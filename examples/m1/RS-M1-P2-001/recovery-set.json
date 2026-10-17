@@ -1,0 +1,17 @@
+{
+  "format": "owr-recovery-set",
+  "schema_version": 1,
+  "site_id": "owr-m1-synthetic",
+  "set_id": "RS-M1-P2-001",
+  "ram_sha256": "27cddc83edf78cf30abe4ba1ee3deff5a9a339379bc6d9426d5105c9e268af97",
+  "asset_ids": [
+    "configuration",
+    "database",
+    "plugins",
+    "recovery_manifest",
+    "runtime",
+    "themes",
+    "uploads",
+    "wordpress_core"
+  ]
+}

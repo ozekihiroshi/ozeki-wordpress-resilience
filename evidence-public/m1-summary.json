@@ -1,0 +1,11 @@
+{
+  "kind": "public_summary_not_original_evidence",
+  "scope": "M1 synthetic recovery; same IAM role and host OS; authenticity unverified",
+  "runs_passed": 2,
+  "baseline_checks_each": 16,
+  "http_checks_each": 14,
+  "rto_seconds": 245.578899,
+  "snapshot_age_seconds": 4429.507284,
+  "stored_bytes": 490331541,
+  "raw_evidence": "retained locally; excluded from Git; no signed independent attestation"
+}

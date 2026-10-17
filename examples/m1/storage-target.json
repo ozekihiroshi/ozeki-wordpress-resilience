@@ -1,0 +1,22 @@
+{
+  "bucket": "owr-example-bucket",
+  "prefix": "wordpress-test/",
+  "region": "ap-northeast-1",
+  "writer_profile": null,
+  "recovery_profile": null,
+  "status": "functional-recovery-tested-role-separation-unmet",
+  "observed_wsl_profile_names": [
+    "default"
+  ],
+  "aws_cli_available": false,
+  "cloud_operations_performed": true,
+  "cloud_mutations_performed": true,
+  "authentication": "IAM role / temporary credentials via AWS SDK default provider chain",
+  "existing_ec2_available": true,
+  "source_host": "community",
+  "observed_role": "ExampleSharedRole",
+  "recovery_host": "dm",
+  "recovery_role_proposal": "OwrM1RecoveryReader",
+  "recovery_cli_path": "/home/ubuntu/.local/owr-m1-runtime/bin/aws",
+  "role_separation": "unmet_user_accepted"
+}

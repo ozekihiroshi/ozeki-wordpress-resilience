@@ -1,0 +1,135 @@
+{
+  "format": "owr-recovery-asset-manifest",
+  "schema_version": 1,
+  "site_id": "owr-m1-synthetic",
+  "set_id": "RS-M1-P2-001",
+  "created_at": "2026-10-17T21:35:44.627018+00:00",
+  "evidence_level": "E1",
+  "authenticity": "unverified",
+  "consistency": "uncoordinated",
+  "procedure_id": "owr-m1-independent-recovery-v1",
+  "assets": [
+    {
+      "id": "database",
+      "role": "database",
+      "required": true,
+      "depends_on": [],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "uploads",
+      "role": "uploads",
+      "required": true,
+      "depends_on": [],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "wordpress_core",
+      "role": "wordpress_core",
+      "required": true,
+      "depends_on": [
+        "runtime"
+      ],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "themes",
+      "role": "themes",
+      "required": true,
+      "depends_on": [
+        "runtime"
+      ],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "plugins",
+      "role": "plugins",
+      "required": true,
+      "depends_on": [
+        "runtime"
+      ],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "configuration",
+      "role": "configuration",
+      "required": true,
+      "depends_on": [
+        "runtime"
+      ],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    },
+    {
+      "id": "runtime",
+      "role": "runtime",
+      "required": true,
+      "depends_on": [],
+      "locator": {
+        "kind": "local",
+        "path": ".local/images/wordpress-phase1.tar"
+      },
+      "sha256": "668048c43d71ae32aa37a304e17a4509fd963d4dacf5557f4a78941c079a9e21",
+      "size_bytes": 861810688
+    },
+    {
+      "id": "recovery_manifest",
+      "role": "recovery_manifest",
+      "required": true,
+      "depends_on": [],
+      "locator": {
+        "kind": "pending",
+        "reason": "phase3_capture_required"
+      },
+      "sha256": null,
+      "size_bytes": null
+    }
+  ],
+  "environment": {
+    "wordpress": "7.0.2",
+    "php": "8.3.33",
+    "database": "11.8.8-MariaDB-ubu2404",
+    "themes": [
+      {
+        "name": "twentytwentyfive",
+        "version": "1.5"
+      }
+    ],
+    "plugins": [
+      {
+        "name": "ozeki-database-backup-for-s3",
+        "version": "0.3.0"
+      }
+    ],
+    "inventory_scope": "phase1_baseline_only"
+  }
+}

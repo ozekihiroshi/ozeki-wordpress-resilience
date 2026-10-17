@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadOnlyPinnedVersions",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObjectVersion"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-bucket/wordpress-test/*"
+    },
+    {
+      "Sid": "DenyMutationsAndLatestReads",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-bucket/wordpress-test/*"
+    }
+  ]
+}

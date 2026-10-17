@@ -1,0 +1,11 @@
+{
+  "bucket": "owr-example-bucket",
+  "owner": "123456789012",
+  "region": "ap-northeast-1",
+  "prefix": "wordpress-test/",
+  "writer_host": "owr-writer",
+  "reader_host": "owr-reader",
+  "reader_home": "/home/ubuntu",
+  "aws_cli": "/home/ubuntu/.local/owr-m1-runtime/bin/aws",
+  "set_id": "RS-M1-YOUR-UNIQUE-ID"
+}

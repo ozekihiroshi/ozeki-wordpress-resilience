@@ -1,0 +1,151 @@
+name: owr-m1
+services:
+  source-db:
+    image: ${OWR_DB_IMAGE:?Run tools/m1-lab.sh prepare}
+    pull_policy: never
+    restart: "no"
+    environment:
+      MARIADB_DATABASE: owr_source
+      MARIADB_USER: owr_source
+      MARIADB_PASSWORD: ${OWR_SOURCE_DB_PASSWORD:?}
+      MARIADB_ROOT_PASSWORD: ${OWR_SOURCE_ROOT_PASSWORD:?}
+    volumes:
+      - source-db:/var/lib/mysql
+    networks: [source]
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    mem_limit: 512m
+    cpus: 1
+  source:
+    image: ${OWR_WP_IMAGE:?Run tools/m1-lab.sh prepare}
+    pull_policy: never
+    restart: "no"
+    depends_on:
+      source-db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: source-db:3306
+      WORDPRESS_DB_NAME: owr_source
+      WORDPRESS_DB_USER: owr_source
+      WORDPRESS_DB_PASSWORD: ${OWR_SOURCE_DB_PASSWORD:?}
+      WORDPRESS_TABLE_PREFIX: owr_
+      WORDPRESS_CONFIG_EXTRA: |
+        define('DISABLE_WP_CRON', true);
+        define('WP_HTTP_BLOCK_EXTERNAL', true);
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+        define('DISALLOW_FILE_MODS', true);
+        define('WP_ENVIRONMENT_TYPE', 'local');
+        define('ODBFS3_MEDIA_WORK_DIR', '/private/media');
+      OWR_FIXTURE: "1"
+      OWR_ADMIN_PASSWORD: ${OWR_ADMIN_PASSWORD:?}
+    volumes:
+      - source-site:/var/www/html
+      - source-private:/private
+      - ./fixture:/fixture:ro
+      - ./fixture/guard.php:/var/www/html/wp-content/mu-plugins/owr-fixture.php:ro
+      - ../../.local/backup-plugin:/var/www/html/wp-content/plugins/ozeki-database-backup-for-s3:ro
+    networks: [source]
+    healthcheck:
+      test: [CMD, php, -r, "exit(is_file('/var/www/html/wp-config.php') && @fsockopen('127.0.0.1', 80) ? 0 : 1);"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    mem_limit: 768m
+    cpus: 1
+  preview:
+    image: ${OWR_PROXY_IMAGE:?}
+    pull_policy: never
+    restart: "no"
+    depends_on:
+      source:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:18081:80"
+    volumes:
+      - ./preview.conf:/etc/nginx/conf.d/default.conf:ro
+    networks: [source, preview]
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1/healthz]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    mem_limit: 64m
+    cpus: 0.5
+  recovery-db:
+    profiles: [recovery]
+    image: ${OWR_DB_IMAGE:?}
+    pull_policy: never
+    restart: "no"
+    environment:
+      MARIADB_DATABASE: owr_recovery
+      MARIADB_USER: owr_recovery
+      MARIADB_PASSWORD: ${OWR_RECOVERY_DB_PASSWORD:?}
+      MARIADB_ROOT_PASSWORD: ${OWR_RECOVERY_ROOT_PASSWORD:?}
+    volumes:
+      - recovery-db:/var/lib/mysql
+    networks: [recovery]
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    mem_limit: 512m
+    cpus: 1
+  recovery:
+    profiles: [recovery]
+    image: ${OWR_WP_IMAGE:?}
+    pull_policy: never
+    restart: "no"
+    depends_on:
+      recovery-db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: recovery-db:3306
+      WORDPRESS_DB_NAME: owr_recovery
+      WORDPRESS_DB_USER: owr_recovery
+      WORDPRESS_DB_PASSWORD: ${OWR_RECOVERY_DB_PASSWORD:?}
+      WORDPRESS_TABLE_PREFIX: owr_
+      WORDPRESS_CONFIG_EXTRA: |
+        define('DISABLE_WP_CRON', true);
+        define('WP_HTTP_BLOCK_EXTERNAL', true);
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+        define('DISALLOW_FILE_MODS', true);
+        define('WP_ENVIRONMENT_TYPE', 'local');
+    volumes:
+      - recovery-site:/var/www/html
+      - recovery-private:/private
+      - ./fixture:/fixture:ro
+      - ./fixture/guard.php:/var/www/html/wp-content/mu-plugins/owr-fixture.php:ro
+    networks: [recovery]
+    healthcheck:
+      test: [CMD, php, -r, "exit(is_file('/var/www/html/wp-config.php') && @fsockopen('127.0.0.1', 80) ? 0 : 1);"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+    mem_limit: 768m
+    cpus: 1
+networks:
+  preview:
+    ipam:
+      config:
+        - subnet: 10.203.106.32/28
+  source:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.203.106.0/28
+  recovery:
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.203.106.16/28
+volumes:
+  source-db:
+  source-site:
+  source-private:
+  recovery-db:
+  recovery-site:
+  recovery-private:

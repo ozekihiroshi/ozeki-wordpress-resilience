@@ -1,0 +1,19 @@
+.local/
+.env
+.env.*
+!.env.example
+*.log
+*.sql
+*.sql.gz
+*.tar
+*.zip
+/vendor/
+
+__pycache__/
+*.pyc
+
+# Raw operational observations remain local; publish a labelled summary.
+/evidence/
+/examples/m1/RS-M1-LIVE-*/
+/vendor/
+/dist/

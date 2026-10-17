@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "owr-recovery-set"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "site_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "set_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+    },
+    "ram_sha256": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+      },
+      "maxItems": 128,
+      "uniqueItems": true,
+      "minItems": 8
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "site_id",
+    "set_id",
+    "ram_sha256",
+    "asset_ids"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
