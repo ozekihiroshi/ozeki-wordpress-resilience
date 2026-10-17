@@ -1,0 +1,16 @@
+{
+  "kind": "synthetic_unit_test_fixture_not_operational_evidence",
+  "environment": {
+    "wordpress": "7.0.2",
+    "php": "8.3.33",
+    "database": "11.8.8-MariaDB",
+    "theme": {
+      "name": "twentytwentyfive",
+      "version": "1.5"
+    },
+    "backup_plugin": "0.3.0"
+  },
+  "database_baseline": {
+    "excluded": "fixture-only marker"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "public_shared_core_recovery_summary",
+  "started_at": "2026-10-17T23:41:22.580170+00:00",
+  "core_version": "0.1.0",
+  "wordpress_loaded_by_collector": false,
+  "status": "passed",
+  "captured_at": "2026-10-17T23:41:25.150838+00:00",
+  "source_stop_at": "2026-10-17T23:43:11.644716+00:00",
+  "metadata_scope": "locally composed derived test set; new DB uploaded and retrieved by fixed Version ID; other assets from previous independent S3 fetch; no full-set publication claim",
+  "restore_started_at": "2026-10-17T23:43:38.278335+00:00",
+  "restore_exit": 0,
+  "finished_at": "2026-10-17T23:44:59.186671+00:00",
+  "restore_result": {
+    "kind": "E3",
+    "started_at": "2026-10-17T23:43:38.613231+00:00",
+    "run": 1,
+    "passed": true,
+    "source_access": "none",
+    "source_containers_stopped": true,
+    "project": "owr-core-e3-1",
+    "baseline_checks": 16,
+    "http_checks": 14,
+    "strict_baseline_fields_matched": 4,
+    "independent_volumes": true,
+    "network_internal": true,
+    "finished_at": "2026-10-17T23:44:56.848226+00:00"
+  },
+  "raw_storage_observation": "retained locally; contains infrastructure identifiers",
+  "role_separation": "unmet",
+  "authenticity": "unverified"
+}

@@ -13,7 +13,13 @@ def main():
  p=argparse.ArgumentParser()
  p.add_argument("--bundle",required=True);p.add_argument("--output",required=True)
  p.add_argument("--run",type=int,choices=[1,2],required=True)
- a=p.parse_args();bundle=Path(a.bundle).resolve();out=Path(a.output).resolve()
+ p.add_argument("--project-prefix",default="owr-m1-e3")
+ p.add_argument("--subnet-base",type=int,default=48)
+ a=p.parse_args()
+ import re
+ if not re.fullmatch(r"[a-z][a-z0-9-]{0,40}",a.project_prefix):p.error("Invalid project prefix")
+ if a.subnet_base%16 or not 0<=a.subnet_base<=192:p.error("Invalid subnet base")
+ bundle=Path(a.bundle).resolve();out=Path(a.output).resolve()
  out.mkdir(parents=True,exist_ok=False);os.umask(0o077)
  report={"kind":"E3","started_at":now(),"run":a.run,"passed":False,"source_access":"none"}
  try:
@@ -40,7 +46,7 @@ def main():
   with assets["runtime"].open("rb") as stream:
    call(["docker","load"],stdin=stream,stdout=subprocess.DEVNULL)
   images=json.loads((bundle/"bootstrap/images.json").read_text())
-  project="owr-m1-e3-"+str(a.run);wp=images["wordpress"];db=images["database"];proxy=images["proxy"]
+  project=a.project_prefix+"-"+str(a.run);wp=images["wordpress"];db=images["database"];proxy=images["proxy"]
   if call(["docker","ps","-aq","--filter","label=com.docker.compose.project="+project],
           capture_output=True,text=True).stdout.strip():
    raise RuntimeError("Recovery project already exists")
@@ -67,7 +73,7 @@ def main():
   preview=service(proxy)
   preview.update(networks=["recovery","ingress"],ports=["127.0.0.1:18081:80"],
     volumes=[str(bundle/"bootstrap/preview.conf")+":/etc/nginx/conf.d/default.conf:ro"],mem_limit="64m")
-  net=48+(a.run-1)*32
+  net=a.subnet_base+(a.run-1)*32
   compose={"name":project,"services":{"db":db_service,"source":wp_service,"preview":preview},
     "volumes":{"db":{},"site":{}},"networks":{
       "recovery":{"internal":True,"ipam":{"config":[{"subnet":"10.203.106."+str(net)+"/28"}]}},

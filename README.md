@@ -2,6 +2,8 @@
 
 WordPressが利用不能になっても、外部の復旧資産から事業に必要な情報と機能を取り戻すための基盤です。バックアップ機能を内包し、資産の組合せ、固定版取得、独立復元、復旧の証拠を管理する製品を目指します。既存のOzeki Database Backup for S3とは、共通バックアップ部品と保存形式を共有する方針です。
 
+推奨するM1初版タグは **v0.1.0-alpha.3** です。初期タグで見つかった試験用ローカル依存を修正しています。
+
 ## 開発環境の準備
 
 [初版のセットアップと検査](docs/guides/development-setup.md)を参照してください。GPL-2.0-or-laterで公開します。実環境の証拠原本・資格情報・AWS接続設定は配布に含めません。
@@ -19,7 +21,7 @@ WordPressが利用不能になっても、外部の復旧資産から事業に�
 
 ## 初版公開と既存製品との関係
 
-GitHub初版はM1研究・開発版として準備します。別バックアッププラグインを必須にせず、それぞれ単独で導入できる二製品が共通部品を使う構成を採用しました。現在のM1は既存製品の内部クラスを利用しており、共通部品への抽出・単独導入パッケージは未実装です。公開前の整理事項を含め、[責任分担と初版の位置づけ](docs/spec/04-product-boundaries-and-initial-release.md)に記録しています。
+GitHub初版はM1研究・開発版として準備します。別バックアッププラグインを必須にせず、それぞれ単独で導入できる二製品が共通部品を使う構成を採用しました。M1初版は既存製品の内部クラスを利用しています。この開発ブランチではPHP DBダンプを共通部品へ抽出し、両製品への組込みと再復元を検証しています。完成版プラグインの単独導入UIやS3転送全体の共通化は今後の作業です。公開前の整理事項を含め、[責任分担と初版の位置づけ](docs/spec/04-product-boundaries-and-initial-release.md)に記録しています。
 
 ## 初めて使う方へ
 
@@ -68,3 +70,15 @@ Python41件、転送PHP14件、一時認証PHP8件のオフライン試験にも
 - [段階的な実装計画と完了条件](docs/spec/05-shared-backup-component-plan.md)
 
 共通化後も、必要資産の判定や復旧成功の認定はResilienceが担います。既存製品との併用は初期の推奨構成とせず、どちらか一方を選ぶ運用と移行手順を整えます。
+## 共通DB部品の開発結果
+
+packages/backup-coreが共通PHP DBダンパーの保守元です。WordPressなしで動作し、従来製品は生成した固定版を同梱して旧APIを互換エイリアスで提供します。
+
+- [共通部品の契約](docs/spec/06-backup-core-contract.md)
+- [再復元の公開用集計](evidence-public/shared-core-recovery.json)
+- 単体契約試験：php tests/test-backup-core.php
+- 同梱版の確認：python3 tools/vendor-backup-core.py --target /path/to/legacy-product --check
+
+再実証はtools/test-shared-core-recovery.py --helpを参照してください。既に構築した専用模擬環境を前提とし、--allow-synthetic-s3を明示した場合のみ実S3を使用します。新しいDBを固定版取得し、以前S3から独立取得済みのファイル資産と組み合わせる試験です。サイト全体の新しいセットをS3へ再発行した試験ではありません。
+
+[初版公開・共通DB部品導入の結果](docs/releases/shared-core-development.md)

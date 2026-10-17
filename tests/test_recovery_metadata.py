@@ -16,7 +16,7 @@ class MetadataTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.ram_path=self.root/"input.json"
-        m.generate(ROOT/"evidence/m1/phase1/source-baseline.json",
+        m.generate(ROOT/"tests/fixtures/source-baseline.json",
                    ROOT/"examples/m1/asset-declarations.json",self.ram_path)
         self.ram,_=m.read(self.ram_path)
     def save(self, ram=None):
@@ -35,7 +35,7 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn("database_baseline",self.ram)
     def test_generate_no_overwrite(self):
         with self.assertRaises(FileExistsError):
-            m.generate(ROOT/"evidence/m1/phase1/source-baseline.json",
+            m.generate(ROOT/"tests/fixtures/source-baseline.json",
                        ROOT/"examples/m1/asset-declarations.json",self.ram_path)
     def test_independent_inspect(self):
         path,sha=self.freeze()

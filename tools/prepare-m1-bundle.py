@@ -6,6 +6,7 @@ p.add_argument("--capture",required=True)
 p.add_argument("--baseline",required=True)
 p.add_argument("--set-id",required=True)
 p.add_argument("--output",required=True)
+p.add_argument("--images",default="lab/m1/images.env")
 a=p.parse_args()
 root=Path(__file__).resolve().parents[1]
 work=(root/a.output).resolve()
@@ -27,7 +28,7 @@ if (!$user || !getenv('OWR_ADMIN_PASSWORD')) { throw new RuntimeException('Missi
 wp_set_password(getenv('OWR_ADMIN_PASSWORD'), $user->ID);
 """)
 images={}
-for line in (root/"lab/m1/images.env").read_text().splitlines():
+for line in (root/a.images).read_text().splitlines():
  if "=" in line:
   k,v=line.split("=",1)
   images[{"OWR_WP_IMAGE":"wordpress","OWR_DB_IMAGE":"database","OWR_PROXY_IMAGE":"proxy"}[k]]=v
@@ -52,7 +53,8 @@ assets.append(artifact("runtime",work/"runtime-images.tar.gz"))
 manifest={"format":"owr-capture-manifest","schema_version":1,
  "capture_id":capture["evidence_id"],"site_id":"owr-m1-synthetic",
  "capture_started_at":capture["started_at"],"capture_finished_at":capture["finished_at"],
- "consistency":"uncoordinated","source":"pinned existing plugin PHP dumper plus explicit file capture",
+ "consistency":"uncoordinated","source":"shared backup core PHP dumper plus explicit file capture",
+ "backup_core_version":"0.1.0",
  "plugin_commit":capture["plugin_commit"],"assets":assets,
  "note":"This is an OWR capture index, not odbfs3-recovery-set or a claim of prior S3 verification."}
 (work/"capture-manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")

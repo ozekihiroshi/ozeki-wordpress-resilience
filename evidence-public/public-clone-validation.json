@@ -1,0 +1,10 @@
+{
+  "kind": "public_clone_validation",
+  "tag": "v0.1.0-alpha.3",
+  "passed": true,
+  "python_tests": 41,
+  "transfer_checks": 14,
+  "authentication_checks": 8,
+  "private_local_dependencies_used": false,
+  "earlier_tags": "alpha / alpha.2 retain historical test dependency defects; use alpha.3"
+}

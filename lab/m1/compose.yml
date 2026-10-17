@@ -43,6 +43,7 @@ services:
       OWR_ADMIN_PASSWORD: ${OWR_ADMIN_PASSWORD:?}
     volumes:
       - source-site:/var/www/html
+      - ../../packages/backup-core:/backup-core:ro
       - source-private:/private
       - ./fixture:/fixture:ro
       - ./fixture/guard.php:/var/www/html/wp-content/mu-plugins/owr-fixture.php:ro
