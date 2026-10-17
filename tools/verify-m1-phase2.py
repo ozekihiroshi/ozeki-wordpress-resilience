@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 ROOT=Path(__file__).resolve().parents[1]
+(ROOT/"evidence/m1/phase2").mkdir(parents=True,exist_ok=True)
 def run(args, **kw):
     return subprocess.run(args,check=True,text=True,capture_output=True,**kw)
 result=run([sys.executable,"-m","unittest","discover","-s",str(ROOT/"tests"),"-v"],cwd=ROOT)

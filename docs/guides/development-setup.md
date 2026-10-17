@@ -4,6 +4,9 @@ Ubuntu / WSL、Python 3.12、PHP 8.1以上（mysqliを含む）、Composer、Doc
 
 ## オフライン検査
 
+    python3 -m venv .local/venv
+    . .local/venv/bin/activate
+    pip install -r requirements-dev.txt
     composer install --no-interaction --prefer-dist
     python3 -m unittest discover -s tests
     php tests/test-versioned-transfer.php
