@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require dirname(__DIR__) . '/.local/backup-plugin/vendor/autoload.php';
+require dirname(__DIR__) . '/tools/aws-autoload.php';
 require dirname(__DIR__) . '/tools/temporary-role-auth.php';
 use Aws\Credentials\Credentials;
 $count = 0;
