@@ -1,0 +1,18 @@
+{
+  "kind": "production_storage_preflight",
+  "bucket": "ceri-link-resilience-prod-121426368082",
+  "bucket_configuration_verified": true,
+  "default_retention": {
+    "Mode": "GOVERNANCE",
+    "Days": 35
+  },
+  "canary_upload_bytes": 99,
+  "canary_upload_acknowledged": true,
+  "reader_fixed_version_download": "verified",
+  "reader_retention_read": "verified",
+  "protected_version_verified": true,
+  "deletion_tests": "passed_on_disposable_canary",
+  "real_backup_uploaded": false,
+  "passed": true,
+  "canary_evidence": "production-storage-canary.json"
+}

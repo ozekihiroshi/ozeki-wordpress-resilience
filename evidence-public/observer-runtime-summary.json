@@ -1,0 +1,26 @@
+{
+  "format": "owr-observer-runtime-integration-verification-v1",
+  "date": "2026-10-19",
+  "status": "passed",
+  "integration_tests": 8,
+  "watchdog_regression_tests": 9,
+  "real_ssh_container_checks": 19,
+  "wordpress_browser_checks": 166,
+  "php_syntax": "passed",
+  "external_notifications_sent": 0,
+  "production_deployed": false,
+  "test_containers_removed": true,
+  "scope": "Real observer/watchdog/dispatch/control with mocked providers; offline SSH containers and WordPress/MariaDB/browser",
+  "verified": [
+    "Normal alarm dispatched before test; separate result and receipt ledgers",
+    "Alarm failure remains visible even when test is accepted",
+    "Test failure does not discard normal alarm receipt",
+    "Stopped request transfer and stopped observer do not fabricate acceptance",
+    "Dispatch lock reports normal delivery failure and test processing error",
+    "Pending work resumes once; expired test is blocked",
+    "Stopped result pull retains prior report; stale UI disables tests and labels history",
+    "Observer container restart does not resend completed alarm/test",
+    "Recovery cancels normal alarm receipt when its polling schedule is due"
+  ],
+  "test_time_controls": "Expiry/staleness use aged fixtures; cancellation makes the fixture poll schedule due. Not a long-duration outage measurement."
+}

@@ -1,0 +1,63 @@
+{
+  "format": "owr-wordpress-consistency-lab-v1",
+  "recorded_at": "2026-10-18T21:42:58.665712+00:00",
+  "results": [
+    {
+      "case": "inflight_writer_drained",
+      "passed": true,
+      "wait_seconds": 2.866
+    },
+    {
+      "case": "http_and_cli_rejected_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "direct_database_write_blocked",
+      "passed": true
+    },
+    {
+      "case": "captured_db_media_references_match",
+      "passed": true,
+      "references": 2,
+      "dump_bytes": 93109,
+      "archive_bytes": 224
+    },
+    {
+      "case": "normal_release_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "dump_restored_and_captured_media_match",
+      "passed": true
+    },
+    {
+      "case": "capture_failure_finally_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "drain_timeout_releases_owned_fence",
+      "passed": true
+    },
+    {
+      "case": "lease_expiry_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "concurrent_owner_rejected_and_disconnect_releases",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "isolated_network": "none / shared loopback only",
+  "resources_removed": true,
+  "scope": "Dedicated cooperative fixture writers only; no production approval, arbitrary plugin/SSH file writes excluded.",
+  "regression_tests": {
+    "python_contract_tests": 80,
+    "passed": true
+  }
+}

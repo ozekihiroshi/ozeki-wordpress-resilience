@@ -1,0 +1,19 @@
+[Unit]
+Description=Independent observation of watchdog and host reachability
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=owr-observer
+Group=owr-observer
+UMask=0027
+ExecStart=/usr/bin/python3 /opt/owr/watchdog-observer.py observe --config /etc/owr/observer.json
+TimeoutStartSec=90
+KillMode=control-group
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/owr-observer
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

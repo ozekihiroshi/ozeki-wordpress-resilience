@@ -1,0 +1,15 @@
+{
+  "format": "owr-observer-pushover-device-verification-v1",
+  "request_id": "a1c3cfea-e62a-4b4a-848f-de72da989a28",
+  "revision": 1,
+  "provider_result": "accepted",
+  "iphone_receipt": "confirmed_by_user",
+  "admin_result": "confirmed_by_user_screenshot_and_public_report",
+  "replay_provider_calls": 0,
+  "replay_preserved_records": true,
+  "test_records": 1,
+  "alarm_delivery_records": 0,
+  "production_monitoring_connected": false,
+  "scope": "Local WordPress, real dedicated SSH and Pushover test executor; dm health not assessed",
+  "new_notifications_sent_by_verification": 0
+}

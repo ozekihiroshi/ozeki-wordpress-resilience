@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "healthy authenticated probe",
+    "stalled completion while host reachable",
+    "failed notification retained durably",
+    "observer restart retries pending alert",
+    "fresh completion resolves stopped watchdog",
+    "whole monitored container stopped",
+    "SSH recovery does not refresh old completion",
+    "watchdog fresh recovery",
+    "host pin mismatch fails closed",
+    "invalid heartbeat separate from reachability",
+    "valid completion resolves invalid record",
+    "endpoint cannot modify heartbeat or code",
+    "restart does not duplicate resolved transitions",
+    "isolated network, no external notification"
+  ],
+  "count": 14,
+  "real_notifications": false,
+  "production_modified": false
+}

@@ -1,0 +1,26 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadPinnedLockLabObjects",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-object-lock-lab/object-lock-probes/*"
+    },
+    {
+      "Sid": "NoLockLabMutationForReader",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:PutObjectRetention",
+        "s3:BypassGovernanceRetention"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-object-lock-lab/object-lock-probes/*"
+    }
+  ]
+}

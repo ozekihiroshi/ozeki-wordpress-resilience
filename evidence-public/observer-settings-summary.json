@@ -1,0 +1,13 @@
+{
+    "format":  "owr-observer-settings-verification-v1",
+    "admin_checks":  139,
+    "ssh_checks":  10,
+    "settings_unit_tests":  19,
+    "live_delivery_regression_tests":  23,
+    "observer_status_regression_tests":  12,
+    "watchdog_regression_tests":  9,
+    "systemd_units_verified":  2,
+    "external_notifications_sent":  0,
+    "production_deployed":  false,
+    "scope":  "Offline WordPress, MariaDB and browser; pinned SSH containers; mocked providers"
+}

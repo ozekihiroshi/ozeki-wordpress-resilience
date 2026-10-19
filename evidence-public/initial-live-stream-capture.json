@@ -1,0 +1,58 @@
+{
+  "kind": "initial_live_stream_capture",
+  "date": "2026-10-18",
+  "passed": true,
+  "scope": "Capture integrity and compressed capacity; not restore acceptance",
+  "assets": [
+    {
+      "role": "database",
+      "file": "database.sql.gz",
+      "compressed_bytes": 63155,
+      "elapsed_seconds": 2.02,
+      "gzip_integrity": "passed",
+      "uncompressed_bytes": 324904,
+      "dump_completion_marker": true
+    },
+    {
+      "role": "site",
+      "file": "wordpress-files.tar.gz",
+      "compressed_bytes": 53894240,
+      "elapsed_seconds": 23.83,
+      "gzip_integrity": "passed",
+      "uncompressed_bytes": 249548800,
+      "tar_members": 20281,
+      "link_members": 0,
+      "unsafe_path_or_device_members": 0
+    },
+    {
+      "role": "runtime",
+      "file": "runtime-images.tar.gz",
+      "compressed_bytes": 404095674,
+      "elapsed_seconds": 82.3,
+      "gzip_integrity": "passed",
+      "uncompressed_bytes": 1111729664,
+      "tar_members": 73,
+      "link_members": 0,
+      "unsafe_path_or_device_members": 0
+    }
+  ],
+  "database_create_table_count": 12,
+  "wp_config_style": "environment-backed standard config",
+  "php_override_bytes": 114,
+  "primary_archives_bytes": 458053069,
+  "measured_payload_with_config_bytes": 458053968,
+  "measured_payload_gib": 0.426596000790596,
+  "storage_usd_month_35_sets": 0.3733,
+  "storage_usd_month_42_sets": 0.4479,
+  "http_before": 200,
+  "http_after": 200,
+  "source_temporary_archives_created": false,
+  "source_stopped": false,
+  "consistency": "DB transaction snapshot; live files; cross-asset consistency unverified",
+  "s3_uploaded": false,
+  "signed": false,
+  "restore_tested": false,
+  "raw_capture_in_git": false,
+  "local_permissions": "directory 0700; files 0600; filesystem access controls, no separate archive encryption",
+  "excludes": "new recovery manifests/bootstrap and monitoring/transfer/compute costs"
+}

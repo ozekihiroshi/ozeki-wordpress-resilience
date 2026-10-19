@@ -1,0 +1,40 @@
+name: Offline recovery contracts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.3']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          coverage: none
+          tools: composer
+      - name: Install declared dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          python3 -m venv /tmp/owr-ci-venv
+          /tmp/owr-ci-venv/bin/pip install -r requirements-dev.txt
+      - name: Verify contracts without private fixtures or cloud access
+        run: |
+          test ! -e .local
+          /tmp/owr-ci-venv/bin/python -m unittest discover -s tests
+          php tests/test-backup-core.php
+          php tests/test-versioned-transfer.php
+          php tests/test-temporary-role-auth.php
+      - name: Build development distributions
+        run: |
+          /tmp/owr-ci-venv/bin/python tools/build-release.py --output dist/candidate
+          test -f dist/candidate/manifest.json

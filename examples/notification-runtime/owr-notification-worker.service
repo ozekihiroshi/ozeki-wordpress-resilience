@@ -1,0 +1,18 @@
+[Unit]
+Description=Owr notification worker cycle
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=owr-worker
+UMask=0027
+ExecStart=/usr/bin/python3 /opt/owr/notification-runtime.py worker --config /etc/owr/runtime-worker.json
+TimeoutStartSec=120
+KillMode=control-group
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/owr-worker /var/lib/owr-public /var/lib/owr-worker-health
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

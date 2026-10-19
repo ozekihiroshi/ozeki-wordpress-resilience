@@ -1,0 +1,69 @@
+{
+  "kind": "dm_fixed_version_database_restore_verification",
+  "passed": true,
+  "checked_at": "2026-10-18T00:59:06.708466+00:00",
+  "database": "owrrecoverylab20261018",
+  "fixed_version_files_verified": 4,
+  "database_sha256": "58ebe918878b4780b95836b035c3218bb8f545d49cff6dc9578d323a9b1cb5e3",
+  "tables": {
+    "owr_commentmeta": {
+      "rows": 0,
+      "all_columns_match": true
+    },
+    "owr_comments": {
+      "rows": 1,
+      "all_columns_match": true
+    },
+    "owr_links": {
+      "rows": 0,
+      "all_columns_match": true
+    },
+    "owr_options": {
+      "rows": 136,
+      "all_columns_match": true
+    },
+    "owr_postmeta": {
+      "rows": 7,
+      "all_columns_match": true
+    },
+    "owr_posts": {
+      "rows": 12,
+      "all_columns_match": true
+    },
+    "owr_term_relationships": {
+      "rows": 2,
+      "all_columns_match": true
+    },
+    "owr_term_taxonomy": {
+      "rows": 1,
+      "all_columns_match": true
+    },
+    "owr_termmeta": {
+      "rows": 0,
+      "all_columns_match": true
+    },
+    "owr_terms": {
+      "rows": 1,
+      "all_columns_match": true
+    },
+    "owr_usermeta": {
+      "rows": 17,
+      "all_columns_match": true
+    },
+    "owr_users": {
+      "rows": 1,
+      "all_columns_match": true
+    }
+  },
+  "total_rows": 178,
+  "baseline_posts_equal": 4,
+  "serialized_options_exact": true,
+  "all_rows_all_columns_equal": true,
+  "import_and_first_query_seconds": 1.078,
+  "comparison_note": "Initial JSON datetime output had fractional-second formatting; read-only recheck uses explicit CHAR casts. No reimport or data normalization performed. Initial failure record retained.",
+  "demand_accessed": false,
+  "wordpress_started": false,
+  "authenticity": "unverified",
+  "role_separation": "unmet",
+  "publication_note": "Summary of a known synthetic M1 database restore. Not a malware-cleanliness or full-site recovery certification."
+}

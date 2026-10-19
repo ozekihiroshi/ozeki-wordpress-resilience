@@ -1,0 +1,10 @@
+[Unit]
+Description=Owr watchdog (dedicated configuration required)
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/usr/bin/python3 /mnt/d/workspace/ozeki-wordpress-resilience/tools/monitor-runtime-lab.py watchdog --config %h/.config/owr/watchdog.json
+SuccessExitStatus=2
+TimeoutStartSec=90
+NoNewPrivileges=true

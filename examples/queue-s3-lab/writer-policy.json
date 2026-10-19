@@ -1,0 +1,38 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InspectDedicatedLab",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketObjectLockConfiguration",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketPolicy",
+        "s3:GetLifecycleConfiguration"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-lock-lab-121426368082"
+    },
+    {
+      "Sid": "WriteRetainedLabAssets",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectRetention"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-lock-lab-121426368082/sites/isolated-queue-lab/sets/*"
+    },
+    {
+      "Sid": "NoLabDeleteOrBypass",
+      "Effect": "Deny",
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:BypassGovernanceRetention"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-lock-lab-121426368082/sites/isolated-queue-lab/sets/*"
+    }
+  ]
+}

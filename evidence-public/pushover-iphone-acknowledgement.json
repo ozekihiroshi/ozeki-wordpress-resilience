@@ -1,0 +1,17 @@
+{
+  "format": "owr-phone-notification-check-v1",
+  "checked_at": "2026-10-19T02:13:28.2829769Z",
+  "provider": "Pushover",
+  "device": "iPhone",
+  "scenario": "isolated backup_missing test",
+  "api_status": "accepted",
+  "receipt_state": "acknowledged",
+  "poll_error": 0,
+  "device_delivery_reported_by_user": true,
+  "acknowledgement_reported_by_user": true,
+  "limitations": [
+    "Repetition stopping was not separately observed.",
+    "Resolution notification and cancellation before acknowledgement have not been tested on the phone.",
+    "This does not indicate a real backup failure or its resolution."
+  ]
+}

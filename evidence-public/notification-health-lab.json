@@ -1,0 +1,31 @@
+{
+  "format": "owr-lab-test-summary-v1",
+  "date": "2026-10-19",
+  "environment": "WSL Ubuntu-24.04; temporary isolated files, SQLite databases, mocked external providers",
+  "suites": [
+    {"file": "tests/test_notification_health.py", "tests": 17, "result": "passed"},
+    {"file": "tests/test_notification_dispatch_lab.py", "tests": 21, "result": "passed"},
+    {"file": "tests/test_monitor_runtime_lab.py", "tests": 21, "result": "passed"},
+    {"file": "tests/test_operations_monitor_lab.py", "tests": 24, "result": "passed"}
+  ],
+  "total_tests": 83,
+  "external_notifications_sent": 0,
+  "wordpress_settings_ui_implemented": false,
+  "production_deployed": false,
+  "verified": [
+    "Invalid alarm selections and duplicate channel IDs rejected before delivery",
+    "Configuration failure detected even with an empty delivery queue",
+    "Rejected or unknown deliveries and persistent backlog are observable",
+    "Missing acknowledgement, expiry and receipt errors distinguished",
+    "Independent watchdog alerts, deduplicates, resolves and detects worker stoppage",
+    "Failed source reads do not refresh the heartbeat",
+    "Watchdog delivery failure persists for later retry",
+    "Health tables preserve existing delivery rows and receipts without resending",
+    "Historical expiry after incident resolution does not keep current health failed"
+  ],
+  "limitations": [
+    "Watchdog integration tested with separate state and injected local receiver on one host",
+    "No new real-host deployment, timers or external watchdog-of-watchdog configured",
+    "Settings migration UI, ambiguous-result reconciliation UI and additional providers remain future work"
+  ]
+}

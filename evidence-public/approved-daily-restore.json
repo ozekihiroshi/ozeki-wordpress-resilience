@@ -1,0 +1,279 @@
+{
+  "format": "owr-approved-daily-restore-v1",
+  "recorded_at": "2026-10-19T00:09:59.027632+00:00",
+  "all_passed": true,
+  "integration_cases": 42,
+  "python_contract_tests_passed": 156,
+  "results": [
+    {
+      "case": "inflight_writer_drained",
+      "passed": true,
+      "wait_seconds": 2.76
+    },
+    {
+      "case": "http_and_cli_rejected_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "direct_database_write_blocked",
+      "passed": true
+    },
+    {
+      "case": "captured_db_media_references_match",
+      "passed": true,
+      "references": 2,
+      "dump_bytes": 93090,
+      "archive_bytes": 222
+    },
+    {
+      "case": "normal_release_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "dump_restored_and_captured_media_match",
+      "passed": true
+    },
+    {
+      "case": "capture_failure_finally_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "drain_timeout_releases_owned_fence",
+      "passed": true
+    },
+    {
+      "case": "lease_expiry_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "concurrent_owner_rejected_and_disconnect_releases",
+      "passed": true
+    },
+    {
+      "case": "real_admin_rest_media_ajax_cli_writes",
+      "passed": true
+    },
+    {
+      "case": "real_cron_drained_new_rest_rejected",
+      "passed": true,
+      "wait_seconds": 3.119
+    },
+    {
+      "case": "all_real_php_routes_and_ddl_fenced",
+      "passed": true,
+      "http_routes": [
+        "admin",
+        "rest",
+        "media",
+        "ajax",
+        "cron",
+        "public"
+      ]
+    },
+    {
+      "case": "additional_php_entrypoints_rejected_before_wordpress",
+      "passed": true,
+      "routes": [
+        "xmlrpc",
+        "comments",
+        "admin-post",
+        "async-upload",
+        "login",
+        "update"
+      ]
+    },
+    {
+      "case": "real_capture_connected_to_consistency_assessor",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3960,
+      "restored_media_references": 1
+    },
+    {
+      "case": "negative_file_mutation_and_unknown_writer_rejected",
+      "passed": true,
+      "mutation": "inconsistent",
+      "unknown_writer": "unverified",
+      "missing_gate": "unverified"
+    },
+    {
+      "case": "real_route_lease_expiry_releases_and_rejects_acceptance",
+      "passed": true,
+      "assessment": {
+        "state": "unverified",
+        "eligible_for_consistency_acceptance": false,
+        "reasons": [
+          "capture_window_not_protected"
+        ],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      }
+    },
+    {
+      "case": "php_shutdown_callback_drained",
+      "passed": true,
+      "wait_seconds": 2.599
+    },
+    {
+      "case": "real_routes_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "restricted_real_ssh_jobs_write_database_and_files",
+      "passed": true
+    },
+    {
+      "case": "ssh_shell_sftp_forwarding_and_direct_site_access_denied",
+      "passed": true
+    },
+    {
+      "case": "independent_durable_queue_acknowledges_only_completed_idempotent_job",
+      "passed": true
+    },
+    {
+      "case": "queue_worker_and_real_child_process_drained",
+      "passed": true,
+      "wait_seconds": 3.015
+    },
+    {
+      "case": "ssh_rejected_and_queue_retained_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "broker_restart_preserves_fenced_pending_job",
+      "passed": true
+    },
+    {
+      "case": "external_writer_capture_and_restore_assessed_consistent",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3966,
+      "job_references": 4
+    },
+    {
+      "case": "ssh_and_pending_queue_job_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "queue_resumes_after_expiry_without_accepting_expired_capture",
+      "passed": true
+    },
+    {
+      "case": "worker_unavailable_and_unknown_privileged_writer_not_accepted",
+      "passed": true
+    },
+    {
+      "case": "paired_checkpoint_blocks_enqueue_ack_and_delivery",
+      "passed": true
+    },
+    {
+      "case": "database_files_and_queue_captured_as_one_checkpoint",
+      "passed": true
+    },
+    {
+      "case": "mixed_generation_corrupt_assets_wrong_site_and_handler_rejected",
+      "passed": true
+    },
+    {
+      "case": "checkpoint_survives_broker_restart_and_wrong_resume_is_denied",
+      "passed": true
+    },
+    {
+      "case": "approved_signature_verified_before_s3_reads",
+      "passed": true
+    },
+    {
+      "case": "approved_three_fixed_versions_retention_checkpoint_verified",
+      "passed": true
+    },
+    {
+      "case": "approved_archive_paths_and_types_verified",
+      "passed": true
+    },
+    {
+      "case": "approved_complete_file_inventory_matches",
+      "passed": true
+    },
+    {
+      "case": "approved_restore_containers_remain_network_isolated",
+      "passed": true
+    },
+    {
+      "case": "lost_queue_database_and_file_restored_with_consumers_stopped",
+      "passed": true
+    },
+    {
+      "case": "ack_loss_redelivered_once_and_pending_job_recovered",
+      "passed": true
+    },
+    {
+      "case": "conflicting_effect_quarantined_without_blocking_safe_jobs",
+      "passed": true
+    },
+    {
+      "case": "completed_job_identity_retained_and_conflicting_enqueue_rejected",
+      "passed": true
+    }
+  ],
+  "set_id": "AWS-82e377a986a42ce5",
+  "manifest_sha256": "dbf4a3a41a6c5a31881d8168ff9d18cd6d952875f82406cffe013230a52ee707",
+  "public_key_sha256": "02d0b3e07a27e766530bc709c9b2e4058f758c0dca851eefb05c161303b42834",
+  "asset_locators": [
+    {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-82e377a986a42ce5/database.sql",
+      "region": "ap-northeast-1",
+      "sha256": "c050b0f65f83df40a6589db082a8788a2add0849a0a6bbb5bdde1dd0017d9941",
+      "size_bytes": 106171,
+      "version_id": "XSSEMTFf0TD9h1fKBX5rSKkjnlDMohWj",
+      "writer_identity": "my-ssm-role"
+    },
+    {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-82e377a986a42ce5/wordpress-files.tar.gz",
+      "region": "ap-northeast-1",
+      "sha256": "849720e4eec4e9beac36ec92a55a88a9065ef5d3ca0a71bea550c6122a3b48bd",
+      "size_bytes": 29719720,
+      "version_id": "4oM3dqZfoPnmkmiJT47vlE72TeqKfEoy",
+      "writer_identity": "my-ssm-role"
+    },
+    {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-82e377a986a42ce5/queue.sqlite",
+      "region": "ap-northeast-1",
+      "sha256": "6bcf54e485091f6b17194fc1c03c5161bf3b21a484c3ba08f90eb5bb7fc2ba9a",
+      "size_bytes": 16384,
+      "version_id": "i.XtEiTa_k3CyRIesYYQuc5mq_kD.AZb",
+      "writer_identity": "my-ssm-role"
+    }
+  ],
+  "file_count": 3972,
+  "fixed_version_gets": 3,
+  "minimum_retention_until": "2026-11-23T00:05:21+00:00",
+  "approval_expires_at": "2026-10-25T23:55:35.050921+00:00",
+  "original_signature_reused": true,
+  "daily_state_required": false,
+  "new_signature_created": false,
+  "isolated_restore_verified": true,
+  "network": "none / shared loopback only",
+  "resources_removed": true,
+  "s3_objects_written": 0,
+  "s3_objects_deleted": 0,
+  "iam_changed": false,
+  "production_data_used": false,
+  "production_key_used": false,
+  "production_recovery_approved": false,
+  "report_sha256": "871d532864bf1cb23b68a852374b3d1881822e7d038cc53f502bfdfef99fef20"
+}

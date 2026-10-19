@@ -6,8 +6,12 @@ namespace Owr;
 final class VersionedAssetStore
 {
     public function __construct(private \Closure $request, private string $bucket,
-        private string $region, private string $owner, private string $prefix)
+        private string $region, private string $owner, private string $prefix,
+        private ?int $retentionDays = null)
     {
+        if ($retentionDays !== null && $retentionDays !== 35) {
+            throw new \InvalidArgumentException('Production retention must be 35 days');
+        }
         if (!preg_match('~^[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*/$~D', $prefix)
             || !preg_match('/^[0-9]{12}$/D', $owner)) {
             throw new \InvalidArgumentException('Invalid storage scope');
@@ -47,6 +51,17 @@ final class VersionedAssetStore
             if (($configuration['Status']??null)!=='Enabled') {
                 throw new \RuntimeException('Versioning must be enabled');
             }
+            if ($this->retentionDays !== null) {
+                $lock=($this->request)('GetObjectLockConfiguration',[
+                    'Bucket'=>$this->bucket,'ExpectedBucketOwner'=>$this->owner]);
+                $config=$lock['ObjectLockConfiguration']??[];
+                $default=$config['Rule']['DefaultRetention']??[];
+                if (($config['ObjectLockEnabled']??null)!=='Enabled'
+                    || ($default['Mode']??null)!=='GOVERNANCE'
+                    || ($default['Days']??null)!==$this->retentionDays || isset($default['Years'])) {
+                    throw new \RuntimeException('Required default retention missing');
+                }
+            }
             $response=($this->request)('PutObject',$args+[
                 'Body'=>$stream,'ContentLength'=>$size,'ChecksumSHA256'=>base64_encode(hex2bin($sha)),
                 'IfNoneMatch'=>'*','ServerSideEncryption'=>'AES256']);
@@ -77,7 +92,23 @@ final class VersionedAssetStore
                 throw new \RuntimeException('Version or size mismatch');
             }
             $body=$response['Body']; $bytes=0; $hash=hash_init('sha256');
+            $retention=[];
             try {
+                if ($this->retentionDays !== null) {
+                    $mode=$response['ObjectLockMode']??null;
+                    $until=$response['ObjectLockRetainUntilDate']??null;
+                    $stored=$response['LastModified']??null;
+                    if (!$until instanceof \DateTimeInterface || !$stored instanceof \DateTimeInterface
+                        || $mode!=='GOVERNANCE'
+                        // S3 LastModified has whole-second precision; retain-until includes fractions.
+                        // Accept less than one second of representation difference only.
+                        || (float)$until->format('U.u') <= (float)$stored->format('U.u')+$this->retentionDays*86400-1
+                        || $until->getTimestamp() <= time()) {
+                        throw new \RuntimeException('Fixed version retention missing, short or expired');
+                    }
+                    $retention=['mode'=>$mode,'retain_until'=>$until->format(DATE_ATOM),
+                        'stored_at'=>$stored->format(DATE_ATOM),'checked_at'=>gmdate('c')];
+                }
                 while (!$body->eof()) {
                     $chunk=$body->read(1024*1024);
                     if ($chunk==='' && !$body->eof()) {throw new \RuntimeException('Stalled stream');}
@@ -105,6 +136,6 @@ final class VersionedAssetStore
             'locator'=>['kind'=>'s3','bucket'=>$this->bucket,'region'=>$this->region,
                 'key'=>$key,'version_id'=>$version],
             'size_bytes'=>$size,'sha256'=>$sha,'observation'=>'download_integrity_checked',
-            'authenticity'=>'unverified','role_separation'=>'unverified'];
+            'authenticity'=>'unverified','role_separation'=>'unverified','retention'=>$retention];
     }
 }

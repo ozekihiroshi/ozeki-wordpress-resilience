@@ -1,0 +1,12 @@
+{
+    "format":  "owr-observer-admin-verification-v1",
+    "admin_integration_checks":  109,
+    "ssh_transfer_checks":  10,
+    "python_status_tests":  12,
+    "php_status_checks":  9,
+    "watchdog_regression_tests":  9,
+    "systemd_units_verified":  2,
+    "external_notifications_sent":  0,
+    "production_deployed":  false,
+    "scope":  "Isolated WordPress, MariaDB, browser and SSH containers; mocked notification providers"
+}

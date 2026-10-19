@@ -24,7 +24,7 @@ def main():
     destination.mkdir(parents=True)
     report = {"evidence_id": identifier, "kind": "E1", "site_id": "owr-m1-synthetic",
               "actor": "local-wsl-operator", "started_at": now(), "result": "incomplete",
-              "method": "pinned-plugin-php-dumper-and-tar",
+              "method": "backup-core-0.1.0-php-dumper-and-tar",
               "scope": "local capture only; no external storage or authenticity claim",
               "consistency": "uncoordinated", "assets": [],
               "plugin_commit": "627e47c2b31527ef1486e582b79fd5dba875843f"}

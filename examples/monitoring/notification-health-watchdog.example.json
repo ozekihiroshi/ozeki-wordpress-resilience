@@ -1,0 +1,13 @@
+{
+  "monitor_id": "owr-delivery-lab",
+  "heartbeat_file": "/home/YOUR_USER/.local/state/owr-delivery-health-lab/delivery-heartbeat.json",
+  "watchdog_state": "/home/YOUR_USER/.local/state/owr-delivery-health-watchdog",
+  "stale_after_seconds": 900,
+  "delivery": {
+    "transport": "smtp_test",
+    "host": "127.0.0.1",
+    "port": 1025,
+    "from": "watchdog@example.invalid",
+    "to": "operator@example.invalid"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "kind": "production_storage_canary",
+  "started_at": "2026-10-18T09:08:39.285464+00:00",
+  "bucket": "ceri-link-resilience-prod-121426368082",
+  "prefix": "sites/wp-ceri-link/canaries/20261018-a67423846495/",
+  "passed": true,
+  "retain_until": "2026-11-22T08:59:45.547000+00:00",
+  "retention_seconds_from_last_modified": 3023999.547,
+  "timestamp_precision_tolerance_seconds": 1,
+  "default_retention_verified": true,
+  "protected_version_intact": true,
+  "configuration_changed": false,
+  "limitations": [
+    "Denial reflects combined IAM and bucket policy controls; does not isolate Object Lock enforcement",
+    "One small canary remains retained; no real backup uploaded"
+  ],
+  "finished_at": "2026-10-18T09:09:30.251834+00:00",
+  "checks": [
+    {
+      "host": "dm",
+      "operation": "get-object-retention",
+      "success": true,
+      "error_code": null
+    },
+    {
+      "host": "dm",
+      "operation": "get-object",
+      "success": true,
+      "error_code": null
+    },
+    {
+      "host": "community",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "community",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "community",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "community",
+      "operation": "put-object-retention",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "get-object",
+      "success": true,
+      "error_code": null
+    },
+    {
+      "host": "dm",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "delete-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "put-object-retention",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "get-object",
+      "success": true,
+      "error_code": null
+    },
+    {
+      "host": "community",
+      "operation": "put-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "put-object",
+      "success": false,
+      "error_code": "AccessDenied"
+    },
+    {
+      "host": "dm",
+      "operation": "get-object",
+      "success": true,
+      "error_code": null
+    },
+    {
+      "host": "dm",
+      "operation": "get-object-retention",
+      "success": true,
+      "error_code": null
+    }
+  ],
+  "real_backup_uploaded": false
+}

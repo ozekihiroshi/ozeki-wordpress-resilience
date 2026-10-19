@@ -1,0 +1,101 @@
+{
+  "kind": "dm_wordpress_recovery_verification",
+  "checked_at": "2026-10-18T01:04:44.200113+00:00",
+  "passed": true,
+  "wordpress_checks": 16,
+  "http_checks": 14,
+  "http_check_results": [
+    {
+      "name": "http_home",
+      "passed": true
+    },
+    {
+      "name": "http_japanese_emoji",
+      "passed": true
+    },
+    {
+      "name": "internal_services_link",
+      "passed": true
+    },
+    {
+      "name": "internal_contact_link",
+      "passed": true
+    },
+    {
+      "name": "http_services",
+      "passed": true
+    },
+    {
+      "name": "http_contact",
+      "passed": true
+    },
+    {
+      "name": "http_post",
+      "passed": true
+    },
+    {
+      "name": "http_media_owr-image.png",
+      "passed": true
+    },
+    {
+      "name": "http_media_owr-guide.pdf",
+      "passed": true
+    },
+    {
+      "name": "form_nonce_present",
+      "passed": true
+    },
+    {
+      "name": "form_rejects_bad_nonce",
+      "passed": true
+    },
+    {
+      "name": "form_accepts_synthetic_message",
+      "passed": true
+    },
+    {
+      "name": "admin_login_http",
+      "passed": true
+    },
+    {
+      "name": "admin_profile_http",
+      "passed": true
+    }
+  ],
+  "media_files_match": 5,
+  "baseline_fields_equal": [
+    "database_baseline",
+    "ids",
+    "upload_inventory"
+  ],
+  "environment": {
+    "wordpress": "7.0.2",
+    "php": "8.1.2-1ubuntu2.26",
+    "database": "8.0.46-0ubuntu0.22.04.4",
+    "theme": {
+      "name": "twentytwentyfive",
+      "version": "1.5"
+    },
+    "backup_plugin": "0.3.0"
+  },
+  "network": {
+    "metadata_tcp_blocked": true
+  },
+  "resource_limits": {
+    "MemoryMax": 402653184,
+    "CPUQuota": "25%",
+    "RuntimeMaxSec": 1200,
+    "memory_observed_bytes": 44576768
+  },
+  "database": "owrrecoverylab20261018",
+  "system_php_changed": false,
+  "existing_web_configuration_changed": false,
+  "demand_accessed": false,
+  "authenticity": "unverified",
+  "role_separation": "unmet",
+  "scope": "known synthetic assets; separate dm host; not malware recovery proof",
+  "admin_password_rotated_in_lab": true,
+  "preview_stopped_after_test": true,
+  "existing_services_active": true,
+  "publication_note": "Synthetic recovery test summary; original observations and credentials remain private. No malware-cleanliness certification."
+}

@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InspectDedicatedLockLab",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketObjectLockConfiguration",
+        "s3:GetBucketPolicy",
+        "s3:GetLifecycleConfiguration"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-object-lock-lab"
+    },
+    {
+      "Sid": "ExerciseDisposableObjects",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention",
+        "s3:PutObjectRetention",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Resource": "arn:aws:s3:::owr-example-object-lock-lab/object-lock-probes/*"
+    },
+    {
+      "Sid": "NoGovernanceBypassForWriter",
+      "Effect": "Deny",
+      "Action": "s3:BypassGovernanceRetention",
+      "Resource": "arn:aws:s3:::owr-example-object-lock-lab/object-lock-probes/*"
+    }
+  ]
+}

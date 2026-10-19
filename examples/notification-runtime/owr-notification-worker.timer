@@ -1,0 +1,12 @@
+[Unit]
+Description=Schedule Owr notification worker
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=60s
+AccuracySec=1s
+RandomizedDelaySec=5s
+Unit=owr-notification-worker.service
+
+[Install]
+WantedBy=timers.target

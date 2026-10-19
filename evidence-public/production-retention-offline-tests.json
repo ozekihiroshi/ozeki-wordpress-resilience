@@ -1,0 +1,92 @@
+{
+    "kind": "versioned_transfer_offline_tests",
+    "checked_at": "2026-10-18T09:09:09+00:00",
+    "passed": true,
+    "checks": [
+        {
+            "name": "conditional upload returns exact version",
+            "passed": true
+        },
+        {
+            "name": "upload rejects disabled",
+            "passed": true
+        },
+        {
+            "name": "upload rejects no_version",
+            "passed": true
+        },
+        {
+            "name": "upload rejects conflict",
+            "passed": true
+        },
+        {
+            "name": "input hash rejected before network",
+            "passed": true
+        },
+        {
+            "name": "prefix escape rejected",
+            "passed": true
+        },
+        {
+            "name": "pinned download despite changed latest",
+            "passed": true
+        },
+        {
+            "name": "destination overwrite refused",
+            "passed": true
+        },
+        {
+            "name": "download rejects wrong_version",
+            "passed": true
+        },
+        {
+            "name": "download rejects corrupt",
+            "passed": true
+        },
+        {
+            "name": "download rejects short",
+            "passed": true
+        },
+        {
+            "name": "download rejects long",
+            "passed": true
+        },
+        {
+            "name": "download rejects denied",
+            "passed": true
+        },
+        {
+            "name": "null version rejected before request",
+            "passed": true
+        },
+        {
+            "name": "short default fails before PUT",
+            "passed": true
+        },
+        {
+            "name": "default retention accepted without explicit override",
+            "passed": true
+        },
+        {
+            "name": "protected download rejects missing_retention",
+            "passed": true
+        },
+        {
+            "name": "protected download rejects short_retention",
+            "passed": true
+        },
+        {
+            "name": "protected download rejects one_second_short",
+            "passed": true
+        },
+        {
+            "name": "subsecond timestamp precision accepted",
+            "passed": true
+        },
+        {
+            "name": "protected download records fixed version retention",
+            "passed": true
+        }
+    ],
+    "cloud_operations": false
+}

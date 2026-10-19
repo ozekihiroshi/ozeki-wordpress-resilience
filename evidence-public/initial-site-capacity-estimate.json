@@ -1,0 +1,27 @@
+{
+  "kind": "initial_site_capacity_estimate",
+  "date": "2026-10-18",
+  "measurement": "uncompressed apparent filesystem bytes; not compressed backup size",
+  "site_apparent_bytes": 225192032,
+  "uploads_apparent_bytes": 1599788,
+  "plugins_apparent_bytes": 121896621,
+  "themes_apparent_bytes": 984093,
+  "database_directory_apparent_bytes": 183968439,
+  "db_scope": "physical directory includes logs/system tables, not logical SQL size",
+  "compressed_full_set_bytes": null,
+  "runtime_archive_bytes": null,
+  "budget_scenarios_gib_per_set": [
+    1,
+    2
+  ],
+  "monthly_storage_usd_42_sets": [
+    1.05,
+    2.1
+  ],
+  "scenario_is_measured_or_guaranteed_upper_bound": false,
+  "source_disk_free_bytes": 3920461824,
+  "source_disk_percent_used": 97,
+  "site_changes": false,
+  "database_dump_executed": false,
+  "followup_compressed_measurement": "initial-live-stream-capture.json"
+}

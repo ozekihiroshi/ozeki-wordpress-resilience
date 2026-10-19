@@ -1,0 +1,247 @@
+{
+  "format": "owr-wordpress-consistency-lab-v1",
+  "recorded_at": "2026-10-18T22:16:59.842454+00:00",
+  "results": [
+    {
+      "case": "inflight_writer_drained",
+      "passed": true,
+      "wait_seconds": 2.758
+    },
+    {
+      "case": "http_and_cli_rejected_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "direct_database_write_blocked",
+      "passed": true
+    },
+    {
+      "case": "captured_db_media_references_match",
+      "passed": true,
+      "references": 2,
+      "dump_bytes": 93109,
+      "archive_bytes": 219
+    },
+    {
+      "case": "normal_release_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "dump_restored_and_captured_media_match",
+      "passed": true
+    },
+    {
+      "case": "capture_failure_finally_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "drain_timeout_releases_owned_fence",
+      "passed": true
+    },
+    {
+      "case": "lease_expiry_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "concurrent_owner_rejected_and_disconnect_releases",
+      "passed": true
+    },
+    {
+      "case": "real_admin_rest_media_ajax_cli_writes",
+      "passed": true
+    },
+    {
+      "case": "real_cron_drained_new_rest_rejected",
+      "passed": true,
+      "wait_seconds": 3.062
+    },
+    {
+      "case": "all_real_php_routes_and_ddl_fenced",
+      "passed": true,
+      "http_routes": [
+        "admin",
+        "rest",
+        "media",
+        "ajax",
+        "cron",
+        "public"
+      ]
+    },
+    {
+      "case": "additional_php_entrypoints_rejected_before_wordpress",
+      "passed": true,
+      "routes": [
+        "xmlrpc",
+        "comments",
+        "admin-post",
+        "async-upload",
+        "login",
+        "update"
+      ]
+    },
+    {
+      "case": "real_capture_connected_to_consistency_assessor",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3960,
+      "restored_media_references": 1
+    },
+    {
+      "case": "negative_file_mutation_and_unknown_writer_rejected",
+      "passed": true,
+      "mutation": "inconsistent",
+      "unknown_writer": "unverified",
+      "missing_gate": "unverified"
+    },
+    {
+      "case": "real_route_lease_expiry_releases_and_rejects_acceptance",
+      "passed": true,
+      "assessment": {
+        "state": "unverified",
+        "eligible_for_consistency_acceptance": false,
+        "reasons": [
+          "capture_window_not_protected"
+        ],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      }
+    },
+    {
+      "case": "php_shutdown_callback_drained",
+      "passed": true,
+      "wait_seconds": 2.395
+    },
+    {
+      "case": "real_routes_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "restricted_real_ssh_jobs_write_database_and_files",
+      "passed": true
+    },
+    {
+      "case": "ssh_shell_sftp_forwarding_and_direct_site_access_denied",
+      "passed": true
+    },
+    {
+      "case": "independent_durable_queue_acknowledges_only_completed_idempotent_job",
+      "passed": true
+    },
+    {
+      "case": "queue_worker_and_real_child_process_drained",
+      "passed": true,
+      "wait_seconds": 2.974
+    },
+    {
+      "case": "ssh_rejected_and_queue_retained_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "broker_restart_preserves_fenced_pending_job",
+      "passed": true
+    },
+    {
+      "case": "external_writer_capture_and_restore_assessed_consistent",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3966,
+      "job_references": 4
+    },
+    {
+      "case": "ssh_and_pending_queue_job_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "queue_resumes_after_expiry_without_accepting_expired_capture",
+      "passed": true
+    },
+    {
+      "case": "worker_unavailable_and_unknown_privileged_writer_not_accepted",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2eb9a7d5398c12bc6bf9cd11b1577bf500b22cc86f661620ebc9edd10be99655",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "isolated_network": "none / shared loopback only",
+  "resources_removed": true,
+  "scope": "isolated-mediated-writers-v1; production scope incomplete",
+  "external_evidence_summary": {
+    "expected_writers": [
+      "php-http",
+      "php-cli-file",
+      "database-direct",
+      "ssh-forced-command",
+      "external-queue",
+      "managed-child"
+    ],
+    "assessment": {
+      "state": "consistent",
+      "eligible_for_consistency_acceptance": true,
+      "reasons": [],
+      "production_recovery_approved": false,
+      "claim": "coordinated capture evidence only; source integrity not attested"
+    },
+    "production_scope_complete": false,
+    "scope_profile": "isolated-mediated-writers-v1",
+    "excluded": [
+      "root/Docker administrator",
+      "arbitrary SSH shell/SFTP/deploy commands",
+      "unregistered workers",
+      "detached or escaping child processes",
+      "external storage"
+    ],
+    "queue_contract": "single consumer; durable SQLite HTTP broker; ack only after done; fixed jobs idempotent",
+    "observation_sha256": "f639dfae29ef7270186ace48d67258a2ae47600b736ee5cfda613aa98c511ec0",
+    "assets": {
+      "database": {
+        "site_id": "isolated-external-writer-lab",
+        "attempt_id": "lab-external-f4983bee1bc0b832",
+        "completed": true,
+        "exit_code": 0,
+        "bytes": 102926,
+        "sha256": "f6e50c864ace29c19780e907584ea702c96f6878ce3584c993b975e4337d1e64"
+      },
+      "files": {
+        "site_id": "isolated-external-writer-lab",
+        "attempt_id": "lab-external-f4983bee1bc0b832",
+        "completed": true,
+        "exit_code": 0,
+        "bytes": 29720219,
+        "sha256": "c70443ba46802dd5a3895f27ef9870e2fca341e38640db9e9c5c24ab1a3a349f"
+      }
+    },
+    "captured_files": 3966,
+    "generation_before": 24,
+    "generation_after": 24
+  },
+  "source_sha256": {
+    "tools/wordpress-external-lab.py": "f85460c282b1b43dfe83f2a96125200f1217bc10dee9be3525405aef4d22b7e2",
+    "tools/run-wordpress-consistency-lab.py": "448f12c49b38bbe79d7eeeb8a3f1815b5d35713ac2e9bec291d8745e17625874",
+    "lab/consistency/ExternalLab.Dockerfile": "ca3396ca91431ab7264043bd91490e3803bfb1f7ee1e151fba5c4b7e2dddc443",
+    "lab/consistency/external-client.py": "53571d7d0661875057f0d9a9964c7f71c96c629d1cf60c296d2d16f7465011f0",
+    "lab/consistency/external_client.py": "53571d7d0661875057f0d9a9964c7f71c96c629d1cf60c296d2d16f7465011f0",
+    "lab/consistency/external-dispatch.py": "8eebb0b615d0f34d48618ab97b46c562b03adff32d9df1ad23874b41a675c14e",
+    "lab/consistency/external-job.php": "62ce46d8855b52981625428aef80c65f57df9b5f2dbbbcce0074119c62d3f0b2",
+    "lab/consistency/external-queue.py": "0072b3ac4c565f921967a2dfc46890dfab17c8bd74926d210846eb71c3634af7"
+  },
+  "regression_tests": {
+    "python_contract_tests": 80,
+    "passed": true
+  }
+}

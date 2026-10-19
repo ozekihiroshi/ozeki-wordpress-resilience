@@ -1,0 +1,9 @@
+{
+  "tests": 380,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "seconds": 293.8,
+  "scope": "Python suite covering external processing, contracts and lab tools; not a WordPress plugin acceptance-test count"
+}

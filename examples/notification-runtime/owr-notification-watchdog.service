@@ -1,0 +1,18 @@
+[Unit]
+Description=Owr notification watchdog cycle
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=owr-watchdog
+UMask=0027
+ExecStart=/usr/bin/python3 /opt/owr/notification-runtime.py watchdog --config /etc/owr/runtime-watchdog.json
+TimeoutStartSec=45
+KillMode=control-group
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/owr-watchdog
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

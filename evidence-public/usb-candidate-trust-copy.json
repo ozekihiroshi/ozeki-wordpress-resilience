@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "kind": "usb_public_trust_copy",
+  "set_id": "RS-WP-CERI-20261018-001",
+  "files_readback_verified": 9,
+  "private_key_copied": false,
+  "site_data_copied": false,
+  "existing_encrypted_key_unchanged": true,
+  "new_passphrase_test": false,
+  "destination": "E:\\owr-recovery\\wp-ceri-link\\RS-WP-CERI-20261018-001",
+  "checked_at": "2026-10-18T09:22:26.350736+00:00",
+  "signature_and_all_assets_verified_with_readback_pin": true,
+  "media_ejected": true,
+  "media_ejection_evidence": "user_confirmed_removed"
+}

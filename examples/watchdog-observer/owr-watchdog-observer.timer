@@ -1,0 +1,12 @@
+[Unit]
+Description=Periodically observe watchdog from independent host
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=60s
+RandomizedDelaySec=5s
+AccuracySec=1s
+Unit=owr-watchdog-observer.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,11 @@
+{
+  "stage": "adapter_ready_awaiting_iam_configuration",
+  "recorded_at": "2026-10-18T22:52:25.184563+00:00",
+  "python_contract_tests_passed": 111,
+  "final_adapter_tests_passed": 8,
+  "preflight_passed": false,
+  "preflight_error": "get-bucket-location: AccessDenied",
+  "real_s3_roundtrip_passed": false,
+  "s3_writes_performed": false,
+  "production_changed": false
+}

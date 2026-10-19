@@ -1,0 +1,31 @@
+{
+  "kind": "object_lock_governance_lab",
+  "passed": true,
+  "started_at": "2026-10-18T12:17:02.534696+09:00",
+  "finished_at": "2026-10-18T12:18:18.460131+09:00",
+  "mode": "GOVERNANCE",
+  "retention_hours": 24,
+  "retain_until": "2026-10-19T12:17:35+09:00",
+  "control_delete_api": "succeeded",
+  "control_post_delete_get_error": "AccessDenied",
+  "locked_version_delete": "AccessDenied",
+  "retention_shortening": "AccessDenied; original expiry unchanged",
+  "governance_bypass_delete": "AccessDenied; explicit IAM bypass deny",
+  "normal_delete": "succeeded; delete marker created; protected fixed version intact",
+  "overwrite": "new bytes and new version; protected old version intact",
+  "recovery_reader": "fixed version, response VersionId, size and SHA256 matched",
+  "bucket_default_retention": false,
+  "bucket_settings_changed_by_probe": false,
+  "object_retention_set_by_probe": true,
+  "existing_backup_buckets_touched": false,
+  "test_policies_removed": true,
+  "cleanup": "retained objects and markers remain; no automatic cleanup scheduled",
+  "limits": [
+    "Dedicated canaries only",
+    "Governance bypass-capable administrators not covered",
+    "Compliance mode not tested",
+    "Production backups have not been given retention"
+  ],
+  "earlier_incomplete_attempts": 2,
+  "policy_removal_evidence": "User confirmed removal; fresh role-based fixed-version GET returned AccessDenied from both community and dm; IAM inventory not retrieved"
+}

@@ -1,0 +1,27 @@
+{
+  "format": "owr-observer-test-send-verification-v1",
+  "date": "2026-10-19",
+  "admin_checks": 155,
+  "ssh_checks": 16,
+  "test_send_unit_tests": 11,
+  "settings_regression_tests": 19,
+  "observer_status_regression_tests": 12,
+  "watchdog_regression_tests": 9,
+  "php_syntax": "passed",
+  "scope": "Offline WordPress/MariaDB/browser and pinned SSH containers; mocked notification providers",
+  "verified": [
+    "Administrator capability, POST, nonce, applied revision and freshness required",
+    "Durable dedicated SSH inbox and acknowledgement replay without duplicate delivery",
+    "Fixed normal-priority test; no caller-selected body, destination or credentials",
+    "Five-minute expiry, active route binding, configuration change rejection",
+    "Per-channel 60-second cooldown and at most one actual send per observation cycle",
+    "Accepted, blocked, rejected, retry and unknown results retained; no automatic resend",
+    "Crash after send-start becomes unknown without retry",
+    "Existing alarm deliveries and ordinary notification settings preserved",
+    "Desktop/mobile layout has no page overflow"
+  ],
+  "external_notifications_sent": 0,
+  "device_delivery_tested": false,
+  "production_deployed": false,
+  "containers_removed": true
+}

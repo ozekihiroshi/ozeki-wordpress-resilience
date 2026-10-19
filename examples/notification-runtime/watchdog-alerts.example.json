@@ -1,0 +1,20 @@
+{
+  "source_outbox": "/var/lib/owr-watchdog/alerts-source.sqlite",
+  "state": "/var/lib/owr-watchdog/alerts-delivery",
+  "channels": [
+    {
+      "id": "independent-push",
+      "kinds": [
+        "monitor_stopped",
+        "heartbeat_invalid",
+        "notification_delivery_failed"
+      ],
+      "provider": {
+        "transport": "pushover",
+        "credentials_file": "/var/lib/owr-watchdog/pushover.json",
+        "retry": 60,
+        "expire": 1800
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "document_links": 45,
+  "missing_links": [],
+  "text_files_scanned": 365,
+  "secret_pattern_findings": [],
+  "scope": "Heuristic scan only; not proof that all secrets are absent"
+}

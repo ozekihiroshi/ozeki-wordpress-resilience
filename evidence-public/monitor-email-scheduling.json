@@ -1,0 +1,79 @@
+{
+  "format": "owr-monitor-email-scheduling-v1",
+  "recorded_at": "2026-10-19T00:34:18.467890+00:00",
+  "all_passed": true,
+  "results": [
+    {
+      "case": "operator-mail_ready",
+      "passed": true
+    },
+    {
+      "case": "watchdog-mail_ready",
+      "passed": true
+    },
+    {
+      "case": "scheduled_monitor_sends_operator_mail",
+      "passed": true
+    },
+    {
+      "case": "heartbeat_written_after_completed_tick",
+      "passed": true
+    },
+    {
+      "case": "timer_runs_again",
+      "passed": true
+    },
+    {
+      "case": "watchdog_has_independent_state",
+      "passed": true
+    },
+    {
+      "case": "monitor_stop_detected_by_separate_timer",
+      "passed": true
+    },
+    {
+      "case": "monitor_restart_resolves_stop",
+      "passed": true
+    },
+    {
+      "case": "primary_delivery_failure_notified_independently",
+      "passed": true
+    },
+    {
+      "case": "queued_primary_mail_retried",
+      "passed": true
+    },
+    {
+      "case": "delivery_recovery_notified",
+      "passed": true
+    },
+    {
+      "case": "unchanged_incident_not_resent_on_timer_ticks",
+      "passed": true
+    },
+    {
+      "case": "temporary_timers_services_and_receivers_stopped",
+      "passed": true
+    }
+  ],
+  "temporary_units_stopped": true,
+  "real_systemd_user_timers": true,
+  "notifications": "two_independent_loopback_smtp_receivers",
+  "external_messages_sent": 0,
+  "production_modified": false,
+  "host_failure_domain_separated": false,
+  "selected_notification_channel": "email",
+  "related_contract_tests_passed": 42,
+  "new_contract_tests_passed": 18,
+  "existing_monitor_contract_tests_passed": 24,
+  "systemd_template_verification_passed": true,
+  "permanent_timers_enabled": false,
+  "production_smtp_connection_tested": false,
+  "concurrent_clock_overlap_regression_passed": true,
+  "smtp_semantics": "at_least_once_with_stable_message_id",
+  "production_defaults": {
+    "monitor_interval_seconds": 300,
+    "watchdog_interval_seconds": 60,
+    "stale_after_seconds": 900
+  }
+}

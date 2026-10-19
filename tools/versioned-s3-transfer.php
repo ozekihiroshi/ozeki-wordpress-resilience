@@ -31,7 +31,8 @@ try {
     $client=new S3Client($config);
     $store=new Owr\VersionedAssetStore(
         static fn($operation,$args)=>$client->execute($client->getCommand($operation,$args))->toArray(),
-        $target['bucket'],$target['region'],$target['owner'],$target['prefix']);
+        $target['bucket'],$target['region'],$target['owner'],$target['prefix'],
+        $target['retention_days']??null);
     if ($argv[1]==='upload') {
         $result=$store->upload($argv[2],$argv[3],(int)$argv[4],$argv[5]);
     } else {

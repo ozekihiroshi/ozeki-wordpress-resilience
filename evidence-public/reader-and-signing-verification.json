@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-18",
+  "fixed_version_get": "passed",
+  "new_put": "AccessDenied",
+  "overwrite_put": "AccessDenied",
+  "delete_object": "AccessDenied",
+  "delete_object_version": "AccessDenied",
+  "scope": "dedicated disposable canary objects only",
+  "local_signature": "passed",
+  "dm_signature": "passed",
+  "verifier_test_cases": 11,
+  "private_key_on_servers": false,
+  "usb_public_files": "hash_verified",
+  "usb_private_key_backup": "encrypted copy and readback signing verified",
+  "malware_cleanliness": "unverified",
+  "mandatory_restore_gate": "integrated in independent recovery runner; signed arguments required",
+  "usb_recovery_checked_at": "2026-10-18T01:51:04.9520594Z",
+  "separate_computer_recovery": "not tested",
+  "gate_real_bundle_preflight": "passed",
+  "full_restore_after_gate_integration": "passed; see signed-gate-recovery.json",
+  "restore_gate_regression_cases": 15,
+  "rejected_before_docker_and_output_creation": true
+}

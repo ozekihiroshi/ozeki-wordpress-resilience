@@ -1,0 +1,304 @@
+{
+  "format": "owr-daily-backup-lab-v1",
+  "recorded_at": "2026-10-18T23:34:23.710778+00:00",
+  "daily_run_id": "daily-50c7469354409fa34d49c670",
+  "day": "2026-10-19",
+  "all_passed": true,
+  "integration_cases": 51,
+  "python_contract_tests_passed": 128,
+  "same_day_second_worker_started": false,
+  "live_concurrent_tick_rejected_as_busy": true,
+  "report_sha256": "2810fbc52ac7e4b388335ca59f22534ad0b61852caba3965b3945f58e4f24ee7",
+  "events": [
+    {
+      "at": "2026-10-18T23:24:41.034847+00:00",
+      "day": "2026-10-19",
+      "state": "running",
+      "reason": "started"
+    },
+    {
+      "at": "2026-10-18T23:25:11.650771+00:00",
+      "day": "2026-10-19",
+      "state": "failed",
+      "reason": "preflight_failed_no_worker_started"
+    },
+    {
+      "at": "2026-10-18T23:27:43.853345+00:00",
+      "day": "2026-10-19",
+      "state": "running",
+      "reason": "started"
+    },
+    {
+      "at": "2026-10-18T23:34:08.254536+00:00",
+      "day": "2026-10-19",
+      "state": "success",
+      "reason": "isolated_restore_verified"
+    }
+  ],
+  "results": [
+    {
+      "case": "inflight_writer_drained",
+      "passed": true,
+      "wait_seconds": 3.012
+    },
+    {
+      "case": "http_and_cli_rejected_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "direct_database_write_blocked",
+      "passed": true
+    },
+    {
+      "case": "captured_db_media_references_match",
+      "passed": true,
+      "references": 2,
+      "dump_bytes": 93090,
+      "archive_bytes": 218
+    },
+    {
+      "case": "normal_release_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "dump_restored_and_captured_media_match",
+      "passed": true
+    },
+    {
+      "case": "capture_failure_finally_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "drain_timeout_releases_owned_fence",
+      "passed": true
+    },
+    {
+      "case": "lease_expiry_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "concurrent_owner_rejected_and_disconnect_releases",
+      "passed": true
+    },
+    {
+      "case": "real_admin_rest_media_ajax_cli_writes",
+      "passed": true
+    },
+    {
+      "case": "real_cron_drained_new_rest_rejected",
+      "passed": true,
+      "wait_seconds": 2.919
+    },
+    {
+      "case": "all_real_php_routes_and_ddl_fenced",
+      "passed": true,
+      "http_routes": [
+        "admin",
+        "rest",
+        "media",
+        "ajax",
+        "cron",
+        "public"
+      ]
+    },
+    {
+      "case": "additional_php_entrypoints_rejected_before_wordpress",
+      "passed": true,
+      "routes": [
+        "xmlrpc",
+        "comments",
+        "admin-post",
+        "async-upload",
+        "login",
+        "update"
+      ]
+    },
+    {
+      "case": "real_capture_connected_to_consistency_assessor",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3960,
+      "restored_media_references": 1
+    },
+    {
+      "case": "negative_file_mutation_and_unknown_writer_rejected",
+      "passed": true,
+      "mutation": "inconsistent",
+      "unknown_writer": "unverified",
+      "missing_gate": "unverified"
+    },
+    {
+      "case": "real_route_lease_expiry_releases_and_rejects_acceptance",
+      "passed": true,
+      "assessment": {
+        "state": "unverified",
+        "eligible_for_consistency_acceptance": false,
+        "reasons": [
+          "capture_window_not_protected"
+        ],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      }
+    },
+    {
+      "case": "php_shutdown_callback_drained",
+      "passed": true,
+      "wait_seconds": 2.442
+    },
+    {
+      "case": "real_routes_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "restricted_real_ssh_jobs_write_database_and_files",
+      "passed": true
+    },
+    {
+      "case": "ssh_shell_sftp_forwarding_and_direct_site_access_denied",
+      "passed": true
+    },
+    {
+      "case": "independent_durable_queue_acknowledges_only_completed_idempotent_job",
+      "passed": true
+    },
+    {
+      "case": "queue_worker_and_real_child_process_drained",
+      "passed": true,
+      "wait_seconds": 2.998
+    },
+    {
+      "case": "ssh_rejected_and_queue_retained_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "broker_restart_preserves_fenced_pending_job",
+      "passed": true
+    },
+    {
+      "case": "external_writer_capture_and_restore_assessed_consistent",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3966,
+      "job_references": 4
+    },
+    {
+      "case": "ssh_and_pending_queue_job_resume_after_release",
+      "passed": true
+    },
+    {
+      "case": "queue_resumes_after_expiry_without_accepting_expired_capture",
+      "passed": true
+    },
+    {
+      "case": "worker_unavailable_and_unknown_privileged_writer_not_accepted",
+      "passed": true
+    },
+    {
+      "case": "paired_checkpoint_blocks_enqueue_ack_and_delivery",
+      "passed": true
+    },
+    {
+      "case": "database_files_and_queue_captured_as_one_checkpoint",
+      "passed": true
+    },
+    {
+      "case": "mixed_generation_corrupt_assets_wrong_site_and_handler_rejected",
+      "passed": true
+    },
+    {
+      "case": "checkpoint_survives_broker_restart_and_wrong_resume_is_denied",
+      "passed": true
+    },
+    {
+      "case": "signed_three_asset_set_fetches_fixed_versions_despite_newer_objects",
+      "passed": true
+    },
+    {
+      "case": "invalid_signature_rejected_before_any_asset_fetch",
+      "passed": true
+    },
+    {
+      "case": "signed_missing_queue_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_null_version_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_short_retention_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_wrong_bucket_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_expired_approval_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_mixed_checkpoint_rejected",
+      "passed": true
+    },
+    {
+      "case": "fresh_wrong_version_rejected",
+      "passed": true
+    },
+    {
+      "case": "fresh_queue_bytes_tampering_rejected",
+      "passed": true
+    },
+    {
+      "case": "fresh_retention_removed_rejected",
+      "passed": true
+    },
+    {
+      "case": "fresh_reader_identity_mismatch_rejected",
+      "passed": true
+    },
+    {
+      "case": "revoked_independent_trust_rejected",
+      "passed": true
+    },
+    {
+      "case": "signed_envelope_retrieved_from_independently_pinned_versions",
+      "passed": true
+    },
+    {
+      "case": "lost_queue_database_and_file_restored_with_consumers_stopped",
+      "passed": true
+    },
+    {
+      "case": "ack_loss_redelivered_once_and_pending_job_recovered",
+      "passed": true
+    },
+    {
+      "case": "conflicting_effect_quarantined_without_blocking_safe_jobs",
+      "passed": true
+    },
+    {
+      "case": "completed_job_identity_retained_and_conflicting_enqueue_rejected",
+      "passed": true
+    }
+  ],
+  "storage": "local versioned-store test double; NOT real AWS",
+  "resources_removed": true,
+  "production_data_used": false,
+  "production_key_used": false,
+  "scheduler_installed": false,
+  "production_recovery_approved": false,
+  "scope": "daily coordinator around isolated real WordPress/MariaDB/queue recovery exercise; no persistent backup service"
+}

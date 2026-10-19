@@ -1,0 +1,21 @@
+{
+  "format": "owr-lab-test-summary-v1",
+  "date": "2026-10-19",
+  "environment": "WSL Ubuntu-24.04, isolated temporary databases and mocked external API",
+  "suites": [
+    {"file": "tests/test_notification_dispatch_lab.py", "tests": 21, "result": "passed"},
+    {"file": "tests/test_monitor_runtime_lab.py", "tests": 21, "result": "passed"},
+    {"file": "tests/test_operations_monitor_lab.py", "tests": 24, "result": "passed"}
+  ],
+  "total_tests": 66,
+  "external_notifications_sent": 0,
+  "phone_delivery_verified": false,
+  "production_deployed": false,
+  "wordpress_settings_ui_implemented": false,
+  "limitations": [
+    "Provider acceptance does not prove phone delivery or operator acknowledgement.",
+    "Ambiguous send results require reconciliation; they are not automatically resent.",
+    "Existing monitor heartbeat counters do not include the new dispatcher queue.",
+    "Configuration migration and escalation to another operator remain future work."
+  ]
+}

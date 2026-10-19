@@ -1,0 +1,10 @@
+[Unit]
+Description=Check the isolated daily backup slot hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=owr-daily-lab.service
+
+[Install]
+WantedBy=timers.target

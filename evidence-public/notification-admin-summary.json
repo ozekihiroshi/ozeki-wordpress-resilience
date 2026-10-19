@@ -1,0 +1,23 @@
+{
+  "format": "owr-notification-admin-summary-v1",
+  "checked_at": "2026-10-19T02:40:08.1803149Z",
+  "wordpress_http_and_browser_checks": 59,
+  "bridge_unit_tests": 14,
+  "result": "passed",
+  "viewport_checks": [
+    "desktop 1440x1600",
+    "mobile 390x844"
+  ],
+  "external_notifications_sent": 0,
+  "production_deployed": false,
+  "lab_containers_removed": true,
+  "limitations": [
+    "Settings are saved as candidates; initial external application is explicit.",
+    "Live configuration migration and test-send requests from the UI are not implemented.",
+    "External status transfer and watchdog connectivity status are not deployed."
+  ],
+  "screenshots": [
+    "notification-admin-desktop.png",
+    "notification-admin-mobile.png"
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "format": "owr-wordpress-consistency-lab-v1",
+  "recorded_at": "2026-10-18T21:58:52.300472+00:00",
+  "results": [
+    {
+      "case": "inflight_writer_drained",
+      "passed": true,
+      "wait_seconds": 2.905
+    },
+    {
+      "case": "http_and_cli_rejected_while_fenced",
+      "passed": true
+    },
+    {
+      "case": "direct_database_write_blocked",
+      "passed": true
+    },
+    {
+      "case": "captured_db_media_references_match",
+      "passed": true,
+      "references": 2,
+      "dump_bytes": 93109,
+      "archive_bytes": 224
+    },
+    {
+      "case": "normal_release_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "dump_restored_and_captured_media_match",
+      "passed": true
+    },
+    {
+      "case": "capture_failure_finally_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "drain_timeout_releases_owned_fence",
+      "passed": true
+    },
+    {
+      "case": "lease_expiry_resumes_writes",
+      "passed": true
+    },
+    {
+      "case": "concurrent_owner_rejected_and_disconnect_releases",
+      "passed": true
+    },
+    {
+      "case": "real_admin_rest_media_ajax_cli_writes",
+      "passed": true
+    },
+    {
+      "case": "real_cron_drained_new_rest_rejected",
+      "passed": true,
+      "wait_seconds": 2.815
+    },
+    {
+      "case": "all_real_php_routes_and_ddl_fenced",
+      "passed": true,
+      "http_routes": [
+        "admin",
+        "rest",
+        "media",
+        "ajax",
+        "cron",
+        "public"
+      ]
+    },
+    {
+      "case": "additional_php_entrypoints_rejected_before_wordpress",
+      "passed": true,
+      "routes": [
+        "xmlrpc",
+        "comments",
+        "admin-post",
+        "async-upload",
+        "login",
+        "update"
+      ]
+    },
+    {
+      "case": "real_capture_connected_to_consistency_assessor",
+      "passed": true,
+      "assessment": {
+        "state": "consistent",
+        "eligible_for_consistency_acceptance": true,
+        "reasons": [],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      },
+      "files": 3960,
+      "restored_media_references": 1
+    },
+    {
+      "case": "negative_file_mutation_and_unknown_writer_rejected",
+      "passed": true,
+      "mutation": "inconsistent",
+      "unknown_writer": "unverified",
+      "missing_gate": "unverified"
+    },
+    {
+      "case": "real_route_lease_expiry_releases_and_rejects_acceptance",
+      "passed": true,
+      "assessment": {
+        "state": "unverified",
+        "eligible_for_consistency_acceptance": false,
+        "reasons": [
+          "capture_window_not_protected"
+        ],
+        "production_recovery_approved": false,
+        "claim": "coordinated capture evidence only; source integrity not attested"
+      }
+    },
+    {
+      "case": "php_shutdown_callback_drained",
+      "passed": true,
+      "wait_seconds": 2.438
+    },
+    {
+      "case": "real_routes_resume_after_release",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "isolated_network": "none / shared loopback only",
+  "resources_removed": true,
+  "scope": "isolated-lab-controlled-php-v1 only; production scope incomplete",
+  "route_evidence_summary": {
+    "assessment": {
+      "state": "consistent",
+      "eligible_for_consistency_acceptance": true,
+      "reasons": [],
+      "production_recovery_approved": false,
+      "claim": "coordinated capture evidence only; source integrity not attested"
+    },
+    "expected_writers": [
+      "php-http",
+      "php-cli-file",
+      "database-direct"
+    ],
+    "scope_profile": "isolated-lab-controlled-php-v1",
+    "production_scope_complete": false,
+    "excluded": [
+      "php -r/-n/config overrides",
+      "SSH/deployment/file writers",
+      "arbitrary plugin subprocesses",
+      "external storage/queues"
+    ],
+    "note": "Admission pauses all PHP HTTP including GET. This is a lab-scoped evidence adapter, not production approval.",
+    "observation_sha256": "14899753c3c1a5888b17de74ed25e6621f8e741f90eb437b604feaaa43a17508",
+    "captured_files": 3960,
+    "assets": {
+      "database": {
+        "site_id": "isolated-wordpress-route-lab",
+        "attempt_id": "lab-route-76b920cc2dd3ab8f",
+        "completed": true,
+        "exit_code": 0,
+        "bytes": 99232,
+        "sha256": "15a0597db73cd6c4a840825573240ce69a1c8926f91d3091921e621984948d38"
+      },
+      "files": {
+        "site_id": "isolated-wordpress-route-lab",
+        "attempt_id": "lab-route-76b920cc2dd3ab8f",
+        "completed": true,
+        "exit_code": 0,
+        "bytes": 29719728,
+        "sha256": "2a5fe6c70db660d2ee165a42eb5fae24a6677a07fc338b12778eba00733fee8e"
+      }
+    },
+    "generation_before": 10,
+    "generation_after": 10
+  },
+  "source_sha256": {
+    "tools/wordpress-route-lab.py": "a5cbca0d21cf2fb4281c7a5e6130a540a4ff15de8b896eb33e837dc19838eca1",
+    "tools/run-wordpress-consistency-lab.py": "1cd62dd7bb9fabc57dea279d781522e0aa7f684a80cf228fe17a23ce392d9c6c",
+    "lab/consistency/route-prepend.php": "ff1a4f65917a31e5029de6e453ede002b54ca6f8bad0ce5c433210d39cff12aa",
+    "lab/consistency/route-fixture.php": "ead8338b9756bb056f9ad9594e876cf94707e3486211d5632c50091fea331886",
+    "lab/consistency/route-client.php": "6cd175501a5da4c535a98af26b264fb11380fe52708997810cd7f4e1c52d9873"
+  },
+  "regression_tests": {
+    "python_contract_tests": 80,
+    "passed": true
+  }
+}

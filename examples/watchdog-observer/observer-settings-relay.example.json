@@ -1,0 +1,10 @@
+{
+  "site_id":"REPLACE_WITH_WORDPRESS_SITE_ID",
+  "host":"observer.example.invalid",
+  "user":"owr-settings-inbox",
+  "port":22,
+  "identity_file":"/etc/owr/observer-settings-key",
+  "known_hosts":"/etc/owr/observer-settings-known-hosts",
+  "requests_dir":"/var/lib/owr-observer-requests",
+  "lock_file":"/var/lib/owr-observer-relay/settings.lock"
+}

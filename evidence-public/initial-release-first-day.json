@@ -1,0 +1,95 @@
+{
+  "format": "owr-initial-release-first-day-v1",
+  "completion": {
+    "day": "2026-10-19",
+    "set_id": "AWS-24a887b4ca4d18e0",
+    "storage_cases": 34,
+    "restore_cases": 42,
+    "restore_report_sha256": "d28d30d0ee2ffeac94285cfd967305c141f654427e7ce50d631cd88e348372a8",
+    "manifest_sha256": "a1aabb44e744b0b5566920002b03425c22e11c8ab0f80061dd49c22c68b863f3",
+    "public_key_sha256": "bcbd883744f13602d2d6ae7bccbd062c98ff8debeac7a45f339c33a47e0a1b05",
+    "minimum_retention_until": "2026-11-23T07:33:46+00:00",
+    "stored_bytes": 29842299,
+    "disposable_private_key_destroyed": true,
+    "production_data_used": false,
+    "production_key_used": false,
+    "separation": "separate processes and directories; same WSL user",
+    "completed_at": "2026-10-19T07:32:12.977696+00:00"
+  },
+  "storage_cases": 34,
+  "restore_cases": 42,
+  "storage_report_sha256": "6bcf8c8678ceb44d6fa4ad5c11c786ca122762bea7ceab3d157f14899d53f98e",
+  "continuity": {
+    "passed": true,
+    "injected_local_failure": true,
+    "original_pending_events": 2,
+    "original_event_ids_retained": true,
+    "all_delivered": true,
+    "trust_unchanged": true,
+    "real_external_notifications_sent": 0,
+    "monitor": {
+      "open_incidents": [],
+      "undelivered": 0,
+      "delivered_total": 4
+    }
+  },
+  "daily_transitions": [
+    {
+      "state": "running",
+      "reason": "started"
+    },
+    {
+      "state": "unknown",
+      "reason": "worker_or_evidence_incomplete"
+    },
+    {
+      "state": "failed",
+      "reason": "operator_reviewed_failure_before_storage_started"
+    },
+    {
+      "state": "running",
+      "reason": "started"
+    },
+    {
+      "state": "unknown",
+      "reason": "worker_or_evidence_incomplete"
+    },
+    {
+      "state": "failed",
+      "reason": "operator_reviewed_failure_before_storage_started"
+    },
+    {
+      "state": "running",
+      "reason": "started"
+    },
+    {
+      "state": "awaiting_approval",
+      "reason": "stored_unsigned"
+    },
+    {
+      "state": "approved",
+      "reason": "independent_signature_and_fixed_versions_verified"
+    }
+  ],
+  "soak_complete": false,
+  "limitations": [
+    "Disposable key, separate processes on same WSL user; not physical signing isolation",
+    "Continuity delivery failures were injected locally; no external push sent",
+    "72-hour observation and remaining daily slots are pending"
+  ],
+  "evidence_scope": {
+    "target": "external CLI and cooperative lab fixtures",
+    "wordpress_plugin_acceptance_test": false,
+    "counts_are_not_additive": true
+  },
+  "environment_observations": [
+    {
+      "event": "initial fixture drain timeout",
+      "cause": "unconfirmed",
+      "classification": "environment_or_test_harness_triage_deferred",
+      "product_defect_established": false,
+      "product_release_blocker_by_itself": false,
+      "details": "docs/releases/initial-release-environment-notes.md"
+    }
+  ]
+}

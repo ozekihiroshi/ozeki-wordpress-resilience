@@ -19,9 +19,14 @@ function rejects(callable $fn):void {
 $data="synthetic database\n";$sha=hash('sha256',$data);$size=strlen($data);
 file_put_contents($root.'/input',$data);
 $mode='normal';$calls=[];
-$request=function($op,$args) use (&$mode,&$calls,$data) {
+$storedAt=new DateTimeImmutable(gmdate('Y-m-d\TH:i:s\Z',time()-3600));
+$request=function($op,$args) use (&$mode,&$calls,$data,$storedAt) {
  $calls[]=[$op,$args];
  if ($op==='GetBucketVersioning') {return ['Status'=>$mode==='disabled'?'Suspended':'Enabled'];}
+ if ($op==='GetObjectLockConfiguration') {
+  return ['ObjectLockConfiguration'=>['ObjectLockEnabled'=>'Enabled','Rule'=>['DefaultRetention'=>[
+   'Mode'=>'GOVERNANCE','Days'=>$mode==='short_default'?1:35]]]];
+ }
  if ($op==='PutObject') {
   ok($args['IfNoneMatch']==='*');
   ok($args['ExpectedBucketOwner']==='123456789012');
@@ -32,6 +37,9 @@ $request=function($op,$args) use (&$mode,&$calls,$data) {
  ok($op==='GetObject' && $args['VersionId']==='v-old');
  if ($mode==='denied') {throw new RuntimeException('AccessDenied');}
  return ['VersionId'=>$mode==='wrong_version'?'v-new':'v-old',
+   'ObjectLockMode'=>$mode==='missing_retention'?null:'GOVERNANCE',
+   'LastModified'=>$storedAt,
+   'ObjectLockRetainUntilDate'=>$storedAt->modify(match($mode){'short_retention'=>'+1 day','subsecond_retention'=>'+35 days -453000 microseconds','one_second_short'=>'+35 days -1 second',default=>'+35 days'}),
    'ContentLength'=>strlen($data),
    'Body'=>Utils::streamFor(match($mode) {
       'corrupt'=>str_repeat('x',strlen($data)),
@@ -82,6 +90,29 @@ try {
   $before=count($calls);
   rejects(fn()=>$store->download($key,'null',$size,$sha,$root.'/bad'));
   ok(count($calls)===$before);
+ });
+ $retained=new VersionedAssetStore($request,'owr-example-bucket','ap-northeast-1','123456789012','wordpress-test/',35);
+ test('short default fails before PUT',function()use(&$mode,&$calls,$retained,$root,$key,$size,$sha){
+  $mode='short_default';$calls=[];
+  rejects(fn()=>$retained->upload($root.'/input',$key,$size,$sha));
+  ok(!in_array('PutObject',array_column($calls,0),true));
+ });
+ test('default retention accepted without explicit override',function()use(&$mode,&$calls,$retained,$root,$key,$size,$sha){
+  $mode='normal';$calls=[];$retained->upload($root.'/input',$key,$size,$sha);
+  $put=end($calls);ok($put[0]==='PutObject'&&!isset($put[1]['ObjectLockRetainUntilDate']));
+ });
+ foreach(['missing_retention','short_retention','one_second_short'] as $failure){
+  test('protected download rejects '.$failure,function()use(&$mode,$failure,$retained,$root,$key,$size,$sha){
+   $mode=$failure;rejects(fn()=>$retained->download($key,'v-old',$size,$sha,$root.'/protected'));
+   ok(!file_exists($root.'/protected')&&glob($root.'/.owr-download-*')===[]);
+  });
+ }
+ test('subsecond timestamp precision accepted',function()use(&$mode,$retained,$root,$key,$size,$sha){
+  $mode='subsecond_retention';$r=$retained->download($key,'v-old',$size,$sha,$root.'/subsecond');ok($r['retention']['mode']==='GOVERNANCE');
+ });
+ test('protected download records fixed version retention',function()use(&$mode,$retained,$root,$key,$size,$sha){
+  $mode='normal';$r=$retained->download($key,'v-old',$size,$sha,$root.'/protected');
+  ok($r['retention']['mode']==='GOVERNANCE' && $r['locator']['version_id']==='v-old');
  });
  echo json_encode(['kind'=>'versioned_transfer_offline_tests','checked_at'=>gmdate('c'),
      'passed'=>true,'checks'=>$checks,'cloud_operations'=>false],JSON_PRETTY_PRINT)."\n";
