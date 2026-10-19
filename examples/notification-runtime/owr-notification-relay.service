@@ -1,0 +1,18 @@
+[Unit]
+Description=Owr notification relay cycle
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=owr-relay
+UMask=0027
+ExecStart=/usr/bin/python3 /opt/owr/notification-runtime.py relay --config /etc/owr/runtime-relay.json
+TimeoutStartSec=45
+KillMode=control-group
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/owr-relay /var/lib/owr-requests /var/lib/owr-status
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

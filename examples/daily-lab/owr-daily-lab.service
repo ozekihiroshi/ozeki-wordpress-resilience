@@ -1,0 +1,8 @@
+[Unit]
+Description=Owr isolated daily backup lab (generated data only)
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/usr/bin/python3 /mnt/d/workspace/ozeki-wordpress-resilience/tools/daily-backup-lab.py tick --execute-lab --state-dir %h/.local/share/owr-daily-lab-20261019
+TimeoutStartSec=35min

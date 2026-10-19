@@ -1,0 +1,26 @@
+{
+  "monitor_id": "site-notification-watchdog",
+  "state": "/var/lib/owr-observer",
+  "stale_after_seconds": 300,
+  "ssh": {
+    "site_id": "site-watchdog",
+    "host": "monitor.example.invalid",
+    "user": "owr-probe",
+    "port": 22,
+    "identity_file": "/etc/owr/observer-key",
+    "known_hosts": "/etc/owr/observer-known-hosts"
+  },
+  "alerts": {
+    "source_outbox": "/var/lib/owr-observer/alerts.sqlite",
+    "state": "/var/lib/owr-observer/delivery",
+    "channels": [{
+      "id": "independent-push",
+      "provider": {
+        "transport": "pushover",
+        "credentials_file": "/etc/owr/observer-pushover.json",
+        "retry": 60,
+        "expire": 1800
+      }
+    }]
+  }
+}

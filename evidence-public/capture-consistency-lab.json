@@ -1,0 +1,155 @@
+{
+  "kind": "capture_consistency_synthetic_lab",
+  "checked_at": "2026-10-18T21:32:21.688642+00:00",
+  "passed": true,
+  "scenario_count": 12,
+  "cases": [
+    {
+      "scenario": "quiescent",
+      "state": "consistent",
+      "expected": "consistent",
+      "accepted": true,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "concurrent_writer_blocked",
+      "state": "consistent",
+      "expected": "consistent",
+      "accepted": true,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": true,
+      "resources_released": true
+    },
+    {
+      "scenario": "unfenced_stable",
+      "state": "unverified",
+      "expected": "unverified",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "update_between_assets",
+      "state": "inconsistent",
+      "expected": "inconsistent",
+      "accepted": false,
+      "references_match": false,
+      "generation_changed": true,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "aba_update",
+      "state": "inconsistent",
+      "expected": "inconsistent",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": true,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "unknown_writer",
+      "state": "unverified",
+      "expected": "unverified",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "inflight_writer",
+      "state": "unverified",
+      "expected": "unverified",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "snapshot_failure",
+      "state": "capture_failed",
+      "expected": "capture_failed",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "file_stream_failure",
+      "state": "capture_failed",
+      "expected": "capture_failed",
+      "accepted": false,
+      "references_match": false,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "lease_lost",
+      "state": "unverified",
+      "expected": "unverified",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "release_failure",
+      "state": "capture_failed",
+      "expected": "capture_failed",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    },
+    {
+      "scenario": "schema_change",
+      "state": "unverified",
+      "expected": "unverified",
+      "accepted": false,
+      "references_match": true,
+      "generation_changed": false,
+      "writer_blocked": false,
+      "resources_released": true
+    }
+  ],
+  "database_backend": "SQLite synthetic fixture; not MariaDB validation",
+  "production_capture_integrated": false,
+  "cloud_operations": false,
+  "live_site_changes": false,
+  "attempt_and_copied_inventory_checks": true,
+  "validation": [
+    {
+      "command": "python3 tools/simulate-capture-consistency.py --output .local/consistency-lab-20261019-002.json",
+      "passed": true,
+      "summary": "{\"passed\": true, \"scenarios\": 12, \"cloud_operations\": false}"
+    },
+    {
+      "command": "/home/ozeki/.local/share/owr-test-venv/bin/python -m unittest discover -s tests",
+      "passed": true,
+      "summary": "................................................................................\n----------------------------------------------------------------------\nRan 80 tests in 33.157s\n\nOK"
+    },
+    {
+      "command": "python3 -O -m unittest discover -s tests -p test_capture_consistency.py",
+      "passed": true,
+      "summary": ".........\n----------------------------------------------------------------------\nRan 9 tests in 35.823s\n\nOK"
+    },
+    {
+      "command": "git diff --check",
+      "passed": true,
+      "summary": ""
+    }
+  ]
+}

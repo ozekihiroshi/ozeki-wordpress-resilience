@@ -1,0 +1,29 @@
+{
+  "format": "owr-notification-runtime-summary-v1",
+  "checked_at": "2026-10-19T03:18:57.5502053Z",
+  "result": "passed",
+  "runtime_unit_tests": 18,
+  "transfer_regression_tests": 25,
+  "isolated_ssh_and_periodic_checks": 34,
+  "systemd_units_verified": 6,
+  "systemd_units_enabled": false,
+  "external_notifications_sent": 0,
+  "production_deployed": false,
+  "lab_resources_removed": true,
+  "injected_outages": [
+    "relay process stopped",
+    "worker process stopped",
+    "SSH host key mismatch with relay process alive"
+  ],
+  "stop_open_events": 3,
+  "stop_resolved_events": 3,
+  "test_interval_seconds": 1,
+  "test_stale_seconds": 8,
+  "default_stale_seconds": 300,
+  "limitations": [
+    "Periodic integration test uses independent scheduler processes, not a systemd daemon",
+    "OS restart and production timer activation not tested",
+    "Notification providers mocked; no real push or email sent",
+    "An additional host must monitor watchdog and whole-host failure"
+  ]
+}

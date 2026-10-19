@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InspectProductionBucket",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketObjectLockConfiguration",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketPolicy",
+        "s3:GetLifecycleConfiguration"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082"
+    },
+    {
+      "Sid": "ReadFixedVersionsAndRetention",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082/sites/wp-ceri-link/*"
+    },
+    {
+      "Sid": "DenyMutationAndLatestReads",
+      "Effect": "Deny",
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:PutObjectRetention",
+        "s3:PutObjectLegalHold",
+        "s3:BypassGovernanceRetention",
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082/sites/wp-ceri-link/*"
+    }
+  ]
+}

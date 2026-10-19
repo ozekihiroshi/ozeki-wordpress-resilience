@@ -1,0 +1,66 @@
+{
+  "kind": "live_capture_quarantine_restore",
+  "started_at": "2026-10-18T08:11:46.586928+00:00",
+  "passed": true,
+  "source_access": "none",
+  "source_consistency": "live capture; cross-asset point-in-time consistency unverified",
+  "public_ports": false,
+  "offline_execution_approval": {
+    "signature_verified": true,
+    "public_key_sha256": "b0ffe7ae228a9522cc2524bf29e258a518cb36a31b14a6d682223846810fac76",
+    "approval_sha256": "e3eccb8a9c890646db3324ae451538a583f00ff0eafac33d5945ae6a3486e4b1",
+    "scope": "offline lab execution only; not malware clearance or production recovery approval"
+  },
+  "file_inventory": {
+    "passed": true,
+    "files": 15343,
+    "mismatches": 0
+  },
+  "finished_at": "2026-10-18T08:18:25.114681+00:00",
+  "test_containers_stopped": true,
+  "prior_attempt": "SQL count parser expected a space after VALUES; dump used newline. Import succeeded; verifier corrected.",
+  "database": {
+    "tables": 12,
+    "rows": 409,
+    "counts_matched": true
+  },
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "blocked": {
+      "1.1.1.1": true,
+      "169.254.169.254": true,
+      "172.17.0.1": true
+    }
+  },
+  "wordpress": {
+    "wordpress_version": "7.1.2",
+    "home": "http://127.0.0.1/",
+    "posts_published": 0,
+    "pages_published": 2,
+    "attachments": 4,
+    "cron_disabled": true,
+    "http_blocked": true,
+    "mail_blocked": true
+  },
+  "homepage": {
+    "status": 200,
+    "bytes": 32229,
+    "title_present": true
+  },
+  "content_checks": {
+    "published_pages_and_posts_tested": 2,
+    "published_pages_and_posts_http_200": 2,
+    "media_files_tested": 23,
+    "media_http_200_and_hash_matched": 23,
+    "passed": true
+  },
+  "limitations": [
+    "No malware clearance",
+    "Cross-asset point-in-time consistency unverified",
+    "No formal S3 RecoverySet acceptance",
+    "Container isolation shares the Docker host kernel",
+    "HTTP content checks are not visual or full business-workflow acceptance"
+  ]
+}

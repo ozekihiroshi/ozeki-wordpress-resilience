@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "real SSH snapshot transfer",
+    "transfer preserves observation age",
+    "snapshot strips secret fields",
+    "identical replay is idempotent",
+    "foreign site rejected",
+    "rollback rejected",
+    "host pin mismatch rejected",
+    "failed pulls preserve last report",
+    "forced command denies shell",
+    "endpoint cannot write snapshot"
+  ],
+  "passed": 10,
+  "external_notifications_sent": 0
+}

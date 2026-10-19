@@ -1,0 +1,6 @@
+{
+  "monitor_id": "site-relay",
+  "heartbeat_file": "/var/lib/owr-relay/heartbeat.json",
+  "cycle_lock": "/var/lib/owr-relay/cycle.lock",
+  "transfer_config": "/var/lib/owr-relay/config.json"
+}

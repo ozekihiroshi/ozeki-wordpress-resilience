@@ -1,0 +1,81 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RequireTLS",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::ceri-link-resilience-prod-121426368082",
+        "arn:aws:s3:::ceri-link-resilience-prod-121426368082/*"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyOperationalRetentionChanges",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion",
+        "s3:PutObjectRetention",
+        "s3:PutObjectLegalHold",
+        "s3:BypassGovernanceRetention"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082/*",
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::121426368082:role/my-ssm-role",
+            "arn:aws:iam::121426368082:role/OwrM1RecoveryReader"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyRecoveryWrites",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082/*",
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": "arn:aws:iam::121426368082:role/OwrM1RecoveryReader"
+        }
+      }
+    },
+    {
+      "Sid": "DenyOperationalBucketChanges",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": [
+        "s3:DeleteBucket",
+        "s3:PutBucketPolicy",
+        "s3:DeleteBucketPolicy",
+        "s3:PutBucketVersioning",
+        "s3:PutBucketObjectLockConfiguration",
+        "s3:PutLifecycleConfiguration",
+        "s3:PutEncryptionConfiguration",
+        "s3:PutBucketPublicAccessBlock",
+        "s3:PutBucketOwnershipControls",
+        "s3:PutBucketAcl"
+      ],
+      "Resource": "arn:aws:s3:::ceri-link-resilience-prod-121426368082",
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::121426368082:role/my-ssm-role",
+            "arn:aws:iam::121426368082:role/OwrM1RecoveryReader"
+          ]
+        }
+      }
+    }
+  ]
+}

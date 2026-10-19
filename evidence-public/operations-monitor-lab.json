@@ -1,0 +1,45 @@
+{
+  "format": "owr-operations-monitor-lab-v1",
+  "recorded_at": "2026-10-19T00:23:28.797758+00:00",
+  "all_passed": true,
+  "python_contract_tests_passed": 180,
+  "monitor_contract_tests_passed": 24,
+  "validation_batches": {
+    "unchanged_regression_tests": 156,
+    "final_monitor_tests": 24
+  },
+  "verified": [
+    "four_incident_types",
+    "grace_and_pending_boundaries",
+    "approval_expiry_boundary",
+    "persistent_deduplication",
+    "resolved_and_reopened_events",
+    "delivery_failure_retry",
+    "lost_acknowledgement",
+    "crash_after_receiver_commit",
+    "corrupt_sources_preserve_incidents",
+    "read_only_daily_ledger",
+    "historical_gap",
+    "config_binding_clock_rollback",
+    "restore_nonzero_exit",
+    "restore_timeout",
+    "zero_exit_missing_report_rejected",
+    "stale_restore_attempt",
+    "exact_42_case_success_contract"
+  ],
+  "current_approved_set": "AWS-82e377a986a42ce5",
+  "existing_approved_set_observation": {
+    "open_incidents": [],
+    "undelivered": 0,
+    "delivered_total": 0
+  },
+  "daily_ledger_unchanged": true,
+  "previous_restore_report_sha256": "871d532864bf1cb23b68a852374b3d1881822e7d038cc53f502bfdfef99fef20",
+  "previous_restore_imported": true,
+  "new_s3_restore_performed": false,
+  "notification_transport": "local_durable_test_inbox",
+  "real_operator_messages_sent": 0,
+  "s3_requests": 0,
+  "timers_activated": false,
+  "production_modified": false
+}

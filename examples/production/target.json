@@ -1,0 +1,14 @@
+{
+  "status": "initial_candidate_stored_and_signed",
+  "site_id": "wp-ceri-link",
+  "bucket": "ceri-link-resilience-prod-121426368082",
+  "owner": "121426368082",
+  "region": "ap-northeast-1",
+  "prefix": "sites/wp-ceri-link/sets/",
+  "retention_days": 35,
+  "writer_role_arn": "arn:aws:iam::121426368082:role/my-ssm-role",
+  "reader_role_arn": "arn:aws:iam::121426368082:role/OwrM1RecoveryReader",
+  "capture_consistency": "unverified_cross_asset_point_in_time",
+  "approval_status": "storage_integrity_candidate_only",
+  "set_id": "RS-WP-CERI-20261018-001"
+}

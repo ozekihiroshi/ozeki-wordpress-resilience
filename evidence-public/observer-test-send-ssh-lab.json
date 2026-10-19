@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "real SSH settings stored acknowledgement",
+    "spool consumed only after durable acknowledgement",
+    "lost acknowledgement replay accepted",
+    "duplicate request stored once",
+    "same request id with different content rejected",
+    "host pin mismatch rejected",
+    "failed transfer preserves queued candidate",
+    "forced command denies shell",
+    "inbox user cannot read private notification credentials",
+    "inbox user cannot modify worker code",
+    "settings replay cleared before test request",
+    "real SSH independent test request durably acknowledged",
+    "independent test lost acknowledgement replay accepted",
+    "settings and test requests coexist without duplicates",
+    "test request arbitrary message rejected",
+    "invalid test request retained for diagnosis"
+  ],
+  "passed": 16,
+  "external_notifications_sent": 0
+}

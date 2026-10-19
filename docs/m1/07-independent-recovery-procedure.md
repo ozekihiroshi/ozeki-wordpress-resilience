@@ -31,8 +31,19 @@
 
 ## 復元と検査
 
-    python3 .local/independent-download/bootstrap/run-independent-recovery.py \
+2026年10月18日更新：復元入口は独立して配置した `tools/run-independent-recovery.py` と、その隣の `verify-recovery-approval.py` を使う。取得したBootstrap内の古いrunnerを直接実行しない。上段の過去の実測結果は当時のもので、このゲートを通した完全復元の再測定とは区別する。
+
+次の例は今回の手元PC向けのパスである。他の復旧ホストには公開鍵と信頼ピンだけを独立した管理経路で配置し、秘密鍵を持ち込まない。承認記録・署名もbundleの外に置く。今回の承認期限は2026-10-25T01:45:40Zであり、期限後は再レビュー・再承認する。
+
+初回は以下のコマンドに `--verify-only` を付けると、署名・対象・期限・世代・失効・承認ハッシュ・固定版メタデータ・展開済みBootstrapの一致だけを確認して終了する。Docker・DB・復元先には触れない。このオプションを外した通常の復元も、同じ検証を必ず最初から行う。
+
+
+    python3 tools/run-independent-recovery.py \
       --bundle .local/independent-download \
+      --trust-dir /home/ozeki/.local/share/owr-trust/key-20261018 \
+      --approval /home/ozeki/.local/share/owr-trust/key-20261018/approval.json \
+      --signature /home/ozeki/.local/share/owr-trust/key-20261018/approval.sig \
+      --site-id owr-m1-synthetic --set-id RS-M1-LIVE-20261018-001 \
       --output .local/e3-run-1 --run 1
 
 ダウンロード済みの3実行イメージをdocker loadし、新規DBを起動、検証済みアーカイブを新規サイトボリュームへ展開、gzip SQLをストリーム展開して新規DBへ投入する。wp-config.phpとDB資格情報は復旧環境用に新規生成する。
@@ -41,14 +52,18 @@
 
 初回成功後、初回復旧環境は停止する。以下で別の新規ボリュームから再現性を確認する。
 
-    python3 .local/independent-download/bootstrap/run-independent-recovery.py \
+    python3 tools/run-independent-recovery.py \
       --bundle .local/independent-download \
+      --trust-dir /home/ozeki/.local/share/owr-trust/key-20261018 \
+      --approval /home/ozeki/.local/share/owr-trust/key-20261018/approval.json \
+      --signature /home/ozeki/.local/share/owr-trust/key-20261018/approval.sig \
+      --site-id owr-m1-synthetic --set-id RS-M1-LIVE-20261018-001 \
       --output .local/e3-run-2 --run 2
 
 2回目は同じ固定版取得済み資産を使用する。S3再取得の再現性試験とは分けて扱う。成功時は2回目をlocalhost:18081で稼働させ、元環境は停止したままにする。公開DNS・外部メール送信・本番サイトは変更しない。
 
 ## 失敗時
 
-出力ディレクトリのresult.jsonとDockerログを保存し、実際の原因を特定する。部分実行済みのプロジェクトを新規として上書きしない。手順変更が必要なら新しいBootstrapとセットIDで再固定するか、変更と適用範囲を明示して再試験する。完了していない試験は成功と記録しない。
+署名ゲートで拒否された場合は非ゼロ終了し、出力ディレクトリもDocker操作も作成しない。ゲート通過後の失敗では、出力ディレクトリのresult.jsonとDockerログを保存し、実際の原因を特定する。部分実行済みのプロジェクトを新規として上書きしない。手順変更が必要なら新しいBootstrapとセットIDで再固定するか、変更と適用範囲を明示して再試験する。完了していない試験は成功と記録しない。
 
 Dockerを既に利用できるWSL管理環境は前提である。裸のOSからDockerを導入する時間や監視の検知待ちは、この復旧時間には含まない。

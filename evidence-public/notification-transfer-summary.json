@@ -1,0 +1,29 @@
+{
+  "format": "owr-notification-transfer-summary-v1",
+  "checked_at": "2026-10-19T03:06:25.0684344Z",
+  "result": "passed",
+  "unit_tests": 25,
+  "isolated_real_ssh_checks": 25,
+  "external_notifications_sent": 0,
+  "production_deployed": false,
+  "lab_containers_and_network_removed": true,
+  "roles": [
+    "WordPress request producer",
+    "local relay",
+    "external SSH ingress",
+    "independent notification worker"
+  ],
+  "guarantees": [
+    "Dedicated key and pinned host key; forced-command-only SSH",
+    "Durable storage acknowledgement distinct from notification acceptance",
+    "Request ID and content hash deduplication; original retained on missing acknowledgement",
+    "Independent worker state and provider credentials inaccessible to ingress",
+    "Sanitized report returned with original completion time; rollback refused"
+  ],
+  "limitations": [
+    "Production host provisioning and timers not deployed",
+    "Transfer and worker stop monitoring not yet integrated",
+    "Inbox limited to 10000 records; archival procedure not automated",
+    "WordPress browser UI uses the previously tested request/report schema; this run tests the two-host transport"
+  ]
+}

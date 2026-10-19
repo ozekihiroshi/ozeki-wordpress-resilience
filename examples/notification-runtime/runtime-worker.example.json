@@ -1,0 +1,9 @@
+{
+  "monitor_id": "site-worker",
+  "heartbeat_file": "/var/lib/owr-worker-health/heartbeat.json",
+  "cycle_lock": "/var/lib/owr-worker/cycle.lock",
+  "stage_config": "/etc/owr/stage.json",
+  "publish_config": "/etc/owr/publish.json",
+  "delivery_state": "/var/lib/owr-worker/delivery",
+  "requests_dir": "/var/lib/owr-worker/requests"
+}

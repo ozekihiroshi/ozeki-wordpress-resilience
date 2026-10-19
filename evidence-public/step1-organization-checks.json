@@ -1,0 +1,32 @@
+{
+  "kind": "step1_implementation_documentation_organization",
+  "checked_at": "2026-10-18T21:23:30.516643+00:00",
+  "passed": true,
+  "local_links_checked": 52,
+  "tests": [
+    {
+      "command": "/home/ozeki/.local/share/owr-test-venv/bin/python -m unittest discover -s tests",
+      "passed": true,
+      "summary": ".......................................................................\n----------------------------------------------------------------------\nRan 71 tests in 31.819s\n\nOK"
+    },
+    {
+      "command": "php tests/test-backup-core.php",
+      "passed": true
+    },
+    {
+      "command": "php tests/test-versioned-transfer.php",
+      "passed": true
+    },
+    {
+      "command": "php tests/test-temporary-role-auth.php",
+      "passed": true
+    },
+    {
+      "command": "git diff --check",
+      "passed": true
+    }
+  ],
+  "aws_operations": false,
+  "live_site_changes": false,
+  "pilot_generalization_complete": false
+}

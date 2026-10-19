@@ -33,7 +33,7 @@ for line in (root/a.images).read_text().splitlines():
   k,v=line.split("=",1)
   images[{"OWR_WP_IMAGE":"wordpress","OWR_DB_IMAGE":"database","OWR_PROXY_IMAGE":"proxy"}[k]]=v
 (boot/"images.json").write_text(json.dumps(images,indent=2)+"\n")
-(boot/"README.txt").write_text("M1 synthetic recovery bundle. No source-server access is needed.\nUse the separately stored anchor to fetch and hash the Recovery Set, RAM and assets by VersionId.\nRun python3 bootstrap/run-independent-recovery.py --bundle DOWNLOAD_DIR --output NEW_OUTPUT_DIR --run 1\nRequires Linux, Python3 and Docker Compose. Roles remain shared in this experiment.\n")
+(boot/"README.txt").write_text("M1 synthetic recovery bundle. No source-server access is needed.\nUse the separately stored anchor to fetch and hash the Recovery Set, RAM and assets by VersionId.\nDo not execute this archived runner. Use independently installed tools/run-independent-recovery.py with --trust-dir --approval --signature --site-id --set-id plus --bundle --output --run.\nRequires Linux, Python3 and Docker Compose. Roles remain shared in this experiment.\n")
 with tarfile.open(work/"bootstrap.tar.gz","w:gz") as t:
  t.add(boot,arcname="bootstrap")
 capture=json.loads((root/a.capture).read_text())

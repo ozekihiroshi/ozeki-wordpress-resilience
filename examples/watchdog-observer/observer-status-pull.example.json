@@ -1,0 +1,10 @@
+{
+  "site_id":"REPLACE_WITH_WORDPRESS_SITE_ID",
+  "host":"observer.example.invalid",
+  "port":22,
+  "user":"owr-status",
+  "identity_file":"/etc/owr/status-read-key",
+  "known_hosts":"/etc/owr/status-known-hosts",
+  "lock_file":"/var/lib/owr-observer-relay/pull.lock",
+  "status_file":"/var/lib/owr-observer-report/status.json"
+}

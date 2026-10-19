@@ -1,0 +1,29 @@
+{
+  "format": "owr-phone-resolution-cancellation-v1",
+  "started_at": "2026-10-19T11:14:55.020112+09:00",
+  "original_resolution_api_accepted": true,
+  "new_emergency_api_accepted": true,
+  "phone_resolution_observed": true,
+  "phone_retry_stop_observed": true,
+  "cancelled_at": "2026-10-19T11:16:11.986562+09:00",
+  "before_cancel": {
+    "status": 1,
+    "acknowledged": 0,
+    "expired": 0,
+    "expires_at": 1792376395,
+    "last_delivered_at": 1792376155
+  },
+  "local_receipt_state": "cancelled",
+  "cancel_api_accepted": true,
+  "cancellation_resolution_api_accepted": true,
+  "after_cancel": {
+    "status": 1,
+    "acknowledged": 0,
+    "expired": 1,
+    "expires_at": 1792376173,
+    "last_delivered_at": 1792376155
+  },
+  "checked_at": "2026-10-19T11:16:27.223364+09:00",
+  "phone_verification_status": "confirmed by user: resolved notification received and no repeated alerts observed",
+  "user_confirmation_recorded_at": "2026-10-19T02:20:08.6529782Z"
+}

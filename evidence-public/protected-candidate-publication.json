@@ -1,0 +1,51 @@
+{
+  "kind": "protected_candidate_publication",
+  "set_id": "RS-WP-CERI-20261018-001",
+  "bucket": "ceri-link-resilience-prod-121426368082",
+  "passed": true,
+  "objects_uploaded_and_independently_downloaded": 12,
+  "bytes_uploaded": 458068818,
+  "asset_roles": [
+    "protected_candidate_manifest",
+    "php_configuration",
+    "candidate_signature",
+    "candidate_anchor",
+    "recovery_instructions",
+    "site",
+    "quarantine_evidence",
+    "runtime",
+    "source_configuration",
+    "capture_evidence",
+    "candidate_approval",
+    "database"
+  ],
+  "verification": {
+    "passed": true,
+    "site_id": "wp-ceri-link",
+    "set_id": "RS-WP-CERI-20261018-001",
+    "assets_verified": 8,
+    "approval_expires_at": "2026-10-25T09:15:47.571936+00:00",
+    "minimum_retention_until": "2026-11-22T09:13:29.382000+00:00",
+    "scope": "storage_integrity_candidate_only",
+    "production_recovery_approved": false,
+    "malware_cleanliness": "unverified",
+    "assets_executed": false
+  },
+  "negative_and_positive_checks": [
+    "valid_signature_and_all_downloaded_assets",
+    "revoked_pin",
+    "stale_sequence",
+    "wrong_site",
+    "signature_tampering",
+    "anchor_tampering",
+    "asset_tampering",
+    "missing_asset"
+  ],
+  "source_temp_archives": false,
+  "server_temp_archives": false,
+  "private_key_exported": false,
+  "signed_urls_persisted": false,
+  "full_restore_from_this_s3_set": "offline_restore_and_basic_content_checks_passed",
+  "new_trust_packet_external_media_copy": "USB_copy_readback_and_signature_verified",
+  "checked_at": "2026-10-18T09:16:04.261359+00:00"
+}

@@ -9,10 +9,13 @@ Ubuntu / WSL、Python 3.12、PHP 8.1以上（mysqliを含む）、Composer、Doc
     pip install -r requirements-dev.txt
     composer install --no-interaction --prefer-dist
     python3 -m unittest discover -s tests
+    php tests/test-backup-core.php
     php tests/test-versioned-transfer.php
     php tests/test-temporary-role-auth.php
 
 クラウド操作なしで実行できる。Composerは初回のみ依存物を取得する。
+
+実サイトパイロットの再実行はこの手順に含めない。[ツール一覧](../../tools/README.md)と[利用開始ガイド](getting-started.md)を確認する。
 
 ## M1の新しい模擬環境
 

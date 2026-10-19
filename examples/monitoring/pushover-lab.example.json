@@ -1,0 +1,17 @@
+{
+  "source_outbox": "/home/YOUR_USER/.local/state/owr-notification-lab/source.sqlite",
+  "state": "/home/YOUR_USER/.local/state/owr-notification-lab/delivery",
+  "channels": [
+    {
+      "id": "operator-push",
+      "kinds": ["backup_missing", "backup_failed", "backup_unknown", "approval_expired", "restore_failed", "restore_incomplete", "source_unreadable", "monitor_stopped", "heartbeat_invalid", "notification_delivery_failed"],
+      "provider": {
+        "transport": "pushover",
+        "credentials_file": "/home/YOUR_USER/.config/owr-notification-lab/pushover.json",
+        "retry": 60,
+        "expire": 300,
+        "timeout_seconds": 10
+      }
+    }
+  ]
+}

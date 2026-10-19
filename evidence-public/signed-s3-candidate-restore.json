@@ -1,0 +1,77 @@
+{
+  "kind": "signed_s3_candidate_quarantine_restore",
+  "signature_gate": {
+    "passed": true,
+    "site_id": "wp-ceri-link",
+    "set_id": "RS-WP-CERI-20261018-001",
+    "assets_verified": 8,
+    "approval_expires_at": "2026-10-25T09:15:47.571936+00:00",
+    "minimum_retention_until": "2026-11-22T09:13:29.382000+00:00",
+    "scope": "storage_integrity_candidate_only",
+    "production_recovery_approved": false,
+    "malware_cleanliness": "unverified",
+    "assets_executed": false
+  },
+  "started_at": "2026-10-18T09:21:24.940623+00:00",
+  "passed": true,
+  "source_access": "none",
+  "source_consistency": "live capture; cross-asset point-in-time consistency unverified",
+  "public_ports": false,
+  "file_inventory": {
+    "passed": true,
+    "files": 15343,
+    "mismatches": 0
+  },
+  "database": {
+    "tables": 12,
+    "rows": 409,
+    "counts_matched": true
+  },
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "blocked": {
+      "1.1.1.1": true,
+      "169.254.169.254": true,
+      "172.17.0.1": true
+    }
+  },
+  "wordpress": {
+    "wordpress_version": "7.1.2",
+    "home": "http://127.0.0.1/",
+    "posts_published": 0,
+    "pages_published": 2,
+    "attachments": 4,
+    "cron_disabled": true,
+    "http_blocked": true,
+    "mail_blocked": true
+  },
+  "homepage": {
+    "status": 200,
+    "bytes": 32229,
+    "title_present": true
+  },
+  "content_checks": {
+    "published_pages_tested": 2,
+    "pages_ok": 2,
+    "media_tested": 23,
+    "media_ok": 23
+  },
+  "finished_at": "2026-10-18T09:24:54.100207+00:00",
+  "test_containers_stopped": true,
+  "fresh_s3_fetch": {
+    "passed": true,
+    "objects": 12,
+    "all_fixed_versions_retrieved": true,
+    "current_retention_verified": true
+  },
+  "usb_trust_readback_verified": true,
+  "limitations": [
+    "Cross-asset consistency unverified",
+    "No malware clearance",
+    "Containers share Docker host kernel",
+    "No visual or full business workflow acceptance",
+    "Production publication not approved"
+  ]
+}

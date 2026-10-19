@@ -1,0 +1,21 @@
+{
+  "monitor_id": "site-notification-watchdog",
+  "heartbeat_file": "/var/lib/owr-watchdog/heartbeat.json",
+  "alert_dispatch_config": "/etc/owr/watchdog-alerts.json",
+  "targets": [
+    {
+      "role": "relay",
+      "monitor_id": "site-relay",
+      "heartbeat_file": "/var/lib/owr-inbox/relay-heartbeat.json",
+      "watchdog_state": "/var/lib/owr-watchdog/relay",
+      "stale_after_seconds": 300
+    },
+    {
+      "role": "worker",
+      "monitor_id": "site-worker",
+      "heartbeat_file": "/var/lib/owr-worker-health/heartbeat.json",
+      "watchdog_state": "/var/lib/owr-watchdog/worker",
+      "stale_after_seconds": 300
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "scenario estimates; target site not yet selected",
+  "price_source": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/ap-northeast-1/index.json",
+  "price_publication_date": "2026-10-15T17:35:40Z",
+  "daily_full_sets": 1,
+  "retention_days": 35,
+  "storage_class": "S3 Standard Tokyo",
+  "storage_unit_bytes": 1073741824,
+  "storage_usd_per_gib_month": 0.025,
+  "rows": [
+    {
+      "compressed_full_set_gib": 1,
+      "stored_35_sets_gib": 35,
+      "storage_usd_month_35_sets": 0.875,
+      "stored_42_sets_gib": 42,
+      "storage_usd_month_42_sets": 1.05
+    },
+    {
+      "compressed_full_set_gib": 5,
+      "stored_35_sets_gib": 175,
+      "storage_usd_month_35_sets": 4.375,
+      "stored_42_sets_gib": 210,
+      "storage_usd_month_42_sets": 5.25
+    },
+    {
+      "compressed_full_set_gib": 10,
+      "stored_35_sets_gib": 350,
+      "storage_usd_month_35_sets": 8.75,
+      "stored_42_sets_gib": 420,
+      "storage_usd_month_42_sets": 10.5
+    },
+    {
+      "compressed_full_set_gib": 50,
+      "stored_35_sets_gib": 1750,
+      "storage_usd_month_35_sets": 43.75,
+      "stored_42_sets_gib": 2100,
+      "storage_usd_month_42_sets": 52.5
+    }
+  ],
+  "excluded": [
+    "tax",
+    "currency conversion",
+    "requests",
+    "network transfer",
+    "EC2/EBS",
+    "monitoring and audit",
+    "operator time",
+    "extra sets and incomplete uploads"
+  ],
+  "cleanup_assumption": "35 sets assumes prompt expiry cleanup; 42 is headroom for weekly manual cleanup, not automatic enforcement"
+}

@@ -34,3 +34,7 @@ jobs:
           php tests/test-backup-core.php
           php tests/test-versioned-transfer.php
           php tests/test-temporary-role-auth.php
+      - name: Build development distributions
+        run: |
+          /tmp/owr-ci-venv/bin/python tools/build-release.py --output dist/candidate
+          test -f dist/candidate/manifest.json

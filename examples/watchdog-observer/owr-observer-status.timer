@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically refresh independent observer status
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=60s
+RandomizedDelaySec=5s
+Unit=owr-observer-status.service
+
+[Install]
+WantedBy=timers.target

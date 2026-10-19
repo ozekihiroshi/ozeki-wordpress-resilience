@@ -1,0 +1,21 @@
+{
+  "kind": "writer_deletion_resilience_probe",
+  "checked_at": "2026-10-18T11:36:19.506299+09:00",
+  "direct_deletion_test": "passed",
+  "overall_compromised_writer_resilience": "not established",
+  "scope": "two new disposable objects only; existing backups untouched",
+  "normal_delete": "AccessDenied",
+  "version_delete": "AccessDenied",
+  "recovery_reader_before_and_after": "fixed version, size and SHA-256 verified",
+  "versioning": "Enabled",
+  "lifecycle": "NoSuchLifecycleConfiguration",
+  "object_lock": "ObjectLockConfigurationNotFoundError",
+  "bucket_policy_review": "NoSuchBucketPolicy after user granted GetBucketPolicy; no bucket policy configured",
+  "iam_role_policy_review": "Reviewed six user-supplied custom policy documents and official AmazonSSMManagedInstanceCore v2; not an IAM API inventory",
+  "configuration_write_permissions": "No direct Allow found in reviewed policies for target bucket settings or IAM changes; indirect access paths remain unreviewed",
+  "aws_configuration_changed": false,
+  "retention_bypass_test": "not applicable; no Object Lock configured",
+  "existing_backup_deletion_attempts": 0,
+  "canaries_retained": true,
+  "permissions_boundary": "not configured; user confirmed in console"
+}

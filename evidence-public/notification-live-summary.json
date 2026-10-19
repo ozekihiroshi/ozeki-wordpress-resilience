@@ -1,0 +1,27 @@
+{
+  "format": "owr-notification-live-summary-v1",
+  "checked_at": "2026-10-19T02:55:34.7573883Z",
+  "result": "passed",
+  "notification_regression_tests": 73,
+  "final_live_tests": 23,
+  "distinct_unit_tests": 75,
+  "wordpress_http_browser_checks": 86,
+  "external_notifications_sent": 0,
+  "production_deployed": false,
+  "lab_containers_removed": true,
+  "implemented": [
+    "Atomic operator-approved configuration cutover retaining pending, unknown, rejected and receipt records",
+    "Version-pinned provider credentials and resolution routing to former destinations",
+    "Admin test requests with capability, nonce, revision, expiration, deduplication and rate checks",
+    "External test results bound to the configuration revision"
+  ],
+  "limitations": [
+    "External host-to-host request and status transfer not deployed",
+    "Device receipt confirmation is manual",
+    "Retired route and credential cleanup is not implemented; route limit 400"
+  ],
+  "screenshots": [
+    "notification-live-desktop.png",
+    "notification-live-mobile.png"
+  ]
+}

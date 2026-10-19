@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "independent_push": {
+      "transport": "pushover",
+      "credentials_file": "/etc/owr/independent-pushover.json"
+    },
+    "independent_mail": {
+      "transport": "smtp_starttls",
+      "host": "smtp.example.invalid",
+      "port": 587,
+      "from": "resilience@example.invalid",
+      "credentials_file": "/etc/owr/independent-smtp.json"
+    }
+  },
+  "allowed_recipients": {"independent_mail": ["operator@example.invalid"]},
+  "required_kinds": ["monitor_stopped", "heartbeat_invalid", "notification_delivery_failed"]
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically transfer independent watchdog settings requests
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=60s
+RandomizedDelaySec=5s
+Unit=owr-observer-settings.service
+
+[Install]
+WantedBy=timers.target
