@@ -1,0 +1,21 @@
+[Unit]
+Description=OWR observer status pull (%i)
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/var/lib/owr-observer-relay /var/lib/owr-status-web
+[Service]
+Type=simple
+User=owr-relay
+Group=www-data
+UMask=0027
+ExecStart=/usr/bin/python3 /opt/owr/tools/observer-status-relay.py --config /etc/owr/observer-%i.json --interval 60
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/owr-observer-relay /var/lib/owr-status-web
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+[Install]
+WantedBy=multi-user.target

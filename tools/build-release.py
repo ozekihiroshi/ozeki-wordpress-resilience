@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,stat,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 VERSION='0.1.0-dev.1'
-PLUGIN=['ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
+PLUGIN=['ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
 DIRS=['src','tools','tests','schemas','examples','lab','docs','packages','evidence-public']
 TOP=['README.md','readme.txt','LICENSE','THIRD_PARTY_NOTICES.md','composer.json','composer.lock','requirements-dev.txt','ozeki-wordpress-resilience.php']
 EXT={'.php','.py','.md','.json','.sh','.ps1','.txt','.yml','.yaml','.ini','.conf','.sql','.js','.css','.html','.service','.timer','.toml','.Dockerfile','.png'}

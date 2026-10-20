@@ -1,0 +1,7 @@
+{
+  "site_id": "generated-first-site",
+  "state": "/var/lib/owr-daily",
+  "report_file": "/var/lib/owr-status-source/daily.json",
+  "producer_health": "/var/lib/owr-status-source/producer.json",
+  "lock_file": "/var/lib/owr-status-source/publish.lock"
+}

@@ -1,0 +1,11 @@
+{
+  "site_id": "generated-first-site",
+  "host": "status-source.example.invalid",
+  "user": "owr-status-reader",
+  "port": 22,
+  "identity_file": "/etc/owr/daily-status-client",
+  "known_hosts": "/etc/owr/daily-status-known-hosts",
+  "status_file": "/var/lib/owr-status-web/daily.json",
+  "transfer_health": "/var/lib/owr-status-web/transfer.json",
+  "lock_file": "/var/lib/owr-status-web/relay.lock"
+}

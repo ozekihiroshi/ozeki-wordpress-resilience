@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "python_tests": 488,
+  "python_seconds": 309.235,
+  "php_contract_files": 8,
+  "php_results": [
+    {
+      "test": "test-backup-core.php",
+      "output": "{\"kind\":\"backup_core_contract\",\"passed\":true,\"checks\":10,\"wordpress_loaded\":false}"
+    },
+    {
+      "test": "test-temporary-role-auth.php",
+      "output": "{\"kind\":\"temporary_role_auth_unit_tests\",\"passed\":true,\"checks\":8}"
+    },
+    {
+      "test": "test-versioned-transfer.php",
+      "output": "{\n    \"kind\": \"versioned_transfer_offline_tests\",\n    \"checked_at\": \"2026-10-20T23:01:50+00:00\",\n    \"passed\": true,\n    \"checks\": [\n        {\n            \"name\": \"conditional upload returns exact version\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"upload rejects disabled\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"upload rejects no_version\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"upload rejects conflict\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"input hash rejected before network\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"prefix escape rejected\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"pinned download despite changed latest\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"destination overwrite refused\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"download rejects wrong_version\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"download rejects corrupt\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"download rejects short\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"download rejects long\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"download rejects denied\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"null version rejected before request\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"short default fails before PUT\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"default retention accepted without explicit override\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"protected download rejects missing_retention\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"protected download rejects short_retention\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"protected download rejects one_second_short\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"subsecond timestamp precision accepted\",\n            \"passed\": true\n        },\n        {\n            \"name\": \"protected download records fixed version retention\",\n            \"passed\": true\n        }\n    ],\n    \"cloud_operations\": false\n}"
+    },
+    {
+      "test": "test_daily_admin.php",
+      "output": "PASS 65 daily admin validation checks"
+    },
+    {
+      "test": "test_daily_transfer_admin.php",
+      "output": "PASS 11 transfer display checks"
+    },
+    {
+      "test": "test_daily_watchdog_admin.php",
+      "output": "PASS 10 daily-watchdog contracts"
+    },
+    {
+      "test": "test_observer_admin.php",
+      "output": "PASS 9 PHP status checks"
+    },
+    {
+      "test": "test_observer_transfer_admin.php",
+      "output": "PASS 10 transfer display contracts"
+    }
+  ],
+  "scope": "offline contracts; not production or 72-hour acceptance",
+  "secret_pattern_scan": "passed",
+  "verified_zip_plugin_source_match": true,
+  "shared_core_code_changed": false
+}

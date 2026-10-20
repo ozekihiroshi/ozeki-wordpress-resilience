@@ -1,0 +1,237 @@
+{
+  "passed": true,
+  "checks": [
+    "both actual observer reports arrive through pinned SSH",
+    "source WordPress cannot write report",
+    "source WordPress cannot read relay key",
+    "source duplicate loop refused",
+    "receiver WordPress cannot write report",
+    "receiver WordPress cannot read relay key",
+    "receiver duplicate loop refused",
+    "actual source update stop becomes alarm",
+    "source recovers after real fresh update",
+    "SSH outage recorded without replacing snapshots",
+    "periodic transfer recovers without restart",
+    "SSH reachable but observer report is stale",
+    "observer and pull restart recover both targets",
+    "actual observer alarm/recovery dispatch recorded locally"
+  ],
+  "events": [
+    {
+      "event": "healthy",
+      "at": "2026-10-20T21:23:38.617401+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "healthy",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-publisher-stopped",
+      "at": "2026-10-20T21:23:40.213910+00:00"
+    },
+    {
+      "event": "source-alarm",
+      "at": "2026-10-20T21:24:13.243947+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "source-alarm",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "期限超過",
+              "発生"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-recovered",
+      "at": "2026-10-20T21:24:27.869947+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "source-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "relay-network-disconnected",
+      "at": "2026-10-20T21:24:29.129570+00:00"
+    },
+    {
+      "event": "transfer-failed",
+      "at": "2026-10-20T21:24:53.282693+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-failed",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "transfer_failed",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "transfer_failed",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "transfer-stale",
+      "at": "2026-10-20T21:29:42.147419+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-stale",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "transfer_failed",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "transfer_failed",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "relay-network-restored",
+      "at": "2026-10-20T21:29:43.680613+00:00"
+    },
+    {
+      "event": "transfer-recovered",
+      "at": "2026-10-20T21:29:57.987348+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-observer-and-receiver-pull-stopped",
+      "at": "2026-10-20T21:30:00.340455+00:00"
+    },
+    {
+      "event": "stopped",
+      "at": "2026-10-20T21:35:45.217769+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "stopped",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "source_stale",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "final-recovered",
+      "at": "2026-10-20T21:35:59.597931+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "final-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    }
+  ],
+  "containers_removed": true,
+  "scope": "Dedicated containers, real SSH and observer, local notification callback, real 5-minute freshness waits; no S3/production or 72h observation changes",
+  "prior_trials": [
+    {
+      "path_suffix": "20261021",
+      "phase": "network setup",
+      "cause": "Docker predefined address pools exhausted; explicit non-overlapping subnet selected",
+      "classification": "environment"
+    },
+    {
+      "path_suffix": "20261021-v2",
+      "phase": "lab report read",
+      "cause": "host test user could not read container-owned0640 report; test now reads via container without relaxing permissions",
+      "classification": "test harness"
+    }
+  ],
+  "unit_tests": "Python2 cases with preservation/binding/rollback/future/recovery checks; PHP10 transfer display checks",
+  "code_sha256": {
+    "tools/observer-status-relay.py": "827e9c883bea7c14a8435becece8d669e2704af6d6ee4232bb7a045065fb797a",
+    "src/DailyWatchdogAdmin.php": "503d871089761f5fbe39febe039991f9fd5c2a0a8f507555b1c11f2e89b139fa",
+    "tools/run-observer-relay-lab.py": "4f33c9ba7a1d919d148d59efc644db26eafb9c828eea24895928680a2d7e5f10",
+    "lab/observer-relay/worker.py": "ab294b3fe08f9e3b2f6cea3d4badcdeedf18f12ad74e5854b6223a5e6601226b",
+    "lab/notification-admin/observer-relay-browser.py": "50e633b63149a72e16da8f5be907d79374c352613d3117d6ba53056de7514542"
+  }
+}

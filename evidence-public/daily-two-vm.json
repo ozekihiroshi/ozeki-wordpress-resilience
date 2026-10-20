@@ -1,0 +1,543 @@
+{
+  "passed": true,
+  "checks": [
+    "different guest kernels and boot IDs",
+    "communication outage preserves exact last report across failed attempts",
+    "source continues publishing while link down",
+    "communication cut does not reboot either VM",
+    "source outage preserves received report",
+    "receiver keeps running during source outage",
+    "only source Boot ID changes after power-on",
+    "source OS and updates continue while receiver is off",
+    "only receiver Boot ID changes after power-on",
+    "recovery and cleanup history survives every fault",
+    "WSL host not rebooted",
+    "original generated fixture unchanged"
+  ],
+  "events": [
+    {
+      "event": "healthy",
+      "at": "2026-10-20T15:07:22.885161+00:00",
+      "source_boot": "9216008a-4dd5-4fde-8d56-07336ac1cd79",
+      "receiver_boot": "8166b33f-0bc4-4efd-abc6-57e68e0c16bb",
+      "report": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:07:13.718559+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:07:15.368497+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82",
+          "site_id": "generated-first-site",
+          "state": "ok"
+        },
+        "sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82"
+      }
+    },
+    {
+      "event": "data_link_down",
+      "at": "2026-10-20T15:07:23.790554+00:00"
+    },
+    {
+      "event": "communication_failure_observed",
+      "at": "2026-10-20T15:09:24.847131+00:00",
+      "first": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:07:13.718559+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:08:17.429388+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82",
+          "site_id": "generated-first-site",
+          "state": "transfer_failed"
+        },
+        "sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82"
+      },
+      "second": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:07:13.718559+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:09:17.606385+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82",
+          "site_id": "generated-first-site",
+          "state": "transfer_failed"
+        },
+        "sha256": "336c5fa023a98a7d8773b0899fc2ad579a56c187ea5f520c9464e749d66aaf82"
+      }
+    },
+    {
+      "event": "communication_recovered",
+      "at": "2026-10-20T15:10:21.260893+00:00",
+      "report": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:10:14.348111+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:10:17.772535+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "16dd1deabebea5a37fc89ec3a182dc03f3cd1de05ae0c2d6cb297b595d7da3ff",
+          "site_id": "generated-first-site",
+          "state": "ok"
+        },
+        "sha256": "16dd1deabebea5a37fc89ec3a182dc03f3cd1de05ae0c2d6cb297b595d7da3ff"
+      }
+    },
+    {
+      "event": "source_powered_off",
+      "at": "2026-10-20T15:10:31.746841+00:00"
+    },
+    {
+      "event": "source_outage_observed",
+      "at": "2026-10-20T15:11:45.821591+00:00",
+      "report": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:10:14.348111+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:11:18.965796+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "16dd1deabebea5a37fc89ec3a182dc03f3cd1de05ae0c2d6cb297b595d7da3ff",
+          "site_id": "generated-first-site",
+          "state": "transfer_failed"
+        },
+        "sha256": "16dd1deabebea5a37fc89ec3a182dc03f3cd1de05ae0c2d6cb297b595d7da3ff"
+      }
+    },
+    {
+      "event": "source_recovered",
+      "at": "2026-10-20T15:12:34.568777+00:00",
+      "new_boot": "a4862506-7d5c-49b8-b0f2-3ba44390f08e",
+      "report": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:12:12.863909+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:12:29.169165+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "1a93c44e1a1a99c916084e533ddb29966ea3570ac49548616186e63e79231dc9",
+          "site_id": "generated-first-site",
+          "state": "ok"
+        },
+        "sha256": "1a93c44e1a1a99c916084e533ddb29966ea3570ac49548616186e63e79231dc9"
+      }
+    },
+    {
+      "event": "receiver_powered_off",
+      "at": "2026-10-20T15:12:48.092089+00:00"
+    },
+    {
+      "event": "source_update_during_receiver_outage",
+      "at": "2026-10-20T15:13:15.379597+00:00",
+      "observed_at": "2026-10-20T15:13:13.122984+00:00"
+    },
+    {
+      "event": "receiver_recovered",
+      "at": "2026-10-20T15:13:45.695016+00:00",
+      "new_boot": "a9e15813-e33d-479e-8f2c-84f4da83b5a3",
+      "report": {
+        "report": {
+          "attempts": [
+            {
+              "cleanup": "automatic_removed",
+              "day": "2026-10-20",
+              "outcome": "succeeded",
+              "registration": "recorded",
+              "request_id": "fresh-02",
+              "state": "finished"
+            },
+            {
+              "cleanup": "closed",
+              "day": "2026-10-20",
+              "outcome": "unknown",
+              "registration": "unavailable",
+              "request_id": "interrupted-01",
+              "state": "reviewed_closed"
+            }
+          ],
+          "format": "owr-daily-admin-v1",
+          "missing_due_slot": false,
+          "observed_at": "2026-10-20T15:13:13.122984+00:00",
+          "runs": [
+            {
+              "approval_state": "approved",
+              "day": "2026-10-20",
+              "phase": "restore_verified",
+              "restore_state": "verified",
+              "storage_complete": true
+            }
+          ],
+          "site_id": "generated-first-site"
+        },
+        "health": {
+          "attempted_at": "2026-10-20T15:13:38.988332+00:00",
+          "format": "owr-daily-transfer-v1",
+          "report_sha256": "c084e7cee6006de67e100886b4274cfcd4ec68823d3592f3cb77d7a2e5fe9230",
+          "site_id": "generated-first-site",
+          "state": "ok"
+        },
+        "sha256": "c084e7cee6006de67e100886b4274cfcd4ec68823d3592f3cb77d7a2e5fe9230"
+      }
+    }
+  ],
+  "before": {
+    "source": {
+      "role": "source",
+      "passed": true,
+      "checks": [
+        "own service enabled and active",
+        "dedicated identity and filesystem restrictions",
+        "hardening enabled",
+        "actual capabilities empty",
+        "actual privilege and syscall restrictions",
+        "exact production unit content",
+        "service cannot modify code",
+        "no receiver state or private key on source VM",
+        "publisher private network",
+        "publisher ledger read only",
+        "SSH reader cannot read ledger",
+        "SSH reader cannot modify report",
+        "source data unchanged"
+      ],
+      "properties": {
+        "MainPID": "1787",
+        "NRestarts": "0",
+        "CapabilityBoundingSet": "",
+        "User": "owr-status-publisher",
+        "PrivateTmp": "yes",
+        "PrivateDevices": "yes",
+        "PrivateNetwork": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes",
+        "MemoryDenyWriteExecute": "yes",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "boot_id": "9216008a-4dd5-4fde-8d56-07336ac1cd79"
+    },
+    "receiver": {
+      "role": "receiver",
+      "passed": true,
+      "checks": [
+        "own service enabled and active",
+        "dedicated identity and filesystem restrictions",
+        "hardening enabled",
+        "actual capabilities empty",
+        "actual privilege and syscall restrictions",
+        "exact production unit content",
+        "service cannot modify code",
+        "no source ledger or publisher report on receiver VM",
+        "web cannot read private key",
+        "web report read only",
+        "received report and healthy hash binding",
+        "restore history preserved"
+      ],
+      "properties": {
+        "MainPID": "1608",
+        "NRestarts": "0",
+        "CapabilityBoundingSet": "",
+        "User": "owr-status-relay",
+        "PrivateTmp": "yes",
+        "PrivateDevices": "yes",
+        "PrivateNetwork": "no",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes",
+        "MemoryDenyWriteExecute": "yes",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "boot_id": "8166b33f-0bc4-4efd-abc6-57e68e0c16bb"
+    }
+  },
+  "after": {
+    "source": {
+      "role": "source",
+      "passed": true,
+      "checks": [
+        "own service enabled and active",
+        "dedicated identity and filesystem restrictions",
+        "hardening enabled",
+        "actual capabilities empty",
+        "actual privilege and syscall restrictions",
+        "exact production unit content",
+        "service cannot modify code",
+        "no receiver state or private key on source VM",
+        "publisher private network",
+        "publisher ledger read only",
+        "SSH reader cannot read ledger",
+        "SSH reader cannot modify report",
+        "source data unchanged"
+      ],
+      "properties": {
+        "MainPID": "643",
+        "NRestarts": "0",
+        "CapabilityBoundingSet": "",
+        "User": "owr-status-publisher",
+        "PrivateTmp": "yes",
+        "PrivateDevices": "yes",
+        "PrivateNetwork": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes",
+        "MemoryDenyWriteExecute": "yes",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "boot_id": "a4862506-7d5c-49b8-b0f2-3ba44390f08e"
+    },
+    "receiver": {
+      "role": "receiver",
+      "passed": true,
+      "checks": [
+        "own service enabled and active",
+        "dedicated identity and filesystem restrictions",
+        "hardening enabled",
+        "actual capabilities empty",
+        "actual privilege and syscall restrictions",
+        "exact production unit content",
+        "service cannot modify code",
+        "no source ledger or publisher report on receiver VM",
+        "web cannot read private key",
+        "web report read only",
+        "received report and healthy hash binding",
+        "restore history preserved"
+      ],
+      "properties": {
+        "MainPID": "645",
+        "NRestarts": "0",
+        "CapabilityBoundingSet": "",
+        "User": "owr-status-relay",
+        "PrivateTmp": "yes",
+        "PrivateDevices": "yes",
+        "PrivateNetwork": "no",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes",
+        "MemoryDenyWriteExecute": "yes",
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "boot_id": "a9e15813-e33d-479e-8f2c-84f4da83b5a3"
+    }
+  },
+  "guest_count": 2,
+  "s3_calls": 0,
+  "production_changed": false,
+  "existing_observation_changed": false,
+  "units_unmodified": true,
+  "interval_seconds": 60,
+  "cleanup": {
+    "removed": true,
+    "guests": 2,
+    "host_rebooted": false,
+    "private_evidence_retained": true
+  },
+  "image": {
+    "url": "https://cloud-images.ubuntu.com/noble/20261017/noble-server-cloudimg-amd64.img",
+    "sha256": "04e8f2461a16a44e78a370284471f29616cdd9baf1893df25807b71f985b6c94",
+    "bytes": 621284352
+  },
+  "source_hashes": {
+    "lab/two-vm/cleanup.py": "06c5c8ad82610e43e0029d80b5f6be5360120657e8813347c47e698c37566d87",
+    "lab/two-vm/common.py": "276e379fe9678810536933e4e4e57543b1bf63c066fdf7a3714f715ac0a4ba37",
+    "lab/two-vm/exercise.py": "2ed774781333f61cc285fe26dbed1baefba6bb19142f9dbe877690bc1f9a403c",
+    "lab/two-vm/guest-setup.py": "1472677a07161a0327d6ec8d95b7dd6f0ae2dc435eecfa72666a10c2bf8b16fe",
+    "lab/two-vm/guest-verify.py": "6f09fa2a880044bc40f65fc1af1594b27a55f612813607441917b88e81d6bebb",
+    "lab/two-vm/start.py": "2b0a41a46569e1e7b8e2973de8746645a09106314d952480d9a293cc8d2f4872",
+    "examples/daily-status-transfer/owr-daily-status-publisher.service": "133a19732513e825149605159e72ab68590c39726a6c65676b3a0a954553bce2",
+    "examples/daily-status-transfer/owr-daily-status-relay.service": "3eaf0b3eba42ccd98006a5be435196ed8d57d98e7ffbbecf4ef78f0d794c5176",
+    "tools/daily-status-transfer.py": "1eaab3461de3b55a56b7ccafda1c12a56edd6c971dab8786c5a95e129d483acf"
+  },
+  "limitations": [
+    "two independent guests on one physical host; not independent hardware failure domains",
+    "no WAN latency/packet corruption or notification delivery trial",
+    "receiver OS outage cannot be reported by receiver itself; independent observer needed",
+    "transfer_failed does not distinguish remote OS failure from network failure",
+    "report/health state verified over real SSH; no new WordPress browser run"
+  ],
+  "qemu_reference": "https://www.qemu.org/docs/master/system/invocation.html"
+}

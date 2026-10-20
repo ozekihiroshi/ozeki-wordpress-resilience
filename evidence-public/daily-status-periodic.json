@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "ssh": {
+    "passed": true,
+    "checks": [
+      "actual generated daily snapshot published",
+      "fixed-command pinned SSH transfers snapshot",
+      "WordPress user cannot write report",
+      "WordPress user cannot read SSH key",
+      "SSH ingress cannot write report",
+      "SSH ingress cannot read source ledger",
+      "three real periodic publish/pull updates observed",
+      "duplicate periodic execution refused by lock",
+      "host-key mismatch shown as transfer failure",
+      "failed transfer retains exact last report",
+      "transfer recovers after pinned key restored",
+      "producer failure delivered without losing previous report",
+      "source failure distinguished from transport failure",
+      "periodic path can resume after source repair",
+      "arbitrary SSH command refused",
+      "original generated source unchanged"
+    ],
+    "containers_removed": true,
+    "real_ssh": true,
+    "periodic_updates": 3,
+    "s3_calls": 0,
+    "production_changed": false
+  },
+  "wordpress_http": {
+    "passed": true,
+    "checks": [
+      "isolated network namespace; no published ports",
+      {
+        "state": "ok",
+        "passed": true
+      },
+      {
+        "state": "transfer_failed",
+        "passed": true
+      },
+      {
+        "state": "source_failed",
+        "passed": true
+      },
+      {
+        "state": "source_stale",
+        "passed": true
+      },
+      {
+        "state": "stopped",
+        "passed": true
+      },
+      {
+        "state": "invalid",
+        "passed": true
+      },
+      "source ledger and evidence unchanged after export and HTTP GET/POST"
+    ],
+    "containers_removed": true,
+    "production_deployed": false,
+    "scope": "WordPress HTTP transfer-health display; report received over real SSH; failure/time states explicitly injected"
+  },
+  "unit_tests": 9,
+  "php_checks": 76,
+  "limitations": [
+    "five-minute stale/stop display tested with injected old timestamp, not five-minute wall-time observation",
+    "systemd unit examples prepared; actual tested scheduling is same CLI interval loop in dedicated containers",
+    "WordPress health rendering verified over HTTP, not a new browser visual acceptance",
+    "local files and pinned SSH host trust; not independently signed recovery authorization"
+  ],
+  "test_tool_issues": [
+    "initial SSH configuration contained escaped newlines; fixed before SSH startup",
+    "initial UI harness reused state variable and stopped at final comparison; fixed and rerun with unchanged ledger verified"
+  ],
+  "source_sha256": {
+    "tools/daily-status-transfer.py": "1eaab3461de3b55a56b7ccafda1c12a56edd6c971dab8786c5a95e129d483acf",
+    "src/DailyAdmin.php": "d161e8a7973c093cc0e2fc3291086199aef696d9e8f87cc5225e0f64fb0c1704",
+    "tools/run-daily-status-transfer-lab.py": "1e58b1f63c02c16f52bac19701929aa1c3f92b956ac113548f7d61cdf8400d84",
+    "tools/run-daily-transfer-ui-lab.py": "32f4315772900bb02f26e8f4d491724ba042d8dacd0f4a15bceabebf3a4bdab7",
+    "tests/test_daily_status_transfer.py": "17b2ab854ddbe1f039f512ab9fa6b790da9418ce784dc2468174d120ddfc8468",
+    "tests/test_daily_transfer_admin.php": "e9d7b4eb80dade2e9b733209e6c0355f97bd99241b3210a57351cd9ee514dcb3"
+  }
+}

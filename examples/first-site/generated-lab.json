@@ -1,0 +1,88 @@
+{
+  "format": "owr-first-site-profile-v1",
+  "site_id": "generated-first-site",
+  "revision": 1,
+  "wordpress": {
+    "multisite": false,
+    "uploads": "wp-content/uploads"
+  },
+  "database": {
+    "name": "lab",
+    "prefix": "wp_",
+    "engines": [
+      "InnoDB"
+    ]
+  },
+  "files": {
+    "root": "/var/www/html",
+    "exclusions": []
+  },
+  "writers": {
+    "http": {
+      "mode": "fenced",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "wp_cron": {
+      "mode": "fenced",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "system_cron": {
+      "mode": "disabled",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "cli": {
+      "mode": "fenced",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "deploy": {
+      "mode": "disabled",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "direct_db": {
+      "mode": "fenced",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    },
+    "direct_files": {
+      "mode": "disabled",
+      "owner": "dedicated-lab-controller",
+      "evidence": "isolated Docker scope; no other users or workers"
+    }
+  },
+  "queue": {
+    "state": "absent",
+    "evidence": "isolated generated WordPress; no queue service or job plugin"
+  },
+  "dependencies": [],
+  "operations": {
+    "owner": "lab-operator",
+    "alternate": "lab-recovery-operator",
+    "window": "dedicated test only",
+    "schedule": "manual dedicated test",
+    "max_stop_seconds": 180,
+    "drain_seconds": 8,
+    "rpo_seconds": 86400,
+    "rto_seconds": 3600,
+    "max_bytes": 268435456,
+    "reserve_bytes": 67108864
+  },
+  "storage": {
+    "destination_ref": "not-connected",
+    "writer_ref": "lab-writer",
+    "reader_ref": "lab-reader",
+    "retention_days": 35
+  },
+  "trust": {
+    "operator": "not-connected",
+    "public_pin_ref": "not-connected"
+  },
+  "runtime": {
+    "wordpress_ref": "lab/m1/images.env:OWR_WP_IMAGE",
+    "database_ref": "lab/m1/images.env:OWR_DB_IMAGE"
+  }
+}

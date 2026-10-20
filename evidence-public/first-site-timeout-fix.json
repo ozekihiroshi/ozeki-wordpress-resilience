@@ -1,0 +1,133 @@
+{
+  "format": "owr-first-site-timeout-fix-v1",
+  "recorded_at": "2026-10-20T04:00:27.904225+00:00",
+  "passed": true,
+  "docker_version": "29.1.3",
+  "reproduced_capture_failure": {
+    "operation": "held via docker exec php",
+    "timeout_seconds": 60,
+    "state": "capture_failed",
+    "release_confirmed": true,
+    "memory_pressure_at_failure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0"
+  },
+  "comparison": [
+    {
+      "mode": "pipe",
+      "iteration": 1,
+      "probe": "timeout",
+      "seconds": 3.0060018680014764,
+      "after_drain_ok": true
+    },
+    {
+      "mode": "pipe",
+      "iteration": 2,
+      "probe": "timeout",
+      "seconds": 3.0057317330010846,
+      "after_drain_ok": true
+    },
+    {
+      "mode": "pipe",
+      "iteration": 3,
+      "probe": "timeout",
+      "seconds": 3.0033420719992137,
+      "after_drain_ok": true
+    },
+    {
+      "mode": "file",
+      "iteration": 1,
+      "probe": "ok",
+      "seconds": 0.3767529899996589,
+      "after_drain_ok": true
+    },
+    {
+      "mode": "file",
+      "iteration": 2,
+      "probe": "ok",
+      "seconds": 0.3697170079994976,
+      "after_drain_ok": true
+    },
+    {
+      "mode": "file",
+      "iteration": 3,
+      "probe": "ok",
+      "seconds": 0.3419497729992145,
+      "after_drain_ok": true
+    }
+  ],
+  "fixed_transport_comparison": [
+    {
+      "iteration": 1,
+      "probe": "ok",
+      "seconds": 0.4990977750003367,
+      "bytes": 33554432,
+      "producer": "completed before forced termination"
+    },
+    {
+      "iteration": 2,
+      "probe": "ok",
+      "seconds": 0.49307424100152275,
+      "bytes": 33554432,
+      "producer": "completed before forced termination"
+    },
+    {
+      "iteration": 3,
+      "probe": "ok",
+      "seconds": 0.5219530189988291,
+      "bytes": 33554432,
+      "producer": "completed before forced termination"
+    }
+  ],
+  "before": {
+    "sequence_cases_passed": 7,
+    "single_failure": 1,
+    "additional_single_passes": 13
+  },
+  "after": {
+    "single_missing_attachment_passes": 3,
+    "sequence_cases_passed": 7,
+    "unit_capture_tests": 17,
+    "unit_stream_tests": 4,
+    "existing_set_tests": 6,
+    "optimized_capture_tests": 17,
+    "optimized_stream_tests": 4
+  },
+  "cadence_regression": {
+    "old_calls": 20,
+    "fixed_maximum_accepted_calls": 6
+  },
+  "source_hashes": {
+    "tools/first-site-capture.py": "ecc7943696ba35f6f3fb2e70777e4d3737576f8cadfc62cd46c792a048136854",
+    "tools/first-site-docker-lab.py": "18a7afefc66654e857c4d5c11e2ed912c5074e6cbd177e074654247f9a41a7ae",
+    "tools/bounded-process-stream.py": "55c07c760eb0a3b934ffeed71a62e50832fbc2d88fcbb0d326f967f25d3aacdd",
+    "tools/first-site-timeout-cases.py": "2c24c5074973f033183d09d2ecc0a9ec42a3d6fc0806da39a3d39373c8dceb93",
+    "tools/run-first-site-timeout-lab.py": "c39bf2feb9aad55f8501886cd6664e54ae2a38c8c3837eeb951f2dea207ef7b7",
+    "tests/test_first_site_capture.py": "24476d008cc68f8755e5c2f0e6ca751fcc5ef1715bc08cf1160f27e7390ef147",
+    "tests/test_bounded_process_stream.py": "ae12720b01b13d69f27973b6a5262d911f0a901c148ca7e723dcd5d07bbbb0e6"
+  },
+  "evidence_hashes": {
+    "single-before.events.jsonl": "7fcdd48f941097c7ecb4db36c9bc32b2781abd93006fd4e17b912842627a7ce8",
+    "sequence-before.json": "0d13872bca7360101a1db0533cffa906bcbe91a110b25ebe464bbd649e3416ef",
+    "single-watch.json": "bf8f799503ebc05d274744c139363207f2847faf68de972b6f393c83ad6497ce",
+    "single-watch2.json": "1a535e3aca53c3e834205d94a923654e366708fe2dde3f73db7e1795f4d204aa",
+    "single-after.json": "27e2a8f401e38432850569a469b6006aad3d5b4f314a57933806cb423a7858ca",
+    "sequence-after.json": "f95b4feee2829677781ea28de8831d739c81a1b253604644193a7467bc5b4c00",
+    "pipe-exit-probe.json": "8e0adf8aeec8a7e7f10368a2601fd3f30cfd2982b26e0770965818d0c5ddef4c",
+    "bounded-exit-probe.json": "626c23c47ac2386cc586289c352eb979cc8c61eff0a32378e344f4f1d5bb0a35",
+    "container-resources.json": "466b056b79ceddf86dc701054760829d1b9ec8d764b2f7ab788ba4113857e980"
+  },
+  "probe_source_hashes": {
+    "probe-docker-backpressure.py": "651a212355b0f73917ba160bd81252bcd5e8ffb50de9f4004bb24ee7aff66584",
+    "probe-docker-exit-backpressure.py": "e367c61ec308888b61fe192c8aea5f32f32ae8b1c5226d0cfe8803681d681591",
+    "probe-bounded-docker-exit.py": "50290e92b1c71534a7b65d80481f63b33167bd2cf430c454008dbec4baf05ebf"
+  },
+  "classification": "Docker exec exit/output backpressure interaction exposed by collector synchronous control waits; collector fixed",
+  "limitations": [
+    "historical first failure has no Docker internal stack; exact identity with upstream implementation is not proven",
+    "not a guarantee for every Docker version or arbitrary host failure",
+    "new host-side transient disk requirement: 2*max_bytes+reserve_bytes"
+  ],
+  "s3_calls": 0,
+  "production_changes": false,
+  "resources_removed": true,
+  "upstream_reference": "https://github.com/moby/moby/issues/53614"
+}

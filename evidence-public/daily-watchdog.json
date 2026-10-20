@@ -1,0 +1,587 @@
+{
+  "passed": true,
+  "checks": [
+    "source probe cannot modify report",
+    "receiver probe cannot modify report",
+    "source authenticated healthy",
+    "receiver authenticated healthy",
+    "link loss detected while receiver SSH reachable; failed delivery pending",
+    "source stays healthy during data-link loss",
+    "pending alarm delivered to local HTTP receiver",
+    "source authenticated healthy",
+    "receiver authenticated healthy",
+    "source authenticated healthy",
+    "receiver authenticated healthy",
+    "source healthy while receiver OS stopped",
+    "source authenticated healthy",
+    "receiver authenticated healthy",
+    "source authenticated healthy",
+    "receiver authenticated healthy",
+    "restarted observer completes a fresh loop",
+    "observer restart preserves state without duplicate delivery",
+    "every alarm has a recovery notification",
+    "all accepted notification IDs unique",
+    "WSL not rebooted"
+  ],
+  "events": [
+    {
+      "event": "watchdog_healthy",
+      "at": "2026-10-20T15:39:49.411136+00:00"
+    },
+    {
+      "event": "data_link_down",
+      "at": "2026-10-20T15:39:50.534716+00:00"
+    },
+    {
+      "event": "data_link_recovered",
+      "at": "2026-10-20T15:41:27.098596+00:00",
+      "notifications": [
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:40:55.233479+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:41:23.099990+00:00"
+        }
+      ]
+    },
+    {
+      "event": "source_powered_off",
+      "at": "2026-10-20T15:41:39.353282+00:00"
+    },
+    {
+      "event": "source_outage_alerted",
+      "at": "2026-10-20T15:43:14.527638+00:00",
+      "notifications": [
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:40:55.233479+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:41:23.099990+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db8052d6dc85471a90f5a0e2539a0c8b",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.002972+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3b550c950d524055ac71830e2641f9c7",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.899098+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db4331e382014d9f976b5259e6eca1e1",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:43:11.684597+00:00"
+        }
+      ]
+    },
+    {
+      "event": "source_recovered",
+      "at": "2026-10-20T15:44:36.302728+00:00",
+      "notifications": [
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:40:55.233479+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:41:23.099990+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db8052d6dc85471a90f5a0e2539a0c8b",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.002972+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3b550c950d524055ac71830e2641f9c7",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.899098+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db4331e382014d9f976b5259e6eca1e1",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:43:11.684597+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "76292c5787f24b34923171f9c93af069",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "2555592059184174a4d799cca9804c74",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "93f96940bfea42cab94181ba78dc9412",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:44:34.958356+00:00"
+        }
+      ]
+    },
+    {
+      "event": "receiver_powered_off",
+      "at": "2026-10-20T15:44:44.784773+00:00"
+    },
+    {
+      "event": "receiver_outage_alerted",
+      "at": "2026-10-20T15:46:21.994430+00:00",
+      "notifications": [
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:40:55.233479+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:41:23.099990+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db8052d6dc85471a90f5a0e2539a0c8b",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.002972+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3b550c950d524055ac71830e2641f9c7",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.899098+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db4331e382014d9f976b5259e6eca1e1",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:43:11.684597+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "76292c5787f24b34923171f9c93af069",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "2555592059184174a4d799cca9804c74",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "93f96940bfea42cab94181ba78dc9412",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:44:34.958356+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "48bbe729f150402c8537b3cb99564ea2",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:45:16.662508+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "109c9df03f574bf3ae3dffad268c8578",
+          "site": "daily-receiver-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:46:18.705706+00:00"
+        }
+      ]
+    },
+    {
+      "event": "receiver_recovered",
+      "at": "2026-10-20T15:46:53.527893+00:00",
+      "notifications": [
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:40:55.233479+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:41:23.099990+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db8052d6dc85471a90f5a0e2539a0c8b",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.002972+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "3b550c950d524055ac71830e2641f9c7",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:42:58.899098+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "db4331e382014d9f976b5259e6eca1e1",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:43:11.684597+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "76292c5787f24b34923171f9c93af069",
+          "site": "daily-source-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source-reachability",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "2555592059184174a4d799cca9804c74",
+          "site": "daily-source",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-source",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:43:39.932958+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "93f96940bfea42cab94181ba78dc9412",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:44:34.958356+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "48bbe729f150402c8537b3cb99564ea2",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:45:16.662508+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "109c9df03f574bf3ae3dffad268c8578",
+          "site": "daily-receiver-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver-reachability",
+          "transition": "opened",
+          "observed_at": "2026-10-20T15:46:18.705706+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "2587fad73fcb456c9a9f1e85adec3008",
+          "site": "daily-receiver-reachability",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver-reachability",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:46:51.851552+00:00"
+        },
+        {
+          "format": "owr-operator-notification-v1",
+          "event_id": "51b0c03052b0489bb563e6739a734c62",
+          "site": "daily-receiver",
+          "domain": "watchdog",
+          "kind": "monitor_stopped",
+          "subject": "daily-receiver",
+          "transition": "resolved",
+          "observed_at": "2026-10-20T15:46:51.851552+00:00"
+        }
+      ]
+    }
+  ],
+  "notifications": [
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "edf1a6ba3a1248cf8bb60654a2e1033c",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:40:55.233479+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "3ef62450a45a457e949b35cb93a21ca1",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:41:23.099990+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "db8052d6dc85471a90f5a0e2539a0c8b",
+      "site": "daily-source",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-source",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:42:58.002972+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "3b550c950d524055ac71830e2641f9c7",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:42:58.899098+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "db4331e382014d9f976b5259e6eca1e1",
+      "site": "daily-source-reachability",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-source-reachability",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:43:11.684597+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "76292c5787f24b34923171f9c93af069",
+      "site": "daily-source-reachability",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-source-reachability",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:43:39.932958+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "2555592059184174a4d799cca9804c74",
+      "site": "daily-source",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-source",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:43:39.932958+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "93f96940bfea42cab94181ba78dc9412",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:44:34.958356+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "48bbe729f150402c8537b3cb99564ea2",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:45:16.662508+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "109c9df03f574bf3ae3dffad268c8578",
+      "site": "daily-receiver-reachability",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver-reachability",
+      "transition": "opened",
+      "observed_at": "2026-10-20T15:46:18.705706+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "2587fad73fcb456c9a9f1e85adec3008",
+      "site": "daily-receiver-reachability",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver-reachability",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:46:51.851552+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "51b0c03052b0489bb563e6739a734c62",
+      "site": "daily-receiver",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "daily-receiver",
+      "transition": "resolved",
+      "observed_at": "2026-10-20T15:46:51.851552+00:00"
+    }
+  ],
+  "threshold_seconds": 100,
+  "real_time": true,
+  "notification_transport": "local HTTP only",
+  "external_notifications": false,
+  "observer_outside_both_guests": true,
+  "same_physical_host": true,
+  "s3_calls": 0,
+  "cleanup": {
+    "removed": true,
+    "guests": 2,
+    "host_rebooted": false,
+    "private_evidence_retained": true
+  },
+  "unit_tests": {
+    "probe": 1,
+    "existing_observer": 9,
+    "slow_response_regression": 1,
+    "passed": true
+  },
+  "clock_fix": "When now is not explicitly supplied, compare completion with current time after SSH response; retain report timestamp and future/rollback rejection.",
+  "first_trial_evidence": "daily-watchdog-first-trial.json"
+}

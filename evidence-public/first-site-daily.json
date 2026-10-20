@@ -1,0 +1,132 @@
+{
+  "format": "owr-first-site-daily-verification-v1",
+  "recorded_at": "2026-10-20T10:09:26.018432+00:00",
+  "set_id": "AWS-f222f329f1737d20",
+  "day": "2026-10-20",
+  "storage": {
+    "acknowledged_puts": 2,
+    "bytes": 29812385,
+    "uncertain_puts": 0,
+    "fixed_versions": true,
+    "retention_days_minimum": 35
+  },
+  "initial": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-20T10:05:08.651794+00:00",
+    "results": [
+      {
+        "case": "http_and_direct_db_fenced",
+        "passed": true
+      },
+      {
+        "case": "real_capture_drain_standard_attachment_two_assets",
+        "passed": true,
+        "bytes": 29812385,
+        "tables": 12,
+        "attempt_id": "23fe91cc73b544afb941061e4d64c7f7"
+      },
+      {
+        "case": "isolated_dump_import_posts_attachment_and_http_resumed",
+        "passed": true
+      },
+      {
+        "case": "daily_two_assets_stored_unsigned_pending",
+        "passed": true
+      },
+      {
+        "case": "same_daily_slot_no_capture_or_put",
+        "passed": true
+      },
+      {
+        "case": "unsigned_storage_not_recovery_authorization",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "generated isolated WP/MariaDB; external daily capture + real S3 unsigned publication; independent approval is separate; not plugin end-to-end acceptance"
+  },
+  "same_day_after_approval": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-20T10:07:46.292475+00:00",
+    "results": [
+      {
+        "case": "approved_daily_slot_preserved",
+        "passed": true
+      },
+      {
+        "case": "same_daily_slot_no_capture_or_put",
+        "passed": true
+      },
+      {
+        "case": "storage_status_not_recovery_authorization",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "generated isolated WP/MariaDB; external daily capture + real S3 unsigned publication; independent approval is separate; not plugin end-to-end acceptance"
+  },
+  "independent_test_approval": {
+    "after": "approved",
+    "approval": {
+      "approval_expires_at": "2026-10-27T10:05:06.445228+00:00",
+      "approved_at": "2026-10-20T10:06:38.435270+00:00",
+      "isolated_restore_verified": false,
+      "manifest_sha256": "96c0a74fc16123ea7bcaaff614ea61354f9325501773a0ab6f1fc967d86ff73c",
+      "production_recovery_approved": false,
+      "public_key_sha256": "d0c5c0ee2e2ee36a8708d6bd9bd9c1bc0451cf7961abbaeda9ff8704d252fb2b",
+      "state": "approved",
+      "verification": {
+        "assets_verified": 2,
+        "attempt_id": "23fe91cc73b544afb941061e4d64c7f7",
+        "malware_cleanliness": "unverified",
+        "passed": true,
+        "production_recovery_approved": false,
+        "scope": "storage_integrity_candidate_only"
+      }
+    },
+    "before": "awaiting_approval",
+    "boundary": "separate operator process/directory; same WSL user, not separate host",
+    "invalid_signature_no_reader": true,
+    "isolated_restore_performed": false,
+    "passed": true,
+    "production_keys_used": false,
+    "set_id": "AWS-f222f329f1737d20"
+  },
+  "tests": {
+    "daily_normal": 12,
+    "daily_optimized": 12,
+    "existing_two_asset_gate": 6
+  },
+  "production_data_used": false,
+  "production_keys_used": false,
+  "old_soak_modified": false,
+  "current_source_sha256": {
+    "tools/first-site-daily.py": "95f7da7bb4807362e47a61e9cd5b0ea46f895433f3569e160a3c778d8ba0237c",
+    "tools/first-site-daily-cases.py": "a501bdc5839d08bacc161705af5f4723e9f954cc4376117e76a13ab76461cff4",
+    "tools/run-first-site-daily-lab.py": "a8b2f03223f4f5f699eb2b19aa9c7d4d5a8ef1caa73a75e8a0cfef7e5c4b98e3",
+    "tests/test_first_site_daily.py": "e04bf24eb2c28305faf6134f0039488f0fd403423d4b3b1db7ec927d51a4d3ba",
+    "tools/first-site-capture.py": "ecc7943696ba35f6f3fb2e70777e4d3737576f8cadfc62cd46c792a048136854",
+    "tools/first-site-docker-lab.py": "18a7afefc66654e857c4d5c11e2ed912c5074e6cbd177e074654247f9a41a7ae",
+    "tools/bounded-process-stream.py": "55c07c760eb0a3b934ffeed71a62e50832fbc2d88fcbb0d326f967f25d3aacdd",
+    "tools/protected-first-site-set.py": "6a4df2da31162c0b1f49e61281648d56b9d5e693fc82b2969b4e5df7e30e1da9"
+  },
+  "limitations": [
+    "Generated Docker adapter only; no production scheduler installed",
+    "Separate signing process/directory on same WSL user, not independent host",
+    "No post-approval isolated restore performed in this trial",
+    "Unknown incomplete outcomes require manual investigation; no automatic re-PUT",
+    "Old 72-hour observation coverage gaps remain unchanged"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": [
+    "isolated network namespace; no published ports",
+    "unavailable",
+    "current",
+    "stale",
+    "wrong_site",
+    "future",
+    "oversize",
+    "injection",
+    "current",
+    "source ledger and evidence unchanged after export and HTTP GET/POST"
+  ],
+  "containers_removed": true,
+  "production_deployed": false,
+  "scope": "real WordPress authenticated HTTP tests; generated copied daily state; no external notifications or S3 calls",
+  "php_validation_checks": 65,
+  "python_export_tests": 6,
+  "fixed_product_issue": "POST rejection moved before admin page headers; final HTTP response 405 confirmed",
+  "limitations": [
+    "local unsigned read-only snapshot, not independent attestation",
+    "no deployed scheduler or cross-host transport",
+    "HTTP integration; no visual browser acceptance"
+  ],
+  "source_sha256": {
+    "src/DailyAdmin.php": "161f370d9fde5a4b0db2d9583aefa735389a6b192829236c6051738361f126c5",
+    "tools/daily-admin-status.py": "fed4ef9924fe271fd08321bb84452b0f27f6228060defd0fd3d8f408eb939cab",
+    "ozeki-wordpress-resilience.php": "7a48daee244ec555a1c069b36ae5c01494f6c97ea6abe6f7fd5d4db26e16329f",
+    "tests/test_daily_admin.php": "1e44f0d34ebdeed9f05fb343aebe4fe83df9c0c5379c54f60d1febcc62b5ef68",
+    "tests/test_daily_admin_status.py": "1e4b1b4352f4bb03ac1e769dd90e92256617b913bd2de9f5c4533288c776281e",
+    "lab/notification-admin/daily-http-test.py": "be73561b410738bea4c74335756182953286f742b6edd01f2ec7ac6efb8474c6"
+  }
+}

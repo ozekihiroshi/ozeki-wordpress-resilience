@@ -21,3 +21,7 @@
 S3転送・圧縮・メディア全体の共通化、完成版の単独導入UI、他方のプラグイン検出・移行案内は残る。DBダンプの最初の共通化を完了したことと、製品全体の完成を区別する。
 
 [公開初版の検査](../../evidence-public/public-clone-validation.json) / [共通部品の復元](../../evidence-public/shared-core-recovery.json) / [既存製品の回帰](../../evidence-public/legacy-core-regression.json)
+
+## 2026-10-19 採用状況の補足
+
+上記の「既存製品へ導入」は開発ブランチへの実装と当時の検証を指します。既存製品側のPRはドラフトのままで、mainへの採用・WordPress.orgへの公開は未完了です。[現在の状態と完了条件](shared-core-adoption-status.md)で追跡します。

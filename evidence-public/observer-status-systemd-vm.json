@@ -1,0 +1,163 @@
+{
+  "passed": true,
+  "checks": [
+    "systemd starts real pinned SSH pulls",
+    "both unmodified 60-second services update periodically",
+    "before-stop service identity hardening permissions and duplicate rejection",
+    "source alarm reaches VM through service",
+    "source recovery reaches VM through service",
+    "explicit service restart refreshes reports",
+    "before-reboot service identity hardening permissions and duplicate rejection",
+    "guest OS reboot changes Boot ID",
+    "enabled services automatically refresh both reports after reboot",
+    "after-reboot service identity hardening permissions and duplicate rejection",
+    "alarm and recovery history survives service and OS restart",
+    "WSL observation host not rebooted"
+  ],
+  "events": [
+    {
+      "event": "guest-booted",
+      "at": "2026-10-20T22:18:00.146971+00:00"
+    },
+    {
+      "event": "systemd-running",
+      "at": "2026-10-20T22:23:02.070668+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-running",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "services-stopped",
+      "at": "2026-10-20T22:23:05.604943+00:00"
+    },
+    {
+      "event": "systemd-stopped",
+      "at": "2026-10-20T22:28:58.463792+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-stopped",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "systemd-resumed",
+      "at": "2026-10-20T22:29:18.382921+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-resumed",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "guest-reboot-requested",
+      "at": "2026-10-20T22:29:33.896520+00:00",
+      "boot_id": "fa33d2c0-8bc3-41eb-9547-5b66a1985ba6"
+    },
+    {
+      "event": "systemd-reboot-recovered",
+      "at": "2026-10-20T22:31:12.788666+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-reboot-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "guest-reboot-verified",
+      "at": "2026-10-20T22:31:17.035303+00:00",
+      "boot_id": "82dc7e7d-c1a4-4827-bb4c-5aa2a3030368"
+    }
+  ],
+  "resources_removed": true,
+  "interval_seconds": 60,
+  "real_guest_reboot": true,
+  "host_unchanged": true,
+  "scope": "Dedicated Ubuntu VM runs production systemd template; external independent observer; real SSH; generated daily reports; WordPress reads guest output through dedicated9p test share; no S3/production/72h observation changes",
+  "extra_permissions": {
+    "passed": true,
+    "checks": [
+      "source duplicate rejected by flock with service UID and GID",
+      "receiver duplicate rejected by flock with service UID and GID",
+      "owr-relay cannot modify installed code",
+      "www-data cannot modify installed code"
+    ]
+  },
+  "initial_trial": {
+    "accepted": false,
+    "phase": "guest initial SSH readiness before service installation",
+    "classification": "test harness readiness handling",
+    "cause": "one 12-second SSH probe timed out during guest startup; exception bypassed overall boot retry budget",
+    "correction": "retry probe timeouts within original overall deadline; failed trial retained"
+  },
+  "second_trial": {
+    "accepted": false,
+    "phase": "Selenium session creation before page access",
+    "classification": "test harness readiness",
+    "cause": "fixed eight-second wait connected before Selenium listener was ready",
+    "correction": "bounded /status ready check before creating a browser session"
+  },
+  "code_sha256": {
+    "examples/observer-status-relay/owr-observer-status@.service": "00958454209bc6f79a331da9c4185faac63ce6a1dbea66cda2f1178463903e08",
+    "tools/run-observer-relay-vm-lab.py": "499c336d8f05af3b932693663c135195d9318685e6dee04ad2ab8e26b4c5b099",
+    "lab/observer-relay-vm/start.py": "9045548ff4c5a26c521b369bff8a82c827d9a8069de7de041b8855682c73293e"
+  }
+}
