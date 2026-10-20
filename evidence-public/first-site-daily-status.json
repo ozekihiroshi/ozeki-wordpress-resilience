@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "cases": [
+    "real_restore_registered",
+    "duplicate_idempotent",
+    "status_read_only",
+    "expiry_not_hidden",
+    "wrong_hash_rejected",
+    "wrong_set_rejected",
+    "wrong_version_rejected",
+    "cleanup_false_rejected",
+    "wrong_network_rejected",
+    "wrong_capture_rejected",
+    "pending_rejected",
+    "later_failed_observation_preserves_prior_success"
+  ],
+  "before": {
+    "format": "owr-first-site-daily-v1",
+    "due_day": "2026-10-20",
+    "runs": [
+      {
+        "day": "2026-10-20",
+        "id": "first-daily-0cb9ce208261639587bce3c6",
+        "state": "approved",
+        "reason": "independent_signature_and_fixed_versions_verified",
+        "digest": "cee870158f05d645503eec05d8f0b5f8d6f0844586c171f0d7cecfb1c5f52beb",
+        "storage_complete": true,
+        "approval_state": "approved",
+        "restore_allowed": false,
+        "manifest_sha256": "96c0a74fc16123ea7bcaaff614ea61354f9325501773a0ab6f1fc967d86ff73c",
+        "approved_key_sha256": "d0c5c0ee2e2ee36a8708d6bd9bd9c1bc0451cf7961abbaeda9ff8704d252fb2b",
+        "approval_expires_at": "2026-10-27T10:05:06.445228+00:00",
+        "restore_state": "not_observed",
+        "restore_verified": false,
+        "restore_observation_count": 0,
+        "phase": "approved"
+      }
+    ],
+    "missing_due_slot": false,
+    "production_recovery_approved": false
+  },
+  "after": {
+    "format": "owr-first-site-daily-v1",
+    "due_day": "2026-10-20",
+    "runs": [
+      {
+        "day": "2026-10-20",
+        "id": "first-daily-0cb9ce208261639587bce3c6",
+        "state": "approved",
+        "reason": "independent_signature_and_fixed_versions_verified",
+        "digest": "cee870158f05d645503eec05d8f0b5f8d6f0844586c171f0d7cecfb1c5f52beb",
+        "storage_complete": true,
+        "approval_state": "approved",
+        "restore_allowed": false,
+        "manifest_sha256": "96c0a74fc16123ea7bcaaff614ea61354f9325501773a0ab6f1fc967d86ff73c",
+        "approved_key_sha256": "d0c5c0ee2e2ee36a8708d6bd9bd9c1bc0451cf7961abbaeda9ff8704d252fb2b",
+        "approval_expires_at": "2026-10-27T10:05:06.445228+00:00",
+        "restore_state": "verified",
+        "restore_verified": true,
+        "restore_observation_count": 1,
+        "last_restore_report_sha256": "cf7ce7f79b7cea6fc09ee40a8a37eb89e8bc84f75744767a2686dd46be22b452",
+        "previous_restore_verified": false,
+        "phase": "restore_verified"
+      }
+    ],
+    "missing_due_slot": false,
+    "production_recovery_approved": false
+  },
+  "source_daily_files_unchanged": true,
+  "additional_s3_calls": 0,
+  "scope": "Dedicated copied two-asset ledger plus existing generated recovery evidence",
+  "tests": {
+    "integration_cases": 12,
+    "aggregation_unit": 6,
+    "aggregation_optimized": 6,
+    "daily_regression": 12
+  },
+  "source_sha256": {
+    "tools/first-site-daily.py": "c3790f9d33427827e4a4c94696aa10a5b0edb36fbe0487e3d94cc39f44f267d9",
+    "tools/first-site-restore-observations.py": "5600299eac78f5468ce7f31ee48fbe5bf501de35318263ca17a73eca91f6ffae",
+    "tests/test_first_site_restore_observations.py": "0f2a29a0b2ba173be9d98a29a587a252d49ddd7afa8902edaa2ef57f6fb75192"
+  }
+}

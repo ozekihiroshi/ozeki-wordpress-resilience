@@ -1,0 +1,14 @@
+{
+  "source": {
+    "MainPID": "0",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "UnitFileState": "enabled"
+  },
+  "receiver": {
+    "MainPID": "0",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "UnitFileState": "enabled"
+  }
+}

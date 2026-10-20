@@ -1,0 +1,119 @@
+{
+  "format": "owr-first-site-s3-validation-v1",
+  "recorded_at": "2026-10-20T03:09:27.697614+00:00",
+  "passed": true,
+  "set_id": "AWS-6a91dbe6037a108a",
+  "results": [
+    {
+      "case": "http_and_direct_db_fenced",
+      "passed": true
+    },
+    {
+      "case": "real_capture_drain_standard_attachment_two_assets",
+      "passed": true,
+      "bytes": 29812647,
+      "tables": 12,
+      "attempt_id": "953cdc5772c2478e96dd1a4283d2122a"
+    },
+    {
+      "case": "isolated_dump_import_posts_attachment_and_http_resumed",
+      "passed": true
+    },
+    {
+      "case": "two_assets_fixed_versions_reader_retention_35_days",
+      "passed": true
+    },
+    {
+      "case": "separate_operator_process_signed_and_pinned_envelope",
+      "passed": true
+    },
+    {
+      "case": "bad_signature_rejected_before_asset_download",
+      "passed": true
+    },
+    {
+      "case": "signed_fixed_versions_and_capture_binding_verified",
+      "passed": true
+    },
+    {
+      "case": "fresh_offline_wordpress_database_media_and_http_restored",
+      "passed": true
+    }
+  ],
+  "source_hashes": {
+    "tools/protected-first-site-set.py": "6a4df2da31162c0b1f49e61281648d56b9d5e693fc82b2969b4e5df7e30e1da9",
+    "tools/first-site-lab-sign.py": "5d5c863d83127e17d6d845036ca9cc4837a2e10afb751b584e7132360d11232d",
+    "tools/first-site-s3-capture.py": "fb709a04e7c600105c36c5ce8e15307fe96b966c2340957e1bc1abc04a79066b",
+    "tools/first-site-s3-cases.py": "1e27d3b083252f51d547fe98e046803a82282c1f801817998504365e77933a46",
+    "tools/run-first-site-s3-lab.py": "0c667ab229f56f628bfee53160ffe1669948d73ece072b8af131dd3c1bf60c6c",
+    "tests/test_first_site_set.py": "a62f34a57ed8fba0cbf2e1955dff0cdf72085129e333a2c3ae3ac5735f1739f2",
+    "tools/queue-s3-adapter.py": "447ed6f7c3ce59539a9eba8466fe30feeddf92f5d96e119e8afd9503a1c55a9d",
+    "tools/lab-s3-request.py": "b796e39b6c96a10bd9ad0e69158d653db84437503b0a8adeb9ecfdf1384e3694",
+    "tools/first-site-capture.py": "bf9b199bc74869a5c5a7c86fe1657c74a9c4c71942b7003764c1ee264b848972"
+  },
+  "unit_tests": 6,
+  "existing_capture_tests": 14,
+  "existing_queue_gate_tests": 11,
+  "optimized_unit_tests": 6,
+  "storage": [
+    {
+      "method": "PUT",
+      "key": "sites/isolated-queue-lab/sets/AWS-6a91dbe6037a108a/database.sql",
+      "sha256": "5af7e67b759a4a5a2c74b9ceb5046f8a2a4993f9c8ee0b3aeaa7266ca499f331",
+      "bytes": 93303,
+      "state": "acknowledged",
+      "version_id": "KSqV7UBRC2lZrzB6f_a6toMn3qa3600g"
+    },
+    {
+      "method": "PUT",
+      "key": "sites/isolated-queue-lab/sets/AWS-6a91dbe6037a108a/wordpress-files.tar.gz",
+      "sha256": "aafa648c560f8e2cfd113422f0ef4131951fbb4b63a800ef7fff7069afee6de0",
+      "bytes": 29719344,
+      "state": "acknowledged",
+      "version_id": "DUBIXExtj7CKi72bToETjYGynIGDa4gS"
+    },
+    {
+      "method": "PUT",
+      "key": "sites/isolated-queue-lab/sets/AWS-6a91dbe6037a108a/recovery-set.json",
+      "sha256": "9ac9d9bbc7ab65fbf99d429dc891f4e3cc62874744fa44f11207655392446882",
+      "bytes": 2694,
+      "state": "acknowledged",
+      "version_id": "4tGGIKhJJyVek70yGCCGwyLoskZ2031X"
+    },
+    {
+      "method": "PUT",
+      "key": "sites/isolated-queue-lab/sets/AWS-6a91dbe6037a108a/recovery-set.sig",
+      "sha256": "f752dedaf7e74a9f86028ac4a8b1b58a581db942966191b5aed996fe81b189f5",
+      "bytes": 256,
+      "state": "acknowledged",
+      "version_id": "WOQQI2CmeZ9._TrNrQPkqEQtU8E0hH14"
+    }
+  ],
+  "retention_until": "2026-11-24T03:17:29+00:00",
+  "restore": {
+    "passed": true,
+    "assets_verified": 2,
+    "attempt_id": "953cdc5772c2478e96dd1a4283d2122a",
+    "scope": "storage_integrity_candidate_only",
+    "production_recovery_approved": false,
+    "malware_cleanliness": "unverified"
+  },
+  "resources_removed": true,
+  "signer_boundary": "separate process/directory and separate EC2 transport roles; same WSL user, not host isolation",
+  "production_data": false,
+  "production_key": false,
+  "production_recovery_approved": false,
+  "original_report_sha256": "c60628d61827529ed36a8120dce775a63816862589d22fc3d3b822aa774a2af9",
+  "limitations": [
+    "external development adapter, not plugin end-to-end acceptance",
+    "same WSL user for capture and signer; no independent host security test",
+    "no automatic uncertain-PUT resume",
+    "no malware cleanliness or production publication approval"
+  ],
+  "prior_run": {
+    "result": "failed before any S3 request",
+    "reason": "reused missing-attachment negative test encountered TimeoutExpired before expected reason; release confirmed",
+    "classification": "external test expectation mismatch; timing cause unproven; no plugin defect established",
+    "action": "retain original journals; use dedicated successful capture setup for S3 roundtrip; no deadline relaxation"
+  }
+}

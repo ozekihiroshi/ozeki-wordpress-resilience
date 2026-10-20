@@ -4,6 +4,8 @@
 
 プラグインZIPの導入手順は[専用ガイド](plugin-candidate-install.md)へ分離しています。以下は外部構成・継続試験を含む説明です。
 
+実サイト向けの次期対応範囲は[最初のサイト構成と取得方式](../spec/13-first-site-capture-profile.md)、担当者の操作順は[導入から復旧まで](first-site-operator-runbook.md)を参照。未実装工程を実行済みとは扱わない。
+
 ## まず見るもの
 
 1. [初版範囲](../releases/initial-release-readiness.md)で対象と未達を確認する。
@@ -28,13 +30,15 @@ Linux秘密ファイルは担当実行ユーザー所有0600、私有状態は07
 
 WSL内の日次台帳：`/home/ozeki/.local/share/owr-release-soak-20261019`。署名担当側：`/home/ozeki/.local/share/owr-release-soak-operator-20261019`。この2つを消して再試行しない。
 
-日次保存の手動起動（同日の二重保存は台帳が防ぐ）：
+今回の専用試験では10月19日・20日分は完了済み。次は10月21日03:00 JST以降に限る。実行中処理と台帳を先に確認し、running/unknownがあれば起動しない。以下は実施担当向けで、読者が並行して実行する手順ではない。現在の環境ではプロセス限定ネットワーク補助を使用する。
+
+日次保存の手動起動（最大3保存セット、結果不明の再送は禁止）：
 
 ```sh
-python3 /mnt/d/workspace/ozeki-wordpress-resilience/tools/daily-backup-lab.py tick --storage s3 --execute-lab --state-dir /home/ozeki/.local/share/owr-release-soak-20261019
+python3 /mnt/d/workspace/wp-rescue/release-readiness/with-process-network.py python3 /mnt/d/workspace/ozeki-wordpress-resilience/tools/daily-backup-lab.py tick --storage s3 --execute-lab --state-dir /home/ozeki/.local/share/owr-release-soak-20261019
 ```
 
-状態確認（読取り主体。ただし中断したrunningをunknownへ評価する）：
+変更しない台帳確認は今回の試験専用 `python3 /mnt/d/workspace/wp-rescue/release-readiness/progress.py` を使う。以下の製品開発用statusは中断したrunningをunknownへ評価するため、完全な読取り専用ではない：
 
 ```sh
 python3 /mnt/d/workspace/ozeki-wordpress-resilience/tools/daily-backup-lab.py status --storage s3 --state-dir /home/ozeki/.local/share/owr-release-soak-20261019

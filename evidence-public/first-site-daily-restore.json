@@ -1,0 +1,83 @@
+{
+  "format": "owr-first-site-daily-restore-evidence-v1",
+  "result": {
+    "assets_verified": true,
+    "completed_at": "2026-10-20T10:59:40.298068+00:00",
+    "format": "owr-first-site-daily-restore-v1",
+    "isolated_restore": {
+      "containers": [
+        "owr-daily-restore-1025a65f73a8-db",
+        "owr-daily-restore-1025a65f73a8-web"
+      ],
+      "fresh_database_credentials": true,
+      "http": {
+        "post": true,
+        "status": 200
+      },
+      "network": "none + shared private namespace",
+      "passed": true,
+      "published_ports": false,
+      "resources_removed": true,
+      "source_mounts": false,
+      "wordpress": {
+        "attachment": "one.png",
+        "cron_disabled": true,
+        "http_blocked": true,
+        "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+        "post": 1
+      }
+    },
+    "malware_cleanliness": "unverified",
+    "passed": true,
+    "production_recovery_approved": false,
+    "restore_started": true,
+    "set_id": "AWS-f222f329f1737d20",
+    "signature_source": "independent local signed document; asset versions from S3",
+    "source_server_used": false,
+    "source_workspace_used": false,
+    "verification": {
+      "assets_verified": 2,
+      "attempt_id": "23fe91cc73b544afb941061e4d64c7f7",
+      "malware_cleanliness": "unverified",
+      "passed": true,
+      "production_recovery_approved": false,
+      "scope": "storage_integrity_candidate_only"
+    },
+    "verified_bytes": 29812385
+  },
+  "reads": [
+    {
+      "method": "GET",
+      "version_id": "eC6ibCA9TjGbWuJxK6_WYpYHBfGGeJqB",
+      "bytes": 93322,
+      "sha256": "3b47d1039b0231cfa5f67a016f03d298d24c37da178c23efce5dcb031d98e21a"
+    },
+    {
+      "method": "GET",
+      "version_id": "H3fCOglfi3lq9xuLpLqx5NI9j8jiF.XS",
+      "bytes": 29719063,
+      "sha256": "a94aa756e3da0ab74df69eea99c1bb4e805bb3a3c7011d3b62d0b3da61cd5f57"
+    }
+  ],
+  "additional_puts": 0,
+  "daily_state": "approved",
+  "original_approval_record_overwritten": false,
+  "tests": {
+    "normal": 10,
+    "optimized": 10
+  },
+  "source_sha256": {
+    "tools/first-site-daily-restore.py": "9ff1e55f34d0a8d1c2c6a343923938a3c4e069a20201c7825162ac7773f0237b",
+    "tests/test_first_site_daily_restore.py": "4409b85714d13cb28ada4380391aba1d9c446153570575805bb3a84443b3c44b",
+    "tools/protected-first-site-set.py": "6a4df2da31162c0b1f49e61281648d56b9d5e693fc82b2969b4e5df7e30e1da9",
+    "tools/queue-s3-adapter.py": "447ed6f7c3ce59539a9eba8466fe30feeddf92f5d96e119e8afd9503a1c55a9d",
+    "tools/first-site-capture.py": "ecc7943696ba35f6f3fb2e70777e4d3737576f8cadfc62cd46c792a048136854"
+  },
+  "limitations": [
+    "Generated fixture only; not live malware containment or production reopening approval",
+    "Signature/envelope from independent local storage, not downloaded from S3",
+    "Same WSL user; independent-host signing not proven",
+    "Restore result kept separately; daily status integration not implemented",
+    "Separate from original 72-hour observation; historical gaps preserved"
+  ]
+}

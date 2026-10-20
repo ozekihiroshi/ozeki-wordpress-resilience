@@ -2,7 +2,7 @@
 
 > **試作・開発版 / Experimental prototype**
 > このリポジトリは、WordPressの侵害・障害後の復旧を研究・開発するための公開基盤です。本番保護が完成した製品ではありません。
-> インストール用ZIPは通知管理画面の試作版です。バックアップ取得・署名・復元・監視・通知配送には別の外部処理と設定が必要です。
+> インストール用ZIPは通知・日次バックアップ・復元・独立監視の状態を扱う管理画面の試作版です。バックアップ取得・署名・復元・監視・通知配送には別の外部処理と設定が必要です。
 > 開発への参加・検証を歓迎します。[開発の始め方](CONTRIBUTING.md)と[現在の機能・未達](docs/releases/plugin-candidate-scope.md)を確認してください。
 
 WordPressが侵害や障害で利用不能になっても、復旧資産と復旧手段を残し、サイトを立て直すための基盤です。DB・ファイル・キューの取得整合性、外部保管、固定版の独立取得、署名検証、隔離復元を扱います。通知・watchdogは、その失敗や未完了を見落とさないための機能です。
@@ -11,7 +11,7 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 
 ## インストール用開発候補
 
-`0.1.0-dev.1` は通知管理画面のインストール用候補です。[機能と配布構成](docs/releases/plugin-candidate-scope.md)・[ZIP導入と停止／再開](docs/guides/plugin-candidate-install.md)を参照してください。外部ツールは開発キットとして分けます。[公開候補の検証と制限](docs/releases/plugin-candidate-review.md)も参照してください。3日間の外部構成観測と、この候補の導入・配布準備は並行して進めます。
+`0.1.0-dev.1` は管理画面のインストール用候補です。[機能と配布構成](docs/releases/plugin-candidate-scope.md)・[ZIP導入と停止／再開](docs/guides/plugin-candidate-install.md)を参照してください。外部ツールは開発キットとして分けます。[公開候補の検証と制限](docs/releases/plugin-candidate-review.md)も参照してください。3日間の外部構成観測と、この候補の導入・配布準備は並行して進めます。
 
 ## 最初に読む
 
@@ -19,6 +19,10 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 2. [導入・起動・確認・停止・再開](docs/guides/initial-release-setup.md)
 3. [開発環境](docs/guides/development-setup.md)と[ツール一覧](tools/README.md)
 4. [検証記録の索引](evidence-public/README.md)と[侵害耐性の公開受入条件](docs/spec/07-cyber-resilience-release-gates.md)
+
+次の実装対象：[最初のサイト構成と取得方式](docs/spec/13-first-site-capture-profile.md)／[導入から復旧までの担当者操作](docs/guides/first-site-operator-runbook.md)。実装済み操作と未実装工程を区別しています。
+
+新規の[収集設定検査と取得アダプター](docs/guides/first-site-capture-lab.md)を専用生成環境で検証しました。外部処理の初期実装で、S3保管・署名への接続と実サイト適用は未完了です。既存の72時間観測と配布候補は変更していません。
 
 ## 現在確認できていること
 
@@ -46,7 +50,7 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 4. 3日次枠・72時間以上を観測し、欠測・承認待ち・停止・通知失敗・容量変化を確認。
 5. 結果と既知の制限をそろえ、GitHubの研究・開発版候補として整備。
 
-継続試験は進行中です。72時間の実測が終わる前に全項目完了とは表示しません。[初版判定表](docs/releases/initial-release-readiness.md)を参照。以前の開発履歴は[運用化計画](docs/spec/10-operationalization-plan.md)に保持します。
+2026年10月20日10:42 JST時点で10月19日・20日の2日次枠は完了。10月21日分と72時間観測は継続中です。最短到達は10月22日15:55:56 JST。既知の約4時間半の観測空白を残し、日次成功・実経過・観測網羅性を別々に評価します。72時間の実測が終わる前に全項目完了とは表示しません。[初版判定表](docs/releases/initial-release-readiness.md)を参照。以前の開発履歴は[運用化計画](docs/spec/10-operationalization-plan.md)に保持します。
 
 初回実サイト候補の署名期限は2026年10月25日18:15:47（日本時間）。期限切れ時の検証省略は禁止です。今回の試験鍵による承認は、その候補の承認更新ではありません。
 
@@ -74,3 +78,43 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 - [M1評価](docs/m1/10-milestone-1-evaluation.md) / [M1合成資産の復旧](docs/m1/07-independent-recovery-procedure.md)
 
 ライセンス：GPL-2.0-or-later。
+
+共通DB部品の既存製品への採用は別途追跡しています。[採用状況と残作業](docs/releases/shared-core-adoption-status.md)。
+
+2資産の取得から実S3固定版・保持確認・試験署名・新規隔離WordPressへの復元を専用環境で確認しました。[手順・信頼境界・制限](docs/guides/first-site-s3-recovery-lab.md)。既存72時間観測、公開ZIP、共通部品とは別の検証です。
+
+取得中の停止確認タイムアウトを専用環境で再現し、Docker出力の読み取りを継続する修正と確認間隔の修正を行いました。[原因・比較試験・修正後の検証](docs/guides/first-site-timeout-investigation.md)。
+
+二資産取得アダプターの[日次接続と署名承認待ち](docs/guides/first-site-daily.md)を専用環境向けに追加しました。固定版保存完了と独立承認を分け、同日重複・途中停止・送信結果不明を扱います。既存の三資産72時間観測とは別の台帳です。実サイト用スケジューラーや管理画面への統合は未完了です。
+
+承認済み日次セットからの[固定版取得・隔離復元](docs/guides/first-site-daily-restore.md)も専用生成環境で確認しました。保存元の作業ファイルを使わず、独立保管した署名文書とS3二資産から新規WordPressへ復元します。復元結果は保存時の承認記録と分けて保管します。
+
+[日次状態への復元結果集約](docs/guides/first-site-daily-status.md)により、保存完了・署名承認待ち・承認済み・復元検証済みをCLI/JSONで区別できます。復元観測は明示登録で追記し、元の承認記録を上書きしません。失敗・期限切れ・証拠不整合も表示します。
+
+[隔離復元からの結果自動登録](docs/guides/first-site-auto-recovery.md)を専用ワーカーで実装しました。復元結果と登録状態を分離し、登録失敗時は再復元せず登録だけ再試行します。途中停止は結果不明として保持し、同じ要求の重複実行を防ぎます。
+
+途中停止後の明示的な確認・後片付け・新規要求への移行は、[隔離復元の後片付け手順](docs/guides/first-site-recovery-cleanup.md)を参照してください。生成データ専用CLIで実装・検証済みです。
+
+日次バックアップ・隔離復元・途中停止後の後片付け履歴は、[読取り専用管理画面](docs/guides/daily-admin-status.md)で確認できます。専用環境での試作機能です。
+
+日次・復元状態の[実ブラウザ検証結果](docs/guides/daily-admin-browser.md)：権限・読取り専用性と通常幅／狭い幅の表示を専用環境で確認しています。
+
+状態報告の[定期更新・SSH受渡し](docs/guides/daily-status-periodic.md)は生成側とWordPress側を分離し、転送失敗と更新停止を表示します。専用環境で検証済み、本番配置は未実施です。
+
+専用環境での日次状態報告のsystemd停止・再開（実時間5分以上）と管理画面の回復は、[定期状態報告の検証範囲](docs/guides/daily-status-periodic.md#検証範囲)を参照してください。本番常駐・別物理ホスト検証とは区別しています。
+
+[本番向けsystemd設定・権限・OS再起動の検証と導入手順](docs/guides/daily-status-systemd-production.md)を追加しました。専用Ubuntu VMでの確認であり、本番環境への配置は含みません。
+
+[生成・取得を別VMに分けた通信断・片側停止・再起動後の回復試験](docs/guides/daily-two-vm-recovery.md)を追加しました。独立した2台のVMで確認しており、物理ホストは共通です。
+
+[日次状態報告の独立watchdogと警報・回復通知](docs/guides/daily-watchdog.md)を追加しました。2台VMの通信断・OS停止とローカル通知先への配送・再送を検証し、物理ホスト全体の障害と実機プッシュ受信は対象外です。
+
+[生成側・取得側の独立watchdog管理画面](docs/guides/daily-watchdog-admin.md)で、状態・警報発生と解消履歴・配送集計を読取り専用で確認できます。専用環境で検証済み、本番配置は未実施です。
+
+[独立watchdog報告の定期受渡し](docs/guides/observer-status-relay.md)を追加しました。専用環境の実SSHで転送失敗・watchdog更新停止・取得停止と管理画面の回復を確認しています。
+
+[独立watchdog報告転送のsystemd・OS再起動検証](docs/guides/observer-status-systemd.md)を追加しました。専用Ubuntu VMで60秒周期、停止・再開、OS再起動後の自動起動と管理画面の回復を確認しています。
+
+状態報告・定期転送のZIP導入・更新と保持対象は[配布ガイド](docs/guides/status-report-zip.md)を参照。検証済み候補は `dist/candidate-20261021-status-validated`（試作版、未公開）。
+
+[2026-10-21初版候補レビュー](docs/releases/initial-candidate-review.md) / [検証済み固定ZIP](release-candidates/20261021/README.md)。72時間観測の最終判定とは独立した試作版です。

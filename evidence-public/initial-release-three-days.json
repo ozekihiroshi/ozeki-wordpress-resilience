@@ -1,0 +1,174 @@
+{
+  "observed_at": "2026-10-20T18:31:02.898351+00:00",
+  "daily_roundtrips_complete": true,
+  "elapsed_72_hours": false,
+  "final_acceptance": false,
+  "scope": "external CLI and cooperative generated fixtures, not plugin-only acceptance",
+  "days": {
+    "2026-10-20": {
+      "completion": {
+        "day": "2026-10-20",
+        "set_id": "AWS-dd96016a79f0e126",
+        "storage_cases": 34,
+        "restore_cases": 42,
+        "restore_report_sha256": "4af6cadbaa800728bc70a6d521f7c1cc26fdea4b7023943cdf719d895d35b232",
+        "manifest_sha256": "12b39a49bfe7e97491601ed520586f90df3a05f6f801f55d35cc620ebccb36fb",
+        "public_key_sha256": "6663487c2a30cd130ab1df23d5c58e652c5eaed7c4de76c96e908f045e104ada",
+        "minimum_retention_until": "2026-11-23T21:57:39+00:00",
+        "stored_bytes": 29843290,
+        "disposable_private_key_destroyed": true,
+        "production_data_used": false,
+        "production_key_used": false,
+        "separation": "separate processes and directories; same WSL user",
+        "completed_at": "2026-10-19T21:54:12.203961+00:00"
+      },
+      "continuity": {
+        "passed": true,
+        "injected_local_failure": true,
+        "original_pending_events": 4,
+        "original_event_ids_retained": true,
+        "all_delivered": true,
+        "trust_unchanged": true,
+        "real_external_notifications_sent": 0,
+        "monitor": {
+          "open_incidents": [],
+          "undelivered": 0,
+          "delivered_total": 8
+        }
+      },
+      "completion_sha256": "6ed50e340b36fe5a5ff909012723b32d8d36527c75d62c405296511f376b28e2",
+      "continuity_sha256": "5d4d6b043f73db7c6f94b9a38808a8ffb56dc42a669017a1156f6d96cd97713e"
+    },
+    "2026-10-21": {
+      "completion": {
+        "day": "2026-10-21",
+        "set_id": "AWS-359b94d5daa10da4",
+        "storage_cases": 34,
+        "restore_cases": 42,
+        "restore_report_sha256": "67c611b10a308dfda299426a35eb90112374abd8ddae50dbe694cf7025057721",
+        "manifest_sha256": "60a18acce103b33da98814850448bf4cd2cef9b5db505ed01e229cb7a9842b58",
+        "public_key_sha256": "54cb39df0c0f957c2e395a1eee45986527c2d95a6baa0502d1f6c1e18f452566",
+        "minimum_retention_until": "2026-11-24T18:34:21+00:00",
+        "stored_bytes": 29842336,
+        "disposable_private_key_destroyed": true,
+        "production_data_used": false,
+        "production_key_used": false,
+        "separation": "separate processes and directories; same WSL user",
+        "completed_at": "2026-10-20T18:30:38.225936+00:00"
+      },
+      "continuity": {
+        "passed": true,
+        "injected_local_failure": true,
+        "original_pending_events": 5,
+        "original_event_ids_retained": true,
+        "all_delivered": true,
+        "trust_unchanged": true,
+        "real_external_notifications_sent": 0,
+        "monitor": {
+          "open_incidents": [],
+          "undelivered": 0,
+          "delivered_total": 10
+        }
+      },
+      "completion_sha256": "982c5a1828e39419e05ed6ba54d93c5741ff157ba25142f5f155a48f205f4251",
+      "continuity_sha256": "a3c738899c6b59b0bf0828b53e27a9d3c90a2744e331ff6734c5580617326915"
+    },
+    "2026-10-19": {
+      "completion": {
+        "day": "2026-10-19",
+        "set_id": "AWS-24a887b4ca4d18e0",
+        "storage_cases": 34,
+        "restore_cases": 42,
+        "restore_report_sha256": "d28d30d0ee2ffeac94285cfd967305c141f654427e7ce50d631cd88e348372a8",
+        "manifest_sha256": "a1aabb44e744b0b5566920002b03425c22e11c8ab0f80061dd49c22c68b863f3",
+        "public_key_sha256": "bcbd883744f13602d2d6ae7bccbd062c98ff8debeac7a45f339c33a47e0a1b05",
+        "minimum_retention_until": "2026-11-23T07:33:46+00:00",
+        "stored_bytes": 29842299,
+        "disposable_private_key_destroyed": true,
+        "production_data_used": false,
+        "production_key_used": false,
+        "separation": "separate processes and directories; same WSL user",
+        "completed_at": "2026-10-19T07:32:12.977696+00:00"
+      },
+      "continuity": {
+        "passed": true,
+        "injected_local_failure": true,
+        "original_pending_events": 2,
+        "original_event_ids_retained": true,
+        "all_delivered": true,
+        "trust_unchanged": true,
+        "real_external_notifications_sent": 0,
+        "monitor": {
+          "open_incidents": [],
+          "undelivered": 0,
+          "delivered_total": 4
+        }
+      },
+      "completion_sha256": "b4793986bc6e77a061875c5bd131039c834bea6cd9b55d168058d51603cd6a37",
+      "continuity_sha256": "d87e165bf5f622813338f8e06eb39ee7f3f40ba376e9021b9865bb38eb64ec50"
+    }
+  },
+  "audit": {
+    "observed_at": "2026-10-20T18:30:46.583387+00:00",
+    "plan": {
+      "started_at": "2026-10-19T06:55:56.778505+00:00",
+      "not_before": "2026-10-22T06:55:56.778505+00:00",
+      "days": [
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21"
+      ],
+      "maximum_sets": 3,
+      "maximum_set_bytes": 134217728
+    },
+    "samples": [
+      {
+        "day": "2026-10-19",
+        "state": "approved",
+        "stored_bytes": 29842299
+      },
+      {
+        "day": "2026-10-20",
+        "state": "approved",
+        "stored_bytes": 29843290
+      },
+      {
+        "day": "2026-10-21",
+        "state": "approved",
+        "stored_bytes": 29842336
+      }
+    ],
+    "stored_bytes_total": 89527925,
+    "all_storage_attempts": [
+      {
+        "run_id": "daily-db28a87e9d93ab3f2a2cdb2d",
+        "acknowledged_bytes": 29842336,
+        "potential_bytes": 29842336,
+        "uncertain_puts": 0
+      },
+      {
+        "run_id": "daily-0265b7a796d643ec2d1aec1d",
+        "acknowledged_bytes": 29842299,
+        "potential_bytes": 29842299,
+        "uncertain_puts": 0
+      },
+      {
+        "run_id": "daily-288c89944e00d1742eeb1d57",
+        "acknowledged_bytes": 29843290,
+        "potential_bytes": 29843290,
+        "uncertain_puts": 0
+      }
+    ],
+    "potential_storage_bytes_including_uncertain": 89527925,
+    "local_free_bytes": 949614485504,
+    "capacity_and_continuity_problems": [],
+    "trust_file_count": 15,
+    "monitor": {
+      "open_incidents": [],
+      "undelivered": 0,
+      "delivered_total": 12
+    },
+    "elapsed_72_hours": false,
+    "external_notifications_sent": 0
+  }
+}

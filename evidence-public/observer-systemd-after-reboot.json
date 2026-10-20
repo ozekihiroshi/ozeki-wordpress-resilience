@@ -1,0 +1,26 @@
+{
+  "source": {
+    "MainPID": "666",
+    "User": "owr-relay",
+    "Group": "www-data",
+    "PrivateTmp": "yes",
+    "ProtectHome": "yes",
+    "ProtectSystem": "strict",
+    "NoNewPrivileges": "yes",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled"
+  },
+  "receiver": {
+    "MainPID": "665",
+    "User": "owr-relay",
+    "Group": "www-data",
+    "PrivateTmp": "yes",
+    "ProtectHome": "yes",
+    "ProtectSystem": "strict",
+    "NoNewPrivileges": "yes",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled"
+  }
+}

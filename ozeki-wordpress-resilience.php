@@ -9,3 +9,9 @@
 if (!defined('ABSPATH')) { exit; }
 require_once __DIR__ . '/src/NotificationAdmin.php';
 \Ozeki\Resilience\NotificationAdmin::boot();
+
+require_once __DIR__ . '/src/DailyAdmin.php';
+\Ozeki\Resilience\DailyAdmin::boot();
+
+require_once __DIR__ . '/src/DailyWatchdogAdmin.php';
+\Ozeki\Resilience\DailyWatchdogAdmin::boot();

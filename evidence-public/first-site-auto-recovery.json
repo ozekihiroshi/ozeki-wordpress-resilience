@@ -1,0 +1,154 @@
+{
+  "passed": true,
+  "cases": [
+    "real_fixed_versions_isolated_restore",
+    "lost_registration_ack_retained",
+    "retry_registration_without_get_or_restore",
+    "duplicate_request_no_rerun",
+    "one_restore_observation",
+    "failed_recovery_auto_registered_preserving_success",
+    "process_exit_partial_detected_without_rerestore"
+  ],
+  "restore": {
+    "assets_verified": true,
+    "completed_at": "2026-10-20T12:14:35.996476+00:00",
+    "format": "owr-first-site-daily-restore-v1",
+    "isolated_restore": {
+      "containers": [
+        "owr-daily-restore-2e171d31b7ce-db",
+        "owr-daily-restore-2e171d31b7ce-web"
+      ],
+      "fresh_database_credentials": true,
+      "http": {
+        "post": true,
+        "status": 200
+      },
+      "network": "none + shared private namespace",
+      "passed": true,
+      "published_ports": false,
+      "resources_removed": true,
+      "source_mounts": false,
+      "wordpress": {
+        "attachment": "one.png",
+        "cron_disabled": true,
+        "http_blocked": true,
+        "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+        "post": 1
+      }
+    },
+    "malware_cleanliness": "unverified",
+    "passed": true,
+    "production_recovery_approved": false,
+    "restore_started": true,
+    "set_id": "AWS-f222f329f1737d20",
+    "signature_source": "independent local signed document; asset versions from S3",
+    "source_server_used": false,
+    "source_workspace_used": false,
+    "verification": {
+      "assets_verified": 2,
+      "attempt_id": "23fe91cc73b544afb941061e4d64c7f7",
+      "malware_cleanliness": "unverified",
+      "passed": true,
+      "production_recovery_approved": false,
+      "scope": "storage_integrity_candidate_only"
+    },
+    "verified_bytes": 29812385
+  },
+  "pending": {
+    "format": "owr-first-site-daily-v1",
+    "due_day": "2026-10-20",
+    "runs": [
+      {
+        "day": "2026-10-20",
+        "id": "first-daily-0cb9ce208261639587bce3c6",
+        "state": "approved",
+        "reason": "independent_signature_and_fixed_versions_verified",
+        "digest": "cee870158f05d645503eec05d8f0b5f8d6f0844586c171f0d7cecfb1c5f52beb",
+        "storage_complete": true,
+        "approval_state": "approved",
+        "restore_allowed": false,
+        "manifest_sha256": "96c0a74fc16123ea7bcaaff614ea61354f9325501773a0ab6f1fc967d86ff73c",
+        "approved_key_sha256": "d0c5c0ee2e2ee36a8708d6bd9bd9c1bc0451cf7961abbaeda9ff8704d252fb2b",
+        "approval_expires_at": "2026-10-27T10:05:06.445228+00:00",
+        "restore_state": "verified",
+        "restore_verified": true,
+        "restore_observation_count": 1,
+        "last_restore_report_sha256": "d556ac0a9b13d95a49d886e9bb846422d2fb74678f336dddaf90f0f0f1172249",
+        "previous_restore_verified": false,
+        "recovery_attempt": {
+          "n": 1,
+          "request_id": "real-auto-01",
+          "day": "2026-10-20",
+          "state": "finished",
+          "outcome": "succeeded",
+          "registration": "pending",
+          "error_type": "OSError"
+        },
+        "phase": "registration_pending"
+      }
+    ],
+    "missing_due_slot": false,
+    "production_recovery_approved": false
+  },
+  "final": {
+    "format": "owr-first-site-daily-v1",
+    "due_day": "2026-10-20",
+    "runs": [
+      {
+        "day": "2026-10-20",
+        "id": "first-daily-0cb9ce208261639587bce3c6",
+        "state": "approved",
+        "reason": "independent_signature_and_fixed_versions_verified",
+        "digest": "cee870158f05d645503eec05d8f0b5f8d6f0844586c171f0d7cecfb1c5f52beb",
+        "storage_complete": true,
+        "approval_state": "approved",
+        "restore_allowed": false,
+        "manifest_sha256": "96c0a74fc16123ea7bcaaff614ea61354f9325501773a0ab6f1fc967d86ff73c",
+        "approved_key_sha256": "d0c5c0ee2e2ee36a8708d6bd9bd9c1bc0451cf7961abbaeda9ff8704d252fb2b",
+        "approval_expires_at": "2026-10-27T10:05:06.445228+00:00",
+        "restore_state": "verified",
+        "restore_verified": true,
+        "restore_observation_count": 1,
+        "last_restore_report_sha256": "d556ac0a9b13d95a49d886e9bb846422d2fb74678f336dddaf90f0f0f1172249",
+        "previous_restore_verified": false,
+        "recovery_attempt": {
+          "n": 1,
+          "request_id": "real-auto-01",
+          "day": "2026-10-20",
+          "state": "finished",
+          "outcome": "succeeded",
+          "registration": "recorded",
+          "error_type": null
+        },
+        "phase": "restore_verified"
+      }
+    ],
+    "missing_due_slot": false,
+    "production_recovery_approved": false
+  },
+  "source_daily_files_unchanged": true,
+  "s3_gets": 2,
+  "additional_puts": 0,
+  "injected_faults": [
+    "registration acknowledgement loss",
+    "failed recovery report",
+    "process exit before final report"
+  ],
+  "limitations": [
+    "local same-user observation delivery, not independent attestation",
+    "partial interrupted resources require manual inspection; no automatic cleanup/recovery retry"
+  ],
+  "tests": {
+    "worker_normal": 9,
+    "worker_optimized": 9,
+    "daily_regression": 12,
+    "integration_cases": 7
+  },
+  "source_sha256": {
+    "tools/first-site-daily-recovery-worker.py": "5e0678ec9ced6fb57912cea030cb4363ca32308b6a5f3c45cc82d5690911d378",
+    "tools/first-site-daily.py": "146481974bcca95320c59fd44a1bf3ac6bf84dcfe1546bfedb74af5ca789e37c",
+    "tools/first-site-daily-restore.py": "9ff1e55f34d0a8d1c2c6a343923938a3c4e069a20201c7825162ac7773f0237b",
+    "tools/first-site-restore-observations.py": "5600299eac78f5468ce7f31ee48fbe5bf501de35318263ca17a73eca91f6ffae",
+    "tests/test_first_site_recovery_worker.py": "a7bd4b6f17efa3b0ae36e34f60996827aace87bb0bf9ca8140ab435c595d8ad3"
+  }
+}

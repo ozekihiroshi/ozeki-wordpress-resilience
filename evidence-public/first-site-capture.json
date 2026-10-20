@@ -1,0 +1,71 @@
+{
+  "format": "owr-first-site-capture-validation-v1",
+  "recorded_at": "2026-10-20T02:40:31.334868+00:00",
+  "target": "external capture adapter and generated WordPress/MariaDB fixture; not plugin end-to-end acceptance",
+  "unit_tests": 14,
+  "optimized_unit_tests": 14,
+  "existing_consistency_tests": 9,
+  "integration": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-20T02:40:31.334868+00:00",
+    "results": [
+      {
+        "case": "http_and_direct_db_fenced",
+        "passed": true
+      },
+      {
+        "case": "real_capture_drain_standard_attachment_two_assets",
+        "passed": true,
+        "bytes": 29812445,
+        "tables": 12,
+        "attempt_id": "908623d495524764a11e7cfb969546d4"
+      },
+      {
+        "case": "isolated_dump_import_posts_attachment_and_http_resumed",
+        "passed": true
+      },
+      {
+        "case": "real_dump_failure_releases_source",
+        "passed": true
+      },
+      {
+        "case": "real_gate_lease_expiry_not_success_and_released",
+        "passed": true
+      },
+      {
+        "case": "controller_disconnect_releases_gate",
+        "passed": true
+      },
+      {
+        "case": "missing_standard_attachment_rejected",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "generated isolated WP/MariaDB; external capture adapter, not plugin end-to-end acceptance; no S3/signing"
+  },
+  "original_result_sha256": "826d1102f61edffae0cd81553dcf28ec54f1548c7b273991fd9c5a2f0423e6f6",
+  "source_sha256": {
+    "tools/first-site-capture.py": "bf9b199bc74869a5c5a7c86fe1657c74a9c4c71942b7003764c1ee264b848972",
+    "tools/first-site-docker-lab.py": "3ecaff8f243c465c594de48e98256bcf87c5692eafe11bc63b86f773c8d22ac9",
+    "tools/first-site-lab-cases.py": "4b52fae1a1d8e8577549c50908400c4743bad832208e3dc1267ddcdab90a3218",
+    "tools/run-first-site-capture-lab.py": "63a72d55b66ac612304d0789061f551b7b9f58800d8897641a3f6fe0ddebb713",
+    "tests/test_first_site_capture.py": "3707d1083cc5760520aebbb943b3ecd450523248ee310a773d2ee3cc062adfe5",
+    "examples/first-site/generated-lab.json": "99b1c23b1378b7cd857a0c67513428f3fbe0149aa9e1ee63b85eaf238a58fd86"
+  },
+  "initial_failure": {
+    "state": "unverified",
+    "reason": "capture_window_lost",
+    "release_confirmed": true,
+    "classification": "new external adapter performance defect; corrected, original evidence retained"
+  },
+  "no_s3_or_production_changes": true,
+  "existing_soak_unchanged": true,
+  "environment_note": "During prior run a 20-second host wait took about 521 seconds and host/container clocks differed. Cause unconfirmed; no reset or threshold relaxation. Final adapter checks monotonic and wall clocks; forward jump rejection is a unit fault injection, not a physical suspend test."
+}

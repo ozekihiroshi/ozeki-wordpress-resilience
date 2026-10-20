@@ -1,0 +1,34 @@
+{
+  "additional_puts": 0,
+  "cleanup": {
+    "cleanup_at": "2026-10-20T12:27:42.202275+00:00",
+    "original_result_preserved": true,
+    "outcome": "unknown",
+    "request_id": "interrupted-01",
+    "resources_removed": true,
+    "reviewed_plan_sha256": "af7e275b48cb99e2ae5453cee616cabd6d32c58687b102db0ee9282c836c622b",
+    "state": "reviewed_closed"
+  },
+  "injected_interruption": "worker process exit with two real sleeping Docker containers and anonymous volumes; not a mid-SQL crash",
+  "interrupted_result_preserved": true,
+  "new_request_restored": true,
+  "old_observation_untouched": true,
+  "passed": true,
+  "resources_removed": true,
+  "s3_gets": 2,
+  "source_sha256": {
+    "tools/recovery-cleanup.py": "4da69e7954aae32e26e1981b4ea9dc7fcba1965610660aedd16a4ff22e31b5fe",
+    "tools/first-site-daily-recovery-worker.py": "f7e460443dbc6097c91ef102dca3dab54b848c08904c343b177bf2db143ddae7",
+    "tools/first-site-daily-restore.py": "e8bb84ef4abdf4cf710f21e07c5fcd52299e4a66c42ddf45b698ded8497cb2ef",
+    "tools/first-site-daily.py": "2b4593e448382f8d00b20cf302946cac2c85679539424828868a0b6498571ec7",
+    "tests/test_recovery_cleanup.py": "635dcdfb4471228c9cfebc6ed087f3316fd5fa3be09cd4b4454a88ac0389a8ed"
+  },
+  "harness_failure": "Initial image setting name mismatch; no resources created; preserved and explicitly closed after inspection.",
+  "unit_tests": {
+    "cleanup": 11,
+    "worker_regression": 9,
+    "restore_regression": 10,
+    "daily_regression": 12,
+    "passed": true
+  }
+}

@@ -1,0 +1,316 @@
+{
+  "passed": true,
+  "checks": [
+    "isolated network namespace; no published ports",
+    "anonymous redirected to login",
+    "browser state unavailable",
+    "read-only explanation visible",
+    "no mutation controls in status page",
+    "unknown secret omitted",
+    "editor cannot read status",
+    "no data in permission error",
+    "editor menu not exposed",
+    "anonymous redirected to login",
+    "browser state current",
+    "read-only explanation visible",
+    "no mutation controls in status page",
+    "unknown secret omitted",
+    "browser POST refused 405",
+    "refresh remains read-only view",
+    "editor cannot read status",
+    "no data in permission error",
+    "editor menu not exposed",
+    "anonymous redirected to login",
+    "browser state matrix",
+    "read-only explanation visible",
+    "no mutation controls in status page",
+    "unknown secret omitted",
+    "visible \u9014\u4e2d\u505c\u6b62\u30fb\u7d50\u679c\u4e0d\u660e",
+    "visible \u5f8c\u7247\u4ed8\u3051\u672a\u5b8c\u4e86",
+    "visible \u5f8c\u7247\u4ed8\u3051\u78ba\u8a8d\u6e08\u307f",
+    "visible \u5fa9\u5143\u691c\u8a3c\u6e08\u307f",
+    "visible \u5fa9\u5143\u51e6\u7406\u3067\u8cc7\u6e90\u524a\u9664\u6e08\u307f",
+    "mobile document fits viewport",
+    "mobile history table visible",
+    "mobile table scrolls horizontally",
+    "browser POST refused 405",
+    "refresh remains read-only view",
+    "editor cannot read status",
+    "no data in permission error",
+    "editor menu not exposed",
+    "anonymous redirected to login",
+    "browser state stale",
+    "read-only explanation visible",
+    "no mutation controls in status page",
+    "unknown secret omitted",
+    "stale not presented as current",
+    "editor cannot read status",
+    "no data in permission error",
+    "editor menu not exposed",
+    "anonymous redirected to login",
+    "browser state invalid",
+    "read-only explanation visible",
+    "no mutation controls in status page",
+    "unknown secret omitted",
+    "editor cannot read status",
+    "no data in permission error",
+    "editor menu not exposed",
+    "WordPress resilience options, cron and request files unchanged",
+    "source ledger and evidence unchanged after export and HTTP GET/POST"
+  ],
+  "containers_removed": true,
+  "production_deployed": false,
+  "scope": "Real Chromium browser tests on isolated WordPress; copied generated data plus explicitly synthetic interruption display; no S3 calls",
+  "browser_results": [
+    {
+      "mode": "unavailable",
+      "checks": [
+        "anonymous redirected to login",
+        "browser state unavailable",
+        "read-only explanation visible",
+        "no mutation controls in status page",
+        "unknown secret omitted",
+        "editor cannot read status",
+        "no data in permission error",
+        "editor menu not exposed"
+      ],
+      "passed": true
+    },
+    {
+      "mode": "current",
+      "checks": [
+        "anonymous redirected to login",
+        "browser state current",
+        "read-only explanation visible",
+        "no mutation controls in status page",
+        "unknown secret omitted",
+        "browser POST refused 405",
+        "refresh remains read-only view",
+        "editor cannot read status",
+        "no data in permission error",
+        "editor menu not exposed"
+      ],
+      "passed": true
+    },
+    {
+      "mode": "matrix",
+      "checks": [
+        "anonymous redirected to login",
+        "browser state matrix",
+        "read-only explanation visible",
+        "no mutation controls in status page",
+        "unknown secret omitted",
+        "visible \u9014\u4e2d\u505c\u6b62\u30fb\u7d50\u679c\u4e0d\u660e",
+        "visible \u5f8c\u7247\u4ed8\u3051\u672a\u5b8c\u4e86",
+        "visible \u5f8c\u7247\u4ed8\u3051\u78ba\u8a8d\u6e08\u307f",
+        "visible \u5fa9\u5143\u691c\u8a3c\u6e08\u307f",
+        "visible \u5fa9\u5143\u51e6\u7406\u3067\u8cc7\u6e90\u524a\u9664\u6e08\u307f",
+        "mobile document fits viewport",
+        "mobile history table visible",
+        "mobile table scrolls horizontally",
+        "browser POST refused 405",
+        "refresh remains read-only view",
+        "editor cannot read status",
+        "no data in permission error",
+        "editor menu not exposed"
+      ],
+      "passed": true
+    },
+    {
+      "mode": "stale",
+      "checks": [
+        "anonymous redirected to login",
+        "browser state stale",
+        "read-only explanation visible",
+        "no mutation controls in status page",
+        "unknown secret omitted",
+        "stale not presented as current",
+        "editor cannot read status",
+        "no data in permission error",
+        "editor menu not exposed"
+      ],
+      "passed": true
+    },
+    {
+      "mode": "invalid",
+      "checks": [
+        "anonymous redirected to login",
+        "browser state invalid",
+        "read-only explanation visible",
+        "no mutation controls in status page",
+        "unknown secret omitted",
+        "editor cannot read status",
+        "no data in permission error",
+        "editor menu not exposed"
+      ],
+      "passed": true
+    }
+  ],
+  "setup_option_diagnostic": {
+    "before": {
+      "cron": "09d4f94355df21b73437ee8373b8f219b04a5484a870d97eb221566a07ad2569",
+      "cron_hooks": {
+        "recovery_mode_clean_expired_keys": [
+          1792502170
+        ],
+        "wp_privacy_delete_old_export_files": [
+          1792502170
+        ],
+        "wp_site_health_scheduled_check": [
+          1792588570
+        ],
+        "wp_update_plugins": [
+          1792507561
+        ],
+        "wp_update_themes": [
+          1792509361
+        ],
+        "wp_version_check": [
+          1792505761
+        ]
+      },
+      "owr_notification_settings_v1": "bffcd6f1ecaaee3c5b3ec20dbb93955159172f140ac1930459bf21073fee677f",
+      "owr_observer_settings_v1": "59cc397481b3b6f6664359487595a38a82c43d13ae448647548218c3909919e7"
+    },
+    "after": {
+      "cron": "e7e5f5a0d52d62b366dd9c999dd8f3f2ed34cd6278a559dbc495c2210deae7bb",
+      "cron_hooks": {
+        "delete_expired_transients": [
+          1792502184
+        ],
+        "recovery_mode_clean_expired_keys": [
+          1792502170
+        ],
+        "wp_privacy_delete_old_export_files": [
+          1792502170
+        ],
+        "wp_scheduled_auto_draft_delete": [
+          1792502185
+        ],
+        "wp_scheduled_delete": [
+          1792502183
+        ],
+        "wp_site_health_scheduled_check": [
+          1792588570
+        ],
+        "wp_update_comment_type_batch": [
+          1792502244
+        ],
+        "wp_update_plugins": [
+          1792507561
+        ],
+        "wp_update_themes": [
+          1792509361
+        ],
+        "wp_update_user_counts": [
+          1792502184
+        ],
+        "wp_version_check": [
+          1792505761
+        ]
+      },
+      "owr_notification_settings_v1": "bffcd6f1ecaaee3c5b3ec20dbb93955159172f140ac1930459bf21073fee677f",
+      "owr_observer_settings_v1": "59cc397481b3b6f6664359487595a38a82c43d13ae448647548218c3909919e7"
+    }
+  },
+  "final_option_comparison": {
+    "before": {
+      "cron": "e7e5f5a0d52d62b366dd9c999dd8f3f2ed34cd6278a559dbc495c2210deae7bb",
+      "cron_hooks": {
+        "delete_expired_transients": [
+          1792502184
+        ],
+        "recovery_mode_clean_expired_keys": [
+          1792502170
+        ],
+        "wp_privacy_delete_old_export_files": [
+          1792502170
+        ],
+        "wp_scheduled_auto_draft_delete": [
+          1792502185
+        ],
+        "wp_scheduled_delete": [
+          1792502183
+        ],
+        "wp_site_health_scheduled_check": [
+          1792588570
+        ],
+        "wp_update_comment_type_batch": [
+          1792502244
+        ],
+        "wp_update_plugins": [
+          1792507561
+        ],
+        "wp_update_themes": [
+          1792509361
+        ],
+        "wp_update_user_counts": [
+          1792502184
+        ],
+        "wp_version_check": [
+          1792505761
+        ]
+      },
+      "owr_notification_settings_v1": "bffcd6f1ecaaee3c5b3ec20dbb93955159172f140ac1930459bf21073fee677f",
+      "owr_observer_settings_v1": "59cc397481b3b6f6664359487595a38a82c43d13ae448647548218c3909919e7"
+    },
+    "after": {
+      "cron": "e7e5f5a0d52d62b366dd9c999dd8f3f2ed34cd6278a559dbc495c2210deae7bb",
+      "cron_hooks": {
+        "delete_expired_transients": [
+          1792502184
+        ],
+        "recovery_mode_clean_expired_keys": [
+          1792502170
+        ],
+        "wp_privacy_delete_old_export_files": [
+          1792502170
+        ],
+        "wp_scheduled_auto_draft_delete": [
+          1792502185
+        ],
+        "wp_scheduled_delete": [
+          1792502183
+        ],
+        "wp_site_health_scheduled_check": [
+          1792588570
+        ],
+        "wp_update_comment_type_batch": [
+          1792502244
+        ],
+        "wp_update_plugins": [
+          1792507561
+        ],
+        "wp_update_themes": [
+          1792509361
+        ],
+        "wp_update_user_counts": [
+          1792502184
+        ],
+        "wp_version_check": [
+          1792505761
+        ]
+      },
+      "owr_notification_settings_v1": "bffcd6f1ecaaee3c5b3ec20dbb93955159172f140ac1930459bf21073fee677f",
+      "owr_observer_settings_v1": "59cc397481b3b6f6664359487595a38a82c43d13ae448647548218c3909919e7"
+    }
+  },
+  "source_sha256": {
+    "src/DailyAdmin.php": "5ae320d479ca3b186b508f1bb929c1c25288e7a6cb5187451f4073ec9a7a490e",
+    "tools/run-daily-browser-lab.py": "756f06e2283d762afc97502370bff6f196ecc7fe825d301797e217888b97d4b5",
+    "lab/notification-admin/daily-browser-test.py": "183121f7afb1c1218e89af9031f274d9378775631f75b8390daccb216ce462b3"
+  },
+  "php_regression_checks": 65,
+  "display_fixture": "copied generated recovery history plus synthetic interrupted/incomplete rows; no new recovery execution",
+  "issues": [
+    "Test script quoting error caught before resources were created; fixed.",
+    "Python Selenium absent in browser image; switched to existing standard-library WebDriver protocol.",
+    "390px table wrapped excessively; product table min-width760px and focusable scroll region added.",
+    "Test baseline included WordPress first-admin-visit cron initialization. Diagnostic identified five core hooks; resilience settings unchanged. Setup now completes first visit before measurement.",
+    "One earlier editor login wait timed out without error detail; historical cause unconfirmed. Inputs cleared and diagnostics improved; final five browser scenarios pass."
+  ],
+  "screenshots_sha256": {
+    "daily-desktop.png": "7e4cc0d91e1600225049a8922a442ad3d7e97ba218530b12d12265a4d1867036",
+    "daily-mobile.png": "0e0934be950297b6ec5dc449146eda7c9b1b69f83ac7f81c55411c50acc8a083"
+  }
+}

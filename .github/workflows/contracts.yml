@@ -31,9 +31,7 @@ jobs:
         run: |
           test ! -e .local
           /tmp/owr-ci-venv/bin/python -m unittest discover -s tests
-          php tests/test-backup-core.php
-          php tests/test-versioned-transfer.php
-          php tests/test-temporary-role-auth.php
+          for test in tests/*.php; do php "$test"; done
       - name: Build development distributions
         run: |
           /tmp/owr-ci-venv/bin/python tools/build-release.py --output dist/candidate

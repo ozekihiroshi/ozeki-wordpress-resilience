@@ -38,7 +38,9 @@ def endpoint(config,packet):
     return dict(format='owr-watchdog-probe-result-v1',nonce=packet['nonce'],monitor_id=config['monitor_id'],status=status,heartbeat=value)
 
 def observe(config,now=None,transport=None,sender=None,factory=None):
+    explicit_now=now is not None
     now=now or datetime.now(timezone.utc)
+    started_at=now
     root=Path(config['state']);root.mkdir(parents=True,exist_ok=True,mode=0o700)
     with watch.locked(root):
         binding=root/'binding.json'
@@ -53,6 +55,8 @@ def observe(config,now=None,transport=None,sender=None,factory=None):
             reply=(transport or transfer.ssh)(config['ssh'],packet)
             if set(reply)!={'format','nonce','monitor_id','status','heartbeat'} or reply['format']!='owr-watchdog-probe-result-v1' or reply['nonce']!=packet['nonce'] or reply['monitor_id']!=config['monitor_id'] or reply['status'] not in ('present','missing','invalid'):raise ValueError('reply binding')
             reachable=True
+            # A completion generated during SSH latency is not a future timestamp.
+            if not explicit_now:now=datetime.now(timezone.utc)
             if reply['status']=='present':
                 value,stamp,_=heartbeat.parse(transfer.body(reply['heartbeat']),config['monitor_id'],now)
                 old=root/'completion.json'
@@ -66,6 +70,9 @@ def observe(config,now=None,transport=None,sender=None,factory=None):
             elif reply['status']=='invalid':invalid=True
         except Exception:
             if reachable:invalid=True
+        if not explicit_now:now=datetime.now(timezone.utc)
+        if now<started_at:raise ValueError('clock rollback during probe')
+        transfer.atomic(last,dict(at=now.isoformat()),0o600)
         if reachable:
             transfer.atomic(root/'reachability.json',dict(format='owr-monitor-heartbeat-v1',monitor_id=config['monitor_id']+'-reachability',completed_at=now.isoformat(),undelivered=0,open_incidents=0),0o600)
         # Never replace the last authenticated completion with the probe time.
