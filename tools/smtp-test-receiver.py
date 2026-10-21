@@ -53,9 +53,9 @@ class Handler(socketserver.StreamRequestHandler):
                 self.reply(b'502 Unsupported')
 
 
-def receiver(directory, reject_file=None):
+def receiver(directory, reject_file=None, port=0):
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
-    server = socketserver.TCPServer(('127.0.0.1', 0), Handler)
+    server = socketserver.TCPServer(('127.0.0.1', port), Handler)
     server.directory, server.reject_file = directory, reject_file
     return server
 
@@ -65,8 +65,10 @@ def main():
     p.add_argument('--directory', type=Path, required=True)
     p.add_argument('--ready-file', type=Path, required=True)
     p.add_argument('--reject-file', type=Path)
+    p.add_argument('--port', type=int, default=0)
     a = p.parse_args()
-    with receiver(a.directory, a.reject_file) as server:
+    if not 0 <= a.port <= 65535: p.error('port out of range')
+    with receiver(a.directory, a.reject_file, a.port) as server:
         a.ready_file.write_text(json.dumps({'host':'127.0.0.1','port':server.server_address[1]}))
         server.serve_forever()
 

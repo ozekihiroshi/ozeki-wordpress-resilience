@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "checks": [
+    "plan does not write input or create output files",
+    "unverified prerequisites stay blocked",
+    "six independent SSH credential references and pinned aliases",
+    "generation matches deterministic read-only plan",
+    "all generated files match manifest hashes",
+    "existing bundle refused without modifying files",
+    "plan rejects write destination",
+    "publisher receiver observer pulls and WordPress fragment generated",
+    "WordPress binding fragment complete"
+  ],
+  "scope": "Dedicated Docker network none, root filesystem read-only; generated inputs; no SSH, DB, systemd, S3, signing or existing observation access",
+  "unit_tests": 19,
+  "prototype": true,
+  "production_ready": false,
+  "observation_72h_separate": true,
+  "existing_preflight_regression_tests": 21
+}

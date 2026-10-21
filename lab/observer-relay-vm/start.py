@@ -35,7 +35,7 @@ ex('qemu-system-x86_64','-enable-kvm','-cpu','host','-smp','2','-m','1536','-dis
    '-pidfile','/lab/qemu.pid','-serial','file:/lab/serial.log',
    '-drive','file=/lab/disk.qcow2,if=virtio,format=qcow2',
    '-drive','file=/lab/seed.iso,media=cdrom,readonly=on',
-   '-virtfs','local,path=/reports,mount_tag=reports,security_model=none,id=reports','-netdev','user,id=n0,hostfwd=tcp:127.0.0.1:2223-:22','-device','virtio-net-pci,netdev=n0')
+   '-virtfs','local,path=/reports,mount_tag=reports,security_model=none,id=reports','-netdev','user,id=n0,hostfwd=tcp:127.0.0.1:2223-:22'+(',hostfwd=tcp:0.0.0.0:2224-:2222' if os.environ.get('OWR_VM_FIXED_ENDPOINT')=='1' else ''),'-device','virtio-net-pci,netdev=n0')
 ssh=['ssh','-i','/lab/admin','-o','IdentitiesOnly=yes','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile=/lab/known_hosts','-o','ConnectTimeout=5','-p','2223','lab@127.0.0.1']
 (OUT/'ssh-command.json').write_text(json.dumps(ssh))
 deadline=time.monotonic()+240

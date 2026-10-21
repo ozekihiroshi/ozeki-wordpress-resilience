@@ -12,7 +12,7 @@ def module(name):
  s=importlib.util.spec_from_file_location(name,ROOT/'tools'/(name+'.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 import contextlib,types
 @contextlib.contextmanager
-def ui_session(statusdir, plugin_zip):
+def ui_session(statusdir, plugin_zip, diagnostics=None):
     args=types.SimpleNamespace(plugin_zip=plugin_zip)
     images=dict(line.split('=',1) for line in (ROOT/'lab/m1/images.env').read_text().splitlines() if '=' in line)
     prefix='owr-preflight-zip-'+secrets.token_hex(5);db=prefix+'-db';web=prefix+'-web';browser=prefix+'-browser';created=[];checks=[]
@@ -61,8 +61,19 @@ def ui_session(statusdir, plugin_zip):
                 assert not item['HostConfig']['PortBindings']
             checks.append('isolated network namespace; no published ports')
 
+            deadline=time.monotonic()+90
+            while True:
+                ready=run('docker','exec',browser,'python3','-c','import json,urllib.request; print(json.load(urllib.request.urlopen("http://127.0.0.1:4444/status",timeout=3))["value"]["ready"])',check=False,timeout=10)
+                if ready.returncode==0 and ready.stdout.strip()==b'True':break
+                if time.monotonic()>deadline:raise RuntimeError('Selenium not ready before browser session')
+                time.sleep(1)
             yield web,browser
     finally:
+        if diagnostics is not None and browser in created:
+            diagnostics.mkdir(parents=True,exist_ok=True)
+            q=run('docker','logs',browser,check=False)
+            (diagnostics/'selenium.log').write_bytes(q.stdout+q.stderr)
+            (diagnostics/'state.json').write_bytes(run('docker','inspect','--format','{{json .State}}',browser,check=False).stdout)
         for name in reversed(created):run('docker','rm','-f','-v',name)
 
 def main():
@@ -110,7 +121,7 @@ def main():
   fixture=dict(format='owr-preflight-admin-v1',site_id='generated-first-site',config_sha256='a'*64,attempted_at=now,result=dict(production_ready=False,state='needs_configuration',host_observation=dict(state='validated_report',unverified=['writers','trust']),issues=[dict(code='host_unverified_scope_remaining',category='configuration')]))
   (status/'preflight.json').write_text(json.dumps(fixture))
   preserved=external()
-  with ui_session(status,initial) as (web,browser):
+  with ui_session(status,initial,args.output/(mode+"-diagnostics")) as (web,browser):
    def php(code):return run('docker','exec','-u','www-data',web,'php','-r','require "/var/www/html/wp-load.php";require_once ABSPATH."wp-admin/includes/plugin.php";'+code).stdout
    php('\\Ozeki\\Resilience\\NotificationAdmin::state();\\Ozeki\\Resilience\\ObserverSettings::state();')
    # Populate non-default settings through the existing real browser form.

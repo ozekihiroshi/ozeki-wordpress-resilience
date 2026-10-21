@@ -15,14 +15,14 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 
 ## 最初に読む
 
-1. [初版の範囲・到達点・未達](docs/releases/initial-release-readiness.md)
+1. [現在の到達点と残課題](docs/releases/current-status.md)／[初版判定](docs/releases/initial-release-readiness.md)／[外部設定作成と導入計画](docs/guides/external-deployment-plan.md)
 2. [導入・起動・確認・停止・再開](docs/guides/initial-release-setup.md)
 3. [開発環境](docs/guides/development-setup.md)と[ツール一覧](tools/README.md)
 4. [検証記録の索引](evidence-public/README.md)と[侵害耐性の公開受入条件](docs/spec/07-cyber-resilience-release-gates.md)
 
 次の実装対象：[最初のサイト構成と取得方式](docs/spec/13-first-site-capture-profile.md)／[導入から復旧までの担当者操作](docs/guides/first-site-operator-runbook.md)。実装済み操作と未実装工程を区別しています。
 
-新規の[収集設定検査と取得アダプター](docs/guides/first-site-capture-lab.md)を専用生成環境で検証しました。外部処理の初期実装で、S3保管・署名への接続と実サイト適用は未完了です。既存の72時間観測と配布候補は変更していません。
+新規の[収集設定検査と取得アダプター](docs/guides/first-site-capture-lab.md)を専用生成環境で検証しました。限定構成でS3保管・署名・隔離復元と日次状態表示まで専用環境で検証済みです。実サイトへの統合導入は未完了です。既存の72時間観測と配布候補は変更していません。
 
 ## 現在確認できていること
 
@@ -50,7 +50,7 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 4. 3日次枠・72時間以上を観測し、欠測・承認待ち・停止・通知失敗・容量変化を確認。
 5. 結果と既知の制限をそろえ、GitHubの研究・開発版候補として整備。
 
-2026年10月20日10:42 JST時点で10月19日・20日の2日次枠は完了。10月21日分と72時間観測は継続中です。最短到達は10月22日15:55:56 JST。既知の約4時間半の観測空白を残し、日次成功・実経過・観測網羅性を別々に評価します。72時間の実測が終わる前に全項目完了とは表示しません。[初版判定表](docs/releases/initial-release-readiness.md)を参照。以前の開発履歴は[運用化計画](docs/spec/10-operationalization-plan.md)に保持します。
+2026年10月21日時点で3日次枠は完了、72時間観測は継続中です。最短到達は10月22日15:55:56 JST。既知の2つの観測空白を保持し、日次成功・実経過・観測網羅性を別々に評価します。[現状一覧](docs/releases/current-status.md)を参照してください。
 
 初回実サイト候補の署名期限は2026年10月25日18:15:47（日本時間）。期限切れ時の検証省略は禁止です。今回の試験鍵による承認は、その候補の承認更新ではありません。
 
@@ -80,6 +80,10 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 ライセンス：GPL-2.0-or-later。
 
 共通DB部品の既存製品への採用は別途追跡しています。[採用状況と残作業](docs/releases/shared-core-adoption-status.md)。
+
+## 個別機能の開発記録
+
+以下は開発時点の記録です。後の実装で解消された課題を含むため、現在の判定には[現状一覧](docs/releases/current-status.md)を使います。
 
 2資産の取得から実S3固定版・保持確認・試験署名・新規隔離WordPressへの復元を専用環境で確認しました。[手順・信頼境界・制限](docs/guides/first-site-s3-recovery-lab.md)。既存72時間観測、公開ZIP、共通部品とは別の検証です。
 
