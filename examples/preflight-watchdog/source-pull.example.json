@@ -1,0 +1,13 @@
+{
+  "site_id": "example-site",
+  "monitor_id": "preflight-source",
+  "host": "observer.example.invalid",
+  "port": 22,
+  "user": "owr-status",
+  "identity_file": "/etc/owr/preflight-source-read-key",
+  "known_hosts": "/etc/owr/observer-known-hosts",
+  "status_file": "/var/lib/owr-reports/preflight-source.json",
+  "transfer_health": "/var/lib/owr-reports/preflight-source-transfer.json",
+  "lock_file": "/var/lib/owr-preflight-relay/source-pull.lock",
+  "loop_lock": "/var/lib/owr-preflight-relay/source-loop.lock"
+}

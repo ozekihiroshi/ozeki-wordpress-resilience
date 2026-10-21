@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+"""Real MariaDB SELECT-only account and read-only site mount; generated data."""
+import hashlib,importlib.util,json,os,secrets,subprocess,tempfile,time,shutil
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+def run(*args,input=None,check=True,timeout=45):
+ p=subprocess.run(args,input=input,capture_output=True,timeout=timeout)
+ if check and p.returncode:raise RuntimeError('lab operation failed (private diagnostics retained by caller)')
+ return p
+def load(name):
+ s=importlib.util.spec_from_file_location(name,ROOT/'tools'/(name+'.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+def main():
+ import argparse
+ p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);a=p.parse_args();a.output.mkdir(mode=0o700,parents=True,exist_ok=False)
+ images=dict(x.split('=',1) for x in (ROOT/'lab/m1/images.env').read_text().splitlines() if '=' in x)
+ prefix='owr-preflight-two-' +secrets.token_hex(5);db=prefix+'-db';host=prefix+'-host';created=[];checks=[];vm=None;events=[]
+ print('LAB '+prefix,flush=True)
+ try:
+  with tempfile.TemporaryDirectory(prefix='owr-host-probe-') as temp:
+   root=Path(temp);root.chmod(0o755);site=root/'site';site.mkdir(mode=0o755);(site/'wp-content/uploads').mkdir(parents=True);(site/'wp-content/uploads/generated.txt').write_text('generated media');(site/'wp-config.php').write_text('<?php throw new Exception("SHOULD_NOT_RUN");')
+   secret=secrets.token_hex(20);env=root/'db-env';env.write_text(f'MARIADB_ROOT_PASSWORD={secret}\nMARIADB_DATABASE=lab\n');env.chmod(0o600)
+   run('docker','run','-d','--name',db,'--network','none','--env-file',str(env),'--memory','512m',images['OWR_DB_IMAGE']);created.append(db)
+   deadline=time.monotonic()+100
+   while run('docker','exec',db,'healthcheck.sh','--connect','--innodb_initialized',check=False).returncode:
+    if time.monotonic()>deadline:raise RuntimeError('DB readiness deadline')
+    time.sleep(1)
+   def sql(text):return run('docker','exec','-i',db,'sh','-c','MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot lab',input=text.encode()).stdout
+   sql("CREATE TABLE wp_options(option_name varchar(64),option_value text) ENGINE=InnoDB; CREATE TABLE wp_posts(ID bigint) ENGINE=InnoDB; CREATE TABLE wp_postmeta(post_id bigint) ENGINE=InnoDB; INSERT INTO wp_options VALUES ('upload_path',''),('upload_url_path',''); CREATE USER 'inspector'@'%' IDENTIFIED BY '"+secret+"'; GRANT SELECT ON lab.* TO 'inspector'@'%';")
+   c=json.loads((ROOT/'examples/first-site/generated-lab.json').read_text());c['storage']['destination_ref']='generated';c['trust'].update(operator='lab',public_pin_ref='generated')
+   pre=load('deployment-preflight');check=load('host-inventory-check');nonce=secrets.token_hex(16)
+   cfg={'SITE':c['site_id'],'CONFIG_SHA256':pre.capture.digest(c),'NONCE':nonce,'DB_NAME':'lab','DB_PREFIX':'wp_','ROOT':'/var/www/html','DB_HOST':'127.0.0.1','DB_USER':'inspector','DB_PASSWORD':secret}
+   e=root/'host-env';e.write_text(''.join('OWR_INV_'+k+'='+v+'\n' for k,v in cfg.items()));e.chmod(0o600)
+   run('docker','run','-d','--name',host,'--network','container:'+db,'--env-file',str(e),'-v',str(site)+':/var/www/html:ro','-v',str(ROOT/'tools/host-inventory.php')+':/probe.php:ro','--entrypoint','sleep','owr-external-lab:local','infinity');created.append(host)
+   ssh=load('host-inventory-ssh')
+   client=prefix+'-client'
+   run('docker','run','-d','--name',client,'--network','container:'+db,'-v',str(ROOT)+':/repo:ro','--entrypoint','sleep','owr-external-lab:local','infinity');created.append(client)
+   for key in ('key','hostkey','wrong'):
+    run('ssh-keygen','-q','-t','ed25519','-N','','-f',str(root/key))
+   def ex(name,*args,**kw):return run('docker','exec',*(['-i'] if kw.get('input') is not None else []),name,*args,**kw)
+   def put(name,path,value,mode='644'):
+    f=root/'upload';f.write_text(value if isinstance(value,str) else json.dumps(value));run('docker','cp',str(f),name+':'+path);ex(name,'chown','root:root',path);ex(name,'chmod',mode,path)
+   ex(host,'mkdir','-p','/opt/owr','/etc/owr','/run/sshd')
+   for file in ('host-inventory-ssh.py','notification-transfer.py','host-inventory.php'):
+    run('docker','cp',str(ROOT/'tools'/file),host+':/opt/owr/'+file)
+   ex(host,'chown','-R','root:root','/opt/owr');ex(host,'chmod','-R','go-w','/opt/owr')
+   ex(host,'useradd','-m','-s','/bin/sh','inspector');ex(host,'usermod','-p','*','inspector')
+   put(host,'/etc/owr/hostkey',(root/'hostkey').read_text(),'600')
+   put(host,'/etc/owr/keys','restrict,command="/usr/bin/python3 -B /opt/owr/host-inventory-ssh.py endpoint --config /etc/owr/endpoint.json" '+(root/'key.pub').read_text())
+   endpoint=dict(site_id=c['site_id'],config_sha256=pre.capture.digest(c),php='/usr/local/bin/php',probe={k:cfg[k] for k in ('DB_HOST','DB_NAME','DB_PREFIX','DB_USER','DB_PASSWORD','ROOT')})
+   put(host,'/etc/owr/endpoint.json',endpoint,'640');ex(host,'chgrp','inspector','/etc/owr/endpoint.json')
+   put(host,'/etc/owr/sshd','\n'.join(['Port 2222','HostKey /etc/owr/hostkey','PidFile /run/sshd/inventory.pid','AuthorizedKeysFile /etc/owr/keys','PasswordAuthentication no','KbdInteractiveAuthentication no','UsePAM no','PermitRootLogin no','AllowUsers inspector','AllowTcpForwarding no','AllowAgentForwarding no','PermitTTY no','PermitUserEnvironment no','DisableForwarding yes'])+'\n')
+   ex(host,'/usr/sbin/sshd','-f','/etc/owr/sshd')
+   put(client,'/key',(root/'key').read_text(),'600')
+   pin='owr-inventory-'+c['site_id']+' '
+   put(client,'/known',pin+(root/'hostkey.pub').read_text())
+   conn=dict(site_id=c['site_id'],host='127.0.0.1',user='inspector',port=2222,identity_file='/key',known_hosts='/known')
+   put(client,'/connection.json',conn)
+   base=ssh.command(conn)
+   def probe(packet=None):
+    packet=packet or dict(site_id=c['site_id'],config_sha256=pre.capture.digest(c),nonce=nonce)
+    q=ex(client,*base,input=json.dumps(packet).encode(),check=False,timeout=25)
+    assert secret.encode() not in q.stdout+q.stderr
+    return q,json.loads(q.stdout)
+   def dump():return run('docker','exec',db,'sh','-c','MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-dump -uroot --skip-comments --skip-dump-date lab').stdout
+   import shlex,sys
+   from datetime import datetime,timezone
+   vmout=a.output/'vm';os.environ['OWR_TWO_VM_OUTPUT']=str(vmout);os.environ['OWR_TWO_VM_NETWORK_HOST']=host
+   q=subprocess.run(['python3',str(ROOT/'lab/preflight-two-vm/start.py')],capture_output=True,timeout=600)
+   if q.returncode:raise RuntimeError('twoVM startup '+q.stderr.decode()[-1500:])
+   sys.path.insert(0,str(ROOT/'lab/preflight-two-vm'));import common as vmc
+   vm=vmc.name()
+   def remote(role,command,data=None,check=True,timeout=120):return vmc.remote(role,command,data=data,check=check,timeout=timeout)
+   def write(role,path,value,mode=0o600,owner='root:root'):
+    code='import pathlib,sys,subprocess;p=pathlib.Path('+repr(path)+');p.write_bytes(sys.stdin.buffer.read());p.chmod('+str(mode)+');subprocess.run(["chown",'+repr(owner)+',str(p)],check=True)'
+    remote(role,'sudo python3 -c '+shlex.quote(code),(value if isinstance(value,str) else json.dumps(value)).encode())
+   for role in ['source','receiver']:
+    remote(role,"""set -eu
+sudo mkdir -p /opt/owr /etc/owr /var/lib/owr-preflight /var/lib/owr-preflight-web
+sudo tar -xf /tmp/payload.tar -C /opt/owr --strip-components=1
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin owr-preflight
+sudo chown owr-preflight:www-data /var/lib/owr-preflight /var/lib/owr-preflight-web
+sudo chmod 700 /var/lib/owr-preflight
+sudo chmod 2750 /var/lib/owr-preflight-web
+sudo chown -R root:root /opt/owr
+sudo find /opt/owr -type d -exec chmod 755 {} +
+sudo find /opt/owr -type f -exec chmod 644 {} +
+sudo mkdir /var/lib/owr-preflight/work
+sudo chown owr-preflight:www-data /var/lib/owr-preflight/work
+sudo chmod 700 /var/lib/owr-preflight/work
+""")
+   base='/var/lib/owr-preflight';out='/var/lib/owr-preflight-web';digest=pre.capture.digest(c)
+   inventory={k:c[k] for k in ('site_id','wordpress','database','files','writers','queue','dependencies','runtime')};inventory.update(format='owr-deployment-inventory-v1',config_sha256=digest,observed_at=datetime.now(timezone.utc).isoformat(),incomplete_runs=0,uncertain_puts=0)
+   for name,value in [('profile',c),('inventory',inventory),('connection',dict(conn,host='10.0.2.2',identity_file=base+'/probe-key',known_hosts=base+'/probe-known'))]:write('source',base+'/'+name+'.json',value,owner='owr-preflight:www-data')
+   write('source',base+'/probe-key',(root/'key').read_text(),owner='owr-preflight:www-data');write('source',base+'/probe-known',pin+(root/'hostkey.pub').read_text(),owner='owr-preflight:www-data')
+   publisher=dict(site_id=c['site_id'],config_sha256=digest,profile_file=base+'/profile.json',inventory_file=base+'/inventory.json',connection_file=base+'/connection.json',workspace=base+'/work',report_file=out+'/report.json',health_file=out+'/health.json',lock_file=base+'/loop.lock')
+   write('source','/etc/owr/preflight-relay.json',publisher,0o640,'root:www-data')
+   write('source','/etc/systemd/system/owr-preflight.service',(ROOT/'examples/preflight-relay/owr-preflight.service').read_text(),0o644)
+   # Only bounded public reports are readable through this key.
+   run('ssh-keygen','-q','-t','ed25519','-N','','-f',str(root/'transferkey'))
+   remote('source','sudo useradd --system --no-create-home --shell /bin/sh --gid www-data owr-reader && sudo usermod -p "*" owr-reader')
+   write('source','/etc/owr/read.json',dict(site_id=c['site_id'],config_sha256=digest,report_file=out+'/report.json',health_file=out+'/health.json'),0o640,'root:www-data')
+   write('source','/etc/owr/authorized','restrict,command="/usr/bin/python3 -B /opt/owr/tools/preflight-transfer.py serve --config /etc/owr/read.json" '+(root/'transferkey.pub').read_text(),0o644)
+   write('source','/etc/ssh/sshd_config.d/80-owr.conf','Match User owr-reader\n AuthorizedKeysFile /etc/owr/authorized\n AuthenticationMethods publickey\n DisableForwarding yes\n PermitTTY no\nMatch all\n',0o644)
+   remote('source','sudo sshd -t && sudo systemctl reload ssh')
+   receiver=dict(site_id=c['site_id'],config_sha256=digest,host='192.0.2.10',port=22,user='owr-reader',identity_file=base+'/transfer-key',known_hosts=base+'/known',report_file=out+'/report.json',health_file=out+'/health.json',lock_file=base+'/loop.lock')
+   write('receiver',base+'/transfer-key',(root/'transferkey').read_text(),owner='owr-preflight:www-data');write('receiver',base+'/known','owr-preflight-'+c['site_id']+' '+(vmout/'source/host.pub').read_text(),owner='owr-preflight:www-data')
+   write('receiver','/etc/owr/preflight-transfer.json',receiver,0o640,'root:www-data');write('receiver','/etc/systemd/system/owr-preflight-transfer.service',(ROOT/'examples/preflight-relay/owr-preflight-transfer.service').read_text(),0o644)
+   for role,unit in [('source','owr-preflight'),('receiver','owr-preflight-transfer')]:remote(role,'sudo systemctl daemon-reload && sudo systemctl enable --now '+unit)
+   def health():return json.loads(vmc.cat('receiver',out+'/health.json'))
+   def wait(fn,label,seconds=200):
+    end=time.monotonic()+seconds
+    while time.monotonic()<end:
+     try:
+      if fn():checks.append(label);print('PASS '+label,flush=True);return
+     except (RuntimeError,ValueError,subprocess.TimeoutExpired):pass
+     time.sleep(3)
+    raise AssertionError(label)
+   wait(lambda:health()['state']=='ok','real interVM SSH transfer')
+   initial_boots={r:vmc.boot(r) for r in ['source','receiver']};assert initial_boots['source']!=initial_boots['receiver']
+   # Build generated WordPress site, then move its runtime into the receiver VM.
+   sql("CREATE DATABASE wp_ui; CREATE USER 'webuser'@'%' IDENTIFIED BY '"+secret+"'; GRANT ALL ON wp_ui.* TO 'webuser'@'%';")
+   runtime=root/'plugin';runtime.mkdir()
+   for rel in load('build-release').PLUGIN:
+    dst=runtime/rel;dst.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/rel,dst)
+   web=prefix+'-web';we=root/'web-env';we.write_text('WORDPRESS_DB_HOST=127.0.0.1\nWORDPRESS_DB_NAME=wp_ui\nWORDPRESS_DB_USER=webuser\nWORDPRESS_DB_PASSWORD='+secret+'\nLAB_ADMIN_PASSWORD='+secret+'\n');we.chmod(0o600)
+   run('docker','run','-d','--name',web,'--network','container:'+db,'--env-file',str(we),'-v',str(runtime)+':/var/www/html/wp-content/plugins/ozeki-wordpress-resilience:ro',images['OWR_WP_IMAGE']);created.append(web)
+   limit=time.monotonic()+90
+   while run('docker','exec',web,'test','-f','/var/www/html/wp-config.php',check=False).returncode:
+    if time.monotonic()>limit:raise RuntimeError('WP preparation deadline')
+    time.sleep(1)
+   code='define("WP_INSTALLING",true);require "/var/www/html/wp-load.php";require_once ABSPATH."wp-admin/includes/upgrade.php";wp_install("Preflight two VM lab","labadmin","lab@example.invalid",false,"",getenv("LAB_ADMIN_PASSWORD"));update_option("siteurl","http://127.0.0.1:8080");update_option("home","http://127.0.0.1:8080");$id=wp_create_user("labeditor",getenv("LAB_ADMIN_PASSWORD"),"editor@example.invalid");(new WP_User($id))->set_role("editor");require_once ABSPATH."wp-admin/includes/plugin.php";activate_plugin("ozeki-wordpress-resilience/ozeki-wordpress-resilience.php");'
+   run('docker','exec',web,'php','-r',code)
+   run('docker','export','-o',str(a.output/'wp-rootfs.tar'),web,timeout=180)
+   with (a.output/'wp-site.tar').open('wb') as f:
+    q=subprocess.run(['docker','exec',web,'tar','-C','/var/www/html','-cf','-','.'],stdout=f,stderr=subprocess.PIPE,timeout=180);assert q.returncode==0
+   for name in ['wp-rootfs.tar','wp-site.tar']:
+    run('docker','cp',str(a.output/name),vm+':/lab/'+name,timeout=180)
+    vmc.ex('scp','-i','/lab/receiver/admin','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile=/lab/receiver/known_hosts','-P','2225','/lab/'+name,'lab@127.0.0.1:/tmp/'+name,timeout=180)
+   remote('receiver','sudo mkdir -p /opt/wp-root && sudo tar -xf /tmp/wp-rootfs.tar -C /opt/wp-root && sudo mkdir -p /opt/wp-root/var/www/html /opt/wp-root/status && sudo tar -xf /tmp/wp-site.tar -C /opt/wp-root/var/www/html',timeout=180)
+   config='<?php\n'
+   constants=dict(DB_NAME='wp_ui',DB_USER='webuser',DB_PASSWORD=secret,DB_HOST='10.0.2.2',DB_CHARSET='utf8mb4',DB_COLLATE='',OWR_PREFLIGHT_REPORT='/status/report.json',OWR_PREFLIGHT_TRANSFER_FILE='/status/health.json',OWR_PREFLIGHT_SITE_ID=c['site_id'],OWR_PREFLIGHT_CONFIG_SHA256=digest)
+   for k,v in constants.items():config+='define('+json.dumps(k)+','+json.dumps(v)+');\n'
+   config+='$table_prefix="wp_"; define("DISABLE_WP_CRON",true);define("WP_HTTP_BLOCK_EXTERNAL",true);define("DISALLOW_FILE_MODS",true);define("ABSPATH",__DIR__."/");require ABSPATH."wp-settings.php";'
+   write('receiver','/opt/wp-root/var/www/html/wp-config.php',config,0o640,'root:www-data')
+   wpunit='[Unit]\nAfter=network-online.target\n[Service]\nUser=www-data\nGroup=www-data\nRootDirectory=/opt/wp-root\nBindReadOnlyPaths=/var/lib/owr-preflight-web:/status /dev/urandom /dev/null\nExecStart=/usr/local/bin/php -S 0.0.0.0:8080 -t /var/www/html\nRestart=on-failure\nNoNewPrivileges=yes\nPrivateTmp=yes\nProtectSystem=strict\n[Install]\nWantedBy=multi-user.target\n'
+   write('receiver','/etc/systemd/system/owr-wordpress-lab.service',wpunit,0o644)
+   remote('receiver','sudo systemctl daemon-reload && sudo systemctl enable --now owr-wordpress-lab')
+   browser=prefix+'-browser';run('docker','run','-d','--name',browser,'--network','container:'+db,'--memory','2g','--shm-size','1g','--env-file',str(we),'-v',str(ROOT/'lab/notification-admin')+':/lab:ro','selenium/standalone-chrome:latest');created.append(browser)
+   def screen(mode,label):
+    q=run('docker','exec',browser,'python3','/lab/preflight-two-vm-browser.py',mode,timeout=180)
+    (a.output/(label+'-browser.json')).write_bytes(q.stdout);run('docker','cp',browser+':/tmp/preflight-'+mode+'.png',str(a.output/(label+'.png')));checks.append(label+' browser');print('PASS '+label,flush=True)
+   screen('ok','healthy')
+   # Permissions and fixed command checked from receiver guest.
+   assert remote('receiver','sudo -u www-data test -r '+base+'/transfer-key',check=False).returncode!=0
+   assert remote('receiver','sudo -u www-data test -w '+out+'/report.json',check=False).returncode!=0
+   assert remote('source','sudo -u owr-reader test -r '+base+'/probe-key',check=False).returncode!=0
+   checks.append('WordPress no keys/no report writes; SSH reader no source credentials')
+   original=vmc.cat('receiver',out+'/report.json');vmc.qmp('receiver','set_link',{'name':'data0','up':False})
+   wait(lambda:health()['state']=='transfer_failed','data network interruption detected');assert vmc.cat('receiver',out+'/report.json')==original;screen('transfer_failed','network-down')
+   vmc.qmp('receiver','set_link',{'name':'data0','up':True});wait(lambda:health()['state']=='ok','network recovers');screen('restarted','network-recovered')
+   remote('source','sudo systemctl stop owr-preflight');frozen=vmc.cat('source',out+'/report.json');start=time.monotonic()
+   while time.monotonic()-start<310:
+    time.sleep(10);assert vmc.cat('source',out+'/report.json')==frozen;print('STOPPED_SECONDS '+str(round(time.monotonic()-start)),flush=True)
+   wait(lambda:health()['state']=='source_stale','source stop detected without refreshing source time');screen('source_stale','source-stopped')
+   old=vmc.boot('source');remote('source','sudo systemctl reboot',check=False,timeout=15);vmc.wait_ssh('source',old);wait(lambda:health()['state']=='ok','source reboot autostarts publisher');screen('restarted','source-reboot')
+   remote('receiver','sudo systemctl stop owr-preflight-transfer');h=health();assert remote('receiver','systemctl is-active owr-preflight-transfer',check=False).returncode!=0
+   old=vmc.boot('receiver');remote('receiver','sudo systemctl reboot',check=False,timeout=15);vmc.wait_ssh('receiver',old);wait(lambda:health()['state']=='ok' and health()['attempted_at']!=h['attempted_at'],'receiver reboot autostarts transfer');screen('restarted','receiver-reboot')
+   after={r:vmc.boot(r) for r in ['source','receiver']};assert all(after[r]!=initial_boots[r] for r in after)
+   assert Path('/proc/sys/kernel/random/boot_id').read_text()==(vmout/'host-boot-before').read_text();checks.append('two guest boots changed; WSL boot unchanged')
+   (a.output/'boots.json').write_text(json.dumps(dict(before=initial_boots,after=after),indent=2))
+   for r in ['source','receiver']:remote(r,'sudo systemctl poweroff',check=False,timeout=15)
+ finally:
+  vf=a.output/'vm/container-name'
+  if vf.exists():
+   name=vf.read_text();assert name.startswith('owr-two-vm-') and name.replace('-','').isalnum();run('docker','rm','-f','-v',name,check=False)
+  for name in reversed(created):run('docker','rm','-f','-v',name,check=False)
+ (a.output/'result.json').write_text(json.dumps(dict(passed=True,checks=checks,resources_removed=True,scope='two independent Ubuntu guest kernels; collector and actual WordPress PHP in separate VMs; DB and probe fixtures outside guests; isolated data NIC SSH; same physical host; no shared report directory'),indent=2))
+ print('ALL_PASS',flush=True)
+if __name__=='__main__':main()

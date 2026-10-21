@@ -118,3 +118,25 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 状態報告・定期転送のZIP導入・更新と保持対象は[配布ガイド](docs/guides/status-report-zip.md)を参照。検証済み候補は `dist/candidate-20261021-status-validated`（試作版、未公開）。
 
 [2026-10-21初版候補レビュー](docs/releases/initial-candidate-review.md) / [検証済み固定ZIP](release-candidates/20261021/README.md)。72時間観測の最終判定とは独立した試作版です。
+
+導入前の設定・棚卸し・作業領域は[読取り専用検査](docs/guides/deployment-preflight.md)で確認できます。実ホストやIAMの自動検査・本番適用承認ではありません。
+
+[ホスト上の読取り専用棚卸し](docs/guides/host-inventory.md)を導入前検査へ接続できます。実測できない停止制御・外部依存等は未確認のまま表示します。
+
+SSHによる取得と権限制限は [SSH棚卸し手順](docs/guides/host-inventory-ssh.md) を参照してください。
+
+検査結果の読取り専用表示は [導入前検査の管理画面](docs/guides/preflight-admin.md) を参照してください。
+
+SSH棚卸しの定期実行と受渡しは [導入前検査の定期更新](docs/guides/preflight-relay.md) を参照してください。
+
+導入前検査側とWordPress側を分離する場合は、[固定コマンドSSHによる結果受渡し](docs/guides/preflight-two-vm.md) を参照してください。元の検査時刻を保持し、通信失敗と検査側の更新停止を区別します。
+
+導入前検査の通信断・処理停止を独立監視する構成は [導入前検査watchdog](docs/guides/preflight-watchdog.md) を参照してください。日次バックアップの監視とは対象を分け、既存の通知基盤を再利用します。
+
+独立監視の状態・警報と回復の履歴は [導入前検査watchdogの管理画面](docs/guides/preflight-watchdog-admin.md) で確認できます。既存の読取り専用表示を再利用しています。
+
+導入前検査watchdogの実報告を管理画面へ定期反映する手順は [状態報告の定期受渡し](docs/guides/preflight-observer-relay.md) にあります。
+
+導入前検査watchdogの状態転送を常駐化する手順は [systemdによる停止・再開と自動起動](docs/guides/preflight-observer-systemd.md) にあります。
+
+導入前検査・独立watchdogを含む最終試作ZIPは `dist/candidate-20261021-preflight-validated`。 [導入・更新ガイド](docs/guides/preflight-zip.md) と [新規導入・更新・状態保持の検証結果](evidence-public/preflight-zip.json) を参照してください。72時間観測・公開の判定は別です。

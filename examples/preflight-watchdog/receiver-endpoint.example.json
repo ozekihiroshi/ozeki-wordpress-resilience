@@ -1,0 +1,4 @@
+{
+  "site_id": "example-site",
+  "public_status_file": "/var/lib/owr-public/preflight-receiver.json"
+}

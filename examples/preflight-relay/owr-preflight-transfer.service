@@ -1,0 +1,23 @@
+[Unit]
+Description=OWR SSH preflight report receiver
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/var/lib/owr-preflight /var/lib/owr-preflight-web
+[Service]
+Type=simple
+User=owr-preflight
+Group=www-data
+UMask=0027
+ExecStart=/usr/bin/python3 -B /opt/owr/tools/preflight-transfer.py pull --config /etc/owr/preflight-transfer.json --interval 60
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/owr-preflight /var/lib/owr-preflight-web
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+[Install]
+WantedBy=multi-user.target

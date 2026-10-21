@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "checks": [
+    "current and unknown scope rendered",
+    "acquisition failure displayed",
+    "old failed attempt remains failed and stale",
+    "future rejected",
+    "site mismatch rejected",
+    "profile mismatch rejected",
+    "untrusted issue rejected",
+    "oversize rejected",
+    "missing shown",
+    "editor forbidden",
+    "POST forbidden",
+    "WordPress options unchanged after reads and rejected requests",
+    "no requests created"
+  ],
+  "scope": "real isolated WordPress/MariaDB PHP rendering; generated reports; not browser automation",
+  "ssh_regression_tests": 15,
+  "admin_envelope_failure_cli": true,
+  "containers_removed": true,
+  "environment_incidents": [],
+  "product_defects": [],
+  "source_sha256": {
+    "src/PreflightAdmin.php": "16e921993724ae8f94c43e46e1360058e27bc6b4cd324f09f781e4c0a822445d",
+    "tools/host-inventory-ssh.py": "180034634df726689b156daf7a7602ef83ee5f5aa9ce68876f590bf831239c96",
+    "tools/run-preflight-admin-lab.py": "ccf218f1d7d102a872fd2a06c148b250965d84fba9334b8394512e1680051531"
+  }
+}

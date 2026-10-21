@@ -1,0 +1,13 @@
+{
+  "site_id": "example-site",
+  "monitor_id": "preflight-receiver",
+  "host": "observer.example.invalid",
+  "port": 22,
+  "user": "owr-status",
+  "identity_file": "/etc/owr/preflight-receiver-read-key",
+  "known_hosts": "/etc/owr/observer-known-hosts",
+  "status_file": "/var/lib/owr-reports/preflight-receiver.json",
+  "transfer_health": "/var/lib/owr-reports/preflight-receiver-transfer.json",
+  "lock_file": "/var/lib/owr-preflight-relay/receiver-pull.lock",
+  "loop_lock": "/var/lib/owr-preflight-relay/receiver-loop.lock"
+}
