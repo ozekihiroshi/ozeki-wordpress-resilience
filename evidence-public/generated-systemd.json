@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "checks": [
+    "dedicated MariaDB ready",
+    "scanner dedicated Ubuntu VM booted",
+    "wordpress dedicated Ubuntu VM booted",
+    "observer dedicated Ubuntu VM booted",
+    "actual plan and generate CLI used; readiness remains false",
+    "six separate SSH keys pinned from local host-key origins; forced commands installed",
+    "generated publisher and receiver perform real SSH inventory; DB and files unchanged",
+    "dedicated local SMTP receiver ready",
+    "generated observer and both status pulls work over actual SSH",
+    "WordPress reads reports but cannot write them or read SSH keys",
+    "generated systemd services advance reports at60seconds",
+    "all generated report routes healthy",
+    "duplicate generated systemd publisher rejected",
+    "initial hardened units and enablement verified",
+    "actual WordPress preflight screen uses generated bindings; permissions and read-only checks pass",
+    "all periodic units stopped310seconds; reports byte-preserved and UI stopped",
+    "explicit restart restores generated report chain",
+    "scanner actual OS reboot changes BootID",
+    "wordpress actual OS reboot changes BootID",
+    "observer actual OS reboot changes BootID",
+    "enabled units automatically recover after OS reboot",
+    "reboot hardened units and enablement verified",
+    "72hour observation host BootID unchanged",
+    "actual watchdog screen uses generated monitor IDs and paths"
+  ],
+  "browser": [
+    {
+      "mode": "ok",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T08:01:17.234138+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：storage_destination_ref_unset\n設定：trust_operator_unset\n設定：trust_public_pin_ref_unset\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "mode": "stopped",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer stopped actual=stopped body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n定期更新が5分以上確認できません。更新停止または受渡し停止を確認してください。\n情報が古くなっています（5分以上）。現在の状態は未確認です。\n最終検査：2026-10-21T08:01:17.234138+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：storage_destination_ref_unset\n設定：trust_operator_unset\n設定：trust_public_pin_ref_unset\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "stopped and stale shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "mode": "recovered",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T08:08:35.029766+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：storage_destination_ref_unset\n設定：trust_operator_unset\n設定：trust_public_pin_ref_unset\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T08:10:03.209836+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：storage_destination_ref_unset\n設定：trust_operator_unset\n設定：trust_public_pin_ref_unset\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "passed": true,
+      "mode": "generated",
+      "expected": {
+        "source": {
+          "report": "current",
+          "transfer": "ok"
+        },
+        "receiver": {
+          "report": "current",
+          "transfer": "ok"
+        }
+      },
+      "readonly": true
+    }
+  ],
+  "reviewed_adjustments": [
+    "inventory endpoint: local PHP binary, generated SELECT credentials and database host",
+    "observer alerts completed with existing smtp_test dispatcher and dedicated loopback receiver; no external delivery",
+    "dedicated lab group33 mapping for read-only reports/config traversal",
+    "generated service interval60seconds unchanged; observer timers60seconds",
+    "generated fixture inventory declarations; measured SSH facts remain independently checked"
+  ],
+  "scope": "Three disposable Ubuntu VMs on same physical host; generated configurations with existing systemd units,60second periods, real310second stop and real OS reboots. SSH between VM roles; final UI files via9p. Synthetic SELECT-only MariaDB and files; local SMTP only; no production/S3/IAM/signing/72h changes.",
+  "environment_incidents": [],
+  "product_defects": [],
+  "boot": {
+    "before": {
+      "scanner": "16b91b59-805a-4f80-8523-01b8446bd29a",
+      "wordpress": "4fe9dfeb-c45a-46df-b553-0aac23468520",
+      "observer": "948fee2f-c7ab-4795-90c0-2eaabd25405d"
+    },
+    "after": {
+      "scanner": "da34f2b1-80c4-4c05-a579-30a079480c41",
+      "wordpress": "d9cc8f92-6f05-4b71-b53b-49942f73c2ac",
+      "observer": "85c315c3-4bc5-417e-b888-9be8089c05b5"
+    },
+    "host_unchanged": true
+  },
+  "units": {
+    "initial": {
+      "scanner/owr-generated-publisher": {
+        "User": "owr-preflight",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-receiver": {
+        "User": "owr-preflight",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-source-pull": {
+        "User": "owr-relay",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-receiver-pull": {
+        "User": "owr-relay",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "observer/owr-generated-source-observer.timer": {
+        "User": "owr-observer",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "observer/owr-generated-receiver-observer.timer": {
+        "User": "owr-observer",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      }
+    },
+    "reboot": {
+      "scanner/owr-generated-publisher": {
+        "User": "owr-preflight",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-receiver": {
+        "User": "owr-preflight",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-source-pull": {
+        "User": "owr-relay",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "wordpress/owr-generated-receiver-pull": {
+        "User": "owr-relay",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "observer/owr-generated-source-observer.timer": {
+        "User": "owr-observer",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      },
+      "observer/owr-generated-receiver-observer.timer": {
+        "User": "owr-observer",
+        "Group": "www-data",
+        "PrivateTmp": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes"
+      }
+    }
+  },
+  "test_infrastructure_incidents": [
+    {
+      "attempt": "initial",
+      "stage": "OS reboot",
+      "cause": "Custom SSH service did not recreate volatile /run/sshd; sshd exited255 and hit start limit",
+      "fix": "RuntimeDirectory=sshd; RuntimeDirectoryMode=0755; RuntimeDirectoryPreserve=yes",
+      "initial_result": "failed and preserved",
+      "retest": "fresh three-VM run passed"
+    }
+  ],
+  "unresolved_test_incidents": [
+    {
+      "attempt": "v2",
+      "stage": "WebDriver session creation before WordPress navigation",
+      "error": "HTTP response timed out at60seconds",
+      "root_cause": "unconfirmed; no contemporaneous Selenium log; postrun resource check does not prove prior resource conditions",
+      "mitigation": "Selenium ready gate and diagnostic log preservation added; subsequent pass alone does not prove root cause"
+    }
+  ],
+  "unit_tests": {
+    "deployment_plan": 19,
+    "notification_dispatch": 21
+  },
+  "cleanup": {
+    "dedicated_vm_wrappers_absent": true,
+    "dedicated_role_containers_absent": true,
+    "dedicated_network_absent": true
+  },
+  "visual_review": {
+    "stopped": true,
+    "restarted": true,
+    "watchdog": true
+  },
+  "ssh_runtime_after_reboot": {
+    "scanner": {
+      "exit_code": 0,
+      "properties": "RuntimeDirectoryPreserve=yes\nRuntimeDirectoryMode=0755\nRuntimeDirectory=sshd\nActiveState=active\n"
+    },
+    "wordpress": {
+      "exit_code": 0,
+      "properties": "RuntimeDirectoryPreserve=yes\nRuntimeDirectoryMode=0755\nRuntimeDirectory=sshd\nActiveState=active\n"
+    },
+    "observer": {
+      "exit_code": 0,
+      "properties": "RuntimeDirectoryPreserve=yes\nRuntimeDirectoryMode=0755\nRuntimeDirectory=sshd\nActiveState=active\n"
+    }
+  },
+  "final_report_times": {
+    "source.json": {
+      "observed_at": "2026-10-21T08:11:07.376235+00:00"
+    },
+    "receiver.json": {
+      "observed_at": "2026-10-21T08:11:07.597115+00:00"
+    },
+    "source-transfer.json": {
+      "attempted_at": "2026-10-21T08:11:14.581084+00:00",
+      "state": "ok"
+    },
+    "receiver-transfer.json": {
+      "attempted_at": "2026-10-21T08:11:15.935687+00:00",
+      "state": "ok"
+    }
+  }
+}

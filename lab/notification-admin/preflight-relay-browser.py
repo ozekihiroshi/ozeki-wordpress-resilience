@@ -64,6 +64,7 @@ while True:
   time.sleep(1)
 page='http://127.0.0.1/wp-admin/admin.php?page=owr-preflight'
 def login(user):
+ driver.delete_all_cookies()
  driver.set_window_size(1440,1000)
  driver.get('http://127.0.0.1/wp-login.php?trial='+str(time.time_ns()))
  for key,value in [('user_login',user),('user_pass',os.environ['LAB_ADMIN_PASSWORD'])]:
@@ -77,10 +78,17 @@ try:
  driver.set_window_size(1440,1000)
  driver.get(page);check(bool(driver.find_elements(By.ID,'loginform')),'anonymous requires login')
  login('labadmin');driver.get(page)
+ try:WebDriverWait(driver,15).until(lambda d:bool(d.find_elements(By.LINK_TEXT,'導入前検査')))
+ except TimeoutError:raise AssertionError('admin page not ready: '+driver.current_url+' body='+driver.find_element(By.TAG_NAME,'body').text)
  check(bool(driver.find_elements(By.LINK_TEXT,'導入前検査')),'admin menu present')
+ # Real periodic publication writes report and health separately. A bounded wait
+ # accepts only convergence, never replaces persistent mismatch with success.
+ settling=[];deadline=time.monotonic()+15
+ while mode!='inconsistent' and driver.find_element(By.CSS_SELECTOR,'[data-preflight-transfer]').get_attribute('data-preflight-transfer')=='inconsistent' and time.monotonic()<deadline:
+  settling.append('inconsistent');time.sleep(.5);driver.refresh()
  content=driver.find_element(By.CSS_SELECTOR,'#wpbody-content .wrap');text=content.text
  expected='stopped' if mode=='stopped' else ('inconsistent' if mode=='inconsistent' else ('acquisition_failed' if mode=='acquisition_failed' else ('transfer_failed' if mode=='transfer_failed' else 'ok')))
- check(driver.find_element(By.CSS_SELECTOR,'[data-preflight-transfer]').get_attribute('data-preflight-transfer')==expected,'transfer '+expected)
+ check(driver.find_element(By.CSS_SELECTOR,'[data-preflight-transfer]').get_attribute('data-preflight-transfer')==expected,'transfer '+expected+' actual='+driver.find_element(By.CSS_SELECTOR,'[data-preflight-transfer]').get_attribute('data-preflight-transfer')+' body='+text)
  if mode=='acquisition_failed':check('取得失敗・取得不可' in text,'acquisition failure shown')
  if mode=='transfer_failed':check('受渡しに失敗' in text,'publication failure distinguished')
  if mode=='stopped':check('5分以上確認できません' in text and '現在の状態は未確認' in text,'stopped and stale shown')
@@ -95,5 +103,5 @@ try:
  driver.delete_all_cookies();login('labeditor');driver.get(page)
  check(not driver.find_elements(By.CSS_SELECTOR,'[data-preflight-state]'),'editor cannot read report')
  check(not driver.find_elements(By.LINK_TEXT,'導入前検査'),'editor has no menu')
- print(json.dumps(dict(mode=mode,checks=checks)))
+ print(json.dumps(dict(mode=mode,checks=checks,publication_settling=settling)))
 finally:driver.quit()

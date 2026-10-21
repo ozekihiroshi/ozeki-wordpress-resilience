@@ -86,3 +86,13 @@ notification-live.py は外部担当者が候補を明示適用する apply と�
 notification-transfer.py は専用SSHの receive / exchange、ワーカー用の stage / publish を提供。run-notification-transfer-lab.py は外部通信不可のコンテナ2台で実SSH・分離ユーザーを検証する。[配置・権限・再送手順](../docs/guides/notification-transfer.md)。
 
 notification-runtime.py は relay / worker / watchdog の1周期実行入口。run-notification-runtime-lab.py は別プロセス・実SSHによる定期実行と停止・復帰・通信断の試験。[運用・設定例](../docs/guides/notification-runtime.md)。
+
+## 外部設定作成と導入計画
+
+`external-deployment-plan.py plan|generate` は既存プロファイルとtopologyから読取り専用計画または新規フォルダーへの設定下書きを作る。[手順と未設定事項](../docs/guides/external-deployment-plan.md)。SSH接続・サービス登録・秘密情報作成は行わない。
+
+[生成設定の配置試験](../docs/guides/generated-deployment-lab.md)：既存SSH/定期処理/独立watchdog/WordPressを再利用。限定専用環境での導入経路の検証で、本番自動配置ではありません。
+
+[生成設定の3VM systemd試験](../docs/guides/generated-systemd-lab.md)：既存サービスを再利用し、60秒周期、実停止・再開、OS再起動後の自動起動と画面回復を専用環境で確認。
+
+設定生成・systemd配置の[ZIP検証手順](../docs/guides/deployment-zip.md)。固定ZIPと専用環境で確認し、72時間判定とは分ける。

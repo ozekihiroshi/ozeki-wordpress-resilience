@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "kit_checks": [
+    "kit ZIP bytes and every extracted file match manifest",
+    "packaged plan is read-only and not production-ready",
+    "packaged generate creates new draft",
+    "existing reviewed draft overwrite refused without changes",
+    "separate code extraction preserves external configuration"
+  ],
+  "wordpress": {
+    "passed": true,
+    "checks": [
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "fc6175a7497b63009c3e11654ce52b1535611084e136b80298186d3cf849fb58",
+    "old_zip_sha256": "fc6175a7497b63009c3e11654ce52b1535611084e136b80298186d3cf849fb58",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "kit_sha256": "ed57169791d61a8d3a270cfacf4021712e8a689f0500f2cdca18f963b3b88a3e",
+  "plugin_sha256": "fc6175a7497b63009c3e11654ce52b1535611084e136b80298186d3cf849fb58",
+  "production_ready": false,
+  "scope": "Synthetic dedicated fixtures; packaged code and actual WordPress updater; no service rollout, S3, signing, production or observation changes",
+  "distribution": "dist/candidate-20261021-deployment-final",
+  "unit_tests": 19,
+  "cleanup_independently_verified": true,
+  "plugin_identical_to_previous_candidate": true,
+  "unresolved_browser_issue": "Prior generated-systemd v2 WebDriver session timeout root cause unconfirmed; no recurrence in this ZIP run; readiness gate and diagnostic retention are mitigation, not proof of cause",
+  "environment_incidents": [],
+  "new_product_defects": []
+}

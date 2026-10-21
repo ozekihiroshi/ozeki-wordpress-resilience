@@ -1,0 +1,26 @@
+{
+  "format": "owr-deployment-topology-v1",
+  "site_id": "generated-first-site",
+  "hosts": {
+    "inventory": {
+      "host": "inventory.example.invalid",
+      "port": 22,
+      "user": "inspector"
+    },
+    "scanner": {
+      "host": "scanner.example.invalid",
+      "port": 22,
+      "user": "owr-status"
+    },
+    "wordpress": {
+      "host": "wordpress.example.invalid",
+      "port": 22,
+      "user": "owr-status"
+    },
+    "observer": {
+      "host": "observer.example.invalid",
+      "port": 22,
+      "user": "owr-status"
+    }
+  }
+}

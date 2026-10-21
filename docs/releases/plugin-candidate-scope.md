@@ -14,10 +14,12 @@
 
 ## 配布構成
 
-- `ozeki-wordpress-resilience-0.1.0-dev.1.zip`：プラグイン入口、管理画面PHP 5ファイル、readme.txt、LICENSEのみ。WordPressへアップロードするのはこちら。
+- `ozeki-wordpress-resilience-0.1.0-dev.1.zip`：プラグイン入口、管理画面PHP 7ファイル、readme.txt、LICENSEのみ。WordPressへアップロードするのはこちら。
 - `owr-development-kit-0.1.0-dev.1.zip`：外部ツール、試験、仕様、設定例、共通部品等の公開ソース。WordPressへアップロードしない。専用環境での検証と開発に用いる。本番常設用インストーラーではない。
 - `manifest.json`：各ZIPのSHA-256、収録ファイル、元ソースのSHA-256。内容識別用であり、独立したリリース署名の代替ではない。
 
 インストール用ZIPへAWS SDK、Composer vendor、取得物、鍵、環境設定、試験用スクリプトは収録しない。開発キットにも.git、.local、vendor、evidence原本、キャッシュ、配布物を収録しない。既存製品の自動インストールはしない。共通部品はpackages/backup-coreで管理し、管理画面ZIPがそのDBダンプ機能を使うとは説明しない。
 
 3日間の継続観測は外部構成の別評価として実施中。開発候補の構築・導入検証・差分レビューを待たせない。完成版としての保護範囲の判断は別途行う。
+
+外部処理の[設定下書きと導入計画](../guides/external-deployment-plan.md)は開発ツリーへ追加。既存の検証済みZIPには含まれず、自動配置やバックアップ起動は行わない。

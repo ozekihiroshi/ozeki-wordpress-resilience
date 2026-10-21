@@ -12,7 +12,7 @@ def run(*args,input=None,check=True,timeout=90):
 
 import contextlib,types
 @contextlib.contextmanager
-def ui_session(statusdir):
+def ui_session(statusdir, deployment=None):
     args=types.SimpleNamespace(plugin_zip=None)
     images=dict(line.split('=',1) for line in (ROOT/'lab/m1/images.env').read_text().splitlines() if '=' in line)
     prefix='owr-preflight-observer-ui-'+secrets.token_hex(5);db=prefix+'-db';web=prefix+'-web';browser=prefix+'-browser';created=[];checks=[]
@@ -36,13 +36,15 @@ def ui_session(statusdir):
             if args.plugin_zip:
                 if not args.plugin_zip.is_file():raise ValueError('plugin ZIP missing')
                 env.write_text(env.read_text().replace('define("DISALLOW_FILE_MODS",true);','define("FS_METHOD","direct");'))
+            if deployment is not None:
+                lines=env.read_text().splitlines();lines=[x for x in lines if not x.startswith('WORDPRESS_CONFIG_EXTRA=')];lines.append('WORDPRESS_CONFIG_EXTRA='+deployment['php']+' define("DISABLE_WP_CRON",true); define("WP_HTTP_BLOCK_EXTERNAL",true); define("DISALLOW_FILE_MODS",true);');env.write_text('\n'.join(lines)+'\n')
             for image in (images['OWR_DB_IMAGE'],images['OWR_WP_IMAGE'],'selenium/standalone-chrome:latest'):run('docker','image','inspect',image)
             run('docker','run','-d','--name',db,'--network','none','--memory','512m','--env-file',str(env),images['OWR_DB_IMAGE']);created.append(db)
             deadline=time.monotonic()+100
             while run('docker','exec',db,'healthcheck.sh','--connect','--innodb_initialized',check=False).returncode:
                 if time.monotonic()>deadline:raise RuntimeError('DB startup timeout')
                 time.sleep(1)
-            run('docker','run','-d','--name',web,'--network','container:'+db,'--memory','768m','--env-file',str(env),*(['-v',str(plugin)+':/var/www/html/wp-content/plugins/ozeki-wordpress-resilience:ro'] if not args.plugin_zip else []),'-v',str(statusdir)+':/status:ro','-v',str(requests)+':/requests',images['OWR_WP_IMAGE']);created.append(web)
+            run('docker','run','-d','--name',web,'--network','container:'+db,'--memory','768m','--env-file',str(env),*(['-v',str(plugin)+':/var/www/html/wp-content/plugins/ozeki-wordpress-resilience:ro'] if not args.plugin_zip else []),'-v',str(statusdir)+':/status:ro',*([item for pair in deployment['mounts'] for item in ('-v',pair)] if deployment else []),'-v',str(requests)+':/requests',images['OWR_WP_IMAGE']);created.append(web)
             run('docker','exec',web,'chown','33:'+str(os.getgid()),'/requests')
             run('docker','exec',web,'chmod','2770','/requests')
             run('docker','exec',web,'chown','33:'+str(os.getgid()),'/requests/observer');run('docker','exec',web,'chmod','2770','/requests/observer')
@@ -62,8 +64,20 @@ def ui_session(statusdir):
                 assert not item['HostConfig']['PortBindings']
             checks.append('isolated network namespace; no published ports')
 
+            # Readiness must precede session creation; retain browser diagnostics on failure.
+            deadline=time.monotonic()+90
+            while True:
+                ready=run('docker','exec',browser,'python3','-c','import json,urllib.request; print(json.load(urllib.request.urlopen("http://127.0.0.1:4444/status",timeout=3))["value"]["ready"])',check=False,timeout=10)
+                if ready.returncode==0 and ready.stdout.strip()==b'True':break
+                if time.monotonic()>deadline:raise RuntimeError('Selenium not ready before browser session')
+                time.sleep(1)
             yield web,browser
     finally:
+        if deployment is not None and deployment.get('diagnostics'):
+            diag=Path(deployment['diagnostics']);diag.mkdir(parents=True,exist_ok=True)
+            if browser in created:
+                (diag/'selenium.log').write_bytes(run('docker','logs',browser,check=False).stdout+run('docker','logs',browser,check=False).stderr)
+                (diag/'browser-state.json').write_bytes(run('docker','inspect','--format','{{json .State}}',browser,check=False).stdout)
         for name in reversed(created):run('docker','rm','-f','-v',name)
 
 def main():
