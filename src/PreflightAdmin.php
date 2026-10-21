@@ -33,8 +33,37 @@ final class PreflightAdmin {
    $unknown=$r['host_observation']['unverified']??[];
    if (!is_array($unknown)||count($unknown)>20) throw new \RuntimeException();
    foreach($unknown as $x) if (!is_string($x)||!preg_match('/^[a-z_]{1,80}$/D',$x)) throw new \RuntimeException();
-   return ['state'=>time()-$at>=300?'stale':'current','at'=>$v['attempted_at'],'verdict'=>$r['state'],'host'=>$h,'issues'=>$clean,'unknown'=>$unknown];
+   return ['state'=>time()-$at>=300?'stale':'current','at'=>$v['attempted_at'],'verdict'=>$r['state'],'host'=>$h,'issues'=>$clean,'unknown'=>$unknown,'operator_review'=>self::review($r['operator_review']??null)];
   } catch(\Throwable $e){return ['state'=>'invalid'];}
+ }
+ static function review($v): array {
+  if($v===null)return ['state'=>'missing','reasons'=>['review_missing']];
+  try {
+   if(!is_array($v)||($v['format']??null)!=='owr-operator-review-status-v1'||!in_array($v['state']??'', ['valid','expired','revoked','reconfirmation_required','missing','invalid'],true)||!is_bool($v['automatic_checks_passed']??null))throw new \RuntimeException();
+   $reasons=$v['reasons']??null;
+   if(!is_array($reasons)||count($reasons)>8)throw new \RuntimeException();
+   foreach($reasons as $reason)if(!in_array($reason,['review_missing','review_invalid','review_revoked','review_expired','scope_changed','confirmation_incomplete','automatic_checks_failed'],true))throw new \RuntimeException();
+   $out=['state'=>$v['state'],'reasons'=>$reasons,'automatic_checks_passed'=>$v['automatic_checks_passed']];
+   if(!in_array($v['state'],['missing','invalid'],true)) {
+    $start=ObserverAdmin::stamp($v['reviewed_at']??null);$expiry=$v['expires_at']??null;
+    if(!is_string($expiry)||strlen($expiry)>64||!preg_match('/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/D',$expiry))throw new \RuntimeException();
+    $end=strtotime($expiry);if($end===false)throw new \RuntimeException();
+    if($start>time()||$end<=$start||$end-$start>604800)throw new \RuntimeException();
+    $out['reviewed_at']=$v['reviewed_at'];$out['expires_at']=$v['expires_at'];
+    if(time()>=$end&&$out['state']!=='revoked'){$out['state']='expired';$out['reasons'][]='review_expired';$out['automatic_checks_passed']=false;}
+   }
+   return $out;
+  }catch(\Throwable $e){return ['state'=>'invalid','reasons'=>['review_invalid']];}
+ }
+ static function renderReview(array $report,array $transfer): void {
+  $v=$report['operator_review']??['state'=>'missing','reasons'=>['review_missing']];
+  $labels=['valid'=>'期限内','expired'=>'期限切れ：担当者の再確認が必要','revoked'=>'失効済み：担当者の再確認が必要','reconfirmation_required'=>'確認対象の再確認が必要','missing'=>'担当者確認の記録は未取得','invalid'=>'担当者確認の記録を確認できません'];
+  $reasons=['review_missing'=>'確認記録がありません。','review_invalid'=>'確認記録の形式または期限が不正です。','review_revoked'=>'担当者確認が失効しています。','review_expired'=>'担当者確認の有効期限を過ぎています。','scope_changed'=>'設定・実行環境・担当者などの確認対象が変わっています。','confirmation_incomplete'=>'必要な担当者確認が不足しています。','automatic_checks_failed'=>'毎回の自動再検査に未達があります。'];
+  echo '<h2>担当者確認（日次運用）</h2><p data-operator-review="'.esc_attr($v['state']).'">'.esc_html($labels[$v['state']]).'</p>';
+  if(($report['state']??'')!=='current'||($transfer['state']??'')!=='ok')echo '<p data-operator-review-current="false">情報の更新・受渡しを確認できません。表示は最後に受信した記録で、現在の有効性は未確認です。</p>';
+  if(isset($v['expires_at']))echo '<p>確認日時：'.esc_html($v['reviewed_at']).'</p><p>有効期限：'.esc_html($v['expires_at']).'</p>';
+  echo '<ul>';foreach(array_unique($v['reasons']) as $reason)echo '<li>'.esc_html($reasons[$reason]).'</li>';echo '</ul>';
+  echo '<p>担当者確認は自動延長しません。再確認・更新は外部の担当者用手順で行ってください。期限内でも取得・保存を許可する表示ではなく、実行直前の再検査と署名承認は別です。</p>';
  }
  static function transfer(): array {
   if (!defined('OWR_PREFLIGHT_TRANSFER_FILE')) return ['state'=>'unavailable'];
@@ -58,6 +87,7 @@ final class PreflightAdmin {
   DailyAdmin::guard();$v=self::read();
   echo '<div class="wrap"><h1>SSH棚卸し・導入前検査</h1><p>読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。</p>';
   $transfer=self::transfer();
+  self::renderReview($v,$transfer);
   $tl=['unavailable'=>'定期更新の記録は未取得です。','invalid'=>'定期更新の記録が不正です。','source_stale'=>'接続先の検査記録が5分以上更新されていません。検査側を確認してください。','stopped'=>'定期更新が5分以上確認できません。更新停止または受渡し停止を確認してください。','ok'=>'定期取得・受渡しは成功しています。','acquisition_failed'=>'今回の棚卸し取得・検査に失敗しました。','transfer_failed'=>'WordPressへの受渡しに失敗しました。表示中の検査結果は直前の記録です。','inconsistent'=>'更新記録と検査結果が一致しません。反映途中または受渡し不整合です。'];
   echo '<p data-preflight-transfer="'.esc_attr($transfer['state']).'">'.esc_html($tl[$transfer['state']]).'</p>';
   $labels=['missing'=>'検査記録が未取得です。','invalid'=>'検査記録を確認できません。サイト・設定版・形式を確認してください。','stale'=>'情報が古くなっています（5分以上）。現在の状態は未確認です。','current'=>'直近5分以内の検査記録です。'];

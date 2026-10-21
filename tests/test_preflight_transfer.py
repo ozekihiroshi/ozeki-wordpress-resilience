@@ -26,4 +26,13 @@ class TransferTests(unittest.TestCase):
   self.v['secret']='never';self.v['result']['private']='never';self.assertNotIn('never',json.dumps(m.clean(self.v,self.c)))
  def test_foreign(self):
   self.v['site_id']='other';self.assertEqual(m.pull(self.c,self.wire)['state'],'transfer_failed')
-if __name__=='__main__':unittest.main()
+
+
+ def test_operator_summary_transfer_redacted(self):
+  now=datetime.now(timezone.utc)
+  self.v['result']['operator_review']=dict(format='owr-operator-review-status-v1',state='valid',reviewed_at=now.isoformat(),expires_at=(now+timedelta(days=1)).isoformat(),reasons=[],automatic_checks_passed=True,secret='NEVER_RENDER_SECRET')
+  self.assertEqual(m.pull(self.c,self.wire)['state'],'ok')
+  text=Path(self.c['report_file']).read_text();self.assertNotIn('NEVER_RENDER_SECRET',text);self.assertEqual(json.loads(text)['result']['operator_review']['state'],'valid')
+ def test_invalid_operator_summary_is_not_valid(self):
+  self.v['result']['operator_review']={'state':'valid','secret':'NEVER_RENDER_SECRET'}
+  v=m.clean(self.v,self.c);self.assertEqual(v['result']['operator_review']['state'],'invalid');self.assertNotIn('NEVER_RENDER_SECRET',json.dumps(v))

@@ -15,6 +15,18 @@ def stamp(v):
  if not d.tzinfo or d.timestamp()>time.time()+5:raise ValueError('time')
  return d.timestamp()
 
+def clean_review(v):
+ try:
+  if v['format']!='owr-operator-review-status-v1' or v['state'] not in ('valid','expired','revoked','reconfirmation_required','missing','invalid') or type(v['automatic_checks_passed']) is not bool:raise ValueError()
+  reasons=v['reasons']
+  if not isinstance(reasons,list) or len(reasons)>8 or any(x not in ('review_missing','review_invalid','review_revoked','review_expired','scope_changed','confirmation_incomplete','automatic_checks_failed') for x in reasons):raise ValueError()
+  if v['state'] not in ('missing','invalid'):
+   start=stamp(v['reviewed_at']);end=datetime.fromisoformat(v['expires_at'])
+   if not end.tzinfo or not 0<end.timestamp()-start<=604800:raise ValueError()
+  return {k:v[k] for k in ('format','state','reviewed_at','expires_at','reasons','automatic_checks_passed')}
+ except (ValueError,TypeError,KeyError,OverflowError):
+  return dict(format='owr-operator-review-status-v1',state='invalid',reviewed_at=None,expires_at=None,reasons=['review_invalid'],automatic_checks_passed=False)
+
 def clean(v,c):
  if v.get('format')!='owr-preflight-admin-v1' or v.get('site_id')!=c['site_id'] or v.get('config_sha256')!=c['config_sha256']:raise ValueError('binding')
  stamp(v['attempted_at']);r=v['result'];h=r.get('host_observation',{})
@@ -25,7 +37,9 @@ def clean(v,c):
   if not re.fullmatch('[a-z0-9_]{1,100}',i['code']) or i['category'] not in ('configuration','environment','operational','unsupported','unclassified'):raise ValueError('issue')
  for x in unknown:
   if not re.fullmatch('[a-z_]{1,80}',x):raise ValueError('scope')
- return dict(format=v['format'],site_id=v['site_id'],config_sha256=v['config_sha256'],attempted_at=v['attempted_at'],result=dict(production_ready=False,state=r['state'],host_observation=dict(state=h['state'],unverified=unknown),issues=[{k:i[k] for k in ('code','category')} for i in issues]))
+ out=dict(format=v['format'],site_id=v['site_id'],config_sha256=v['config_sha256'],attempted_at=v['attempted_at'],result=dict(production_ready=False,state=r['state'],host_observation=dict(state=h['state'],unverified=unknown),issues=[{k:i[k] for k in ('code','category')} for i in issues]))
+ if 'operator_review' in r:out['result']['operator_review']=clean_review(r['operator_review'])
+ return out
 
 def serve(c,q):
  if set(q)!={'site_id','config_sha256','nonce'} or q['site_id']!=c['site_id'] or q['config_sha256']!=c['config_sha256'] or not re.fullmatch('[a-f0-9]{32}',q['nonce']):raise ValueError('request')

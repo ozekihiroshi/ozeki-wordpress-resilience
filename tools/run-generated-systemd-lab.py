@@ -8,7 +8,7 @@ def load(name):
  s=importlib.util.spec_from_file_location(name,ROOT/'tools'/(name+'.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 ui=load('run-preflight-observer-relay-lab');run=ui.run
 
-def main():
+def main(review_mode=False):
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(mode=0o700,parents=True,exist_ok=False)
  prefix='owr-plan-systemd-'+secrets.token_hex(5);net=prefix+'-net';hosts={r:prefix+'-'+r for r in ('inventory','scanner','wordpress','observer')};db=prefix+'-db';created=[];checks=[];events=[];vms={};hostboot=Path('/proc/sys/kernel/random/boot_id').read_text()
  def record(label):checks.append(label);print('PASS '+label,flush=True)
@@ -64,6 +64,8 @@ def main():
     ex(role,'useradd','-m','-g','33','-s','/bin/sh',user)
    ex(role,'usermod','-p','*','ingress');ex(role,'mkdir','-p',cfg,'/run/sshd');ex(role,'chmod','750',cfg);ex(role,'chgrp','33',cfg)
   profile=json.loads((ROOT/'examples/first-site/generated-lab.json').read_text());top=dict(format='owr-deployment-topology-v1',site_id=site,hosts={r:dict(host=json.loads(run('docker','inspect',h).stdout)[0]['NetworkSettings']['Networks'][net]['IPAddress'],port=2222 if r=='inventory' else 2224,user='ingress') for r,h in hosts.items()})
+  if review_mode:
+   profile['storage']['destination_ref']='generated-storage';profile['trust'].update(operator='lab-operator',public_pin_ref='generated-pin')
   for n,v in [('profile',profile),('topology',top)]: (a.output/(n+'.json')).write_text(json.dumps(v))
   tool=['python3','-B',str(ROOT/'tools/external-deployment-plan.py')];inputs=['--profile',str(a.output/'profile.json'),'--topology',str(a.output/'topology.json')]
   plan=json.loads(run(*tool,'plan',*inputs).stdout);bundle=a.output/'bundle';run(*tool,'generate',*inputs,'--output',str(bundle))
@@ -109,12 +111,27 @@ def main():
   def command(role,needle):return next(c['argv'] for c in commands if c['role']==role and needle in ' '.join(c['argv']))
   pub=command('scanner','preflight-relay.py');recv=command('wordpress','preflight-transfer.py')
   def one(role,argv,user):return invoke(role,argv[:-1]+['0'] if '--interval' in argv else argv,user,False)
+  def refresh_inventory():
+   inventory['observed_at']=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
+   put('scanner',cfg+'/inventory.json',inventory,owner='root:33')
+  if review_mode:
+   pubpath=pub[pub.index('--config')+1];pc=doc('scanner',pubpath);pc['review_file']=cfg+'/operator-review.json';put('scanner',pubpath,pc,owner='root:33')
+   refresh_inventory()
   def dump():return run('docker','exec',db,'sh','-c','MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb-dump -uroot --skip-comments --skip-dump-date lab').stdout
   before=dump();filebefore={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in fixture.rglob('*') if p.is_file()}
   result=one('scanner',pub,'owr-preflight');assert result.returncode==0,result.stdout.decode()+result.stderr.decode()
   assert one('wordpress',recv,'owr-preflight').returncode==0
   assert before==dump() and filebefore=={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in fixture.rglob('*') if p.is_file()}
   assert doc('wordpress',public+'/report.json')['result']['host_observation']['state']=='validated_report';record('generated publisher and receiver perform real SSH inventory; DB and files unchanged')
+  if review_mode:
+   # Explicit lab operator issuance; periodic publisher cannot write this root-owned file.
+   code="import importlib.util,json,pathlib; s=importlib.util.spec_from_file_location('issuer','/opt/owr/tools/recurring-capture-review.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);c=json.load(open("+repr(pubpath)+"));read=lambda k:json.load(open(c[k]));p=read('profile_file');v=m.issue(p,read('inventory_file'),c['workspace'],read('report_file'),read('health_file'),{k:dict(confirmed=True,evidence_ref='generated-manual-check/'+k) for k in m.gate.SCOPES},p['operations']['owner']);print(json.dumps(v))"
+   review=json.loads(invoke('scanner',['python3','-B','-c',code],'owr-preflight').stdout);put('scanner',pc['review_file'],review,owner='root:33');review_bytes=read('scanner',pc['review_file'])
+   assert one('scanner',pub,'owr-preflight').returncode==0
+   assert one('wordpress',recv,'owr-preflight').returncode==0
+   summary=doc('wordpress',public+'/report.json')['result']['operator_review'];assert summary['state']=='valid' and summary['automatic_checks_passed'],summary
+   assert ex('scanner','runuser','-u','owr-preflight','--','test','-w',pc['review_file'],check=False).returncode!=0
+   record('operator review issued explicitly; valid summary transferred over SSH; worker cannot edit confirmation')
   put('observer','/etc/systemd/system/owr-lab-mail.service','[Unit]\nAfter=network.target\n[Service]\nUser=owr-observer\nGroup=www-data\nExecStart=/usr/bin/python3 -B /opt/owr/tools/smtp-test-receiver.py --directory '+op+'/mail --ready-file '+op+'/smtp-ready.json --port 1025\nRestart=on-failure\n[Install]\nWantedBy=multi-user.target\n',mode='644');ex('observer','systemctl','daemon-reload');ex('observer','systemctl','enable','--now','owr-lab-mail')
   wait(lambda:ex('observer','test','-f',op+'/smtp-ready.json',check=False).returncode==0,'dedicated local SMTP receiver ready')
   smtp=doc('observer',op+'/smtp-ready.json')
@@ -170,7 +187,17 @@ def main():
     if q.returncode:raise RuntimeError('browser '+mode+' failed: '+q.stderr.decode()[-2500:])
     events.append(json.loads(q.stdout));(a.output/'browser-events.json').write_text(json.dumps(events,indent=2));run('docker','cp',browser+':/tmp/preflight-'+mode+'.png',str(a.output/(mode+'.png')))
 
+   def review_screen(label,mode):
+    if not review_mode:return
+    q=run('docker','exec',browser,'python3','/lab/operator-review-browser.py',mode,timeout=120,check=False)
+    (a.output/('review-'+label+'.log')).write_bytes(q.stdout+q.stderr)
+    if q.returncode:raise RuntimeError('operator review browser failed:'+label)
+    events.append(dict(label=label,operator_review=json.loads(q.stdout)))
+    run('docker','cp',browser+':/tmp/operator-review-'+mode+'.png',str(a.output/('review-'+label+'.png')))
+    assert read('scanner',pc['review_file'])==review_bytes,'automatic renewal or mutation'
+    record('operator review '+label+' UI and immutable confirmation verified')
    diagnostics=run('docker','exec',wp,'php','-r',"require '/var/www/html/wp-load.php'; echo json_encode(['report_defined'=>defined('OWR_PREFLIGHT_REPORT'),'report_readable'=>defined('OWR_PREFLIGHT_REPORT') && is_readable(OWR_PREFLIGHT_REPORT),'health_readable'=>defined('OWR_PREFLIGHT_TRANSFER_FILE') && is_readable(OWR_PREFLIGHT_TRANSFER_FILE)]);");(a.output/'wordpress-bindings.json').write_bytes(diagnostics.stdout)
+   review_screen('initial','valid')
    screen('ok');record('actual WordPress preflight screen uses generated bindings; permissions and read-only checks pass')
    # Stop every generated periodic service/timer; preserve reports and private state.
    for role,names in units.items():
@@ -179,19 +206,24 @@ def main():
    started=time.monotonic()
    while time.monotonic()-started<310:
     time.sleep(10);assert all(read('wordpress',p)==v for p,v in frozen.items());print('STOPPED_SECONDS '+str(round(time.monotonic()-started)),flush=True)
+   review_screen('stopped','stale')
    screen('stopped');record('all periodic units stopped310seconds; reports byte-preserved and UI stopped')
+   if review_mode:refresh_inventory() # Controlled fixture re-observation, never renewal of confirmation.
    for role,names in units.items():ex(role,'systemctl','start',*names)
    old=json.loads(frozen[public+'/report.json'])['attempted_at'];wait(lambda:healthy() and doc('wordpress',public+'/report.json')['attempted_at']!=old,'explicit restart restores generated report chain');screen('recovered')
+   review_screen('recovered','valid')
    boots={role:read(role,'/proc/sys/kernel/random/boot_id').decode().strip() for role in vms}
+   if review_mode:refresh_inventory()
    before_reboot=doc('wordpress',public+'/report.json')['attempted_at']
    for role in vms:ex(role,'systemctl','reboot',check=False)
    for role in vms:wait(lambda role=role:read(role,'/proc/sys/kernel/random/boot_id').decode().strip()!=boots[role],role+' actual OS reboot changes BootID')
    wait(lambda:healthy() and doc('wordpress',public+'/report.json')['attempted_at']!=before_reboot,'enabled units automatically recover after OS reboot')
    verify('reboot');screen('restarted')
+   review_screen('reboot','valid')
    assert Path('/proc/sys/kernel/random/boot_id').read_text()==hostboot
    (a.output/'boot.json').write_text(json.dumps(dict(before=boots,after={r:read(r,'/proc/sys/kernel/random/boot_id').decode().strip() for r in vms},host_unchanged=True),indent=2));record('72hour observation host BootID unchanged')
    q=run('docker','exec',browser,'python3','/lab/preflight-observer-relay-browser.py','generated',json.dumps({s:dict(report='current',transfer='ok') for s in ('source','receiver')}),timeout=120);events.append(json.loads(q.stdout));run('docker','cp',browser+':/tmp/relay-generated.png',str(a.output/'watchdog.png'));record('actual watchdog screen uses generated monitor IDs and paths')
-  (a.output/'result.json').write_text(json.dumps(dict(passed=True,checks=checks,browser=events,reviewed_adjustments=mutations+['dedicated lab group33 mapping for read-only reports/config traversal','generated service interval60seconds unchanged; observer timers60seconds','generated fixture inventory declarations; measured SSH facts remain independently checked'],scope='disposable internal Docker network; real SELECT-only MariaDB, pinned SSH, existing workers and WordPress browser; three real Ubuntu VMs with systemd and OS reboot; no S3/signing/72h mutation; observer CLI uses local SMTP test receiver, no external notification',environment_incidents=[],product_defects=[]),indent=2))
+  (a.output/'result.json').write_text(json.dumps(dict(passed=True,operator_review_mode=review_mode,automatic_review_renewal=False,checks=checks,browser=events,reviewed_adjustments=mutations+['dedicated lab group33 mapping for read-only reports/config traversal','generated service interval60seconds unchanged; observer timers60seconds','generated fixture inventory declarations; measured SSH facts remain independently checked'],scope='disposable internal Docker network; real SELECT-only MariaDB, pinned SSH, existing workers and WordPress browser; three real Ubuntu VMs with systemd and OS reboot; no S3/signing/72h mutation; observer CLI uses local SMTP test receiver, no external notification',environment_incidents=[],product_defects=[]),indent=2))
  except Exception as e:
   (a.output/'failure.json').write_text(json.dumps(dict(error_type=type(e).__name__,detail=str(e)),indent=2));raise
  finally:

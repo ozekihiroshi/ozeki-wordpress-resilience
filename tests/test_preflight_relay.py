@@ -29,4 +29,13 @@ class RelayTests(unittest.TestCase):
   Path(self.c['health_file']).mkdir()
   with patch.object(m.wire,'inspect',side_effect=OSError):
    with self.assertRaises(OSError):m.tick(self.c)
+
+ def test_optional_review_missing_published(self):
+  self.c['review_file']=str(self.root/'missing-review.json')
+  with patch.object(m.wire,'inspect',return_value={'production_ready':False,'state':'needs_configuration','issues':[],'host_observation':{'state':'validated_report'}}):m.tick(self.c)
+  v=json.loads(Path(self.c['report_file']).read_text())['result']['operator_review']
+  self.assertEqual(v['state'],'missing');self.assertFalse(v['automatic_checks_passed'])
+ def test_review_path_cannot_overwrite_input(self):
+  with self.assertRaises(ValueError):m.validate(dict(self.c,review_file=self.c['report_file']))
+
 if __name__=='__main__':unittest.main()

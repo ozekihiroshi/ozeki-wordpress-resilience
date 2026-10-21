@@ -1,0 +1,12 @@
+{
+  "scope": "dedicated_generated_data_only",
+  "tests": 14,
+  "result": "pass",
+  "network": "none",
+  "code_mount": "read_only",
+  "capture_started": false,
+  "production_ready": false,
+  "actual_worker_gate_integration": false,
+  "browser_root_cause": "previous_issue_unconfirmed",
+  "observation_72h": "separate_not_final"
+}

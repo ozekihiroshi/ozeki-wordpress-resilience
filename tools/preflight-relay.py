@@ -9,7 +9,7 @@ s=importlib.util.spec_from_file_location('hostssh',Path(__file__).with_name('hos
 
 def validate(c):
     keys=('report_file','health_file','lock_file','profile_file','inventory_file','connection_file')
-    paths=[Path(c[k]) for k in keys]
+    paths=[Path(c[k]) for k in keys]+([Path(c['review_file'])] if 'review_file' in c else [])
     if any(not p.is_absolute() or p.is_symlink() for p in paths) or len({p.resolve() for p in paths})!=len(paths):raise ValueError('separate absolute paths required')
     for p in paths[:3]:
         st=p.parent.stat()
@@ -28,6 +28,16 @@ def tick(c,transport=None):
     except Exception:
         result=dict(production_ready=False,state='needs_configuration',host_observation=dict(state='unavailable'),issues=[dict(code='preflight_input_or_acquisition_failed',category='unclassified')])
     envelope=dict(format='owr-preflight-admin-v1',site_id=c['site_id'],config_sha256=digest,attempted_at=at,result=result)
+    if 'review_file' in c:
+        summary=wire.load('operator-review-status')
+        try: review=pre.read_json(c['review_file'])
+        except FileNotFoundError: review=None
+        except Exception: review={}
+        try:
+            prospective=dict(health,state='ok' if result.get('host_observation',{}).get('state')=='validated_report' else 'acquisition_failed',report_at=at)
+            result['operator_review']=summary.summarize(profile,pre.read_json(c['inventory_file']),c['workspace'],envelope,prospective,review)
+        except Exception:
+            result['operator_review']=dict(format='owr-operator-review-status-v1',state='invalid',reviewed_at=None,expires_at=None,reasons=['review_invalid'],automatic_checks_passed=False)
     try:
         wire.t.atomic(c['report_file'],envelope)
         health['report_at']=at

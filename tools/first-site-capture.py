@@ -69,7 +69,7 @@ def write_json(path,value):
         json.dump(value,f,indent=2);f.flush();os.fsync(f.fileno())
     tmp.replace(path)
 
-def capture(config, expected_config_hash, backend, state_root):
+def capture(config, expected_config_hash, backend, state_root, *, pre_capture_check=None):
     c=copy.deepcopy(config);validate(c)
     require(digest(c)==expected_config_hash,'configuration_pin_mismatch')
     root=Path(state_root);require(root.is_dir() and not root.is_symlink(),'invalid_state_root')
@@ -81,8 +81,10 @@ def capture(config, expected_config_hash, backend, state_root):
         except BlockingIOError:raise Rejected('site_busy')
         active=root/(c['site_id']+'.active.json')
         require(not active.exists(),'prior_attempt_requires_reconciliation')
+        # Re-read admission evidence while holding the same lock as capture.
+        if pre_capture_check is not None:pre_capture_check(c)
         attempt=uuid.uuid4().hex;work=root/attempt;work.mkdir(mode=0o700)
-        result={'format':'owr-first-site-capture-v1','attempt_id':attempt,'site_id':c['site_id'],'config_sha256':digest(c),'state':'capture_failed','eligible_for_consistency_acceptance':False,'storage_complete':False,'signed':False,'restore_verified':False,'production_recovery_approved':False,'queue':c['queue'],'assets':{},'release_confirmed':False,'phases':[]}
+        result={'format':'owr-first-site-capture-v1','attempt_id':attempt,'site_id':c['site_id'],'config_sha256':digest(c),'state':'capture_failed','eligible_for_consistency_acceptance':False,'storage_complete':False,'signed':False,'restore_verified':False,'production_recovery_approved':False,'queue':c['queue'],'assets':{},'release_confirmed':False,'capture_started':False,'phases':[]}
         write_json(active,{'attempt_id':attempt,'config_sha256':digest(c),'state':'in_progress'})
         token=uuid.uuid4().hex;attempted_fence=False
         def measured(operation, fn, *args):
@@ -104,7 +106,10 @@ def capture(config, expected_config_hash, backend, state_root):
         try:
             measured('preflight',backend.preflight,c)
             o=c['operations'];require(shutil.disk_usage(root).free>=o['max_bytes']*getattr(backend,'staging_copies',1)+o['reserve_bytes'],'insufficient_space')
+            # Backend preparation may take time; never reuse the earlier eligibility result.
+            if pre_capture_check is not None:pre_capture_check(c)
             if hasattr(backend,'set_staging'):backend.set_staging(work)
+            result['capture_started']=True
             attempted_fence=True;wall_start=time.time();wall_deadline=wall_start+o['max_stop_seconds'];deadline=time.monotonic()+o['max_stop_seconds']
             measured('fence',backend.fence,token,o['drain_seconds'],o['max_stop_seconds']);result['phases']+=['fence','drain']
             require(measured('held',backend.held,token),'fence_not_held')
