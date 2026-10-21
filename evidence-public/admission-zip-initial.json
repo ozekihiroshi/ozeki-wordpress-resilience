@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "kit_checks": [
+    "kit ZIP bytes and every extracted file match manifest",
+    "packaged plan is read-only and not production-ready",
+    "packaged generate creates new draft",
+    "existing reviewed draft overwrite refused without changes",
+    "separate code extraction preserves external configuration"
+  ],
+  "wordpress": {
+    "passed": true,
+    "operator_review": true,
+    "checks": [
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "fc6175a7497b63009c3e11654ce52b1535611084e136b80298186d3cf849fb58",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "kit_sha256": "c7fba6c4649e8daf908fe8b0724c54e7d71c65986e9eefd5ba6044adfc540fe3",
+  "plugin_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+  "production_ready": false,
+  "scope": "Synthetic dedicated fixtures; packaged code and actual WordPress updater; no service rollout, S3, signing, production or observation changes",
+  "distribution": "dist/candidate-20261021-admission-final",
+  "python_tests": 65,
+  "php_review_contracts": 11,
+  "environment_incidents": [],
+  "test_infrastructure_incidents": [],
+  "new_product_defects": [],
+  "known_browser_issue": "Prior WebDriver startup cause remains unconfirmed; no recurrence in this run",
+  "version_note": "Both candidates are 0.1.0-dev.1, distinct ZIP contents; not a released semantic-version migration",
+  "observation_72_hours": "independent and incomplete",
+  "preserved_admission_files": 16
+}

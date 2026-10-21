@@ -1,0 +1,39 @@
+{
+  "format": "owr-first-site-lab-v1",
+  "recorded_at": "2026-10-21T10:15:06.387224+00:00",
+  "results": [
+    {
+      "name": "initial_failure_no_capture",
+      "passed": true
+    },
+    {
+      "name": "live_preflight_then_changed_health_no_fence",
+      "passed": true
+    },
+    {
+      "name": "admitted_real_db_files_capture_and_release",
+      "passed": true,
+      "asset_bytes": {
+        "database": 92829,
+        "files": 29718629
+      }
+    },
+    {
+      "name": "source_available_after_release",
+      "passed": true
+    }
+  ],
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "all_passed": true,
+  "resources_removed": true,
+  "scope": "generated isolated WP/MariaDB; external capture adapter, not plugin end-to-end acceptance; no S3/signing",
+  "unit_tests": 7,
+  "regression_tests": 31,
+  "admission_evidence": "synthetic; not live SSH inventory",
+  "test_infrastructure_failure": "First attempt output parent missing before entry invocation; fixed and retained in private failure record",
+  "production_ready": false
+}

@@ -1,0 +1,200 @@
+{
+  "passed": true,
+  "operator_review_mode": true,
+  "automatic_review_renewal": false,
+  "checks": [
+    "dedicated MariaDB ready",
+    "scanner dedicated Ubuntu VM booted",
+    "wordpress dedicated Ubuntu VM booted",
+    "observer dedicated Ubuntu VM booted",
+    "actual plan and generate CLI used; readiness remains false",
+    "six separate SSH keys pinned from local host-key origins; forced commands installed",
+    "generated publisher and receiver perform real SSH inventory; DB and files unchanged",
+    "operator review issued explicitly; valid summary transferred over SSH; worker cannot edit confirmation",
+    "dedicated local SMTP receiver ready",
+    "generated observer and both status pulls work over actual SSH",
+    "WordPress reads reports but cannot write them or read SSH keys",
+    "generated systemd services advance reports at60seconds",
+    "all generated report routes healthy",
+    "duplicate generated systemd publisher rejected",
+    "initial hardened units and enablement verified",
+    "operator review initial UI and immutable confirmation verified",
+    "actual WordPress preflight screen uses generated bindings; permissions and read-only checks pass",
+    "operator review stopped UI and immutable confirmation verified",
+    "all periodic units stopped310seconds; reports byte-preserved and UI stopped",
+    "explicit restart restores generated report chain",
+    "operator review recovered UI and immutable confirmation verified",
+    "scanner actual OS reboot changes BootID",
+    "wordpress actual OS reboot changes BootID",
+    "observer actual OS reboot changes BootID",
+    "enabled units automatically recover after OS reboot",
+    "reboot hardened units and enablement verified",
+    "operator review reboot UI and immutable confirmation verified",
+    "72hour observation host BootID unchanged",
+    "actual watchdog screen uses generated monitor IDs and paths"
+  ],
+  "browser": [
+    {
+      "label": "initial",
+      "operator_review": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      }
+    },
+    {
+      "mode": "ok",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n担当者確認（日次運用）\n期限内\n確認日時：2026-10-21T11:22:43.551476+00:00\n有効期限：2026-10-28T11:22:43.551476+00:00\n担当者確認は自動延長しません。再確認・更新は外部の担当者用手順で行ってください。期限内でも取得・保存を許可する表示ではなく、実行直前の再検査と署名承認は別です。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T11:27:19.476925+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "label": "stopped",
+      "operator_review": {
+        "mode": "stale",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      }
+    },
+    {
+      "mode": "stopped",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer stopped actual=stopped body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n担当者確認（日次運用）\n期限内\n情報の更新・受渡しを確認できません。表示は最後に受信した記録で、現在の有効性は未確認です。\n確認日時：2026-10-21T11:22:43.551476+00:00\n有効期限：2026-10-28T11:22:43.551476+00:00\n担当者確認は自動延長しません。再確認・更新は外部の担当者用手順で行ってください。期限内でも取得・保存を許可する表示ではなく、実行直前の再検査と署名承認は別です。\n定期更新が5分以上確認できません。更新停止または受渡し停止を確認してください。\n情報が古くなっています（5分以上）。現在の状態は未確認です。\n最終検査：2026-10-21T11:27:19.476925+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "stopped and stale shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "mode": "recovered",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n担当者確認（日次運用）\n期限内\n確認日時：2026-10-21T11:22:43.551476+00:00\n有効期限：2026-10-28T11:22:43.551476+00:00\n担当者確認は自動延長しません。再確認・更新は外部の担当者用手順で行ってください。期限内でも取得・保存を許可する表示ではなく、実行直前の再検査と署名承認は別です。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T11:36:01.103917+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "label": "recovered",
+      "operator_review": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      }
+    },
+    {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok actual=ok body=SSH棚卸し・導入前検査\n読取り専用。SSH取得は外部で行います。この画面は取得・設定変更・署名承認を実行しません。\n担当者確認（日次運用）\n期限内\n確認日時：2026-10-21T11:22:43.551476+00:00\n有効期限：2026-10-28T11:22:43.551476+00:00\n担当者確認は自動延長しません。再確認・更新は外部の担当者用手順で行ってください。期限内でも取得・保存を許可する表示ではなく、実行直前の再検査と署名承認は別です。\n定期取得・受渡しは成功しています。\n直近5分以内の検査記録です。\n最終検査：2026-10-21T11:38:00.626457+00:00\n棚卸し応答の検査済み / 設定・確認が必要\n未確認項目\n更新経路\nキュー\n依存関係\n実行環境との対応\nマルチサイト設定\n保管先\n信頼情報\n処理台帳\nファイル取得の整合性\n確認が必要な事項\n設定：host_unverified_scope_remaining\n本番導入可能・マルウェア不在の証明ではありません。SSHホスト鍵の照合と独立署名による証明は別です。",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ],
+      "publication_settling": []
+    },
+    {
+      "label": "reboot",
+      "operator_review": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      }
+    },
+    {
+      "passed": true,
+      "mode": "generated",
+      "expected": {
+        "source": {
+          "report": "current",
+          "transfer": "ok"
+        },
+        "receiver": {
+          "report": "current",
+          "transfer": "ok"
+        }
+      },
+      "readonly": true
+    }
+  ],
+  "reviewed_adjustments": [
+    "inventory endpoint: local PHP binary, generated SELECT credentials and database host",
+    "observer alerts completed with existing smtp_test dispatcher and dedicated loopback receiver; no external delivery",
+    "dedicated lab group33 mapping for read-only reports/config traversal",
+    "generated service interval60seconds unchanged; observer timers60seconds",
+    "generated fixture inventory declarations; measured SSH facts remain independently checked"
+  ],
+  "scope": "disposable internal Docker network; real SELECT-only MariaDB, pinned SSH, existing workers and WordPress browser; three real Ubuntu VMs with systemd and OS reboot; no S3/signing/72h mutation; observer CLI uses local SMTP test receiver, no external notification",
+  "environment_incidents": [],
+  "product_defects": [],
+  "test_infrastructure_incidents": [
+    {
+      "cause": "first trial invoked issuance as root although workspace belongs to publisher user; owner check rejected",
+      "fix": "invoke issuance check as workspace owner; root installs immutable confirmation",
+      "previous_failure_preserved": true
+    }
+  ],
+  "known_limitations": [
+    "Prototype only; no production deployment or 72-hour final assessment",
+    "Three VMs share one WSL host; final WordPress display uses 9p mount",
+    "Controlled generated inventory refreshed before restart/reboot, no automatic review renewal",
+    "Previous unrelated browser startup root cause remains unresolved"
+  ],
+  "final_operator_review": {
+    "automatic_checks_passed": true,
+    "expires_at": "2026-10-28T11:22:43.551476+00:00",
+    "format": "owr-operator-review-status-v1",
+    "reasons": [],
+    "reviewed_at": "2026-10-21T11:22:43.551476+00:00",
+    "state": "valid"
+  }
+}

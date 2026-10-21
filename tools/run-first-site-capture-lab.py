@@ -27,7 +27,7 @@ def run(*args, input=None, timeout=60, must=True):
         raise RuntimeError(f'{args[0]} failed ({p.returncode}): {p.stderr.decode()[-600:]}')
     return p
 
-def main():
+def main(cases_file='first-site-lab-cases.py'):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute-lab', action='store_true')
     parser.add_argument('--output',type=Path,required=True)
@@ -121,7 +121,7 @@ def main():
             run('docker', 'exec', web, 'sh', '-c', 'printf \'<?php require "/lab/writer.php";\' > /var/www/html/lab-write.php')
 
 
-            spec=importlib.util.spec_from_file_location('first_site_cases',ROOT/'tools/first-site-lab-cases.py')
+            spec=importlib.util.spec_from_file_location('first_site_cases',ROOT/'tools'/cases_file)
             cases=importlib.util.module_from_spec(spec);spec.loader.exec_module(cases)
             cases.exercise(db,web,php,sql,hold,ready,release,run,check,results,args.output)
     finally:

@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "scenes": [
+    {
+      "mode": "valid",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    },
+    {
+      "mode": "expired",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    },
+    {
+      "mode": "revoked",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    },
+    {
+      "mode": "reconfirmation_required",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    },
+    {
+      "mode": "stale",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    },
+    {
+      "mode": "missing",
+      "passed": true,
+      "checks": [
+        "state",
+        "readonly",
+        "redaction",
+        "POST405",
+        "editor_denied"
+      ]
+    }
+  ],
+  "read_only_hashes": true,
+  "python_checks": 21,
+  "php_checks": 11,
+  "scope": "dedicated generated WordPress/MariaDB/Chromium; no AWS or notification",
+  "initial_failure": "test fixture omitted required source file; corrected",
+  "production_ready": false
+}

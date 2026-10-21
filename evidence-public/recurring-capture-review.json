@@ -1,0 +1,12 @@
+{
+  "scope": "generated isolated offline tests",
+  "checks": 16,
+  "result": "pass",
+  "max_review_hours": 168,
+  "automatic_evidence_age_seconds": 300,
+  "automatic_renewal": false,
+  "real_7_day_elapsed_test": false,
+  "aws_requests": 0,
+  "observation_72h": "separate",
+  "production_ready": false
+}

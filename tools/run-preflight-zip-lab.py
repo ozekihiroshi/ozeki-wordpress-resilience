@@ -31,7 +31,7 @@ def ui_session(statusdir, plugin_zip, diagnostics=None):
             password=secrets.token_hex(24);env=work/'env';env.write_text(f'MARIADB_ROOT_PASSWORD={password}\nMARIADB_DATABASE=lab\nMARIADB_USER=lab\nMARIADB_PASSWORD={password}\nWORDPRESS_DB_HOST=127.0.0.1:3306\nWORDPRESS_DB_NAME=lab\nWORDPRESS_DB_USER=lab\nWORDPRESS_DB_PASSWORD={password}\nLAB_ADMIN_PASSWORD={password}\nWORDPRESS_CONFIG_EXTRA=define("OWR_PREFLIGHT_WATCHDOG_REPORTS",["source"=>["path"=>"/status/source.json","monitor_id"=>"preflight-source","transfer_file"=>"/status/source-transfer.json"],"receiver"=>["path"=>"/status/receiver.json","monitor_id"=>"preflight-receiver","transfer_file"=>"/status/receiver-transfer.json"]]); define("OWR_DAILY_TRANSFER_FILE","/status/transfer.json"); define("OWR_DAILY_STATUS_FILE","/status/daily.json"); define("OWR_PREFLIGHT_SITE_ID","generated-first-site"); define("DISABLE_WP_CRON",true); define("WP_HTTP_BLOCK_EXTERNAL",true); define("DISALLOW_FILE_MODS",true); define("OWR_NOTIFICATION_STATUS_FILE","/status/status.json"); define("OWR_NOTIFICATION_REQUEST_DIR","/requests");\n');env.chmod(0o600)
             env.write_text(env.read_text().replace('WORDPRESS_CONFIG_EXTRA=', 'WORDPRESS_CONFIG_EXTRA=define("OWR_OBSERVER_STATUS_FILE","/status/observer.json"); '))
             env.write_text(env.read_text().replace('WORDPRESS_CONFIG_EXTRA=', 'WORDPRESS_CONFIG_EXTRA=define("OWR_OBSERVER_REQUEST_DIR","/requests/observer"); '))
-            env.write_text(env.read_text().replace('WORDPRESS_CONFIG_EXTRA=', 'WORDPRESS_CONFIG_EXTRA=define("OWR_PREFLIGHT_REPORT","/status/preflight.json"); define("OWR_PREFLIGHT_CONFIG_SHA256","'+('a'*64)+'"); '))
+            env.write_text(env.read_text().replace('WORDPRESS_CONFIG_EXTRA=', 'WORDPRESS_CONFIG_EXTRA=define("OWR_PREFLIGHT_TRANSFER_FILE","/status/preflight-health.json"); define("OWR_PREFLIGHT_REPORT","/status/preflight.json"); define("OWR_PREFLIGHT_CONFIG_SHA256","'+('a'*64)+'"); '))
             if args.plugin_zip:
                 if not args.plugin_zip.is_file():raise ValueError('plugin ZIP missing')
                 env.write_text(env.read_text().replace('define("DISALLOW_FILE_MODS",true);','define("FS_METHOD","direct");'))
@@ -77,9 +77,20 @@ def ui_session(statusdir, plugin_zip, diagnostics=None):
         for name in reversed(created):run('docker','rm','-f','-v',name)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--zip',type=Path,required=True);p.add_argument('--old-zip',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('--operator-review',action='store_true');p.add_argument('--zip',type=Path,required=True);p.add_argument('--old-zip',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
  checks=[];observer=module('watchdog-observer')
  snapshots={}
+ if args.operator_review:
+  # Produce durable generated capture/daily records through existing fixtures/core, not handwritten SQLite.
+  import sys
+  sys.path.insert(0,str(ROOT/'tests'))
+  from test_recurring_capture_review import Recurring
+  fixture=Recurring();fixture.setUp()
+  try:
+   row=fixture.tick_daily();assert row['state']=='awaiting_approval' and fixture.remote.puts==2
+   shutil.copytree(fixture.root,args.output/'admission-state')
+   (args.output/'admission-state'/'expected-state.json').write_text(json.dumps(row))
+  finally:fixture.tearDown()
  for role in ('source','receiver'):
      root=args.output/role;root.mkdir()
      config=dict(state=str(root/'observer'),monitor_id='preflight-'+role,stale_after_seconds=5,ssh={},
@@ -108,7 +119,7 @@ def main():
  for role in snapshots:
   (status/(role+'.json')).write_text(json.dumps(snapshots[role]['recovered']))
   (status/(role+'-transfer.json')).write_text(json.dumps(dict(format='owr-observer-transfer-v1',site_id='generated-first-site',monitor_id='preflight-'+role,state='ok',attempted_at=datetime.now(timezone.utc).isoformat())))
- def external():return {str(f.relative_to(args.output)):hashlib.sha256(f.read_bytes()).hexdigest() for folder in ('source','receiver','status') for f in (args.output/folder).rglob('*') if f.is_file()}
+ def external():return {str(f.relative_to(args.output)):hashlib.sha256(f.read_bytes()).hexdigest() for folder in ('source','receiver','status','admission-state') for f in (args.output/folder).rglob('*') if f.is_file()}
 
  for mode,initial in [('fresh',args.zip),('upgrade',args.old_zip)]:
   # Explicit synthetic fixture refresh before each install, never during preservation checks.
@@ -119,7 +130,10 @@ def main():
    h=json.loads((status/(role+'-transfer.json')).read_text());h['attempted_at']=now
    (status/(role+'-transfer.json')).write_text(json.dumps(h))
   fixture=dict(format='owr-preflight-admin-v1',site_id='generated-first-site',config_sha256='a'*64,attempted_at=now,result=dict(production_ready=False,state='needs_configuration',host_observation=dict(state='validated_report',unverified=['writers','trust']),issues=[dict(code='host_unverified_scope_remaining',category='configuration')]))
+  if args.operator_review:
+   fixture['result']['operator_review']=dict(format='owr-operator-review-status-v1',state='valid',reviewed_at=now,expires_at=(datetime.now(timezone.utc)+timedelta(days=1)).isoformat(),reasons=[],automatic_checks_passed=True)
   (status/'preflight.json').write_text(json.dumps(fixture))
+  if args.operator_review:(status/'preflight-health.json').write_text(json.dumps(dict(format='owr-preflight-transfer-v1',site_id='generated-first-site',config_sha256='a'*64,attempted_at=now,report_at=now,state='ok')))
   preserved=external()
   with ui_session(status,initial,args.output/(mode+"-diagnostics")) as (web,browser):
    def php(code):return run('docker','exec','-u','www-data',web,'php','-r','require "/var/www/html/wp-load.php";require_once ABSPATH."wp-admin/includes/plugin.php";'+code).stdout
@@ -165,12 +179,17 @@ def main():
    assert json.loads(pre.stdout)['checks']
    (args.output/(mode+'-preflight-checks.json')).write_bytes(pre.stdout)
    run('docker','cp',browser+':/tmp/preflight-current.png',str(args.output/(mode+'-preflight.png')))
+   if args.operator_review:
+    q=run('docker','exec',browser,'python3','/lab/operator-review-browser.py','valid','--require-current',timeout=180)
+    (args.output/(mode+'-operator-review.json')).write_bytes(q.stdout)
+    assert json.loads(q.stdout)['passed']
+    run('docker','cp',browser+':/tmp/operator-review-valid.png',str(args.output/(mode+'-operator-review.png')))
    after=php(snapshot)
    (args.output/(mode+"-options.json")).write_text(json.dumps(dict(before=json.loads(before),after=json.loads(after)),indent=2))
    assert after==before
    assert external()==preserved
    checks.append(mode+': exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate')
    print('PASS '+checks[-1],flush=True)
- result=dict(passed=True,checks=checks,zip_sha256=hashlib.sha256(args.zip.read_bytes()).hexdigest(),old_zip_sha256=hashlib.sha256(args.old_zip.read_bytes()).hexdigest(),containers_removed=True,scope='Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial')
+ result=dict(passed=True,operator_review=args.operator_review,checks=checks,zip_sha256=hashlib.sha256(args.zip.read_bytes()).hexdigest(),old_zip_sha256=hashlib.sha256(args.old_zip.read_bytes()).hexdigest(),containers_removed=True,scope='Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial')
  (args.output/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 if __name__=='__main__':main()

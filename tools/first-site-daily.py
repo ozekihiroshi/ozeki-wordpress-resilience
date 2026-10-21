@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Daily two-asset coordinator for generated first-site fixtures (Linux/WSL)."""
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, closing
 from datetime import datetime
 import fcntl
 import importlib.util
@@ -108,7 +108,7 @@ class Coordinator:
         with (self.root / 'daily.lock').open('a') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             # Keep the lock across capture/transfer; interruption cannot cause an automatic retry.
-            with sqlite3.connect(self.root / 'daily.sqlite') as db:
+            with closing(sqlite3.connect(self.root / 'daily.sqlite')) as connection, connection as db:
                 db.row_factory = sqlite3.Row
                 db.execute('PRAGMA synchronous=FULL')
                 db.execute('CREATE TABLE IF NOT EXISTS metadata(format TEXT NOT NULL)')
@@ -158,6 +158,28 @@ class Coordinator:
                 self.change(db, day, 'awaiting_approval', 'stored_unsigned',
                             gate.sha((work / 'receipt.json').read_bytes()))
             return dict(db.execute('SELECT * FROM runs WHERE day=?', (day,)).fetchone())
+
+    def tick_admitted(self, now, *, admission, backend, adapter_factory=None, preflight=None):
+        """Onboarding daily entry: mandatory fresh capture and pre-publication checks.
+
+        admission contains protected input paths and a pre-created private workspace.
+        No signing; unknown outcomes retain the existing no-automatic-retry policy.
+        """
+        entry = load('first_daily_admission', 'first-capture-entry.py')
+        captured_pin = []
+        def worker(work):
+            directory, result = entry.capture_from_files(**admission, backend=backend)
+            io.write_json(work / 'capture-result.json', result)
+            gate.check(result['eligible_for_consistency_acceptance'] is True
+                       and result['release_confirmed'] is True, 'capture not accepted')
+            assets = {k: (directory / v['path']).read_bytes() for k,v in result['assets'].items()}
+            entry.check_admission(**admission, expected_config_hash=result['config_sha256'])
+            captured_pin.append(result['config_sha256'])
+            return result, assets
+        def publication_check():
+            (preflight or transport.preflight)()
+            entry.check_admission(**admission, expected_config_hash=captured_pin[0])
+        return self.tick(now, worker, adapter_factory, publication_check)
 
     def reconcile(self, day):
         """Explicit local evidence review; never re-PUT or manufacture missing receipts."""
@@ -209,7 +231,7 @@ class Coordinator:
         restore_records = []
         recovery_attempts = []
         if path.exists():
-            with sqlite3.connect(path.as_uri() + '?mode=ro', uri=True) as db:
+            with closing(sqlite3.connect(path.as_uri() + '?mode=ro', uri=True)) as connection, connection as db:
                 db.row_factory = sqlite3.Row
                 rows = [dict(r) for r in db.execute('SELECT * FROM runs ORDER BY day')]
                 if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='recovery_attempts'").fetchone():

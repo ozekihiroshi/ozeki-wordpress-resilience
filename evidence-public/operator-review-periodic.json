@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "scenes": [
+    {
+      "index": 0,
+      "mode": "valid",
+      "checks": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      },
+      "periodic_updates": 4
+    },
+    {
+      "index": 1,
+      "mode": "expired",
+      "checks": {
+        "mode": "expired",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      },
+      "periodic_updates": 3
+    },
+    {
+      "index": 2,
+      "mode": "valid",
+      "checks": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      },
+      "periodic_updates": 4
+    },
+    {
+      "index": 3,
+      "mode": "revoked",
+      "checks": {
+        "mode": "revoked",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      },
+      "periodic_updates": 3
+    },
+    {
+      "index": 4,
+      "mode": "valid",
+      "checks": {
+        "mode": "valid",
+        "passed": true,
+        "checks": [
+          "state",
+          "readonly",
+          "redaction",
+          "POST405",
+          "editor_denied"
+        ]
+      },
+      "periodic_updates": 4
+    }
+  ],
+  "updates": 50,
+  "scope": "real periodic relay.tick and transfer serve/pull; generated inventory and in-process transport; real WordPress/Chromium; not SSH or systemd",
+  "automatic_review_renewal": false,
+  "production_ready": false,
+  "observation_72h": "separate",
+  "aws_requests": 0
+}

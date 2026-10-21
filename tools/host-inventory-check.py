@@ -1,6 +1,6 @@
 """Validate a bounded host probe report and combine it with declared preflight."""
 from datetime import datetime, timezone
-import re
+import re, hashlib, json
 
 def integrate(result, profile, report, nonce, now=None):
     now = now or datetime.now(timezone.utc)
@@ -62,6 +62,8 @@ def integrate(result, profile, report, nonce, now=None):
         if runtime['os_family'] != 'Linux' or tuple(map(int, runtime['php_version'].split('.')[:2])) < (8, 1):
             add('host_runtime_unsupported', 'unsupported')
         result['host_observation'] = {'state': 'validated_report', 'summary': {'tables': db['tables'], 'entries': files['entries'], 'bytes': files['bytes'], 'links': files['links'], 'special': files['special'], 'innodb_only': db['engines'] == ['InnoDB']}, 'unverified': unknown, 'authenticated': False}
+        review_scope = {'database': {k: db[k] for k in ('name','prefix','engines')}, 'files_root': files['root'], 'wordpress': wp, 'runtime': runtime}
+        result['host_observation']['review_scope'] = {k: hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':')).encode()).hexdigest() for k,v in review_scope.items()}
         result['evidence_scope']['host'] = 'bounded_report_bound_to_nonce_not_remote_attestation'
         add('host_unverified_scope_remaining')
     except (AssertionError, ValueError, TypeError, KeyError, AttributeError):

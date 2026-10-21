@@ -96,3 +96,21 @@ notification-runtime.py は relay / worker / watchdog の1周期実行入口。r
 [生成設定の3VM systemd試験](../docs/guides/generated-systemd-lab.md)：既存サービスを再利用し、60秒周期、実停止・再開、OS再起動後の自動起動と画面回復を専用環境で確認。
 
 設定生成・systemd配置の[ZIP検証手順](../docs/guides/deployment-zip.md)。固定ZIPと専用環境で確認し、72時間判定とは分ける。
+
+## First capture readiness
+
+`first-capture-readiness.py`: read-only operator review gate; never starts capture. See [conditions and operator checklist](../docs/guides/first-capture-readiness.md).
+
+`first-capture-entry.py`: initial capture API with mandatory admission re-read under the capture lock and immediately before fencing. `run-first-capture-entry-lab.py` verifies rejection and actual generated WordPress/MariaDB capture; no S3 or signing.
+
+Daily admission: `Coordinator.tick_admitted` reuses mandatory capture admission and rechecks before S3 adapter creation. See [daily admission](../docs/guides/daily-capture-admission.md).
+
+`recurring-capture-review.py`: explicit operator issuance, maximum 168 hours, no overwrite or automatic renewal. See [recurring confirmation policy](../docs/guides/recurring-capture-review.md).
+
+Operator review display: optional `review_file` on preflight relay adds redacted status to existing admin report. [Setup and validation](../docs/guides/operator-review-admin.md).
+
+`run-operator-review-periodic-lab.py`: periodic report and UI recovery using existing relay/transfer, generated transport, isolated WordPress. See [scope](../docs/guides/operator-review-periodic.md).
+
+`run-operator-review-systemd-lab.py`: existing generated configuration harness, real pinned SSH, three disposable Ubuntu VMs, systemd stop/restart/reboot and operator review UI. [Scope and procedure](../docs/guides/operator-review-systemd.md).
+
+ZIP admission/review acceptance: `run-deployment-zip-lab.py --operator-review` uses packaged code, actual WordPress install/update, generated daily records and immutable external state. [Guide](../docs/guides/admission-zip.md).
