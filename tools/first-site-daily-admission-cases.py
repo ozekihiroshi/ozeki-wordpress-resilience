@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def load(name,file):
     s=importlib.util.spec_from_file_location(name,ROOT/'tools'/file);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 
-def exercise(db,web,php,sql,hold,ready,release,run,check,results,output):
+def exercise(db,web,php,sql,hold,ready,release,run,check,results,output,roundtrip=False,integration=None):
     a=load('capture_api','first-site-capture.py');module=load('docker_backend','first-site-docker-lab.py')
     c=json.loads((ROOT/'examples/first-site/generated-lab.json').read_text())
     # Real standard attachment fields. No synthetic content-hash postmeta required.
@@ -34,6 +34,13 @@ def exercise(db,web,php,sql,hold,ready,release,run,check,results,output):
     report=dict(format='owr-preflight-admin-v1',site_id=c['site_id'],config_sha256=d(c),attempted_at=now,result=assessment)
     health=dict(format='owr-preflight-transfer-v1',site_id=c['site_id'],config_sha256=d(c),attempted_at=now,state='ok',report_at=now)
     review=dict(format='owr-first-capture-review-v1',site_id=c['site_id'],config_sha256=d(c),report_sha256=d(report),health_sha256=d(health),inventory_sha256=d(inv),workspace=str(workspace),reviewed_at=now,reviewed_by=c['operations']['owner'],scope='dedicated_trial_only',confirmations={k:dict(confirmed=True,evidence_ref='generated-record/'+k) for k in entry.gate.SCOPES})
+    if integration:
+        report,health=integration.evidence(c,inv,workspace,report,health)
+    if roundtrip:
+        if not integration:
+            report['result']['host_observation']['review_scope']={k:d({'fixture':k}) for k in ('database','files_root','wordpress','runtime')}
+        issuer=load('roundtrip_issuer','recurring-capture-review.py')
+        review=issuer.issue(c,inv,workspace,report,health,review['confirmations'],c['operations']['owner'])
     paths={}
     for name,value in [('profile',c),('inventory',inv),('report',report),('health',health),('review',review)]:
         p=root/(name+'.json');p.write_text(json.dumps(value));p.chmod(0o600);paths[name]=p
@@ -50,38 +57,53 @@ def exercise(db,web,php,sql,hold,ready,release,run,check,results,output):
     from datetime import timedelta
     daily=load('admitted_daily_lab','first-site-daily.py')
     store={};operations=[]
+    modified=daily.gate.now().isoformat();until=(daily.gate.now()+timedelta(days=36)).isoformat()
     class Adapter:
         def __init__(self,path):self.path=path;path.mkdir();self.ops=[]
         def save(self):daily.io.write_json(self.path/'operations.json',self.ops)
         def put(self,bucket,key,body):
             store[key]=body;event=dict(method='PUT',key=key,sha256=daily.gate.sha(body),bytes=len(body),state='acknowledged',version_id='lab-fixed-v1');self.ops.append(event);operations.append(event);self.save();return 'lab-fixed-v1'
         def get(self,loc):
-            body=store[loc['key']];event=dict(method='GET',key=loc['key'],sha256=daily.gate.sha(body),bytes=len(body),version_id='lab-fixed-v1');self.ops.append(event);operations.append(event);self.save()
-            return dict(body=body,version_id='lab-fixed-v1',reader_identity='OwrM1RecoveryReader',mode='GOVERNANCE',last_modified=daily.gate.now().isoformat(),retain_until=(daily.gate.now()+timedelta(days=36)).isoformat())
+            body=store[loc['key']];event=dict(method='GET',key=loc['key'],sha256=daily.gate.sha(body),bytes=len(body),version_id='lab-fixed-v1',retention=dict(mode='GOVERNANCE',last_modified=modified,retain_until=until));self.ops.append(event);operations.append(event);self.save()
+            return dict(body=body,version_id='lab-fixed-v1',reader_identity='OwrM1RecoveryReader',mode='GOVERNANCE',last_modified=modified,retain_until=until)
+    if integration:
+        Adapter=integration.adapter(operations)
+    storage_preflight=integration.preflight if integration else lambda:None
     stamp=daily.gate.now()
     original=paths['health'].read_bytes();bad=dict(health);bad['state']='transfer_failed';paths['health'].write_text(json.dumps(bad))
     blocked=daily.Coordinator(root/'blocked-daily')
-    row=blocked.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=lambda:None)
+    row=blocked.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=storage_preflight)
     check(row['state']=='unknown' and not calls and not operations,'invalid admission started capture or PUT')
-    check(blocked.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=lambda:None)['state']=='unknown' and not calls and not operations,'blocked run retried')
+    check(blocked.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=storage_preflight)['state']=='unknown' and not calls and not operations,'blocked run retried')
     results.append(dict(name='daily_initial_failure_no_capture_no_put_no_retry',passed=True))
     paths['health'].write_bytes(original)
     b=counted();original_preflight=b.preflight
     def changed(config):original_preflight(config);paths['health'].write_text(json.dumps(bad))
     b.preflight=changed
     late=daily.Coordinator(root/'late-daily')
-    row=late.tick_admitted(stamp,admission=paths,backend=b,adapter_factory=Adapter,preflight=lambda:None)
+    row=late.tick_admitted(stamp,admission=paths,backend=b,adapter_factory=Adapter,preflight=storage_preflight)
     check(row['state']=='unknown' and not calls and not operations,'late admission failure started capture or PUT')
     results.append(dict(name='daily_late_failure_no_fence_no_put',passed=True))
     paths['health'].write_bytes(original)
+    if integration:
+        report,health=integration.evidence(c,inv,workspace,report,health)
+        paths['report'].write_text(json.dumps(report));paths['health'].write_text(json.dumps(health));paths['inventory'].write_text(json.dumps(inv))
     accepted=daily.Coordinator(root/'accepted-daily')
-    row=accepted.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=lambda:None)
+    row=accepted.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=storage_preflight)
     check(row['state']=='awaiting_approval','daily capture/publication failed; retained ledger')
     status=accepted.status(stamp)['runs'][0]
     check(status['storage_complete'] and status['approval_state']=='pending' and not status['restore_allowed'],'publication confused with signature approval')
     check(sum(x['method']=='PUT' for x in operations)==2 and calls.count('fence')==1 and calls.count('stream')==2,'unexpected transfers')
     results.append(dict(name='real_capture_daily_mock_storage_pending_approval',passed=True,puts=2))
     snapshot=list(operations);previous=list(calls)
-    check(accepted.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=lambda:None)==row and operations==snapshot and calls==previous,'duplicate slot repeated capture or storage')
+    check(accepted.tick_admitted(stamp,admission=paths,backend=counted(),adapter_factory=Adapter,preflight=storage_preflight)==row and operations==snapshot and calls==previous,'duplicate slot repeated capture or storage')
     results.append(dict(name='daily_duplicate_no_capture_no_put',passed=True))
     check(php("echo file_exists('/tmp/owr-gate.fence')?'bad':'ok';")==b'ok','source not released')
+
+    if roundtrip:
+        follow=load('onboarding_roundtrip','onboarding-recovery-cases.py')
+        follow.finish(accepted,row,root,paths,Adapter,operations,run,check,results)
+        if integration:
+            for result in results:
+                if result.get('transport'):result['transport']='real S3 fixed Version IDs and retention; EC2 role authorization over SSH'
+                if result.get('name')=='real_capture_daily_mock_storage_pending_approval':result['name']='real_capture_daily_s3_storage_pending_approval'

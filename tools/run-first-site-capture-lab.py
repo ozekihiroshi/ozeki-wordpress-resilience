@@ -131,7 +131,7 @@ def main(cases_file='first-site-lab-cases.py'):
                 try:p.wait(timeout=20)
                 except sp.TimeoutExpired:p.kill();p.wait()
         for name in reversed(created):run('docker','rm','-f','-v',name)
-    report={'format':'owr-first-site-lab-v1','recorded_at':datetime.now(timezone.utc).isoformat(),'results':results,'images':images,'all_passed':True,'resources_removed':all(run('docker','inspect',name,must=False).returncode!=0 for name in created),'scope':'generated isolated WP/MariaDB; external capture adapter, not plugin end-to-end acceptance; no S3/signing'}
+    report={'format':'owr-first-site-lab-v1','recorded_at':datetime.now(timezone.utc).isoformat(),'results':results,'images':images,'all_passed':True,'resources_removed':all(run('docker','inspect',name,must=False).returncode!=0 for name in created),'scope':getattr(cases,'REPORT_SCOPE','generated isolated WP/MariaDB; external capture adapter, not plugin end-to-end acceptance; no S3/signing')}
     args.output.parent.mkdir(parents=True,exist_ok=True)
     with args.output.open('x') as f:json.dump(report,f,indent=2)
     print(json.dumps(report,indent=2))

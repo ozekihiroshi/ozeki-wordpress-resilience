@@ -114,3 +114,7 @@ Operator review display: optional `review_file` on preflight relay adds redacted
 `run-operator-review-systemd-lab.py`: existing generated configuration harness, real pinned SSH, three disposable Ubuntu VMs, systemd stop/restart/reboot and operator review UI. [Scope and procedure](../docs/guides/operator-review-systemd.md).
 
 ZIP admission/review acceptance: `run-deployment-zip-lab.py --operator-review` uses packaged code, actual WordPress install/update, generated daily records and immutable external state. [Guide](../docs/guides/admission-zip.md).
+
+`run-onboarding-recovery-lab.py`：生成WordPress/MariaDBで取得判定付き日次処理→試験署名→隔離復元→日次結果登録を接続。ローカル固定版代替を使用し、実AWS/実SSHは対象外。[操作と範囲](../docs/guides/onboarding-recovery.md)。
+
+`run-onboarding-ssh-s3-lab.py`：生成サイトの実SSH棚卸しから、取得判定・実験S3・試験署名・隔離復元・日次登録まで。[構成・保存先・再実行時の注意](../docs/guides/onboarding-ssh-s3.md)。

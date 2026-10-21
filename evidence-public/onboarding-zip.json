@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "kit_checks": [
+    "kit ZIP bytes and every extracted file match manifest",
+    "packaged plan is read-only and not production-ready",
+    "packaged generate creates new draft",
+    "existing reviewed draft overwrite refused without changes",
+    "separate code extraction preserves external configuration"
+  ],
+  "wordpress": {
+    "passed": true,
+    "roundtrip_preserved_files": 32,
+    "operator_review": true,
+    "checks": [
+      "completed real roundtrip records copied for byte-preservation only; no migration or resumed execution",
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "kit_sha256": "6c410d8d7ce73af20b0f53ba6f6b91434c66c4ad725e90ab2d531090868686d1",
+  "plugin_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+  "production_ready": false,
+  "scope": "Synthetic dedicated fixtures; packaged code and actual WordPress updater; no service rollout, S3, signing, production or observation changes",
+  "format": "owr-onboarding-zip-acceptance-v1",
+  "version": "0.1.0-dev.1",
+  "distribution": "dist/candidate-20261021-onboarding-final",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162,
+      "file_count": 10
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "6c410d8d7ce73af20b0f53ba6f6b91434c66c4ad725e90ab2d531090868686d1",
+      "bytes": 14456575,
+      "file_count": 728
+    }
+  ],
+  "roundtrip_preserved_files": 32,
+  "source_unchanged": true,
+  "migration_tested": false,
+  "same_plugin_bytes_as_previous": true,
+  "packaged_regression_tests": 22,
+  "classification": {
+    "environment": "no new failure observed",
+    "test_infrastructure": "previous mock retention omission fixed; prior WebDriver startup cause unresolved",
+    "plugin": "no new runtime changes or defects identified"
+  }
+}

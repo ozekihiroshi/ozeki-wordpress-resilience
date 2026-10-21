@@ -1,0 +1,14 @@
+{
+  "format": "owr-onboarding-recovery-initial-v1",
+  "all_passed": false,
+  "isolated_restore_passed": true,
+  "http_status": 200,
+  "resources_removed": true,
+  "registration": "pending",
+  "error_type": "KeyError",
+  "classification": "test_infrastructure",
+  "cause": "Local substitute GET receipts omitted retention required by existing restore-result registration",
+  "fix": "Record stable synthetic retention in GET receipts; preserve initial ledger; rerun new workspace",
+  "production_changes": false,
+  "aws_calls": 0
+}

@@ -1,0 +1,145 @@
+{
+  "format": "owr-onboarding-real-ssh-s3-v1",
+  "recorded_at": "2026-10-21T13:58:49.665615+00:00",
+  "results": [
+    {
+      "name": "real_ssh_pinned_source_inventory",
+      "passed": true,
+      "readonly_site": true,
+      "select_only": true,
+      "wrong_host_key_rejected": true
+    },
+    {
+      "name": "daily_initial_failure_no_capture_no_put_no_retry",
+      "passed": true
+    },
+    {
+      "name": "daily_late_failure_no_fence_no_put",
+      "passed": true
+    },
+    {
+      "name": "real_capture_daily_s3_storage_pending_approval",
+      "passed": true,
+      "puts": 2
+    },
+    {
+      "name": "daily_duplicate_no_capture_no_put",
+      "passed": true
+    },
+    {
+      "name": "unsigned_admitted_set_no_recovery_or_read",
+      "passed": true
+    },
+    {
+      "name": "separate_signature_approval_and_invalid_signature_rejection",
+      "passed": true
+    },
+    {
+      "name": "admitted_capture_signed_fixed_version_real_isolated_restore_registered",
+      "passed": true,
+      "transport": "real S3 fixed Version IDs and retention; EC2 role authorization over SSH",
+      "capture_workspace_available": false
+    },
+    {
+      "name": "duplicate_recovery_no_get_put_or_restore",
+      "passed": true
+    }
+  ],
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "all_passed": true,
+  "resources_removed": true,
+  "scope": "Generated WP/MariaDB real pinned SSH inventory -> admitted capture -> experimental S3 fixed versions/retention -> separate test signature -> isolated restore and registration; no production or 72h state",
+  "base_commit": "0b10e5444ae7e4570160cbccc1d7d1a3c26d85ee",
+  "bucket": "ceri-link-resilience-lock-lab-121426368082",
+  "region": "ap-northeast-1",
+  "set_id": "AWS-d60193cc1c4c0630",
+  "writer": "my-ssm-role",
+  "reader": "OwrM1RecoveryReader",
+  "aws_puts": 2,
+  "aws_fixed_gets": 6,
+  "uncertain_puts": 0,
+  "stored_bytes": 29811488,
+  "assets": [
+    {
+      "role": "database",
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-d60193cc1c4c0630/database.sql",
+        "region": "ap-northeast-1",
+        "sha256": "334537f78d502bdf50ce540f3dad20dd967ca301dc564fd6bd096cee338b7256",
+        "size_bytes": 92829,
+        "version_id": "QcLmUydFVd3BR3wdDXd5Cs_im6ha1fny",
+        "writer_identity": "my-ssm-role"
+      },
+      "retention": {
+        "last_modified": "2026-10-21T13:57:27+00:00",
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-25T14:07:26Z"
+      }
+    },
+    {
+      "role": "files",
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-d60193cc1c4c0630/wordpress-files.tar.gz",
+        "region": "ap-northeast-1",
+        "sha256": "234538322906d8497053281e2990aa5183cea0b05d5c39a105273ecb5b4e05f0",
+        "size_bytes": 29718659,
+        "version_id": "uJJjgGuBZJyMXzN6xMEqdSo1qHNhjyBz",
+        "writer_identity": "my-ssm-role"
+      },
+      "retention": {
+        "last_modified": "2026-10-21T13:57:33+00:00",
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-25T14:07:31Z"
+      }
+    }
+  ],
+  "final_phase": "restore_verified",
+  "result_registration": "recorded",
+  "isolated_restore": {
+    "containers": [
+      "owr-daily-restore-1938bf16da9d-db",
+      "owr-daily-restore-1938bf16da9d-web"
+    ],
+    "fresh_database_credentials": true,
+    "http": {
+      "post": true,
+      "status": 200
+    },
+    "network": "none + shared private namespace",
+    "passed": true,
+    "published_ports": false,
+    "resources_removed": true,
+    "source_mounts": false,
+    "wordpress": {
+      "attachment": "one.png",
+      "cron_disabled": true,
+      "http_blocked": true,
+      "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+      "post": 1
+    }
+  },
+  "regression_tests": {
+    "ssh": 4,
+    "s3_adapter": 11,
+    "daily_admission": 7,
+    "passed": true
+  },
+  "classification": {
+    "environment": "no new failure observed",
+    "test_infrastructure": "no unexpected failure in this real run; prior local fixture retention omission fixed; prior WebDriver cause unresolved",
+    "plugin": "no runtime changes or new defects identified"
+  },
+  "limitations": [
+    "Capture uses existing DockerBackend; SSH is used for source inventory and EC2 S3 request authorization",
+    "Dedicated SSH client/server, signer and restore share one WSL physical host",
+    "Declared inventory and manual confirmations belong to generated fixture; not remote attestation",
+    "WordPress reporting/systemd lifecycle are separate prior tests",
+    "No production approval or 72-hour observation completion"
+  ]
+}

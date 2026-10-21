@@ -77,8 +77,23 @@ def ui_session(statusdir, plugin_zip, diagnostics=None):
         for name in reversed(created):run('docker','rm','-f','-v',name)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--operator-review',action='store_true');p.add_argument('--zip',type=Path,required=True);p.add_argument('--old-zip',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
+ p=argparse.ArgumentParser();p.add_argument('--operator-review',action='store_true');p.add_argument('--preserve-state',type=Path);p.add_argument('--zip',type=Path,required=True);p.add_argument('--old-zip',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
  checks=[];observer=module('watchdog-observer')
+ preserved_source={}
+ if args.preserve_state:
+  source=args.preserve_state.resolve();assert source.is_dir()
+  target=args.output/'roundtrip-state';target.mkdir(mode=0o700)
+  for f in source.rglob('*'):
+   if f.is_file() and f.suffix in ('.json','.sqlite','.sig','.pem'):
+    assert not f.is_symlink() and f.resolve().is_relative_to(source)
+    rel=f.relative_to(source);raw=f.read_bytes()
+    assert b'PRIVATE KEY-----' not in raw,'private key excluded from retention fixture'
+    dest=target/rel;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(raw)
+    preserved_source[str(rel)]=hashlib.sha256(raw).hexdigest()
+  assert preserved_source and any(x.endswith('daily.sqlite') for x in preserved_source)
+  status=json.loads((source/'roundtrip-status.json').read_text())
+  assert status['runs'][0]['phase']=='restore_verified'
+  checks.append('completed real roundtrip records copied for byte-preservation only; no migration or resumed execution')
  snapshots={}
  if args.operator_review:
   # Produce durable generated capture/daily records through existing fixtures/core, not handwritten SQLite.
@@ -119,7 +134,7 @@ def main():
  for role in snapshots:
   (status/(role+'.json')).write_text(json.dumps(snapshots[role]['recovered']))
   (status/(role+'-transfer.json')).write_text(json.dumps(dict(format='owr-observer-transfer-v1',site_id='generated-first-site',monitor_id='preflight-'+role,state='ok',attempted_at=datetime.now(timezone.utc).isoformat())))
- def external():return {str(f.relative_to(args.output)):hashlib.sha256(f.read_bytes()).hexdigest() for folder in ('source','receiver','status','admission-state') for f in (args.output/folder).rglob('*') if f.is_file()}
+ def external():return {str(f.relative_to(args.output)):hashlib.sha256(f.read_bytes()).hexdigest() for folder in ('source','receiver','status','admission-state','roundtrip-state') for f in (args.output/folder).rglob('*') if f.is_file()}
 
  for mode,initial in [('fresh',args.zip),('upgrade',args.old_zip)]:
   # Explicit synthetic fixture refresh before each install, never during preservation checks.
@@ -190,6 +205,9 @@ def main():
    assert external()==preserved
    checks.append(mode+': exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate')
    print('PASS '+checks[-1],flush=True)
- result=dict(passed=True,operator_review=args.operator_review,checks=checks,zip_sha256=hashlib.sha256(args.zip.read_bytes()).hexdigest(),old_zip_sha256=hashlib.sha256(args.old_zip.read_bytes()).hexdigest(),containers_removed=True,scope='Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial')
+ if args.preserve_state:
+  assert all(hashlib.sha256((args.preserve_state/rel).read_bytes()).hexdigest()==value for rel,value in preserved_source.items())
+  (args.output/'roundtrip-preservation.json').write_text(json.dumps(dict(passed=True,file_count=len(preserved_source),hashes=preserved_source,source_unchanged=True,migration_tested=False),indent=2))
+ result=dict(passed=True,roundtrip_preserved_files=len(preserved_source),operator_review=args.operator_review,checks=checks,zip_sha256=hashlib.sha256(args.zip.read_bytes()).hexdigest(),old_zip_sha256=hashlib.sha256(args.old_zip.read_bytes()).hexdigest(),containers_removed=True,scope='Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial')
  (args.output/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 if __name__=='__main__':main()
