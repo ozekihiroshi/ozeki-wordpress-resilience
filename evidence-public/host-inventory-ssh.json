@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "checks": [
+    "real SELECT-only MariaDB and read-only site scan; DB/file hashes unchanged; wp-config not executed",
+    "measured facts connected to preflight; unobserved writer/queue/control scope remains blocked",
+    "CLI report binding and conservative verdict",
+    "SELECT-only credentials reject writes in separate negative test",
+    "actual unsupported engine detected",
+    "symlink detected without following target",
+    "wrong nonce rejected",
+    "actual SSH inspect CLI reaches preflight",
+    "probe account cannot modify code or site",
+    "arbitrary command rejected by forced endpoint",
+    "foreign site request rejected",
+    "wrong host key fails closed",
+    "pin restored recovers",
+    "SSH service stopped is unavailable, no cached success",
+    "SSH service restart recovers",
+    "database unavailable yields redacted failure, never healthy inventory"
+  ],
+  "preflight": {
+    "format": "owr-deployment-preflight-v1",
+    "assessed_at": "2026-10-20T23:44:22.291951+00:00",
+    "state": "needs_configuration",
+    "production_ready": false,
+    "capture_started": false,
+    "config_sha256": "44fe453387a9bfb4354c506ea63465868c34412cc37e3bfd0635cc4c11f5d8c2",
+    "issues": [
+      {
+        "code": "host_unverified_scope_remaining",
+        "category": "configuration",
+        "action": "実測結果と未確認項目を確認してください。自動修正・取得は行いません。"
+      }
+    ],
+    "evidence_scope": {
+      "profile": "operator_declaration",
+      "inventory": "operator_supplied_not_authenticated",
+      "workspace": "local_metadata_only",
+      "host": "bounded_report_bound_to_nonce_not_remote_attestation"
+    },
+    "not_verified": [
+      "live_writer_fencing",
+      "database_credentials",
+      "s3_permissions_and_retention",
+      "signing_host_independence",
+      "malware_absence",
+      "production_restore"
+    ],
+    "workspace_required_bytes": 603979776,
+    "host_observation": {
+      "state": "validated_report",
+      "summary": {
+        "tables": 3,
+        "entries": 4,
+        "bytes": 59,
+        "links": 0,
+        "special": 0,
+        "innodb_only": true
+      },
+      "unverified": [
+        "writers",
+        "queue",
+        "dependencies",
+        "runtime_image_binding",
+        "multisite_config",
+        "storage",
+        "trust",
+        "operational_ledgers",
+        "file_snapshot_consistency"
+      ],
+      "authenticated": false
+    }
+  },
+  "scope": "generated MariaDB/WordPress-shaped tables and real local files; real pinned SSH between dedicated containers; no WP bootstrap or production host",
+  "environment_incidents": [],
+  "product_defects": [],
+  "unit_tests": 4,
+  "containers_removed": true,
+  "source_sha256": {
+    "tools/host-inventory-ssh.py": "92beb851c0a2bdc2a4d7295f3bd83e557461bfa1f306ae707a246281a325ea6d",
+    "tools/run-host-inventory-ssh-lab.py": "5b0a639f1e449a36ddf668a6d85d779db522e50c4ff5d0d4193e7acff1732956"
+  },
+  "limitations": [
+    "same physical host, isolated real SSH containers",
+    "generated WP-shaped tables, not installed production WordPress",
+    "unknown writer/trust/storage scope remains blocked",
+    "no independent remote attestation"
+  ]
+}

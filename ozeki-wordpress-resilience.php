@@ -15,3 +15,9 @@ require_once __DIR__ . '/src/DailyAdmin.php';
 
 require_once __DIR__ . '/src/DailyWatchdogAdmin.php';
 \Ozeki\Resilience\DailyWatchdogAdmin::boot();
+
+require_once __DIR__ . '/src/PreflightAdmin.php';
+\Ozeki\Resilience\PreflightAdmin::boot();
+
+require_once __DIR__ . '/src/PreflightWatchdogAdmin.php';
+\Ozeki\Resilience\PreflightWatchdogAdmin::boot();

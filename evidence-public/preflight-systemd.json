@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "checks": [
+    "systemd starts real SSH inventory",
+    "unmodified60second service updates",
+    "before-stop identity hardening permissions and duplicate rejection",
+    "running browser accepted",
+    "stopped browser accepted",
+    "explicit service restart refreshes report",
+    "resumed browser accepted",
+    "guest reboot changes BootID",
+    "enabled service automatically refreshes after reboot",
+    "after-reboot identity hardening permissions and duplicate rejection",
+    "reboot-recovered browser accepted",
+    "WSL observation host BootID unchanged"
+  ],
+  "resources_removed": true,
+  "real_guest_reboot": true,
+  "interval_seconds": 60,
+  "scope": "real dedicated UbuntuVM systemd and pinned SSH/MariaDB; WordPress reads actual VM outputs via9p share; no rebased times; generated data; same physical host",
+  "boot": {
+    "before": "b075d613-6cd9-4e75-a7c1-a8dc1560b544",
+    "after": "a2bd6001-6a0b-48e0-a5ff-860b5fbb456f",
+    "host_unchanged": true
+  },
+  "units": {
+    "before-stop": {
+      "MainPID": "2075",
+      "User": "owr-preflight",
+      "Group": "www-data",
+      "PrivateTmp": "yes",
+      "ProtectHome": "yes",
+      "ProtectSystem": "strict",
+      "NoNewPrivileges": "yes",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "after-reboot": {
+      "MainPID": "662",
+      "User": "owr-preflight",
+      "Group": "www-data",
+      "PrivateTmp": "yes",
+      "ProtectHome": "yes",
+      "ProtectSystem": "strict",
+      "NoNewPrivileges": "yes",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    }
+  },
+  "stopped_unit": "MainPID=0\nActiveState=inactive\nSubState=dead\nUnitFileState=enabled\n",
+  "browser": {
+    "running": {
+      "mode": "ok",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "stopped": {
+      "mode": "stopped",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer stopped",
+        "stopped and stale shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "resumed": {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "reboot-recovered": {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    }
+  },
+  "source_sha256": {
+    "examples/preflight-relay/owr-preflight.service": "d8add72e8321a17d617a652af0aae7788471f1c9425e3156c6236fad186029a2",
+    "tools/preflight-relay.py": "eb685e54d37b0bde977a340f4f31d58ae3956d30bdbde9e01403bb9c92744a53",
+    "tools/run-preflight-systemd-vm-lab.py": "73a7f781768694210b964ba84fbc2082499c7a0e83b151b725ff9f38246989dd",
+    "src/PreflightAdmin.php": "421e2d5b49fcce22778ef46b106b4f223cb3e39b1cc2e9c2e8f9524c617b71a2"
+  },
+  "environment_incidents": [],
+  "product_defects": []
+}

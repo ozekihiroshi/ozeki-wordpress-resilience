@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "scope": "dedicated generated profiles/inventory; local filesystem metadata; no live WordPress/SSH/AWS verification",
+  "eligible": {
+    "format": "owr-deployment-preflight-v1",
+    "assessed_at": "2026-10-20T23:28:40.299573+00:00",
+    "state": "eligible_for_dedicated_trial",
+    "production_ready": false,
+    "capture_started": false,
+    "config_sha256": "8a19ebc12fc801d2ed08aed296e28f055f721b0986912f6fc625374e7043baf0",
+    "issues": [],
+    "evidence_scope": {
+      "profile": "operator_declaration",
+      "inventory": "operator_supplied_not_authenticated",
+      "workspace": "local_metadata_only"
+    },
+    "not_verified": [
+      "live_writer_fencing",
+      "database_credentials",
+      "s3_permissions_and_retention",
+      "signing_host_independence",
+      "malware_absence",
+      "production_restore"
+    ],
+    "workspace_required_bytes": 603979776
+  },
+  "uncertain_put": {
+    "format": "owr-deployment-preflight-v1",
+    "assessed_at": "2026-10-20T23:28:40.487878+00:00",
+    "state": "needs_configuration",
+    "production_ready": false,
+    "capture_started": false,
+    "config_sha256": "8a19ebc12fc801d2ed08aed296e28f055f721b0986912f6fc625374e7043baf0",
+    "issues": [
+      {
+        "code": "uncertain_puts_present",
+        "category": "operational",
+        "action": "未完了処理・結果不明送信の照合を先に行ってください。自動再送しません。"
+      }
+    ],
+    "evidence_scope": {
+      "profile": "operator_declaration",
+      "inventory": "operator_supplied_not_authenticated",
+      "workspace": "local_metadata_only"
+    },
+    "not_verified": [
+      "live_writer_fencing",
+      "database_credentials",
+      "s3_permissions_and_retention",
+      "signing_host_independence",
+      "malware_absence",
+      "production_restore"
+    ],
+    "workspace_required_bytes": 603979776
+  },
+  "inputs_and_sentinel_unchanged": true,
+  "production_ready": false,
+  "existing_observation_modified": false,
+  "contract_tests": 21,
+  "capture_regression_tests": 17
+}

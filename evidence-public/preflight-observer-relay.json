@@ -1,0 +1,270 @@
+{
+  "passed": true,
+  "checks": [
+    "both actual observer reports arrive through pinned SSH",
+    "source WordPress cannot write report",
+    "source WordPress cannot read relay key",
+    "source duplicate loop refused",
+    "receiver WordPress cannot write report",
+    "receiver WordPress cannot read relay key",
+    "receiver duplicate loop refused",
+    "actual source update stop becomes alarm",
+    "source recovers after real fresh update",
+    "SSH outage recorded without replacing snapshots",
+    "periodic transfer recovers without restart",
+    "SSH reachable but observer report is stale",
+    "observer and pull restart recover both targets",
+    "actual observer alarm/recovery dispatch recorded locally",
+    "no publication-window invalid alerts in real run"
+  ],
+  "events": [
+    {
+      "event": "healthy",
+      "at": "2026-10-21T04:54:42.040142+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "healthy",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-publisher-stopped",
+      "at": "2026-10-21T04:54:43.246510+00:00"
+    },
+    {
+      "event": "source-alarm",
+      "at": "2026-10-21T04:55:14.089981+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "source-alarm",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "期限超過",
+              "発生"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-recovered",
+      "at": "2026-10-21T04:55:27.045312+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "source-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "relay-network-disconnected",
+      "at": "2026-10-21T04:55:27.917081+00:00"
+    },
+    {
+      "event": "transfer-failed",
+      "at": "2026-10-21T04:55:37.320972+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-failed",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "transfer_failed",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "transfer_failed",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "transfer-stale",
+      "at": "2026-10-21T05:00:44.093343+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-stale",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "transfer_failed",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "transfer_failed",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "relay-network-restored",
+      "at": "2026-10-21T05:00:44.996541+00:00"
+    },
+    {
+      "event": "transfer-recovered",
+      "at": "2026-10-21T05:00:54.366981+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "transfer-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "source-observer-and-receiver-pull-stopped",
+      "at": "2026-10-21T05:00:56.542011+00:00"
+    },
+    {
+      "event": "stopped",
+      "at": "2026-10-21T05:06:27.237771+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "stopped",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "source_stale",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "final-recovered",
+      "at": "2026-10-21T05:06:39.569488+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "final-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    }
+  ],
+  "containers_removed": true,
+  "scope": "Dedicated containers, real SSH and observer, local notification callback, real 5-minute freshness waits; no S3/production or 72h observation changes",
+  "format": "owr-preflight-observer-relay-evidence-v1",
+  "production_ready": false,
+  "unit_tests_passed": 10,
+  "notifications": [
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "49235d7808b54a4fba81c35b2c5c79f9",
+      "site": "preflight-source",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "preflight-source",
+      "transition": "opened",
+      "observed_at": "2026-10-21T04:55:04.102452+00:00"
+    },
+    {
+      "format": "owr-operator-notification-v1",
+      "event_id": "667066e525534a08b7cc356ea645dcb5",
+      "site": "preflight-source",
+      "domain": "watchdog",
+      "kind": "monitor_stopped",
+      "subject": "preflight-source",
+      "transition": "resolved",
+      "observed_at": "2026-10-21T04:55:16.865911+00:00"
+    }
+  ],
+  "clock_rebased": false,
+  "reused": [
+    "watchdog-observer.py",
+    "observer-status.py",
+    "observer-status-relay.py",
+    "PreflightWatchdogAdmin"
+  ],
+  "test_incidents": [
+    {
+      "classification": "product integration race",
+      "first_trial": "preflight-observer-relay-20261021",
+      "detail": "Adjacent report/health generations caused transient heartbeat_invalid. First retry with100ms reread was insufficient and stopped. Final implementation uses the completion committed in health.report_at, never credits a newer report; stale health still expires. Health ahead of report is invalid. Regression and real retry confirm behavior."
+    },
+    {
+      "classification": "test assertion correction",
+      "detail": "Await exact monitor_stopped instead of any alarm; synthetic publisher completes its pair when gracefully stopped."
+    }
+  ],
+  "limitations": [
+    "Generated preflight source reports; real watchdog and pinned SSH, no mocked transport.",
+    "Dedicated containers same host; no OS reboot or systemd deployment acceptance in this turn.",
+    "Local notification callback only; delivery UI remains unknown without configured dispatcher.",
+    "72h observation and production assets unaffected."
+  ],
+  "sources": {
+    "tools/preflight-watchdog-probe.py": "cd0501d8e292bf9582dd9cd083cd42c42b225785d431ec6757c871837c574d17",
+    "tools/run-preflight-observer-relay-lab.py": "b63cfef7833fd5f19a081f0690689a64db49602ae366cb0ccde6c2d3fb3fae69",
+    "tools/observer-status-relay.py": "827e9c883bea7c14a8435becece8d669e2704af6d6ee4232bb7a045065fb797a"
+  }
+}

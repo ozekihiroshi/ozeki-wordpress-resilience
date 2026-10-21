@@ -147,3 +147,7 @@ Daily-watchdog final review: initial restart transient heartbeat_invalid prompte
 ## 2026-10-21 状態報告の最終ZIP検証
 
 専用生成データのWordPress環境でPlugin_Upgraderによる新規導入、10月19日候補からの同番号ZIP置換、無効化・再有効化に合格。設定・Cron・wp-config・要求ファイル・外部警報/回復台帳を保持し、管理画面の読取り専用性と編集者の拒否を確認。同じプラグインZIPで日次状態のHTTP試験も合格。最終キットのPython11件/PHP85チェック合格。WordPressコアの下書き掃除Cron初期化による比較失敗を切り分け、初期化後の完全一致で検証。詳細は `evidence-public/status-report-zip.json` と[手順](../guides/status-report-zip.md)。72時間観測の合格・本番適用・公開は別判定。
+
+## 2026-10-21 導入前検査・独立watchdogの最終ZIP
+
+専用WordPressで最終ZIPの新規導入、前回状態報告候補からの同番号ZIP置換、無効化・再有効化を検証。設定・Cron・wp-config・要求記録・外部報告/警報台帳の保持、全配布ファイルとの一致、両管理画面の権限/読取り専用性を確認。最終キットからPython58件・PHP20チェック合格。実S3/外部サービスのコード切替/実端末通知/72時間観測は別判定。 [詳細](../../evidence-public/preflight-zip.json)。ZIPは検証後変更せず、この結果はリポジトリー側へ追記。

@@ -1,0 +1,7 @@
+{
+  "monitor_id": "preflight-source",
+  "site_id": "example-site",
+  "config_sha256": "REPLACE_WITH_PROFILE_SHA256",
+  "report_file": "/var/lib/owr-preflight-web/report.json",
+  "health_file": "/var/lib/owr-preflight-web/health.json"
+}

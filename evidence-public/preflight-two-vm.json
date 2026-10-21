@@ -1,0 +1,153 @@
+{
+  "passed": true,
+  "checks": [
+    "real interVM SSH transfer",
+    "healthy browser",
+    "WordPress no keys/no report writes; SSH reader no source credentials",
+    "data network interruption detected",
+    "network-down browser",
+    "network recovers",
+    "network-recovered browser",
+    "source stop detected without refreshing source time",
+    "source-stopped browser",
+    "source reboot autostarts publisher",
+    "source-reboot browser",
+    "receiver reboot autostarts transfer",
+    "receiver-reboot browser",
+    "two guest boots changed; WSL boot unchanged"
+  ],
+  "resources_removed": true,
+  "scope": "two independent Ubuntu guest kernels; collector and actual WordPress PHP in separate VMs; DB and probe fixtures outside guests; isolated data NIC SSH; same physical host; no shared report directory",
+  "format": "owr-preflight-two-vm-evidence-v1",
+  "production_ready": false,
+  "browser": {
+    "source-stopped-browser": {
+      "mode": "source_stale",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer source_stale",
+        "source stale preserved across transfer",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "healthy-browser": {
+      "mode": "ok",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "source-reboot-browser": {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "network-recovered-browser": {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "network-down-browser": {
+      "mode": "transfer_failed",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer transfer_failed",
+        "publication failure distinguished",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    },
+    "receiver-reboot-browser": {
+      "mode": "restarted",
+      "checks": [
+        "anonymous requires login",
+        "admin menu present",
+        "transfer ok",
+        "recovery shown",
+        "read-only controls absent",
+        "mobile no page overflow",
+        "POST returns405",
+        "editor cannot read report",
+        "editor has no menu"
+      ]
+    }
+  },
+  "boots": {
+    "before": {
+      "source": "18e26bf5-8ac2-49a6-a780-06eb148b2298",
+      "receiver": "11f1ed6a-6be9-43b2-a110-a7944fe83cbc"
+    },
+    "after": {
+      "source": "6bd8edd4-711a-4aeb-b319-dd130953951b",
+      "receiver": "63eff006-fada-4dfa-ac39-c6a6cb52df45"
+    }
+  },
+  "unit_tests": {
+    "passed": 7,
+    "scope": "transfer source time, stale, failure preservation, rollback, nonce, sanitization, foreign site"
+  },
+  "test_incidents": [
+    {
+      "phase": "first trial preparation",
+      "classification": "external test tooling",
+      "detail": "Whole Windows-mounted project tar timed out at180s before browser testing. Changed to explicit build-release.PLUGIN staged on Linux; retry passed that step. OS-level latency breakdown not measured; failed raw evidence retained."
+    },
+    {
+      "phase": "auxiliary progress inspection",
+      "classification": "environment",
+      "detail": "One Wsl/Service/WSAETIMEDOUT launch, subsequent echo succeeded. No WSL restart."
+    },
+    {
+      "phase": "auxiliary guest inspection",
+      "classification": "unclassified diagnostic timeout",
+      "detail": "Read-only guest service query exceeded20s during preparation; acceptance process continued. Cause not established; not counted as plugin failure or silently erased."
+    }
+  ],
+  "limitations": [
+    "Same physical WSL host; not independent physical failure domains.",
+    "WordPress PHP is in receiver VM; generated MariaDB and probe fixtures outside both guests.",
+    "SSH host pinning is not independent evidence signing.",
+    "Tested generated data only; no production rollout or release.",
+    "72h observation separate, not yet complete."
+  ],
+  "sources": {
+    "tools/preflight-transfer.py": "df50ff59358afd7e631f6534b89a6fd71ebb7d57125e7126146203dfdaed7b6a",
+    "src/PreflightAdmin.php": "cbec35b65b4418f53e4a1c223578db91f0b64951a1e5eb3654cbeda7d4001be8",
+    "examples/preflight-relay/owr-preflight-transfer.service": "d59acfb980751b8740aba4bbeb61168b5beb8b76367c92b1fafeb9009b905fce",
+    "tools/run-preflight-two-vm-lab.py": "fdf16cbfd8b4551475fb33ce417b235dbb78c58f561df13222dbe7510b0d968c"
+  }
+}

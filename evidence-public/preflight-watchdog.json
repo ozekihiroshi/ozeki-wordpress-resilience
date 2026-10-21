@@ -1,0 +1,622 @@
+{
+  "passed": true,
+  "checks": [
+    "real interVM SSH transfer",
+    "source probe cannot write reports",
+    "source probe cannot read private state",
+    "receiver probe cannot write reports",
+    "receiver probe cannot read private state",
+    "both independent probes healthy",
+    "preflight transfer outage creates pending independent alert",
+    "management reachable and source healthy during data link failure",
+    "pending alarm reaches HTTP receiver",
+    "link recovery clears alarm",
+    "inspection service stop detected",
+    "receiver does not conceal stalled inspection",
+    "SSH alone does not imply inspection progress",
+    "inspection restart resolves alerts",
+    "transfer service stop detected",
+    "inspection stays healthy during transfer stop",
+    "transfer restart resolves alert",
+    "independent observer restarted with same state",
+    "observer restart remains healthy",
+    "observer restart does not duplicate notifications",
+    "all preflight alarms have recovery notifications",
+    "accepted notification IDs unique",
+    "WSL not rebooted"
+  ],
+  "resources_removed": true,
+  "scope": "new preflight watchdog integration only; independent observer process outside two guest VMs; local HTTP notification receiver; same physical host; no WordPress UI repeat or external notification",
+  "format": "owr-preflight-watchdog-evidence-v1",
+  "production_ready": false,
+  "unit_tests_passed": 7,
+  "details": {
+    "events": [
+      {
+        "label": "initial",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "notifications": []
+      },
+      {
+        "label": "link_failed_delivery_pending",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "invalid",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [
+              "heartbeat_invalid"
+            ],
+            "undelivered": 1
+          }
+        },
+        "notifications": []
+      },
+      {
+        "label": "link_recovered",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "notifications": [
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "2a90389be800416da375f97597a470c7",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:22:48.213248+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "c2e4066baf754c548be313d2baa64868",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:23:53.119503+00:00"
+          }
+        ]
+      },
+      {
+        "label": "source_stopped",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [
+              "monitor_stopped"
+            ],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [
+              "monitor_stopped"
+            ],
+            "undelivered": 0
+          }
+        },
+        "notifications": [
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "2a90389be800416da375f97597a470c7",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:22:48.213248+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "c2e4066baf754c548be313d2baa64868",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:23:53.119503+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "7afb030fa47a4a70a59cbd8f738dc5a0",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:21.525477+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "17cf66400a804d4ead742e8d5e459677",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:25.996809+00:00"
+          }
+        ]
+      },
+      {
+        "label": "source_recovered",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "notifications": [
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "2a90389be800416da375f97597a470c7",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:22:48.213248+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "c2e4066baf754c548be313d2baa64868",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:23:53.119503+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "7afb030fa47a4a70a59cbd8f738dc5a0",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:21.525477+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "17cf66400a804d4ead742e8d5e459677",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:25.996809+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "5a819790ed3b4053b2e05a7089b27f51",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:38.054108+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "de8d2a074db84e478d2288ad040660ba",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:55.007138+00:00"
+          }
+        ]
+      },
+      {
+        "label": "transfer_stopped",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [
+              "monitor_stopped"
+            ],
+            "undelivered": 0
+          }
+        },
+        "notifications": [
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "2a90389be800416da375f97597a470c7",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:22:48.213248+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "c2e4066baf754c548be313d2baa64868",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:23:53.119503+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "7afb030fa47a4a70a59cbd8f738dc5a0",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:21.525477+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "17cf66400a804d4ead742e8d5e459677",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:25.996809+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "5a819790ed3b4053b2e05a7089b27f51",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:38.054108+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "de8d2a074db84e478d2288ad040660ba",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:55.007138+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "6743c1599740453098e3d6bd5565f311",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:27:17.702793+00:00"
+          }
+        ]
+      },
+      {
+        "label": "transfer_recovered",
+        "source": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "receiver": {
+          "completion_observation": "received",
+          "reachability": {
+            "active": [],
+            "undelivered": 0
+          },
+          "reachable": true,
+          "watchdog": {
+            "active": [],
+            "undelivered": 0
+          }
+        },
+        "notifications": [
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "2a90389be800416da375f97597a470c7",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:22:48.213248+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "c2e4066baf754c548be313d2baa64868",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "heartbeat_invalid",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:23:53.119503+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "7afb030fa47a4a70a59cbd8f738dc5a0",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:21.525477+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "17cf66400a804d4ead742e8d5e459677",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:25:25.996809+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "5a819790ed3b4053b2e05a7089b27f51",
+            "site": "preflight-source",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-source",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:38.054108+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "de8d2a074db84e478d2288ad040660ba",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:25:55.007138+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "6743c1599740453098e3d6bd5565f311",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "opened",
+            "observed_at": "2026-10-21T04:27:17.702793+00:00"
+          },
+          {
+            "format": "owr-operator-notification-v1",
+            "event_id": "929abf30e2ed4dde89efc53b7ed2c673",
+            "site": "preflight-receiver",
+            "domain": "watchdog",
+            "kind": "monitor_stopped",
+            "subject": "preflight-receiver",
+            "transition": "resolved",
+            "observed_at": "2026-10-21T04:27:29.732461+00:00"
+          }
+        ]
+      }
+    ],
+    "notifications": [
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "2a90389be800416da375f97597a470c7",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "heartbeat_invalid",
+        "subject": "preflight-receiver",
+        "transition": "opened",
+        "observed_at": "2026-10-21T04:22:48.213248+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "c2e4066baf754c548be313d2baa64868",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "heartbeat_invalid",
+        "subject": "preflight-receiver",
+        "transition": "resolved",
+        "observed_at": "2026-10-21T04:23:53.119503+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "7afb030fa47a4a70a59cbd8f738dc5a0",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-receiver",
+        "transition": "opened",
+        "observed_at": "2026-10-21T04:25:21.525477+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "17cf66400a804d4ead742e8d5e459677",
+        "site": "preflight-source",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-source",
+        "transition": "opened",
+        "observed_at": "2026-10-21T04:25:25.996809+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "5a819790ed3b4053b2e05a7089b27f51",
+        "site": "preflight-source",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-source",
+        "transition": "resolved",
+        "observed_at": "2026-10-21T04:25:38.054108+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "de8d2a074db84e478d2288ad040660ba",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-receiver",
+        "transition": "resolved",
+        "observed_at": "2026-10-21T04:25:55.007138+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "6743c1599740453098e3d6bd5565f311",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-receiver",
+        "transition": "opened",
+        "observed_at": "2026-10-21T04:27:17.702793+00:00"
+      },
+      {
+        "format": "owr-operator-notification-v1",
+        "event_id": "929abf30e2ed4dde89efc53b7ed2c673",
+        "site": "preflight-receiver",
+        "domain": "watchdog",
+        "kind": "monitor_stopped",
+        "subject": "preflight-receiver",
+        "transition": "resolved",
+        "observed_at": "2026-10-21T04:27:29.732461+00:00"
+      }
+    ],
+    "threshold_seconds": 100,
+    "service_interval_seconds": 60,
+    "real_time": true,
+    "external_notifications": false,
+    "receiver": "local HTTP",
+    "observer_outside_both_guests": true
+  },
+  "new_scope": "first independent watchdog integration for preflight report and transfer health; existing observer/durable outbox reused",
+  "not_repeated": [
+    "WordPress installation/browser acceptance",
+    "daily backup watchdog workflow",
+    "72h storage/signing/restore"
+  ],
+  "limitations": [
+    "Observer outside both VMs but same physical host; no whole-host failure claim.",
+    "Local HTTP delivery only, no Pushover/iPhone/email notification in this trial.",
+    "Trial threshold100seconds with60second publisher/transfer interval; not a production threshold commitment.",
+    "Existing generic heartbeat_invalid and monitor_stopped alarm kinds identify target through monitor ID; no new admin interface in this change.",
+    "SSH reachability loss of entire hosts was covered by earlier generic observer tests, not repeated here; this trial cuts the preflight transfer data NIC and stops services."
+  ],
+  "sources": {
+    "tools/preflight-watchdog-probe.py": "865a5658572290f6281680b5b39c0e763007ee358e576adef1c3d5a2430c168e",
+    "lab/preflight-watchdog/exercise.py": "74379c055ebeab77ca42adf70dd8c8886bd409dd504bb6f096215b01005dd747",
+    "tools/run-preflight-watchdog-lab.py": "9b90bb321c02e91b0dfc3b572a538e45b90a52069ef9219dd3bc80ddcef008f7"
+  }
+}

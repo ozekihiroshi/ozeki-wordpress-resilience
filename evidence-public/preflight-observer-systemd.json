@@ -1,0 +1,151 @@
+{
+  "passed": true,
+  "checks": [
+    "systemd starts real pinned SSH pulls",
+    "both unmodified 60-second services update periodically",
+    "before-stop service identity hardening permissions and duplicate rejection",
+    "source alarm reaches VM through service",
+    "source recovery reaches VM through service",
+    "no publication-window false alarm",
+    "explicit service restart refreshes reports",
+    "before-reboot service identity hardening permissions and duplicate rejection",
+    "guest OS reboot changes Boot ID",
+    "enabled services automatically refresh both reports after reboot",
+    "after-reboot service identity hardening permissions and duplicate rejection",
+    "alarm and recovery history survives service and OS restart",
+    "WSL observation host not rebooted"
+  ],
+  "events": [
+    {
+      "event": "guest-booted",
+      "at": "2026-10-21T05:13:30.739289+00:00"
+    },
+    {
+      "event": "systemd-running",
+      "at": "2026-10-21T05:18:23.515446+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-running",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "services-stopped",
+      "at": "2026-10-21T05:18:26.251119+00:00"
+    },
+    {
+      "event": "systemd-stopped",
+      "at": "2026-10-21T05:24:03.285415+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-stopped",
+        "expected": {
+          "source": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          },
+          "receiver": {
+            "report": "stale",
+            "transfer": "stopped",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "systemd-resumed",
+      "at": "2026-10-21T05:24:15.920266+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-resumed",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "guest-reboot-requested",
+      "at": "2026-10-21T05:24:26.848184+00:00",
+      "boot_id": "9a8a297a-7267-4d2f-bf2c-20e35173e536"
+    },
+    {
+      "event": "systemd-reboot-recovered",
+      "at": "2026-10-21T05:25:22.407802+00:00",
+      "browser": {
+        "passed": true,
+        "mode": "systemd-reboot-recovered",
+        "expected": {
+          "source": {
+            "report": "current",
+            "transfer": "ok",
+            "text": [
+              "発生",
+              "解消"
+            ]
+          },
+          "receiver": {
+            "report": "current",
+            "transfer": "ok",
+            "text": []
+          }
+        },
+        "readonly": true
+      }
+    },
+    {
+      "event": "guest-reboot-verified",
+      "at": "2026-10-21T05:25:24.551839+00:00",
+      "boot_id": "cb63f1ef-1afa-46c8-849a-8da43b75d329"
+    }
+  ],
+  "resources_removed": true,
+  "interval_seconds": 60,
+  "real_guest_reboot": true,
+  "host_unchanged": true,
+  "scope": "Dedicated Ubuntu VM runs production systemd template; external independent observer; real SSH; generated preflight reports; WordPress reads guest output through dedicated9p test share; no S3/production/72h observation changes",
+  "unit_tests": 10,
+  "browser_scenes": 4,
+  "limitations": [
+    "Generated preflight publishers; actual watchdog and pinned SSH.",
+    "Dedicated guest and WordPress containers share one physical host; final file exposure uses dedicated 9p share.",
+    "Local notification callback only, not phone/email delivery.",
+    "72-hour observation remains separate and incomplete; existing gaps retained."
+  ],
+  "source_sha256": {
+    "tools/run-preflight-observer-relay-vm-lab.py": "ec099c7b6768a5f3c5e9f943d7b202bbf9743df977fcf72af5134c0f7d3d8d05",
+    "lab/notification-admin/preflight-observer-relay-vm-browser.py": "0f7b8f8b10f09645a386ce3ca0f421a008bf06244a540d57e3dce2fe8faebd75",
+    "tools/preflight-watchdog-probe.py": "cd0501d8e292bf9582dd9cd083cd42c42b225785d431ec6757c871837c574d17",
+    "tools/observer-status-relay.py": "827e9c883bea7c14a8435becece8d669e2704af6d6ee4232bb7a045065fb797a",
+    "examples/observer-status-relay/owr-observer-status@.service": "00958454209bc6f79a331da9c4185faac63ce6a1dbea66cda2f1178463903e08"
+  }
+}
