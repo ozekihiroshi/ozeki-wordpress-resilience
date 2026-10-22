@@ -163,3 +163,11 @@ SSH配置済み台帳から実復旧入口への接続を検証しました。�
 実験用S3の固定Version IDからの実取得でも、SSH台帳照合・署名検証・WordPress隔離復元を確認しました。古い一式・失効済みセットは実GET前に拒否しました。[実S3検証の範囲](docs/guides/trust-real-s3-recovery.md)を参照してください。認証情報を分離する試験用中継を使用しています。
 
 最新世代・失効台帳の最終候補ZIPで導入・更新・保持を確認しました。[検証結果とハッシュ](docs/releases/trust-final-zip.md)。試作版のままで、72時間観測の最終判定とは別です。
+
+## PR #7後の継続運用
+
+PR #7はmain `5cd2564`へマージ済み。最新台帳の継続更新・全対象ホストの配置確認・失敗や期限切れへの対応は[運用手順](docs/guides/trust-recurring-operations.md)を参照してください。台帳更新では署名承認を延長しません。最新の実装状況は[現状文書](docs/releases/current-status.md)を参照。過去の試験記録と72時間観測の対象は書き換えません。
+
+[継続更新の2台VM・実SSH検証](docs/guides/trust-recurring-ssh.md)：配置確認、一部認証失敗、実時間の期限切れと明示更新後の回復の7項目に成功。署名承認は変更せず、72時間観測とは別の結果です。
+
+[Recurring trust final ZIP acceptance](docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.

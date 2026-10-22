@@ -131,3 +131,5 @@ Current recovery trust: [mandatory checkpoint deployment](../docs/guides/current
 `run-trust-ssh-recovery-lab.py` / `trust-ssh-recovery-cases.py`: explicit generated-data SSH-to-recovery integration using actual offline restore and fixture storage. Requires dedicated development Docker privileges; see [scope](../docs/guides/trust-ssh-recovery.md).
 
 `run-trust-ssh-recovery-lab.py --real-s3` reuses existing experimental object versions with the existing real reader via `trust-recovery-s3-broker.py`; no PUT. See [scope](../docs/guides/trust-real-s3-recovery.md).
+
+Recurring current-trust operations: [runbook and six targeted connection checks](../docs/guides/trust-recurring-operations.md). Generated data, temporary local host representations; no new real SSH/S3 or 72-hour acceptance claim.

@@ -1,80 +1,49 @@
-# 現状と残課題
+# Current implementation and remaining work
 
-2026-10-22。基準はPR #6マージ済み main `55ea023`。導入から復旧までの実SSH/S3接続と固定ZIP受入もマージ済み。初回取得・日次接続・担当者確認はマージ済み。`0.1.0-dev.1` は試作版。PR #6のCI（PHP 8.1/8.3）は成功。正式Releaseではなく、既存の検証済みZIPは変更しない。
+Snapshot: October 22, 2026, after PR #7 merged into main `5cd2564`. Both PR CI jobs (PHP 8.1/8.3) passed. Version `0.1.0-dev.1` remains an experimental prototype, not a production release. English is the primary README; [RAADME-jp.md](../../RAADME-jp.md) is the Japanese companion.
 
-|領域|実装・専用環境での確認|実環境・残課題|
+## Implemented and checked
+
+| Area | Dedicated evidence | Remaining operational boundary |
 |---|---|---|
-|取得・保存|限定構成のDB/ファイル取得、日次接続、実S3固定版と保持証拠まで確認|実サイトの全更新経路の適合確認と安全な配置は未完了|
-|署名・復元|独立試験署名、固定版取得、隔離復元、結果登録・途中停止・後片付けを確認|鍵の更新・失効・担当交代・別媒体更新の統合運用が未完了|
-|状態表示|日次・復元・導入前検査・独立watchdogの読取り専用画面、権限、情報の古さを確認|画面の正常表示は無感染・本番復旧可能の保証ではない|
-|外部通信・定期実行|固定SSH、別VM、通信断、停止再開、OS再起動と表示回復を確認|同一物理ホストの試験を物理障害への耐性とは扱わない|
-|設定作成・導入計画|棚卸し→導入前検査→watchdog→WordPressの設定下書きと読取り専用計画を追加|ホスト接続、配置、サービス登録、秘密情報、通知先の設定は自動化しない|
-|通知|Pushoverの実機受付・受信を確認。専用試験ではローカル受信先も使用|実SMTP・本番監視常設化は未達。今回の生成設定に配送先はない|
-|配布|PR #6までのCI、最終ZIPの新規導入・更新・状態保持を確認|試作版を維持。新しい正式リリースではない|
+| Capture and storage | Admission checks, write coordination, DB/file pairing, daily processing, fixed S3 versions and retention | Fit to every real site write path, remote capture backend and production rollout |
+| Approval and recovery | Independent signatures, fixed-version retrieval, isolated restore, result registration and interrupted cleanup | Clean-generation selection, credential rotation and safe production republication |
+| Current trust | Mandatory independent local checkpoint; stale/revoked bundles rejected; reviewed atomic updates and pinned SSH deployment | Trusted administrator/code/clock, manual refresh and per-host reconciliation; no root-resistant rollback or global immediate revocation |
+| Status and monitoring | Read-only WordPress screens, SSH reporting, systemd restart/reboot, watchdog, test notifications | Independent physical failure domains and production monitoring placement |
+| Setup and distribution | Configuration drafts, read-only deployment plan, dedicated placement, frozen ZIP installation/overwrite and state retention | No automatic complete production deployment or registry provisioning |
 
-## 72時間観測は独立した判定
+Trust lifecycle operations and their boundaries are described in [key lifecycle](../guides/trust-lifecycle.md), [current registry](../guides/current-recovery-trust.md), [SSH deployment](../guides/trust-registry-ssh.md) and [recurring operations](../guides/trust-recurring-operations.md). Local generation enforcement is now implemented; earlier lifecycle evidence showing old-bundle acceptance describes the historical signature primitive, not the current mandatory recovery entry.
 
-10月19日・20日・21日の3日次枠は保存、承認待ち観測、試験署名、固定版隔離復元まで完了。追加保存はしない。72時間の最短到達は **2026-10-22 15:55:56 JST**。日次往復の成功、実経過時間、観測網羅性を別々に評価する。
+## Observation is a separate assessment
 
-10月21日22:40 JSTの監査では104標本、3承認、89,527,925 bytes、結果不明PUT 0、信頼情報15件不変、未配送0。既知の空白は4時間26分33秒と4時間24分8秒。周期的な点検を連続観測と呼ばず、欠測を後から成功で埋めない。最新値は監査記録に従う。
+Three generated-data daily slots (October 19–21) completed storage, pending-approval observation, test signing and fixed-version isolated restoration. Maximum three stored sets reached: do not add saves or repeat restores to refresh evidence.
 
-## 問題の分類
+Latest checked audit: October 22 10:16:22 JST, 123 samples; three approved sets totaling 89,527,925 bytes; uncertain PUTs 0; 15 trust files unchanged; unresolved trial incidents 0; undelivered trial notifications 0. No new capacity/continuity issue or gap longer than two hours. This is a dated snapshot, not live telemetry.
 
-- 環境：Windows待機に伴う観測空白、WSL/DNS等。原因不明のタイムアウトを環境起因と断定しない。
-- 外部試験ツール：依存jsonschema不足、シェル引用、GitHub CLI互換性は対処済み。プラグインの失敗件数には混ぜない。
-- 製品：取得時の出力読取り停止と報告公開途中の誤警報は原因を確認し修正・再検証済み。失敗記録も保存。
+Earliest 72-hour threshold: **October 22, 2026 15:55:56 JST**. It has not yet been reached at this snapshot. Existing gaps of 4h26m33s and 4h24m8s remain. Daily success, elapsed time and observation coverage must be evaluated separately. Periodic audits are not continuous observation. Features added later, including PR #7, do not inherit 72-hour coverage from the older running trial.
 
-生成設定の3VM試験で専用SSHサービスの `/run/sshd` 再作成不足を特定し、修正・再起動を再検証済み。別試行のWebDriverセッション作成タイムアウトは根本原因未確定。ready確認と診断ログ保存の追加後は成功したが、以前の原因の証明とは扱わない。[詳細と失敗記録の分類](../guides/generated-systemd-lab.md)。
+On actual observation completion, restore battery sleep to three minutes while retaining AC no-sleep, using the recorded restoration procedure; stop follow-up only after final assessment and power restoration. Do not overwrite user changes to the power plan.
 
-詳細は[環境・試験基盤記録](initial-release-environment-notes.md)。今回の設定生成試験では新たな環境障害・製品不具合は観測していない。未試験の本番配置を合格とはしない。
+## Classification of remaining issues
 
-## 次に進む順序
+- **Environment:** the latest audit establishes no new capacity/continuity problem. Production PHP/SMTP/HTTPS maintenance is separate from product acceptance; unrelated database administration and other-host PHP issues are not resolved by this plugin.
+- **Test infrastructure:** historical WebDriver startup timeout remains unexplained despite later successful runs. Python-path and dedicated SSH runtime-directory defects were diagnosed and corrected; initial failed evidence remains. Shared kernels, development Docker socket and test S3 broker limit isolation claims. See [environment and infrastructure records](initial-release-environment-notes.md).
+- **Product:** current-registry transitions and recovery checks are implemented, including the corrected SSH semantic-outcome classification. Global immediate revocation, administrator-resistant rollback, continuous cancellation after the final check and atomic fleet rollout are not implemented. All production write paths, independent placement, safe republication and ongoing operator coverage remain to be accepted.
+- **Human operations:** actual substitute-operator access, physical USB rotation and production approval renewal are not satisfied by generated directory tests. The documented real candidate approval expiry remains October 25, 2026 18:15:47 JST; no test refresh extends it.
 
-1. [設定作成と導入計画](../guides/external-deployment-plan.md)を担当者が確認し、秘密情報・ホスト鍵・権限・サービス配置の未設定を埋める。
-2. 限定構成の初回導入を新しい専用環境で通す。既存の取得→保存→署名→復元を再利用し、新しい配置経路の受入に集中する。
-3. 署名更新・失効・代替担当・USB更新、保持期限後の整理と容量運用を整備する。
+## Next work, without repeating completed trials
 
-Backup for S3は独立した製品。相互必須依存・自動インストールはない。今回共通部品とBackup for S3は変更しない。
+1. Follow the recurring trust runbook: independently review current authority, refresh explicitly, confirm every intended host, retain unknown outcomes and expiry incidents. Automated signing/approval extension is prohibited.
+2. Complete actual deployment/operating ownership decisions separately from dedicated tests. Do not broaden notifications or redo all SSH/systemd/ZIP tests without a changed requirement.
+3. After the threshold, finalize the original observation with its gaps and frozen scope, restore power settings and close its follow-up. Formal release remains a separate decision.
 
-[生成設定からの実配置検証](../guides/generated-deployment-lab.md)：既存SSH/定期処理/独立watchdog/WordPressを再利用。限定専用環境での導入経路の検証で、本番自動配置ではありません。
+## Evidence entry points
 
-[生成設定のsystemd配置検証](../guides/generated-systemd-lab.md)：既存サービスを再利用し、60秒周期、実停止・再開、OS再起動後の自動起動と画面回復を専用環境で確認。
+- [Onboarding through recovery](../guides/onboarding-recovery.md), [actual SSH/S3 connection](../guides/onboarding-ssh-s3.md), [onboarding ZIP](../guides/onboarding-zip.md).
+- [Current trust real S3 recovery](../guides/trust-real-s3-recovery.md) and [frozen trust ZIP acceptance](trust-final-zip.md).
+- [Daily admission](../guides/daily-capture-admission.md), [operator confirmation](../guides/recurring-capture-review.md), [generated systemd deployment](../guides/generated-systemd-lab.md).
+- [Recurring trust connection checks](../../evidence-public/trust-recurring-operations.json). Frozen ZIPs predate these new docs/tests and are not rebuilt here.
 
-設定生成・systemd配置の[ZIP検証手順](../guides/deployment-zip.md)。固定ZIPと専用環境で確認し、72時間判定とは分ける。
+Backup for S3 is independent: no mandatory mutual dependency or automatic installation. Shared components and Backup for S3 are unchanged.
 
-## 初回取得へ進む条件（PR #5マージ済み）
-
-PR #5でマージ済みの[読取り専用ゲートと担当者確認仕様](../guides/first-capture-readiness.md)を実装し、分離Dockerで14試験成功。新しい初回取得入口はロック取得後・停止直前の再検査を必須化し、専用WordPress/MariaDBで拒否と実取得を確認済み。本番許可と既存日次処理の移行は未達。72時間観測の最終判定とは別です。
-
-日次接続：`tick_admitted` を追加し、初回取得入口と保存前再検査を接続。既存観測・本番スケジュールは未切替。日次用の担当者確認は最長7日、技術検査は毎回5分未満に分離済み。確認の発行・更新・失効は担当者の明示操作であり、本番スケジュールへの配置は未達。[仕様](../guides/daily-capture-admission.md)。
-
-日次用確認の追補：[期限・更新方式](../guides/recurring-capture-review.md)。毎回5分未満の技術検査と、最長7日の担当者確認を分離。明示発行のみで自動延長なし。初回用確認の5分期限は維持します。
-
-担当者確認の読取り専用管理画面を追加。既存の導入前報告経路を再利用し、期限・失効・再確認理由と報告の鮮度を表示。[手順](../guides/operator-review-admin.md)。本番配置と72時間観測の最終判定は別。
-
-担当者確認の定期報告：既存relay/transferを専用の2秒周期処理へ接続。実SSH・systemd・本番配置の変更は対象外。[検証範囲](../guides/operator-review-periodic.md)。
-
-担当者確認の実SSH・systemd接続：専用3VMで定期更新、実停止と再開、OS再起動後の自動回復、管理画面4場面を検証。確認期限は自動延長せず原本を保持。[結果・制限](../guides/operator-review-systemd.md)。初回の発行ユーザー不一致は試験基盤として修正・記録し、既存ブラウザ問題の原因未確定は維持。本番適用・72時間観測の最終判定とは別。
-
-初回取得・日次接続・担当者確認の[固定ZIP受入](../guides/admission-zip.md)：専用環境で新規導入・異なる旧候補からの更新・設定と台帳の保持を確認。Python65/PHP11、生成設定5検査が合格。試作版0.1.0-dev.1を維持し、未公開。72時間観測の最終判定は独立。
-
-## 導入から復旧までの接続確認
-
-[統合操作と検証範囲](../guides/onboarding-recovery.md)。設定生成は報告経路を対象とし、取得・署名・復元の全サービスを自動配備するものではない。新しい取得判定から承認・復元・日次結果登録への接続を別の生成データ環境で確認する。実S3、実SSH棚卸しからの同一実行での一貫試験、本番自動配置は今回の追加試験の対象外。
-
-追加接続試験：生成WordPress/MariaDBで新入口→承認待ち→試験署名→隔離復元→結果登録の8項目成功。日次判定回帰7件成功。初回代替GET記録の保持証拠不足は試験基盤として修正・再試験し、初回記録を保持。本番コードの変更なし。[結果](../../evidence-public/onboarding-recovery.json)。
-
-実経路の追加確認：[実SSH・実験S3の一貫試験](../guides/onboarding-ssh-s3.md)で、同じ生成サイトのSSH棚卸し→取得判定→2 PUT→試験署名→固定版隔離復元→日次登録を確認。9項目と回帰22件成功。実S3の保持証拠を使用。取得backendのリモートSSH化、本番配置・物理ホスト独立性・72時間の最終判定は別。
-
-導入・復旧接続の[固定ZIP受入](../guides/onboarding-zip.md)：新規導入、前回候補への実上書き、設定・履歴と完了済み実SSH/S3試験記録32件の保持を確認。プラグインは前回と同一内容、development kitのみ更新。正式リリース・72時間観測判定とは別。
-
-
-## 2026-10-22 信頼情報の継続運用
-
-[鍵更新・失効・担当交代・USB更新](../guides/trust-lifecycle.md)を追加。既存の署名ゲートを試験用鍵・データで検証し、物理USB・別担当者本人確認・最新信頼情報の強制配布とは区別する。信頼情報一式の巻戻しを検出する独立した世代管理は未実装。今回のPHP/メール/HTTPS本番保守はResilienceの本番保護完了を意味しない。
-
-08:55:57 JST監査は121標本、3セット89,527,925bytes、未配送0、信頼情報15件不変。既存2欠測を保持。72時間は15:55:56 JSTまで未達。最新監査値は運用記録を参照。署名承認と日次の担当者確認は別の有効期限・権限で運用する。
-
-## Current trust at recovery entry (prototype)
-
-Recovery entry now requires a root-owned independent current-generation/revocation checkpoint. Whole old trust bundles are rejected when they conflict with that checkpoint. Missing or expired checkpoints block recovery. Administrator provisioning is required; online global freshness is not implemented. See [deployment and limits](../guides/current-recovery-trust.md). The ongoing 72-hour observation is unchanged and is not final evidence for this new gate.
+Additional [two-VM recurring SSH verification](../guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.

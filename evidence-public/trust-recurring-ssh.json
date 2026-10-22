@@ -1,0 +1,235 @@
+{
+  "format": "owr-trust-recurring-ssh-v1",
+  "passed": true,
+  "checks": [
+    "two_different_guest_kernel_boot_ids",
+    "same_reviewed_registry_and_valid_signed_approval_on_both_hosts",
+    "partial_real_ssh_transfer_failure_keeps_b_old_and_a_confirmed",
+    "actual_elapsed_expiry_blocks_b_while_a_remains_ready",
+    "reviewed_higher_revision_restores_b_and_full_rollout_readback_matches",
+    "signed_approval_signature_key_and_pin_unchanged_everywhere",
+    "stale_expected_retry_rejected_after_recovery"
+  ],
+  "host_boot_ids": [
+    "cf40c13a-ad5e-4fe9-97af-d07a2548c8c9",
+    "138342bd-7888-4d55-9ca6-ea6471136328"
+  ],
+  "actual_expiry": "2026-10-22T01:29:06.748499+00:00",
+  "finished_at": "2026-10-22T01:29:25.438733+00:00",
+  "signed_bundle_sha256": {
+    "approved.sig": "dae22860566fa1e0b897813b7c549ae846df2bc6f1161256423de5496000f73c",
+    "public.pem": "c9abbe7dd2804252223bdd595418e383edd668687e85e53fef03e03c880b4067",
+    "approved.json": "5b82c9ed0d73eab35488b58d0754dfbce79ec48b17ddd56955f547c5717854f0",
+    "pin.json": "ff85cbedff8210ed885dc85437e6c7707e921ad80be3a83964110a71c7ff4354"
+  },
+  "final_registry_sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+  "production_changed": false,
+  "observation_changed": false,
+  "scope": "Two new QEMU VM kernels; actual pinned SSH; read-only current and signature gates, no S3 GET/restore. Same physical host. Dedicated sender clients run in VM wrapper containers.",
+  "classification": {
+    "environment": "No new environmental failure established",
+    "test_infrastructure": "Deliberately removed only lab deployment authorized key on B; actual short expiry, no OS clock modification",
+    "product": "Partial rollout remains unresolved until every intended host confirms; no signature extension or runtime modification"
+  },
+  "dedicated_vms_stopped": true,
+  "standalone_private_keys_removed": true,
+  "disk_images_retained_private": "Guest SSH host private keys remain in stopped dedicated qcow2 disks; restricted local evidence only, not published.",
+  "recorded_at": "2026-10-22T01:30:12.070979+00:00",
+  "production_ready": false,
+  "source_sha256": {
+    "current-recovery-trust.py": "b1e5179a50c96c3508bb32a833226f35eee7884716390b7fe427c7c19dce3ccd",
+    "update-current-recovery-trust.py": "d43abe8b9abfaa79a324a0a6d5af37cf7975786771566457e5c55ebc73897694",
+    "trust-registry-ssh.py": "f766d5264f293f335bd4c9881b08358e1192e5f79533604ccfc63eef53f37165",
+    "notification-transfer.py": "5cf0d02ed2cc141ed4f749b8767673eb3cee944903d6e99b06a00c625e2e9f88",
+    "protected-first-site-set.py": "6a4df2da31162c0b1f49e61281648d56b9d5e693fc82b2969b4e5df7e30e1da9"
+  },
+  "local_harness_sha256": {
+    "start-recurring-vms.py": "ffa1c31a1d8343f5caaf7310b46da4c0f37339b2bff779dc09bad3d89238673f",
+    "exercise-recurring-vms.py": "c9f214c497501e06e2f6c606960714cc84058cfaccf99476f33d80744dd773f0",
+    "start-trust-vm.py": "55b7b88766be07d3baab77a750b7c6bf57ae62afd6df54553e1ebe5774173c8f"
+  },
+  "ssh_receipts": [
+    {
+      "at": "2026-10-22T01:27:48.464765+00:00",
+      "host": "a",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "absent",
+        "revision": null
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:21.747935+00:00",
+      "host": "b",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "absent",
+        "revision": null
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:24.846670+00:00",
+      "host": "a",
+      "action": "validate",
+      "result": {
+        "state": "validated",
+        "revision": 1,
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "previous_sha256": "absent",
+        "applied": false
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:26.029655+00:00",
+      "host": "a",
+      "action": "apply",
+      "result": {
+        "state": "applied",
+        "revision": 1,
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "previous_sha256": "absent",
+        "applied": true
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:27.089420+00:00",
+      "host": "a",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:29.898958+00:00",
+      "host": "b",
+      "action": "validate",
+      "result": {
+        "state": "validated",
+        "revision": 1,
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "previous_sha256": "absent",
+        "applied": false
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:31.207187+00:00",
+      "host": "b",
+      "action": "apply",
+      "result": {
+        "state": "applied",
+        "revision": 1,
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "previous_sha256": "absent",
+        "applied": true
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:32.383886+00:00",
+      "host": "b",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:36.569371+00:00",
+      "host": "a",
+      "action": "apply",
+      "result": {
+        "state": "applied",
+        "revision": 2,
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "previous_sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "applied": true
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:37.333314+00:00",
+      "host": "b",
+      "action": "apply",
+      "result": {
+        "state": "unknown",
+        "next": "inspect_before_any_retry"
+      }
+    },
+    {
+      "at": "2026-10-22T01:28:38.571173+00:00",
+      "host": "a",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:14.376892+00:00",
+      "host": "b",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:15.900176+00:00",
+      "host": "b",
+      "action": "validate",
+      "result": {
+        "state": "validated",
+        "revision": 2,
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "previous_sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "applied": false
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:17.495762+00:00",
+      "host": "b",
+      "action": "apply",
+      "result": {
+        "state": "applied",
+        "revision": 2,
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "previous_sha256": "30dfeed371c228c6ee9cd0476f1d7f097854b0633dabe7954373eef32acd911c",
+        "applied": true
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:18.869718+00:00",
+      "host": "a",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:21.386017+00:00",
+      "host": "b",
+      "action": "inspect",
+      "result": {
+        "state": "inspected",
+        "sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-22T01:29:25.437995+00:00",
+      "host": "b",
+      "action": "apply",
+      "result": {
+        "state": "rejected",
+        "next": "inspect_before_reviewed_retry"
+      }
+    }
+  ]
+}

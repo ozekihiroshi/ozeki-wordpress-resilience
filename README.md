@@ -11,7 +11,7 @@ The project aims to preserve recovery assets and recovery capability when WordPr
 
 ## Current status
 
-PR #6 is merged (main `55ea023`). The candidate remains `0.1.0-dev.1`; the current trust-lifecycle changes are not a formal release. Existing tested ZIPs and historical tags are unchanged.
+PR #7 is merged (main `5cd2564`). The candidate remains `0.1.0-dev.1`; the current trust-lifecycle changes are not a formal release. Existing tested ZIPs and historical tags are unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
@@ -66,3 +66,9 @@ SSH-deployed current trust has been connected to the actual recovery entry and o
 The SSH-installed registry/recovery-entry integration also passed with actual experimental-S3 fixed-version GETs and offline WordPress restoration. Old/revoked bundles were blocked before object requests. See [real-S3 scope and results](docs/guides/trust-real-s3-recovery.md); a credential-isolating test broker is used.
 
 Frozen trust-lifecycle candidate ZIPs passed installation/update and retention checks; see [acceptance and exact hashes](docs/releases/trust-final-zip.md). Still a prototype, separate from 72-hour final evaluation.
+
+Recurring registry refresh, per-host readback, failure and expiry procedures are documented in the [operating runbook](docs/guides/trust-recurring-operations.md). Registry refresh never renews a signed approval. Six new dedicated operational-connection checks are separate from the frozen ZIP and ongoing observation.
+
+Additional [two-VM recurring SSH verification](docs/guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
+
+[Recurring trust final ZIP acceptance](docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.

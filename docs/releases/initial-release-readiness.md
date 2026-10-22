@@ -1,3 +1,7 @@
+# Post-PR #7 status note
+
+PR #7 is merged (main `5cd2564`), with both CI jobs passing. The dated checklist below retains historical evidence; use [current status](current-status.md) for current implementation and [recurring trust operations](../guides/trust-recurring-operations.md) for registry refresh and failure handling. Local current-generation enforcement is implemented; global revocation/root-resistant rollback is not. Prototype only, no final 72-hour verdict or formal release.
+
 # 初版整備の判定表
 
 2026-10-22。詳細な現在値は[現状一覧](current-status.md)、過去の経緯は[進捗履歴](initial-release-history.md)を参照。履歴中の「未実装」を現在の判定として使わない。
