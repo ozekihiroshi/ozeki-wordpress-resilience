@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "checks": [
+    "anonymous editor requires login",
+    "normal page edit opens protected editor",
+    "resume button hidden when editable",
+    "initial paragraph from enrolled public page",
+    "typing does not update public content",
+    "storage failure leaves public text unchanged",
+    "failed request locks content for exact retry",
+    "resume button visible only for unresolved request",
+    "different pending operation shows conflict",
+    "reload retrieves frozen operation from server",
+    "resume applies exactly one generation",
+    "other two pages retained",
+    "text escaped in projection",
+    "resume button hidden after completion",
+    "stale editor rejected without overwrite",
+    "S3 committed but not projected state visible",
+    "interrupted HTTP save resumes same fixed generation",
+    "invalid input stays editable without creating a generation",
+    "lost successful save response reconciles as applied not conflict",
+    "state-refresh failure never displays false completion",
+    "editor status GET requires nonce",
+    "classic form POST bypass blocked",
+    "unrelated page retains normal editor",
+    "subscriber has no protected form"
+  ],
+  "commits": 5,
+  "containers_removed": true,
+  "scope": "Real Chromium editor + WordPress HTTP + MariaDB; persistent S3 double for controlled faults",
+  "live_S3_used": false,
+  "production_changed": false,
+  "automatic_publication": false,
+  "approval_conditions_changed": false,
+  "source_sha256": {
+    "src/RbrWordPressSave.php": "5a1a4d8469d12b60afbc985f75a0dee3422097dbc7d9696f43414819341f1260",
+    "src/RbrWordPressSaveApi.php": "a13567dd44b062a806f797cbe770943914e04a3d7c58d6a313eed5e855e472a0",
+    "src/RbrWordPressEditor.php": "46c90839beb8b596dea871a14310c209525550db4953b271a5c73a509dfac12d",
+    "assets/rbr-editor.js": "f9cdc60879ceb5d8c2b32bc2c585e5732fbe75f3068e5658da39999e101a5c77",
+    "tools/run-rbr-wordpress-editor-lab.py": "13f7b3c5a63f2be49b8b97cc54dee14f9b2554e40ecf6f680e390f0230563f5c",
+    "lab/rbr-protected-save/editor-browser.py": "110da3440d5d8b8e0bfc257697e9f80e7025fa5967804b3a23e16fcd2b18bfa0"
+  },
+  "classification": {
+    "product": "Opt-in protected edit screen, read-only editor-state endpoint, durable submitted input and S3-confirmed checkpoint. Review corrected a possible success message after state-read failure; invalid input remains editable. Fixed WordPress button CSS overriding the hidden resume control; final browser checks assert its actual visibility.",
+    "test_infrastructure": "Initial Selenium session creation timed out before UI tests; direct matching ChromeDriver worked, root cause of Grid timeout not established. Second run used HTML attribute rather than DOM property for textarea value; corrected. Prior failures retained privately. No product failure inferred from these.",
+    "environment": "New isolated WordPress/MariaDB/Chromium only; no public ports, production changes or cloud writes. S3 fault injection uses persistent contract double, not a new live S3 qualification."
+  },
+  "regressions": {
+    "input": 9,
+    "generation": 21,
+    "distribution": 8
+  }
+}

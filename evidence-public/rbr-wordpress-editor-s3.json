@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "checks": [
+    "anonymous editor requires login",
+    "normal page edit opens protected editor",
+    "resume button hidden when editable",
+    "initial paragraph from enrolled public page",
+    "typing does not update public content",
+    "storage failure leaves public text unchanged",
+    "failed request locks content for exact retry",
+    "resume button visible only for unresolved request",
+    "different pending operation shows conflict",
+    "reload retrieves frozen operation from server",
+    "resume applies exactly one generation",
+    "other two pages retained",
+    "text escaped in projection",
+    "resume button hidden after completion",
+    "stale editor rejected without overwrite",
+    "S3 committed but not projected state visible",
+    "interrupted HTTP save resumes same fixed generation",
+    "editor status GET requires nonce",
+    "classic form POST bypass blocked",
+    "unrelated page retains normal editor",
+    "subscriber has no protected form"
+  ],
+  "commits": 3,
+  "containers_removed": true,
+  "scope": "Real Chromium editor + WordPress HTTP + MariaDB + scoped real S3; injected pre-commit failure",
+  "prefix": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-editor-20261023-a/",
+  "versions": [
+    {
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-editor-20261023-a/commits/000000000001.json",
+      "version": "hgiDorUIEmfXmw4wQhVPN.vaA9S5SdTX"
+    },
+    {
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-editor-20261023-a/commits/000000000002.json",
+      "version": "xSkaPVUitEb_rJ3ztaPsHDhl_CchzXxi"
+    },
+    {
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-editor-20261023-a/commits/000000000003.json",
+      "version": "FVjlVkNSbXkMb1506UPS7M97FR7UUfTE"
+    }
+  ],
+  "successful_puts": 18,
+  "retention_observations": 39,
+  "minimum_remaining_retention_days": 35.994762131800805,
+  "unknown_transport_results": 0,
+  "test_data_only": true,
+  "production_modified": false,
+  "failure_injection": "503 before commit PUT; PHP process exit after S3 commit",
+  "source_sha256": {
+    "src/RbrWordPressSave.php": "5a1a4d8469d12b60afbc985f75a0dee3422097dbc7d9696f43414819341f1260",
+    "src/RbrWordPressSaveApi.php": "a13567dd44b062a806f797cbe770943914e04a3d7c58d6a313eed5e855e472a0",
+    "src/RbrWordPressEditor.php": "46c90839beb8b596dea871a14310c209525550db4953b271a5c73a509dfac12d",
+    "src/RbrGenerationCoordinator.php": "cd616d3e8f82d98946e0f1af4086ae572c83d7c14c8089655c1663c528a1689a",
+    "src/RbrObjectStore.php": "54c17360c4002c45d3b6c3b7cd70ad0f9ade2e0d7870faf4bc97c465ae1aa3bf",
+    "assets/rbr-editor.js": "f9cdc60879ceb5d8c2b32bc2c585e5732fbe75f3068e5658da39999e101a5c77",
+    "lab/rbr-protected-save/editor-browser.py": "0d5d435d64955efe1c27465111400cb4e0704cc1dc155ac3f0552dd50ccc6225"
+  },
+  "limits": [
+    "Explicit opt-in three-page editor; not general Gutenberg, Markdown or new media support",
+    "Test-only Unix socket and SSH role broker; not production credential provisioning or latency qualification",
+    "S3 failure deliberately injected, not an observed AWS outage",
+    "Prior Selenium Grid startup timeout unresolved; matching direct ChromeDriver used",
+    "No new product runtime changes required for this live integration"
+  ]
+}

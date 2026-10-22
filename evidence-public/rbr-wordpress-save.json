@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "checks": [
+    "network isolated and no published ports",
+    "anonymous request denied",
+    "subscriber denied",
+    "core REST protected page write denied",
+    "unrelated page remains editable",
+    "S3 failure returns unresolved",
+    "S3 failure leaves all public page rows unchanged",
+    "new operation cannot pass pending save",
+    "real HTTP API resumes failed operation",
+    "generation one applied once",
+    "public HTTP shows S3-confirmed text",
+    "duplicate API request idempotent",
+    "process interrupted after S3 commit",
+    "after-S3 stop keeps public rows unchanged",
+    "new process resumes exact committed version",
+    "process stopped inside DB transaction",
+    "DB disconnect rolls back all page writes",
+    "transaction stop resumes same generation",
+    "competing operation rejected while committed apply pending",
+    "winning operation completes",
+    "stale expected generation rejected",
+    "old completed replay cannot overwrite newer state",
+    "same operation changed payload rejected",
+    "invalid page scope rejected",
+    "out-of-band change detected before S3 write"
+  ],
+  "scope": "real WordPress HTTP REST + MariaDB; existing filesystem S3 protocol double; no live S3 claim",
+  "commits": 4,
+  "containers_removed": true,
+  "source_sha256": {
+    "src/RbrWordPressSave.php": "6b16bb2c7ef967b6a8acf5e85552b21e2a69759215b40730aa3818ececa179fe",
+    "src/RbrWordPressSaveApi.php": "55fc2c18fcd96f39e3927c24c79ec59d907e6fc6f54f0dfebd055954aef981ca"
+  },
+  "input_contract_tests": 9,
+  "production_changed": false,
+  "live_S3_used": false,
+  "approval_conditions_changed": false,
+  "classification": {
+    "product": "New opt-in three-page save/projection component; tested bounded scope only. No editor button or upload interception.",
+    "test_infrastructure": "Input-contract test initially omitted the coordinator include; corrected. Dedicated dependency copy was slow. Neither is classified as plugin failure.",
+    "environment": "New isolated containers only; no existing services or network configuration changed."
+  },
+  "checked_at": "2026-10-22T15:40:29.995149+00:00",
+  "regressions": {
+    "input_contracts": 9,
+    "generation_contracts": 21,
+    "distribution": 7,
+    "core_distribution": "passed"
+  }
+}

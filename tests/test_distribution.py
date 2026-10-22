@@ -15,6 +15,11 @@ class DistributionTests(unittest.TestCase):
   out,m=self.build('one');item=m['artifacts'][0]
   with zipfile.ZipFile(out/item['file']) as z:self.assertEqual(set(z.namelist()),{'ozeki-wordpress-resilience/'+x for x in b.PLUGIN})
   self.assertEqual(item['sha256'],hashlib.sha256((out/item['file']).read_bytes()).hexdigest())
+ def test_editor_asset_shipped_in_development_kit_only(self):
+  asset=self.root/'assets/rbr-editor.js';asset.parent.mkdir();asset.write_text('/* editor asset */')
+  out,m=self.build('editor');plugin,kit=m['artifacts']
+  self.assertNotIn('assets/rbr-editor.js',plugin['files'])
+  self.assertIn('assets/rbr-editor.js',kit['files'])
  def test_reproducible_bytes(self):
   a,x=self.build('one');c,y=self.build('two');self.assertEqual(x,y)
   for item in x['artifacts']:self.assertEqual((a/item['file']).read_bytes(),(c/item['file']).read_bytes())

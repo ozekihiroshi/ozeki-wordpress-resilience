@@ -143,3 +143,13 @@ Recurring current-trust operations: [runbook and six targeted connection checks]
 - `rbr-generation-kit.py`: fixed S3 generation receipt + explicit R/E/C/Q profile to an approval-pending kit. Preserves the generation, checks common retention horizon, copies short-protected profile dependencies; no fixture generation, signing or WordPress execution. See [contract](../docs/spec/rbr-generation-kit.md).
 
 - `rbr-coordinate-s3-lab.php` / `rbr-coordinator-transport.py`: scoped experimental real-S3 generation coordinator; see [connection guide](../docs/spec/rbr-live-coordinator.md).
+
+`run-rbr-wordpress-save-lab.py --output NEW_PRIVATE_DIRECTORY` exercises the opt-in three-page save API with real WordPress HTTP/MariaDB and the existing S3 contract double; see docs/spec/rbr-wordpress-save.md. It requires locally available pinned images and Composer dependencies, exposes no public ports, and removes its dedicated containers. No real AWS writes or editor-button integration.
+
+`run-rbr-wordpress-save-s3-lab.py --output NEW_PRIVATE_DIRECTORY --vendor-cache LOCAL_COMPOSER_VENDOR --case api-UNUSED_SUFFIX` reuses the HTTP/MariaDB cases with the existing real experimental S3 broker and a private Unix socket. It requires WSL/Linux, pinned local Docker images, matching Composer dependencies and the existing community/dm test roles. It checks the exact prefix is empty before writes; refuses reuse. It creates retained experimental S3 objects and deletes only its dedicated containers. Do not rerun a failed lab into a new prefix blindly: inspect its private transport journal and pending operation first. Only generated data; never install its MU-plugin or fault controls on a live site. See the save API specification and live evidence.
+
+`run-rbr-wordpress-editor-lab.py --output NEW --vendor-cache LOCAL_COMPOSER_VENDOR` tests the opt-in protected editor in isolated WordPress/MariaDB/Chromium with a persistent S3 double. Uses directly launched, matching ChromeDriver; no production or AWS writes. Private browser logs may include test cookies. See docs/spec/rbr-wordpress-editor.md.
+
+### Protected editor with real experimental S3
+
+`run-rbr-wordpress-editor-s3-lab.py --output NEW_PRIVATE_DIR --vendor-cache MATCHING_VENDOR --case api-UNUSED_CASE` reuses the browser scenarios and restricted S3 role broker. An exact-prefix empty read is mandatory. Three generations are written and retained; never blindly rerun an unknown result or delete the journal. Private logs may contain generated cookies. Success/retention evidence: `evidence-public/rbr-wordpress-editor-s3.json`.
