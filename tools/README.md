@@ -1,3 +1,9 @@
+# Current reconstruction CLI entry points
+
+The development kit contains `rbr-plan.php`, `rbr-s3-kit.py publish` and the independently approved `rbr-approved-kit.py` entry. The unsigned S3 fetch command is disabled. See [signed-kit operation](../docs/spec/rbr-signed-kit.md) and [ZIP setup/preservation](../docs/releases/rbr-signed-kit-zip.md). Install Composer dependencies from the included lock file before PHP-based tests/tools. These generated-data CLIs are not installed by the WordPress administration plugin ZIP.
+
+The following index describes the wider historical prototype and does not imply automatic production enrollment.
+
 # ツール一覧と実行条件
 
 2026年10月19日整理。ファイル移動で既存参照を壊さず、用途と入口を整理した。Git公開用のコードと、Git対象外の取得物・資格情報・証拠原本を分ける。

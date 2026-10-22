@@ -1,0 +1,157 @@
+{
+  "kind": "rbr_generation_contract_tests",
+  "checked_at": "2026-10-22T08:55:20+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "name": "three pages image relations and profile commit; no WP publication",
+      "passed": true
+    },
+    {
+      "name": "reopen coordinator and retry with local source files removed",
+      "passed": true
+    },
+    {
+      "name": "changed operation payload cannot be reused",
+      "passed": true
+    },
+    {
+      "name": "partial upload failure preserves previous complete generation and resumes",
+      "passed": true
+    },
+    {
+      "name": "partial originals already saved survive missing local files on retry",
+      "passed": true
+    },
+    {
+      "name": "lost original PUT response reconciles exact version",
+      "passed": true
+    },
+    {
+      "name": "lost commit PUT response reconciles one commit",
+      "passed": true
+    },
+    {
+      "name": "commit unavailable leaves originals confirmed and no partial generation",
+      "passed": true
+    },
+    {
+      "name": "denied discovery never becomes missing or blind PUT",
+      "passed": true
+    },
+    {
+      "name": "36-day default required without changing legacy bucket",
+      "passed": true
+    },
+    {
+      "name": "expired uncommitted operation blocked; committed result still reconciled",
+      "passed": true
+    },
+    {
+      "name": "old image copied with stable logical identity and pinned bytes; no retention mutation",
+      "passed": true
+    },
+    {
+      "name": "copy failure blocks new generation and retry does not duplicate copy",
+      "passed": true
+    },
+    {
+      "name": "corrupted fixed bytes stop commit",
+      "passed": true
+    },
+    {
+      "name": "foreign site and parent rejected",
+      "passed": true
+    },
+    {
+      "name": "missing role and unsafe identity rejected before writes",
+      "passed": true
+    },
+    {
+      "name": "unresolved relationship withheld, never silently stripped",
+      "passed": true
+    },
+    {
+      "name": "stale editor cannot jump or overwrite newer generation",
+      "passed": true
+    },
+    {
+      "name": "server clock skew fails closed",
+      "passed": true
+    },
+    {
+      "name": "late S3 commit never returned as eligible success, including retry",
+      "passed": true
+    },
+    {
+      "name": "two independent PHP processes race for same slot: one winner only",
+      "passed": true
+    }
+  ],
+  "backend": "atomic-filesystem-S3-test-double",
+  "aws_verified": false,
+  "production_changes": false,
+  "wp_apply_implemented": false,
+  "source_sha256": {
+    "src/RbrObjectStore.php": "f20131e4dc1f8a776e612e4ecb07e56efc51244eb23d89fab928f56c0d81bc5e",
+    "src/RbrGenerationCoordinator.php": "cd616d3e8f82d98946e0f1af4086ae572c83d7c14c8089655c1663c528a1689a",
+    "tools/rbr-save-lab.php": "6e01a7d012852fc2cc5cc870dd560ab7d2a5c990b85f452d2d5b4bd439e15e89",
+    "tools/rbr-create-fixture.php": "6d8ec7a2dc7207e94a9d06fd677d77e58acd6126a165cf041f02abff59e90377",
+    "tests/test-rbr-generation.php": "8bdfdd4dea94000d747db293183229b6cbc7058d6b7518b9e9842a7f3765c6c1",
+    "tests/support/RbrS3Double.php": "37a140b27f6b2f90e3963ba71fa2187465c7ffe58ec2a150fa4ecb16ca75b8fe"
+  },
+  "regression_runs": [
+    {
+      "test": "test-backup-core.php",
+      "passed": true
+    },
+    {
+      "test": "test-rbr-generation.php",
+      "passed": true
+    },
+    {
+      "test": "test-temporary-role-auth.php",
+      "passed": true
+    },
+    {
+      "test": "test-versioned-transfer.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_transfer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_watchdog_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_observer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_observer_transfer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_operator_review_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_preflight_watchdog_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_distribution.py",
+      "passed": true
+    },
+    {
+      "test": "test_core_distribution.py",
+      "passed": true
+    }
+  ]
+}

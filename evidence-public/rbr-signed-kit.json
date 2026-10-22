@@ -1,0 +1,350 @@
+{
+  "state": "PASS",
+  "scope": "synthetic corporate site, independently approved fixed S3 kit, private reconstruction only",
+  "initial_signed_download_and_reconstruction": {
+    "definition_sha256": "84fa2023d58c295ff845365cef5e68a557b905cfe57e16c310b21da790965476",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-order",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "ef46b381c8047a8fdc15faeebe0268de67cff1b89909bae0083727f468313ed8",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "final_revalidated_reconstruction": {
+    "definition_sha256": "84fa2023d58c295ff845365cef5e68a557b905cfe57e16c310b21da790965476",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-order",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "ef46b381c8047a8fdc15faeebe0268de67cff1b89909bae0083727f468313ed8",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "approval_verification": {
+    "approval_sha256": "15e8fe52990ec273f8a73dc9598256288196926540f3672e9fbca47e6a2117ab",
+    "authority": {
+      "expires_at": "2026-10-22T18:48:47.203275+00:00",
+      "registry_sha256": "bd2a8f5d3d8701fed9886351c86a18949635147ef4a87bad0b7152fc7104ad6e",
+      "revision": 1
+    },
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-root.json",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "tcSuYPknBXaUMODyjYwhnuyzdPDw7IX4"
+      },
+      "sha256": "e1f1c81326ca848c43fb1336fc50221939576290da8d1fdb7b72e7046674855b",
+      "size_bytes": 3910
+    },
+    "state": "PASS"
+  },
+  "signer_separation": {
+    "approval_sha256": "15e8fe52990ec273f8a73dc9598256288196926540f3672e9fbca47e6a2117ab",
+    "expires_at": "2026-10-22T18:48:47.203275+00:00",
+    "key_sha256": "90c98d98400f204b68e7a4c02f0aaa11e09ad1badd090dd4bc44238c282a16d2",
+    "private_key_off_recovery_user": true,
+    "test_key_only": true
+  },
+  "separation_limit": "same dedicated WSL host, separate root signer and unprivileged recovery account; not physical-host independence",
+  "fixed_S3_GETs": 75,
+  "additional_root_confirmation_GETs": 1,
+  "S3_PUTs": 0,
+  "live_negative_cases": [
+    {
+      "case": "set-revoked",
+      "rejected": true,
+      "reason": "ValueError: set revoked",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "key-revoked",
+      "rejected": true,
+      "reason": "ValueError: key revoked",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "expired-registry",
+      "rejected": true,
+      "reason": "ValueError: authority expired, future or excessive validity",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "obsolete-sequence",
+      "rejected": true,
+      "reason": "ValueError: approval generation obsolete",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "different-approval",
+      "rejected": true,
+      "reason": "ValueError: not current approval",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "changed-root-manifest.json",
+      "rejected": true,
+      "reason": "ValueError: Root changed after fetch",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "changed-kit/tools/rbr-wordpress-apply.php",
+      "rejected": true,
+      "reason": "ValueError: Execution code changed",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "changed-bundle/definition.json",
+      "rejected": true,
+      "reason": "ValueError: Definition changed",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "changed-bundle/plan.json",
+      "rejected": true,
+      "reason": "ValueError: Plan changed",
+      "S3_or_Docker_started": false
+    },
+    {
+      "case": "changed-images.json",
+      "rejected": true,
+      "reason": "ValueError: Image inventory changed",
+      "S3_or_Docker_started": false
+    }
+  ],
+  "offline_signature_tests": 15,
+  "regressions": [
+    {
+      "test": "test_rbr_approval.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_rbr_s3_kit.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_rbr_comparison.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_distribution.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test_core_distribution.py",
+      "exit_code": 0
+    },
+    {
+      "test": "test-rbr-planner.php",
+      "exit_code": 0
+    },
+    {
+      "test": "test-rbr-generation.php",
+      "exit_code": 0
+    }
+  ],
+  "unsigned_CLI": {
+    "rejected": true,
+    "exit_code": 2,
+    "output_created": false
+  },
+  "bytecode_cache_absent_after_final_execution": true,
+  "network_cleanup": [
+    {
+      "rules": [
+        {
+          "rule": [
+            "FORWARD",
+            "-i",
+            "br-6a95a5228a09",
+            "-o",
+            "br-6a95a5228a09",
+            "-m",
+            "comment",
+            "--comment",
+            "owr-rbr-approval-20261022",
+            "-j",
+            "ACCEPT"
+          ],
+          "removed": true
+        },
+        {
+          "rule": [
+            "FORWARD",
+            "-i",
+            "br-def75dc82b9a",
+            "-o",
+            "br-def75dc82b9a",
+            "-m",
+            "comment",
+            "--comment",
+            "owr-rbr-approval-20261022",
+            "-j",
+            "ACCEPT"
+          ],
+          "removed": true
+        },
+        {
+          "rule": [
+            "FORWARD",
+            "-i",
+            "br-09df4bcb9709",
+            "-o",
+            "br-09df4bcb9709",
+            "-m",
+            "comment",
+            "--comment",
+            "owr-rbr-approval-20261022",
+            "-j",
+            "ACCEPT"
+          ],
+          "removed": true
+        }
+      ],
+      "all_removed": true
+    },
+    {
+      "rules": [
+        {
+          "rule": [
+            "FORWARD",
+            "-i",
+            "br-86b53a724ddb",
+            "-o",
+            "br-86b53a724ddb",
+            "-m",
+            "comment",
+            "--comment",
+            "owr-rbr-approval-20261022",
+            "-j",
+            "ACCEPT"
+          ],
+          "removed": true
+        }
+      ],
+      "all_removed": true
+    }
+  ],
+  "production_changed": false,
+  "automatic_publication": false,
+  "existing_approval_conditions_changed": false,
+  "classified_findings": {
+    "environment": [
+      "Existing dedicated classic-image Docker compatibility and bridge forwarding prerequisites remain."
+    ],
+    "test_infrastructure": [
+      "Private overlay mode0700 prevented authority access before S3; corrected within mount namespace only.",
+      "Network removal/list-inspect race stopped the temporary bridge helper. All its rules were removed; helper fixed and restarted without duplicate reconstruction."
+    ],
+    "plugin": [
+      "Python bytecode generation made a reused kit fail strict code-tree checking. Fixed by python3 -B; old cache retained outside kit, no verification relaxation."
+    ]
+  },
+  "limitations": [
+    "Generated-data CLI only; trusted bootstrap verifier and independently provisioned current registry required.",
+    "No automatic approval extension or production deployment.",
+    "Local administrator/root compromise is outside the account separation proof."
+  ],
+  "source_hashes": {
+    "tools/rbr-approved-kit.py": "b255fa48850a1bec5bfbc55fb10345fad12014621441dff1c177a4359beb7f84",
+    "tools/rbr-s3-kit.py": "1735854d1f98405664d2a9b52a6d191782ca8c648b29f15310c5a03c4f25d6af",
+    "tests/test_rbr_approval.py": "a7bce95cb94c709495c86446be107811116019f55c80c9806e3e1591d46c53ea",
+    "tools/current-recovery-trust.py": "b1e5179a50c96c3508bb32a833226f35eee7884716390b7fe427c7c19dce3ccd",
+    "tools/verify-recovery-approval.py": "ebac2fba8284ab49dbf47f3f793d48a13034ebc5de96cf516c3d15c1fb045221"
+  }
+}
