@@ -151,6 +151,23 @@ def main():
   if args.operator_review:(status/'preflight-health.json').write_text(json.dumps(dict(format='owr-preflight-transfer-v1',site_id='generated-first-site',config_sha256='a'*64,attempted_at=now,report_at=now,state='ok')))
   preserved=external()
   with ui_session(status,initial,args.output/(mode+"-diagnostics")) as (web,browser):
+   # Provisioning may exceed the five-minute report freshness limit. First prove
+   # startup did not alter the external records, then start this UI fixture's
+   # observation clock before the settings/update preservation baseline.
+   assert external()==preserved
+   fresh=datetime.now(timezone.utc).isoformat()
+   for role in snapshots:
+    report=json.loads((status/(role+'.json')).read_text());report['observed_at']=fresh
+    (status/(role+'.json')).write_text(json.dumps(report))
+    health=json.loads((status/(role+'-transfer.json')).read_text());health['attempted_at']=fresh
+    (status/(role+'-transfer.json')).write_text(json.dumps(health))
+   report=json.loads((status/'preflight.json').read_text());report['attempted_at']=fresh
+   (status/'preflight.json').write_text(json.dumps(report))
+   if args.operator_review:
+    health=json.loads((status/'preflight-health.json').read_text())
+    health.update(attempted_at=fresh,report_at=fresh)
+    (status/'preflight-health.json').write_text(json.dumps(health))
+   preserved=external()
    def php(code):return run('docker','exec','-u','www-data',web,'php','-r','require "/var/www/html/wp-load.php";require_once ABSPATH."wp-admin/includes/plugin.php";'+code).stdout
    php('\\Ozeki\\Resilience\\NotificationAdmin::state();\\Ozeki\\Resilience\\ObserverSettings::state();')
    # Populate non-default settings through the existing real browser form.

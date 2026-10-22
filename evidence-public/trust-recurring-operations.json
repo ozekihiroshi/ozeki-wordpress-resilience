@@ -1,0 +1,28 @@
+{
+  "format": "owr-trust-recurring-operations-v1",
+  "recorded_at": "2026-10-22T01:21:12.331520+00:00",
+  "passed": true,
+  "tests": 6,
+  "checks": [
+    "refresh preserves signed bundle and exact per-host readback",
+    "fresh registry does not extend expired signed approval",
+    "failed refresh then expiry blocks; reviewed higher revision restores entry",
+    "partial revocation rollout remains incomplete; old host boundary explicit",
+    "post-replace uncertainty reconciled by inspect; stale retry rejected",
+    "expired registry inspect is not recovery readiness"
+  ],
+  "source_sha256": "dab5179a10365d2a40fa4ab4e8414717b1f770d742481f48a337cb62aea470ad",
+  "production_ready": false,
+  "runtime_changes": false,
+  "signature_auto_extension": false,
+  "production_state_changed": false,
+  "scope": "Existing updater/SSH endpoint inspect/recovery entry; root-owned temporary /run fixtures, generated real signatures, local S3/restore callbacks, simulated expiry without changing OS clock. No new network, actual SSH, real S3, OS reboot, physical USB or elapsed-time claim.",
+  "classification": {
+    "environment": "No new environmental fault established",
+    "test_infrastructure": "Injected replace/fsync faults and expiry; two local registry paths, not separate hosts. Historical browser startup cause unresolved.",
+    "product": "Manual refresh and per-host reconciliation; no global immediate revocation or root-resistant rollback. No runtime change needed for these connections."
+  },
+  "temporary_resources_removed": true,
+  "observation": "Separate; unchanged original 72-hour scope and historical gaps; no final verdict",
+  "artifacts": "Previously validated ZIPs remain frozen; these new docs/tests/evidence are not retroactively included"
+}

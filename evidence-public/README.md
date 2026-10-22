@@ -56,3 +56,9 @@ Current recovery trust: [mandatory checkpoint deployment](../docs/guides/current
 [Real S3 with SSH current trust](trust-real-s3-recovery.json): four integration cases, two actual fixed-version GETs, no PUT, real offline restoration and cleanup.
 
 [Trust final ZIP](trust-final-zip.json): frozen artifact hashes, install/update/state retention and 52 packaged trust tests.
+
+Recurring current-trust operations: [runbook and six targeted connection checks](../docs/guides/trust-recurring-operations.md). Generated data, temporary local host representations; no new real SSH/S3 or 72-hour acceptance claim.
+
+Additional [two-VM recurring SSH verification](../docs/guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
+
+[Recurring trust final ZIP acceptance](../docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.

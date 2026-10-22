@@ -1,0 +1,79 @@
+{
+  "first_attempt_failure": {
+    "classification": "test_infrastructure",
+    "failed_assertion": "operator review expected current but UI correctly displayed current validity unconfirmed",
+    "fixture_attempted_at": "2026-10-22T01:33:57.503865+00:00",
+    "freshness_limit_seconds": 300,
+    "diagnostic_log": "/home/ozeki/.local/share/owr-recurring-trust-zip-20261022/wordpress/fresh-diagnostics/selenium.log",
+    "product_change": false,
+    "fix": "refresh synthetic report timestamps after startup only; assert startup preservation first, then freeze before update/deactivate/reactivate/browser checks; approval fields unchanged"
+  },
+  "format": "owr-recurring-trust-final-zip-v1",
+  "recorded_at": "2026-10-22T01:45:37.204391+00:00",
+  "passed": true,
+  "version": "0.1.0-dev.1",
+  "production_ready": false,
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "7ec65fd810cb57ac6a7b75c4a901a73cdf00d33e0dcb5f83001b1d006e7505fe",
+      "bytes": 14661140
+    }
+  ],
+  "plugin_identical_to_previous_candidate": true,
+  "kit_checks": [
+    "kit ZIP bytes and every extracted file match manifest",
+    "packaged plan is read-only and not production-ready",
+    "packaged generate creates new draft",
+    "existing reviewed draft overwrite refused without changes",
+    "separate code extraction preserves external configuration"
+  ],
+  "wordpress": {
+    "passed": true,
+    "roundtrip_preserved_files": 32,
+    "operator_review": true,
+    "checks": [
+      "completed real roundtrip records copied for byte-preservation only; no migration or resumed execution",
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "retained_roundtrip_files": 32,
+  "source_records_unchanged": true,
+  "external_state": {
+    "passed": true,
+    "checks": [
+      "old/new kit extraction preserves external registry, approval and SSH failure/recovery history",
+      "fresh install without registry fails closed",
+      "retained registry and signature checks pass without changing approval expiry or bytes",
+      "original dedicated VM records unchanged"
+    ],
+    "file_count": 7,
+    "approval_expires_at": "2026-10-29T01:27:18.191614+00:00",
+    "registry_sha256": "551672ad28aedfabe63ce4f4a249e416f84865b29824923c09702a83d51d6ce2",
+    "scope": "Separate root-owned temporary state; actual extracted gate and signature check, no network/signing/renewal; byte retention not migration"
+  },
+  "packaged_operational_tests": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 4.698
+  },
+  "actual_ssh_tested_sources_match_kit": 5,
+  "signature_approval_auto_extended": false,
+  "classification": {
+    "environment": "Dedicated Docker lab; no new production or observation change",
+    "test_infrastructure": "Actual WordPress updater and Chromium; same-version overwrite, local generated state and byte preservation, not migration or real SSH retest",
+    "product": "No runtime change; manual independent registry refresh/provisioning still required; same prototype limitations"
+  },
+  "scope": "New final ZIP install/overwrite/state retention; no new S3, signing, SSH deployment or 72h final verdict"
+}
