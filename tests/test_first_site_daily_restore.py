@@ -7,6 +7,7 @@ import subprocess
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('recovery',ROOT/'tools/first-site-daily-restore.py')
@@ -15,6 +16,11 @@ r=importlib.util.module_from_spec(s);s.loader.exec_module(r)
 
 class Recovery(unittest.TestCase):
     def setUp(self):
+        # Legacy signature/transport contracts isolate the new authority; separate root-owned tests cover it.
+        if type(self) is Recovery:
+            for method in ("current", "unchanged"):
+                stub=patch.object(r.current_trust,method,return_value={"revision":1})
+                stub.start();self.addCleanup(stub.stop)
         self.tmp=tempfile.TemporaryDirectory(); self.root=Path(self.tmp.name)
         buf=io.BytesIO()
         with tarfile.open(fileobj=buf,mode='w:gz') as tar:

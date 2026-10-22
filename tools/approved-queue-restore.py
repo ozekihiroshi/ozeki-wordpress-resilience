@@ -9,6 +9,8 @@ ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('approved_publication',ROOT/'tools/daily-s3-publication.py')
 publication=importlib.util.module_from_spec(s);s.loader.exec_module(publication)
 gate=publication.gate
+s=importlib.util.spec_from_file_location("queue_current_trust",ROOT/"tools/current-recovery-trust.py")
+current_trust=importlib.util.module_from_spec(s);s.loader.exec_module(current_trust)
 
 
 def archive_inventory(body):
@@ -39,6 +41,7 @@ def fetch(trust,set_id,document_hash,key_hash,receipts,mark,adapter_factory=None
     trust=Path(trust).resolve();receipts=Path(receipts).resolve()
     gate.check(not receipts.is_relative_to(trust) and not trust.is_relative_to(receipts),'trust and receipts must be separate')
     document=trust/'recovery-set.json';signature=trust/'recovery-set.sig'
+    checkpoint=current_trust.current(trust,document,publication.SITE,set_id)
     gate.check(gate.sha((trust/'public.pem').read_bytes())==key_hash,'operator key fingerprint mismatch')
     m=publication.candidate(document,document_hash)
     gate.check(m['set_id']==set_id,'wrong selected set')
@@ -54,6 +57,7 @@ def fetch(trust,set_id,document_hash,key_hash,receipts,mark,adapter_factory=None
         assets,verified=gate.fetch_verified(trust,document,signature,publication.SITE,set_id,handler,adapter.get)
         mark('approved_three_fixed_versions_retention_checkpoint_verified')
         inventory=archive_inventory(assets['files'])
+        current_trust.unchanged(checkpoint,trust,document,publication.SITE,set_id)
         mark('approved_archive_paths_and_types_verified')
         evidence={'set_id':set_id,'manifest_sha256':document_hash,'public_key_sha256':key_hash,
                   'verification':verified,'transport':'AWS S3 fixed VersionId, reader only','receipts_directory':str(receipts),

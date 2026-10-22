@@ -1,0 +1,45 @@
+{
+  "format": "owr-trust-ssh-lab-v1",
+  "passed": 13,
+  "checks": [
+    "remote_absent_inspected",
+    "remote_validation_no_install",
+    "bootstrap_readback",
+    "new_revision",
+    "old_resend_rejected",
+    "connection_refused_no_change",
+    "wrong_host_key_rejected",
+    "remote_readonly_failure_preserves_registry",
+    "lost_response_after_commit_reconciled_without_resend",
+    "stale_retry_rejected",
+    "truncated_request_no_change",
+    "arbitrary_shell_not_executed",
+    "separate_guest_kernel"
+  ],
+  "final_revision": 3,
+  "separate_vm_kernel": true,
+  "transport": "actual pinned SSH",
+  "response_loss": "actual client timeout/termination after remote commit with dedicated delayed-response fixture",
+  "production_changes": false,
+  "observation_changes": false,
+  "finished_at": "2026-10-22T00:33:26.043650+00:00",
+  "dedicated_container_stopped": true,
+  "protocol_regressions_passed": 4,
+  "initial_failure": {
+    "category": "product",
+    "description": "Structured remote rejection was converted to unknown because generic SSH transport rejected nonzero exit status",
+    "resolved": "Endpoint returns successful transport exit for delivered structured outcomes; caller retains failed/rejected semantic status",
+    "regression_tests": 4
+  },
+  "classification": {
+    "environment": "No production change or unexplained host failure; fresh dedicated guest stopped",
+    "test_infrastructure": "Read-only mount, wrong key/port, truncated request, and delayed response deliberately induced; not physical cable/power failure",
+    "product": "Fixed-command pinned SSH deploy and unknown-outcome inspection implemented; upstream authenticity/admin review and root rollback limits unchanged"
+  },
+  "source_sha256": {
+    "trust-registry-ssh.py": "f766d5264f293f335bd4c9881b08358e1192e5f79533604ccfc63eef53f37165",
+    "notification-transfer.py": "5cf0d02ed2cc141ed4f749b8767673eb3cee944903d6e99b06a00c625e2e9f88",
+    "update-current-recovery-trust.py": "d43abe8b9abfaa79a324a0a6d5af37cf7975786771566457e5c55ebc73897694",
+    "current-recovery-trust.py": "b1e5179a50c96c3508bb32a833226f35eee7884716390b7fe427c7c19dce3ccd"
+  }
+}

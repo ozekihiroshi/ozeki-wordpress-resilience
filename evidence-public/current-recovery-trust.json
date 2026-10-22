@@ -1,0 +1,36 @@
+{
+  "format": "owr-current-recovery-trust-test-v1",
+  "checked_at": "2026-10-22T00:23:02.874505+00:00",
+  "prototype": true,
+  "dedicated_generated_data": true,
+  "authority_tests": {
+    "passed": 28,
+    "root_owned_temporary_registry": true,
+    "real_disposable_signatures": true,
+    "s3_and_restore": "synthetic call counters",
+    "whole_old_bundle_rejected_against_current_registry": true,
+    "changed_registry_before_restore_rejected": true,
+    "unprivileged_read_allowed_write_denied": true
+  },
+  "regressions": {
+    "test_first_site_daily_restore.py": 10,
+    "test_approved_queue_restore.py": 13,
+    "test_recovery_approval.py": 15,
+    "test_first_site_recovery_worker.py": 10
+  },
+  "ast_files": 11,
+  "production_modified": false,
+  "observation_resources_modified": false,
+  "limitations": [
+    "Administrator-managed local checkpoint, not an online global authority",
+    "Maximum 24 hour validity; independently refreshed by administrator",
+    "Root/code/clock compromise and administrator rollback outside boundary",
+    "No cancellation after final entry check",
+    "No new real S3/Docker/physical USB test; other entry integrations syntax/regression checked, new authority matrix exercises daily entry"
+  ],
+  "classification": {
+    "environment": "Sandbox denied WSL/git access; authorized escalated commands succeeded; no production change",
+    "test_infrastructure": "Generated data, real filesystem permissions, simulated retrieval/restore; prior browser startup issue separate",
+    "product": "Protected current checkpoint mandatory; automatic distribution, global immediate revocation and monotonic administrator rollback protection remain unimplemented"
+  }
+}

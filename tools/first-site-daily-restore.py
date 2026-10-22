@@ -23,6 +23,7 @@ def load(name, file):
 d = load('restore_daily', 'first-site-daily.py')
 c = load('restore_capture', 'first-site-capture.py')
 g = d.gate
+current_trust = load('daily_current_trust', 'current-recovery-trust.py')
 
 
 def recover(trust, destination, set_id, config_hash, document_hash, key_hash,
@@ -31,6 +32,7 @@ def recover(trust, destination, set_id, config_hash, document_hash, key_hash,
     trust, destination = Path(trust).resolve(), Path(destination).resolve()
     g.check(not trust.is_relative_to(destination) and not destination.is_relative_to(trust),
             'trust and recovery workspace must be separate')
+    checkpoint = current_trust.current(trust, trust/'approved.json', d.SITE, set_id)
     destination.mkdir(parents=True, mode=0o700, exist_ok=False)
     report = dict(format='owr-first-site-daily-restore-v1', set_id=set_id,
                   passed=False, assets_verified=False, restore_started=False,
@@ -52,6 +54,8 @@ def recover(trust, destination, set_id, config_hash, document_hash, key_hash,
         g.check(pin['bucket'] == d.transport.BUCKET and pin['region'] == d.transport.REGION,
                 'dedicated experimental bucket required')
         g.check(sum(e['locator']['size_bytes'] for e in m['assets']) <= 128*1024**2, 'lab size limit')
+        current_trust.unchanged(checkpoint, snapshot, doc, d.SITE, set_id)
+        report['current_trust'] = checkpoint
         adapter = (adapter_factory or d.transport.S3Adapter)(destination/'reader-receipts')
         assets, verified = g.fetch_verified(snapshot, doc, sig, d.SITE, set_id, config_hash, adapter.get)
         target = destination/'verified-assets'; target.mkdir(mode=0o700)
@@ -64,6 +68,7 @@ def recover(trust, destination, set_id, config_hash, document_hash, key_hash,
                       source_workspace_used=False, source_server_used=False,
                       signature_source='independent local signed document; asset versions from S3')
         save()
+        current_trust.unchanged(checkpoint, snapshot, doc, d.SITE, set_id)
         report['restore_started'] = True; save()
         outcome = (restore or restore_offline)(target, inventory, destination)
         g.check(outcome['passed'] is True and outcome['resources_removed'] is True, 'restore/cleanup incomplete')

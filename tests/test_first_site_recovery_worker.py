@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import subprocess
 import unittest
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
@@ -33,6 +34,17 @@ class Worker(unittest.TestCase):
         return self.worker.run('trial',self.day,self.trust,
                                recover=kw.get('recover',self.recover),
                                registrar=kw.get('registrar',self.registrar))
+    def test_current_trust_denial_is_not_an_interrupted_attempt(self):
+        original=w.load
+        class Denied:
+            def current(self,*args):raise ValueError('revoked')
+        def loader(name,path):
+            return Denied() if path=='current-recovery-trust.py' else original(name,path)
+        with patch.object(w,'load',side_effect=loader),self.assertRaises(ValueError):
+            self.worker.run('denied',self.day,self.trust)
+        self.assertIsNone(self.worker.row('denied'))
+        self.assertFalse((self.worker.root/'recovery-attempts'/'denied').exists())
+
     def test_success_and_duplicate_no_rerestore(self):
         self.assertEqual(self.run_worker()['registration'],'recorded')
         self.assertEqual(self.run_worker()['registration'],'recorded')

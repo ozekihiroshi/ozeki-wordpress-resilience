@@ -1,0 +1,16 @@
+{
+  "format": "owr-trust-registry-update-tests-v1",
+  "checked_at": "2026-10-22T00:25:55.117704+00:00",
+  "passed": 20,
+  "dedicated_temporary_root_owned_registry": true,
+  "production_changes": false,
+  "observation_changes": false,
+  "failure_injection": [
+    "pre-replacement sync",
+    "replace",
+    "post-replacement directory sync"
+  ],
+  "rollback_boundary": "supported updater relative to installed registry; not root/whole-host rollback",
+  "real_power_loss_test": false,
+  "real_s3_test": false
+}

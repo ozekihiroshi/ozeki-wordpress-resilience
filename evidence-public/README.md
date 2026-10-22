@@ -43,3 +43,16 @@ M1の一部は例示識別子、後続の実サイトパイロットは実際の
 - [メール通知・定期実行・監視停止検知](monitor-email-scheduling.json)：関連42件と実systemdタイマー・ローカルSMTP往復。外部宛先への送信なし、試験用サービスは停止済み。
 
 - [dm専用SSH heartbeat](dm-heartbeat-ssh.json)：実SSH18項目・関連56件。権限分離、停止・解消、既存FTP/MySQL/SSHの維持を確認。実通知なし。
+
+
+- [Trust lifecycle](trust-lifecycle.json): 12 generated-data checks and one explicitly unmet old-trust rollback requirement. Same-machine simulated media, not a real USB or independent-person exercise. [Method and operations](../docs/guides/trust-lifecycle.md).
+
+Current recovery trust: [mandatory checkpoint deployment](../docs/guides/current-recovery-trust.md), [generated acceptance evidence](../evidence-public/current-recovery-trust.json). Missing administrator checkpoint now blocks recovery; no production checkpoint was installed.
+
+[Trust registry SSH](trust-registry-ssh.json): 13 real-SSH checks, 4 protocol regressions, initial classification defect and fix; separate VM stopped.
+
+[SSH trust to recovery](trust-ssh-recovery.json): four integration cases, actual WordPress restore, fixture S3, initial test-path correction retained.
+
+[Real S3 with SSH current trust](trust-real-s3-recovery.json): four integration cases, two actual fixed-version GETs, no PUT, real offline restoration and cleanup.
+
+[Trust final ZIP](trust-final-zip.json): frozen artifact hashes, install/update/state retention and 52 packaged trust tests.
