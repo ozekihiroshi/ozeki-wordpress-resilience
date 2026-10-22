@@ -2,7 +2,7 @@
 
 > **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](shortened-observation-final.md).
 
-Snapshot: October 22, 2026. Git baseline PR #10 (`f5ebf8c`), with subsequent bounded reconstruction/S3-kit/signature work in the current working candidate. Version `0.1.0-dev.1` is a prototype, not a formal release. See the [current ZIP scope](rbr-signed-kit-zip.md), primary [English README](../../README.md) and [Japanese README](../../RAADME-jp.md).
+Snapshot: October 22, 2026. Git baseline merged PR #11 (`d00188d`), including bounded reconstruction/S3-kit/signature work. Subsequent work adds the committed-generation CLI inlet. Version `0.1.0-dev.1` is a prototype, not a formal release. See the [current ZIP scope](rbr-signed-kit-zip.md), primary [English README](../../README.md) and [Japanese README](../../RAADME-jp.md).
 
 The development kit now plans A/R/E/D/Q, reconstructs the three-page corporate subset, stores runtime/input/code closure as fixed experimental S3 versions, and gates retrieval/execution with independent signatures and the current registry. Two fresh private WordPress targets matched Q. This is CLI functionality outside the installable administration plugin; generic production setup and S3-first WordPress authoring are not complete. Prior short-observation and legacy Restore evidence are separate from this scope.
 
@@ -59,3 +59,11 @@ Additional [two-VM recurring SSH verification](../guides/trust-recurring-ssh.md)
 ## Evidence reuse review
 
 See [what earlier tests establish and the collector gaps](evidence-reuse-and-collector-gaps.md). In particular, earlier real-SSH/S3 onboarding still captured through DockerBackend. Remote least-privilege capture and loss of the collector while the source is paused remain new integration questions. Repeated unchanged ZIP/UI/lifecycle trials are not additional product coverage. Pilot infrastructure choices are provisional, not plugin requirements.
+
+## Committed-generation inlet
+
+See [contract and boundaries](../spec/rbr-generation-kit.md). The selected fixed generation is preserved in D; profile/runtime dependencies are protected through its horizon, with explicit copies where needed. Output awaits independent approval. This removes fixture-generator calls from the inlet, not the remaining production editor/coordinator integration gap.
+
+Real S3 coordinator connection verified: scoped discovery, explicit new-version retention, concurrent commit/resume, unchanged generation reference into independent signed reconstruction, two private WordPress results matching Q. Evidence: `evidence-public/rbr-live-coordinator.json`; prototype CLI only. No production authoring hook or generic connector, no release or observation restart.
+
+Final real-S3 coordinator ZIP lifecycle acceptance: PASS; see [results](rbr-coordinator-zip-results.md). CLI prototype, no production publication; shortened observation remains unchanged.

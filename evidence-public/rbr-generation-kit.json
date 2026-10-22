@@ -1,0 +1,207 @@
+{
+  "state": "PASS",
+  "scope": "generated fixed S3 generation receipt to independently approved private WordPress reconstruction",
+  "generation_ref": {
+    "locator": {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-e29660e409a20c38/rbr-d149749913d7b2dd40bee02151f4b635f79fee33d77e851c71b3e036a5c70156.blob",
+      "kind": "s3",
+      "region": "ap-northeast-1",
+      "version_id": "zsMicBcFbK7QIOnnb_X2nsBcflFtm7VJ"
+    },
+    "sha256": "d149749913d7b2dd40bee02151f4b635f79fee33d77e851c71b3e036a5c70156",
+    "size_bytes": 3667
+  },
+  "generation_preserved_in_fetched_D": true,
+  "kit": {
+    "generation_ref": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-e29660e409a20c38/rbr-d149749913d7b2dd40bee02151f4b635f79fee33d77e851c71b3e036a5c70156.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "zsMicBcFbK7QIOnnb_X2nsBcflFtm7VJ"
+      },
+      "sha256": "d149749913d7b2dd40bee02151f4b635f79fee33d77e851c71b3e036a5c70156",
+      "size_bytes": 3667
+    },
+    "plan_sha256": "6597a4e637184a7ef89e1448770bd890cc417bfc6587a001878a00c4cda122c8",
+    "protect_until": 1795694815,
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-fb55b1f0fe99891d/rbr-64d6266277def032da662f7f7353fdbd08fe1b638d97acfee5bf43894800a91a.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "DLp8Q1j_XsY28co65DBK02xvRZOOsFQ9"
+      },
+      "sha256": "64d6266277def032da662f7f7353fdbd08fe1b638d97acfee5bf43894800a91a",
+      "size_bytes": 3910
+    },
+    "state": "stored_awaiting_independent_approval"
+  },
+  "actual_generation_fixture": {
+    "objects": 7,
+    "coordinator_live_concurrency_verified": false,
+    "preparation": "generated originals read back from S3 before fixture manifest commit; no production source"
+  },
+  "kit_storage": {
+    "puts": 68,
+    "bytes": 412580720,
+    "unknown_puts": 0
+  },
+  "signed_retrieval": {
+    "fixed_gets": 75,
+    "every_final_object_covers_generation_horizon": true
+  },
+  "final_code_retention_time_verification": {
+    "final_code_replayed_acknowledged_actual_s3_evidence": true,
+    "fresh_live_generation_deadline_and_retention_check": true,
+    "new_puts": 0,
+    "same_root_receipt": true
+  },
+  "reconstruction": {
+    "definition_sha256": "6bbc2fd78aa60aec8472976c8cf1810c79bd04288f69b9221e217065da27b45c",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-order",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "6597a4e637184a7ef89e1448770bd890cc417bfc6587a001878a00c4cda122c8",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "approval_verification": {
+    "approval_sha256": "ebd296029059215e4c0ce15f6d6020d86e6f0c1ff607dcf2d0c605a988135ea3",
+    "authority": {
+      "expires_at": "2026-10-22T20:13:53.710014+00:00",
+      "registry_sha256": "c6287906afbbaf9ff1eb522edbbbde6dc8f6b384e19a1587719f4c7532e81fe1",
+      "revision": 1
+    },
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-fb55b1f0fe99891d/rbr-64d6266277def032da662f7f7353fdbd08fe1b638d97acfee5bf43894800a91a.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "DLp8Q1j_XsY28co65DBK02xvRZOOsFQ9"
+      },
+      "sha256": "64d6266277def032da662f7f7353fdbd08fe1b638d97acfee5bf43894800a91a",
+      "size_bytes": 3910
+    },
+    "state": "PASS"
+  },
+  "tests": {
+    "inlet": 15,
+    "existing_s3": 7,
+    "existing_approval": 15,
+    "comparison": 9,
+    "distribution": 7
+  },
+  "cleanup": {
+    "rules": [
+      {
+        "rule": [
+          "FORWARD",
+          "-i",
+          "br-90f5ff76c0f0",
+          "-o",
+          "br-90f5ff76c0f0",
+          "-m",
+          "comment",
+          "--comment",
+          "owr-rbr-generation-20261022",
+          "-j",
+          "ACCEPT"
+        ],
+        "removed": true
+      },
+      {
+        "rule": [
+          "FORWARD",
+          "-i",
+          "br-61421f525b89",
+          "-o",
+          "br-61421f525b89",
+          "-m",
+          "comment",
+          "--comment",
+          "owr-rbr-generation-20261022",
+          "-j",
+          "ACCEPT"
+        ],
+        "removed": true
+      }
+    ],
+    "all_removed": true
+  },
+  "production_changes": false,
+  "automatic_publication": false,
+  "issues": {
+    "environment": [
+      "Existing classic Docker/architecture and temporary dedicated same-bridge prerequisites remain."
+    ],
+    "test_infrastructure": [
+      "Initial offline test double reused a version identity for copied bytes; corrected to key/version identities.",
+      "Final inlet adds S3 commit-time check; same root reproduced from acknowledged live evidence with no PUT, and source time/retention freshly read."
+    ],
+    "product_limits": [
+      "Experimental bucket/role broker only; no editor hook.",
+      "Live input generation is an explicit fixture at receipt boundary, not a live test of the PHP coordinator.",
+      "Parent/provenance closure must also cover the current horizon; shorter history is refused.",
+      "Same-host account-separated signer, not independent physical host."
+    ]
+  },
+  "source_sha256": {
+    "tools/rbr-generation-kit.py": "a8783d8254b46041fb7a862de3d8e8ebe17894fb6ae50a1d63991d7665a8dc4c",
+    "tools/rbr-s3-kit.py": "4a0def8275e07653c8bdd741c2e7058a4f8d4a438bbfcee8375b6b2efe0677b0",
+    "tests/test_rbr_generation_kit.py": "19d3dca905d9b42e4cc8f9a91eb04952be71919c6deed83da829e5f4af3de491"
+  }
+}
