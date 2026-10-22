@@ -1,0 +1,112 @@
+{
+  "format": "owr-portable-extraction-evidence-v1",
+  "report": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-22T06:44:40.852268+00:00",
+    "results": [
+      {
+        "name": "readonly_db_checksums_unchanged",
+        "passed": true
+      },
+      {
+        "name": "private_draft_and_meta_values_excluded",
+        "passed": true
+      },
+      {
+        "name": "three_page_bodies_independent",
+        "passed": true
+      },
+      {
+        "name": "local_image_bytes_hash_match",
+        "passed": true
+      },
+      {
+        "name": "parent_inline_featured_anchor_relations",
+        "passed": true
+      },
+      {
+        "name": "missing_and_unsupported_reported",
+        "passed": true
+      },
+      {
+        "name": "active_content_excluded_from_normalized_text",
+        "passed": true
+      },
+      {
+        "name": "no_static_generation",
+        "passed": true
+      },
+      {
+        "name": "deterministic_repeat",
+        "passed": true
+      },
+      {
+        "name": "existing_output_refused",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "Generated corporate WordPress: read-only selected extraction, local media bytes, relationships and explicit losses; no S3, production or static site generation"
+  },
+  "summary": {
+    "counts": {
+      "pages": 3,
+      "media": 1,
+      "relations": 6,
+      "issues": 16
+    },
+    "issue_codes": [
+      "active_content_excluded",
+      "consistency_not_atomic",
+      "media_requires_review",
+      "media_unavailable",
+      "selected_not_exported",
+      "shortcode_or_bracket_syntax",
+      "uncollected_dependency",
+      "unmapped_metadata",
+      "unresolved_image",
+      "unresolved_link",
+      "unsupported_block",
+      "unsupported_html"
+    ],
+    "missing": [
+      7
+    ],
+    "source_unchanged": true
+  },
+  "unit_tests": 10,
+  "package_readable_after_source_removed": true,
+  "package_hashes_verified": true,
+  "production_changed": false,
+  "static_generated": false,
+  "source_hashes": {
+    "tools/portable-content.py": "e9796912572675bf5eeba30e800dfefecd0230a8d16d529dd0940d1fa6e5afd6",
+    "tools/portable-content-export.php": "fd5d4e4af85549ba84eb3d1c0a42e4de541304e5eb97cab8db309def1cc9f55b",
+    "tools/portable-content-lab-cases.py": "d7df5a3742d091d6f79a866c876922aa48aa45449db84865615a9176c9045191",
+    "tests/test_portable_content.py": "4eb6276fb20acfd767b9b0c3514a3a0bdbc820957ab011b5ffe04e4e9848dcca"
+  },
+  "initial_failed_run": {
+    "path": "/home/ozeki/.local/share/owr-portable-content-20261022-01",
+    "category": "test infrastructure",
+    "reason": "WordPress sanitized script during fixture creation; no script reached collector",
+    "fix": "Store deliberately unsafe generated fixture directly; assert script present before extraction"
+  },
+  "classification": {
+    "environment": "No new fault observed",
+    "test_infrastructure": "Initial fixture sanitization mismatch corrected; failed evidence retained",
+    "plugin": "No defect found in final tested scope; limitations explicit"
+  },
+  "limitations": [
+    "Trusted CLI WordPress bootstrap only; hooks may have side effects on other sites",
+    "No atomic snapshot or malware-free claim",
+    "Images copied and hashed, not decoded or sanitized",
+    "Menu/theme/taxonomy and complex content unsupported and reported",
+    "Plain text derivative; no Markdown rendering, static generator or publication"
+  ]
+}
