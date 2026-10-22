@@ -1,0 +1,104 @@
+{
+  "format": "owr-portable-roundtrip-evidence-v1",
+  "recorded_at": "2026-10-22T07:04:00.879400+00:00",
+  "scope": "Generated corporate site only; no production, S3, automatic publication or approval-policy changes",
+  "unit_tests_passed": 21,
+  "extraction": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-22T07:04:00.879400+00:00",
+    "results": [
+      {
+        "name": "readonly_db_checksums_unchanged",
+        "passed": true
+      },
+      {
+        "name": "private_draft_and_meta_values_excluded",
+        "passed": true
+      },
+      {
+        "name": "three_page_bodies_independent",
+        "passed": true
+      },
+      {
+        "name": "local_image_bytes_hash_match",
+        "passed": true
+      },
+      {
+        "name": "parent_inline_featured_anchor_relations",
+        "passed": true
+      },
+      {
+        "name": "missing_and_unsupported_reported",
+        "passed": true
+      },
+      {
+        "name": "active_content_excluded_from_normalized_text",
+        "passed": true
+      },
+      {
+        "name": "no_static_generation",
+        "passed": true
+      },
+      {
+        "name": "deterministic_repeat",
+        "passed": true
+      },
+      {
+        "name": "existing_output_refused",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "Generated corporate WordPress: read-only selected extraction, local media bytes, relationships and explicit losses; no S3, production or static site generation"
+  },
+  "preview": {
+    "passed": true,
+    "source_containers_absent": true,
+    "source_package_unchanged": true,
+    "images_rendered": 1,
+    "pages": [
+      4,
+      5,
+      6
+    ],
+    "issues": 18,
+    "publication_authorized": false
+  },
+  "browser": {
+    "passed": true,
+    "checks": [
+      "index_and_review_notice",
+      "services_and_missing_media_visible",
+      "valid_image_decoded_in_browser",
+      "fragment_targets_original_body_position",
+      "internal_link_without_source",
+      "contact_and_unsupported_visible",
+      "all_pages_local_resources_no_active_elements",
+      "mobile_no_horizontal_overflow"
+    ]
+  },
+  "issue_classification": {
+    "environment": "No new environment failure observed",
+    "test_infrastructure": "Previous invalid-PNG fixture preserved; new fixture generates valid PNG with GD",
+    "plugin": "Anchor positions previously absent from normalized nodes; now preserved with duplicate/legacy fallback"
+  },
+  "limitations": [
+    "Supported standard content subset only",
+    "Unsupported and missing content needs human review",
+    "Image normalization and hashes do not prove absence of compromise",
+    "No automatic publication"
+  ],
+  "source_files_sha256": {
+    "tools/portable-content.py": "ea56f5805bad6e77fc61be33a8c8572beddda624228132d4338c1d036c8c80aa",
+    "tools/portable-preview.py": "0c84915d6aca5ebfa2835a09936ac093c36100d60befe4d1a1116d6fdceab335",
+    "tools/portable-content-lab-cases.py": "c2665c182dbde36228f5a007b6fed0edd758bca78b8f4fe979d56d0fbb9b5d1c",
+    "tools/portable-preview-browser.py": "4db26a2eed9059e35381ea712c23eeae7f1ad536075b5d78f6ee111c46f460d3",
+    "tests/test_portable_anchors.py": "c8bcd9e95c56b223893adf5c5da8b25dfb3012e31430afdb9ac03c3964f072d7"
+  }
+}

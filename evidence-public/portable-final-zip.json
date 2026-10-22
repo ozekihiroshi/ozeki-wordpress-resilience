@@ -1,0 +1,126 @@
+{
+  "format": "owr-portable-final-zip-v1",
+  "recorded_at": "2026-10-22T07:15:44.867257+00:00",
+  "passed": true,
+  "production_ready": false,
+  "version": "0.1.0-dev.1",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "6a3e83cc4ceaadbc5d189c94b2a41be6a3c2bbfee71ada267d255267010f04c8",
+      "bytes": 14820141
+    }
+  ],
+  "plugin_identical_to_previous_candidate": true,
+  "kit": {
+    "passed": true,
+    "unit_tests": 21,
+    "fresh_pages": [
+      4,
+      5,
+      6
+    ],
+    "images": 1,
+    "source_removed": true,
+    "previous_package_unchanged": true,
+    "retained_material_usable": true,
+    "production_ready": false
+  },
+  "extraction": {
+    "format": "owr-first-site-lab-v1",
+    "recorded_at": "2026-10-22T07:12:26.944846+00:00",
+    "results": [
+      {
+        "name": "readonly_db_checksums_unchanged",
+        "passed": true
+      },
+      {
+        "name": "private_draft_and_meta_values_excluded",
+        "passed": true
+      },
+      {
+        "name": "three_page_bodies_independent",
+        "passed": true
+      },
+      {
+        "name": "local_image_bytes_hash_match",
+        "passed": true
+      },
+      {
+        "name": "parent_inline_featured_anchor_relations",
+        "passed": true
+      },
+      {
+        "name": "missing_and_unsupported_reported",
+        "passed": true
+      },
+      {
+        "name": "active_content_excluded_from_normalized_text",
+        "passed": true
+      },
+      {
+        "name": "no_static_generation",
+        "passed": true
+      },
+      {
+        "name": "deterministic_repeat",
+        "passed": true
+      },
+      {
+        "name": "existing_output_refused",
+        "passed": true
+      }
+    ],
+    "images": {
+      "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+      "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+    },
+    "all_passed": true,
+    "resources_removed": true,
+    "scope": "Generated corporate WordPress: read-only selected extraction, local media bytes, relationships and explicit losses; no S3, production or static site generation"
+  },
+  "browser": {
+    "passed": true,
+    "checks": [
+      "index_and_review_notice",
+      "services_and_missing_media_visible",
+      "valid_image_decoded_in_browser",
+      "fragment_targets_original_body_position",
+      "internal_link_without_source",
+      "contact_and_unsupported_visible",
+      "all_pages_local_resources_no_active_elements",
+      "mobile_no_horizontal_overflow"
+    ]
+  },
+  "wordpress": {
+    "passed": true,
+    "roundtrip_preserved_files": 0,
+    "operator_review": true,
+    "checks": [
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "classification": {
+    "environment": "No new environment defect established",
+    "test_infrastructure": "Existing generated-data harness reused; no scope expansion to real S3/systemd",
+    "plugin": "Portable CLI in development kit only; no admin extraction UI or schema migration"
+  },
+  "limits": [
+    "Incomplete content reconstruction; review issues remain visible",
+    "No production enrollment or automatic publication",
+    "No clean-source or malware-free guarantee",
+    "Same-version plugin overwrite, not a schema migration"
+  ],
+  "packaging_note": "Initial candidate retained; final-v2 corrects stale Japanese README status before acceptance. Acceptance report generated after freeze, not inside frozen ZIP."
+}

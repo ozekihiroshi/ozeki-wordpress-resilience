@@ -82,3 +82,26 @@ Additional [two-VM recurring SSH verification](docs/guides/trust-recurring-ssh.m
 ## Proposed next operating model
 
 The [initial selectable-recovery specification](docs/spec/selectable-recovery-spec.md) describes same-host verification, optional independent verification, incident quarantine and on-demand recovery environments. **Design only: these are not shipped capabilities or relaxed approval rules.** [Japanese specification](docs/spec/selectable-recovery-spec-jp.md).
+
+## Reconstruct design proposal
+
+The [portable-content research and minimum Reconstruct specification](docs/spec/portable-reconstruct-minimum.md) proposes extracting business information independently of WordPress and generating an offline static preview. It separates preserved source material, supported conversion, missing dependencies and operator review. The specification is broader than the implemented increments below; the prototype's current approval rules remain unchanged.
+
+The first [portable extraction increment](docs/guides/portable-content-extraction.md) is now implemented and checked with generated corporate-site data. It produces independent text/media/relationships and an explicit loss report; production enrollment remains unimplemented; the subsequent increment adds static previews.
+
+The subsequent [local static preview increment](docs/guides/portable-preview.md) now builds review-only pages from saved portable material without WordPress. Missing/unsupported items remain visible; this is not publication authorization.
+
+The [generated corporate-site roundtrip](evidence-public/portable-roundtrip.json) verifies extraction through offline preview with a valid image and original fragment-target positions. Three pages and one normalized image render after the source containers are removed; missing/unsupported items remain explicit.
+
+## Portable extraction and preview: shipped scope
+
+Experimental CLI tools are in **owr-development-kit**, not in the WordPress admin plugin ZIP. Installing the plugin alone does not add extraction or static generation buttons. A technician needs Python 3, a trusted WordPress CLI environment for extraction, and Docker with an explicitly pinned PHP/GD image for image normalization. The saved package can then be previewed without the original WordPress.
+
+| Supported subset | Remaining limitations |
+| --- | --- |
+| Explicitly selected, published standard pages/posts; independent text and JSON | No general site discovery, draft/private/password-protected export or atomic snapshot guarantee |
+| Referenced local attachment originals; normalized PNG/JPEG preview | Missing attachments, relative/resized image discovery and unsupported types require review |
+| Page parents, internal links, featured/inline images, unique fragment positions | Theme layout, menus and taxonomy are not reconstructed; ambiguous/legacy fragment positions fall back with a notice |
+| Escaped allowlisted body markup and local review pages | Forms, shortcodes, dynamic blocks, builders, custom metadata and active content are not recreated |
+
+Markdown export, general import into a new WordPress, automatic publication, production enrollment and proof that content is uncompromised are not implemented. Losses remain in issues.json and the preview. Existing approval rules are unchanged. Keep packages and generated output outside the code directory; update the kit by extracting into a new directory and explicitly selecting that version. Do not overwrite private material or existing output. Plugin updates use the WordPress ZIP updater; this prototype retains the same development version, so the test covers overwrite and state retention, not a schema migration.

@@ -1,0 +1,52 @@
+{
+  "format": "owr-portable-preview-evidence-v1",
+  "generated_pages": [
+    4,
+    5,
+    6
+  ],
+  "unit_tests": 7,
+  "browser": {
+    "passed": true,
+    "checks": [
+      "index_and_review_notice",
+      "services_and_missing_media_visible",
+      "internal_link_without_source",
+      "contact_and_unsupported_visible",
+      "all_pages_local_resources_no_active_elements",
+      "mobile_no_horizontal_overflow"
+    ]
+  },
+  "source_removed": true,
+  "source_unchanged": true,
+  "source_manifest_sha256": "0e44bbf1427eda53fffb8133315dcb876b4d8c6555a842d30fdbf8a76e8652f5",
+  "output_hashes": {
+    "index.html": "75686b7fb64aad7a729d30b5399fbfa15dae4cd0167f26f922183396764ec657",
+    "page-4.html": "fca8b9a6f8a53fd0616ae96d480ae61db3305f1c8187cbca9e1804e01ef34b48",
+    "page-5.html": "409c951f8f8c47cb3c62d2bd401ec536b655f23a18c326623ca56d0e5256e656",
+    "page-6.html": "b066b35111183a0caa62f79e6a140ca4e90d0f877c13316a95b2c15aa6871068",
+    "style.css": "f126c0a66286d878315aea29608aff63dbeeaef32ee13e26b22da4f5332a983a"
+  },
+  "images_rendered": 0,
+  "issue_count": 21,
+  "valid_image_path": {
+    "generated_valid_png_reencoded": true,
+    "output_bytes": 98
+  },
+  "publication_authorized": false,
+  "production_changed": false,
+  "classification": {
+    "environment": "No new fault observed",
+    "test_infrastructure": [
+      "Original generated PNG has invalid IDAT CRC; retained and withheld, not silently repaired",
+      "file stylesheet cssRules SecurityError; check computed style",
+      "WebDriver helper treats error-key dictionaries as failures; probe return form corrected"
+    ],
+    "plugin": "No new defect found in tested scope; anchor-position loss explicitly downgraded"
+  },
+  "source_hashes": {
+    "tools/portable-preview.py": "091bb6d49e8edc6c60658e584c64710f273d13141ffc980a640918e3fd936461",
+    "tools/portable-preview-browser.py": "d0e4c730d6d516a7dc37b4ce4fa1666d3d1b8fc2fde19e3af22ba9de3b9cdd8c",
+    "tests/test_portable_preview.py": "a085b38c691998c870917fc55d0db9a3a1ec7d0703809d7a3cf49a47efaf9cb2"
+  }
+}

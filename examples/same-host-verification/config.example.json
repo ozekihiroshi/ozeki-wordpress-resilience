@@ -1,0 +1,14 @@
+{
+  "format": "owr-same-host-verification-v1",
+  "workspace": "/var/lib/owr/verification-work",
+  "production_paths": ["/var/www/wordpress", "/var/lib/mysql"],
+  "container_id": "REPLACE_WITH_FULL_STOPPED_CONTAINER_ID",
+  "image_id": "REPLACE_WITH_LOCAL_SHA256_IMAGE_ID",
+  "memory_bytes": 268435456,
+  "nano_cpus": 500000000,
+  "pids_limit": 32,
+  "tmpfs_bytes": 33554432,
+  "required_workspace_bytes": 1073741824,
+  "reserve_disk_bytes": 2147483648,
+  "reserve_memory_bytes": 536870912
+}

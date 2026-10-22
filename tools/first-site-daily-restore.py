@@ -81,7 +81,11 @@ def recover(trust, destination, set_id, config_hash, document_hash, key_hash,
 
 
 def run(*args, input=None, timeout=120, must=True):
-    p = subprocess.run(args, input=input, capture_output=True, timeout=timeout)
+    env = None
+    if args and args[0] == 'docker':
+        args = ('/usr/bin/docker', '--host', 'unix:///var/run/docker.sock', *args[1:])
+        env = {k: v for k, v in os.environ.items() if not k.startswith('DOCKER_')}
+    p = subprocess.run(args, input=input, capture_output=True, timeout=timeout, env=env)
     if must and p.returncode:
         # Do not expose dump contents, environment values or command output.
         raise RuntimeError('isolated recovery command failed: '+args[0])
@@ -96,12 +100,16 @@ def restore_offline(target, inventory, workspace):
     ownership_token = secrets.token_hex(16)
     d.io.write_json(workspace/'ownership.json',dict(token=ownership_token,containers=[db,web]))
     images = dict(x.split('=',1) for x in (ROOT/'lab/m1/images.env').read_text().splitlines() if '=' in x)
+    runtime = load('same_host_runtime', 'same-host-runtime.py')
     created = []
     outcome = dict(passed=False, resources_removed=False, containers=[db,web])
     d.io.write_json(workspace/'isolation.json', outcome)
     def wait(args):
         deadline=time.monotonic()+90
         while run(*args, must=False).returncode:
+            if len(args)>2 and args[:2]==['docker','exec']:
+                state=json.loads(run('docker','inspect',args[2]).stdout)[0]['State']
+                g.check(state['Running'] is True, 'isolated target exited during startup')
             g.check(time.monotonic()<deadline, 'isolated target startup timeout')
             time.sleep(1)
     try:
@@ -110,21 +118,26 @@ def restore_offline(target, inventory, workspace):
             env.write_text(f'MARIADB_ROOT_PASSWORD={password}\nMARIADB_DATABASE=lab\nMARIADB_USER=lab\nMARIADB_PASSWORD={password}\nWORDPRESS_DB_HOST=127.0.0.1:3306\nWORDPRESS_DB_NAME=lab\nWORDPRESS_DB_USER=lab\nWORDPRESS_DB_PASSWORD={password}\nWORDPRESS_CONFIG_EXTRA=define("DISABLE_WP_CRON",true); define("WP_HTTP_BLOCK_EXTERNAL",true); define("DISALLOW_FILE_MODS",true);\n')
             env.chmod(0o600)
             # Record intended names before creating resources, including timeout/unknown outcomes.
+            db_image = json.loads(run('docker','image','inspect',images['OWR_DB_IMAGE']).stdout)[0]['Id']
+            web_image = json.loads(run('docker','image','inspect',images['OWR_WP_IMAGE']).stdout)[0]['Id']
             created.append(db)
-            run('docker','run','-d','--name',db,'--label','owr.daily-restore=generated','--label','owr.recovery-token='+ownership_token,
-                '--network','none','--memory','512m','--env-file',str(env),images['OWR_DB_IMAGE'])
-            wait(['docker','exec',db,'healthcheck.sh','--connect','--innodb_initialized'])
-            run('docker','exec','-i',db,'sh','-c','MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot lab',
-                input=(target/g.NAMES['database']).read_bytes())
+            db_id = run(*runtime.create_args('db', db, db_image, ownership_token, env)).stdout.decode().strip()
             created.append(web)
-            run('docker','run','-d','--name',web,'--label','owr.daily-restore=generated','--label','owr.recovery-token='+ownership_token,
-                '--network','container:'+db,'--memory','512m','--env-file',str(env),images['OWR_WP_IMAGE'])
-            wait(['docker','exec',web,'test','-f','/var/www/html/wp-config.php'])
-            inspect = json.loads(run('docker','inspect',db,web).stdout)
-            g.check(inspect[0]['HostConfig']['NetworkMode']=='none'
-                    and inspect[1]['HostConfig']['NetworkMode']=='container:'+inspect[0]['Id']
-                    and all(not e['HostConfig']['PortBindings'] and not e['HostConfig']['Binds'] for e in inspect),
-                    'target isolation not verified')
+            web_id = run(*runtime.create_args('web', web, web_image, ownership_token, env, db_id)).stdout.decode().strip()
+            config = dict(format=runtime.FORMAT, workspace=str(workspace), production_paths=[],
+                          token=ownership_token, db_id=db_id, web_id=web_id,
+                          db_image=db_image, web_image=web_image)
+            d.io.write_json(workspace/'runtime-config.json', config)
+            outcome['preflight'] = runtime.require(config, 'prepared')
+            d.io.write_json(workspace/'isolation.json', outcome)
+            run('docker','start',db_id)
+            wait(['docker','exec',db_id,'healthcheck.sh','--connect','--innodb_initialized'])
+            outcome['before_database'] = runtime.require(config, 'db_started')
+            run('docker','exec','-i',db_id,'sh','-c','MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot lab',
+                input=(target/g.NAMES['database']).read_bytes())
+            run('docker','start',web_id)
+            wait(['docker','exec',web_id,'test','-f','/var/www/html/wp-config.php'])
+            outcome['before_files'] = runtime.require(config, 'running')
             run('docker','exec','-i',web,'tar','xzf','-','-C','/var/www/html','--no-same-owner',
                 input=(target/g.NAMES['files']).read_bytes())
             run('docker','exec',web,'chown','-R','www-data:www-data','/var/www/html')
@@ -145,6 +158,10 @@ echo json_encode(['post'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->post
             outcome.update(passed=True, network='none + shared private namespace', published_ports=False,
                            source_mounts=False, fresh_database_credentials=True,
                            wordpress=value, http=http)
+    except Exception as exc:
+        outcome["error_type"] = type(exc).__name__
+        if hasattr(exc, "assessment"): outcome["blocked_preflight"] = exc.assessment
+        raise
     finally:
         for name in reversed(created):
             found = run('docker','inspect',name,must=False)
