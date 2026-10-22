@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "aa0b44b08085bf78eaf0454ef14f7b53dce21c277900394d9348c128338dc5ed",
+      "bytes": 15670316
+    }
+  ],
+  "packaged_tests": [
+    "tests/test_distribution.py",
+    "tests/test_core_distribution.py",
+    "tests/test-rbr-wordpress-save-input.php",
+    "tests/test-rbr-generation.php"
+  ],
+  "external_files_preserved": 10,
+  "external_hashes": {
+    "retrieval-history.json": "5dd9b110ecc33d779f9ddae3adf28388591af8a6d1ea114b846a4dd28b7e9096",
+    "approval.sig": "ab1ad2c863f4b4fb390c79484d9cb320266e190c3c60ea1033f269a04c0fc65c",
+    "approval-verification.json": "8bcfddd27db5897f4d6ba43807796476627e2c06337f75e74ebb56d366d1fa26",
+    "reconstruction-history.json": "93df050c1540407ff9f05507a8832a5896cde3143be3e7f499772fc0c90cc04a",
+    "receipt.json": "1f621f437fb0e3045630b4dc7160ee852fd9367e7c6b3f12a54c57461a774ae1",
+    "registry.json": "ca0723e938ca09490e1c8e5eefe937d5b967c1dc783f652122f431732daff2f8",
+    "approval.json": "87265867351a745ede82a41b10c3edad143120b94f5415c5e400684035a15b66",
+    "configuration.json": "4d020051832da7be32d211589b091f56988adc9babe1b34a4963786372722a21",
+    "trust/public.pem": "90c98d98400f204b68e7a4c02f0aaa11e09ad1badd090dd4bc44238c282a16d2",
+    "trust/pin.json": "96324a23d5fd4e65e0d8e560606d08988cdb321bdab1366c695bd55211ecc455"
+  },
+  "wordpress": {
+    "passed": true,
+    "checks": [
+      "anonymous editor requires login",
+      "normal page edit opens protected editor",
+      "resume button hidden when editable",
+      "initial paragraph from enrolled public page",
+      "typing does not update public content",
+      "storage failure leaves public text unchanged",
+      "failed request locks content for exact retry",
+      "resume button visible only for unresolved request",
+      "different pending operation shows conflict",
+      "reload retrieves frozen operation from server",
+      "resume applies exactly one generation",
+      "other two pages retained",
+      "text escaped in projection",
+      "resume button hidden after completion",
+      "stale editor rejected without overwrite",
+      "S3 committed but not projected state visible",
+      "interrupted HTTP save resumes same fixed generation",
+      "invalid input stays editable without creating a generation",
+      "lost successful save response reconciles as applied not conflict",
+      "state-refresh failure never displays false completion",
+      "editor status GET requires nonce",
+      "classic form POST bypass blocked",
+      "unrelated page retains normal editor",
+      "subscriber has no protected form"
+    ],
+    "commits": 5,
+    "containers_removed": true,
+    "scope": "Real Chromium editor + WordPress HTTP + MariaDB; persistent S3 double for controlled faults",
+    "lifecycle_checks": [
+      "fresh final plugin ZIP installs and activates",
+      "fresh installed files match final ZIP",
+      "network isolated and no published ports",
+      "pending committed save created before update",
+      "deactivate preserves pages, pending journal and completed history",
+      "activate preserves pages, pending journal and completed history",
+      "upgrade preserves settings and cron",
+      "upgrade preserves external assets and configuration",
+      "upgraded plugin remains active",
+      "upgraded files match final ZIP",
+      "kit redeployment preserves pending state",
+      "pending request resumes after ZIP update without new generation"
+    ],
+    "external_files_preserved": 53,
+    "schema_migration_tested": false,
+    "plugin_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_plugin_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb"
+  },
+  "S3_calls": 0,
+  "signature_renewal": false,
+  "schema_migration_tested": false,
+  "production_changed": false,
+  "published": false,
+  "format": "owr-protected-editor-zip-v1",
+  "version": "0.1.0-dev.1",
+  "prototype": true,
+  "distribution": "dist/candidate-20261023-save-editor-final-v4",
+  "browser_checks": 24,
+  "lifecycle_checks": 12,
+  "mock_committed_generations": 6,
+  "live_s3_evidence": "rbr-wordpress-editor-s3.json",
+  "notes": [
+    "Administration plugin ZIP unchanged from PR #12; same-version overwrite tested, not a schema migration",
+    "Fresh final plugin activation and exact installed files verified; opt-in editor from development kit",
+    "Pending sixth generation resumes after update without new generation; earlier five applied generations retained",
+    "Initial lifecycle test stopped on browser-owned control fixture; subsequent attempt stopped on host reading WordPress-private originals. Fixed test harness without loosening original permissions. Prior failed evidence retained.",
+    "Selenium Grid startup root cause remains unresolved; matching ChromeDriver direct launch used",
+    "Evidence recorded after ZIP freeze; no retrospective modification of tested archives"
+  ]
+}

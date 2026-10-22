@@ -67,3 +67,9 @@ See [contract and boundaries](../spec/rbr-generation-kit.md). The selected fixed
 Real S3 coordinator connection verified: scoped discovery, explicit new-version retention, concurrent commit/resume, unchanged generation reference into independent signed reconstruction, two private WordPress results matching Q. Evidence: `evidence-public/rbr-live-coordinator.json`; prototype CLI only. No production authoring hook or generic connector, no release or observation restart.
 
 Final real-S3 coordinator ZIP lifecycle acceptance: PASS; see [results](rbr-coordinator-zip-results.md). CLI prototype, no production publication; shortened observation remains unchanged.
+
+After PR #12: opt-in three-page save API and atomic source-WordPress projection implemented on codex/wordpress-protected-save. 25 dedicated HTTP/DB cases plus 9 input and 21 coordinator contracts pass. S3 is a contract double in this new integration test; real-AWS and normal editor/upload entry remain unverified. See docs/spec/rbr-wordpress-save.md and evidence-public/rbr-wordpress-save.json. No production activation or approval changes.
+
+Follow-up: the same save API passed 25 checks against actual experimental S3 and private HTTP WordPress. No product runtime changes; the scoped test transport is new. See evidence-public/rbr-wordpress-save-s3.json. The preceding mock-only statement describes the earlier trial. Editor/upload entry integration remains incomplete.
+
+Opt-in three-page editor now connects Edit links to the existing save API with durable frozen input and stored checkpoint. See docs/spec/rbr-wordpress-editor.md and evidence-public/rbr-wordpress-editor.json. Real browser + S3 double, not live S3 in this trial. Generic editing/upload integration and automatic migration remain incomplete.
