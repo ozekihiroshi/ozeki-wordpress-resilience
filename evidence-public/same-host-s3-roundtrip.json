@@ -1,0 +1,174 @@
+{
+  "format": "owr-same-host-real-s3-roundtrip-v1",
+  "recorded_at": "2026-10-22T05:39:47.097832+00:00",
+  "results": [
+    {
+      "name": "real_ssh_pinned_source_inventory",
+      "passed": true,
+      "readonly_site": true,
+      "select_only": true,
+      "wrong_host_key_rejected": true
+    },
+    {
+      "name": "daily_initial_failure_no_capture_no_put_no_retry",
+      "passed": true
+    },
+    {
+      "name": "daily_late_failure_no_fence_no_put",
+      "passed": true
+    },
+    {
+      "name": "real_capture_daily_s3_storage_pending_approval",
+      "passed": true,
+      "puts": 2
+    },
+    {
+      "name": "daily_duplicate_no_capture_no_put",
+      "passed": true
+    },
+    {
+      "name": "unsigned_admitted_set_no_recovery_or_read",
+      "passed": true
+    },
+    {
+      "name": "separate_signature_approval_and_invalid_signature_rejection",
+      "passed": true
+    },
+    {
+      "name": "admitted_capture_signed_fixed_version_real_isolated_restore_registered",
+      "passed": true,
+      "transport": "real S3 fixed Version IDs and retention; EC2 role authorization over SSH",
+      "capture_workspace_available": false
+    },
+    {
+      "name": "duplicate_recovery_no_get_put_or_restore",
+      "passed": true
+    }
+  ],
+  "images": {
+    "OWR_WP_IMAGE": "sha256:2224a8cd4ce71985515424619108e5bb9bf65366ac359bac570bd0a7dc9cb6c9",
+    "OWR_DB_IMAGE": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "OWR_PROXY_IMAGE": "sha256:da954fb959a34e2195e6bf622e6396bf338f99e0fe6d8e641b302d9aaa1f0645"
+  },
+  "all_passed": true,
+  "resources_removed": true,
+  "scope": "Generated data: existing SSH inventory and experimental S3 fixed versions/retention -> unchanged test signature/current-registry gates -> shared pair preparation/inspection/restore -> daily registration/cleanup; no production changes",
+  "bucket": "ceri-link-resilience-lock-lab-121426368082",
+  "region": "ap-northeast-1",
+  "set_id": "AWS-cbf08bb1ebecf84d",
+  "assets": [
+    {
+      "role": "database",
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-cbf08bb1ebecf84d/database.sql",
+        "region": "ap-northeast-1",
+        "sha256": "06004aea9d12a51f4c30ea3c01ae31e0c645c66d56e91086d49ea24362924bae",
+        "size_bytes": 92848,
+        "version_id": "0fF9WHYCL_Q2le3TIfmZxCimM8m.Wa.W",
+        "writer_identity": "my-ssm-role"
+      },
+      "retention": {
+        "last_modified": "2026-10-22T05:38:19+00:00",
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T05:48:18Z"
+      }
+    },
+    {
+      "role": "files",
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-cbf08bb1ebecf84d/wordpress-files.tar.gz",
+        "region": "ap-northeast-1",
+        "sha256": "6d515aee0fe5b65125837049e525e85db6246992d2b5920a88d9b38e180f1138",
+        "size_bytes": 29718636,
+        "version_id": "x6U5keEv0p1DG7lDI5hkZaAVrc0sOFQb",
+        "writer_identity": "my-ssm-role"
+      },
+      "retention": {
+        "last_modified": "2026-10-22T05:38:24+00:00",
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T05:48:22Z"
+      }
+    }
+  ],
+  "aws_puts": 2,
+  "aws_fixed_gets": 6,
+  "uncertain_puts": 0,
+  "stored_bytes": 29811484,
+  "final_phase": "restore_verified",
+  "registration": "recorded",
+  "approval_conditions_changed": false,
+  "isolated_restore": {
+    "before_database": {
+      "approval_changed": false,
+      "contract": "owr-same-host-wordpress-pair-v1",
+      "format": "owr-same-host-pair-assessment-v1",
+      "independent_verification": false,
+      "issues": [],
+      "phase": "db_started",
+      "state": "eligible_for_dedicated_trial"
+    },
+    "before_files": {
+      "approval_changed": false,
+      "contract": "owr-same-host-wordpress-pair-v1",
+      "format": "owr-same-host-pair-assessment-v1",
+      "independent_verification": false,
+      "issues": [],
+      "phase": "running",
+      "state": "eligible_for_dedicated_trial"
+    },
+    "containers": [
+      "owr-daily-restore-e3d80a9459d2-db",
+      "owr-daily-restore-e3d80a9459d2-web"
+    ],
+    "fresh_database_credentials": true,
+    "http": {
+      "post": true,
+      "status": 200
+    },
+    "network": "none + shared private namespace",
+    "passed": true,
+    "preflight": {
+      "approval_changed": false,
+      "contract": "owr-same-host-wordpress-pair-v1",
+      "format": "owr-same-host-pair-assessment-v1",
+      "independent_verification": false,
+      "issues": [],
+      "phase": "prepared",
+      "state": "eligible_for_dedicated_trial"
+    },
+    "published_ports": false,
+    "resources_removed": true,
+    "source_mounts": false,
+    "wordpress": {
+      "attachment": "one.png",
+      "cron_disabled": true,
+      "http_blocked": true,
+      "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+      "post": 1
+    }
+  },
+  "source_workspace_available": false,
+  "hashes": {
+    "same-host-runtime.py": "761d9218cbf359a7cab77ba7cd8d65f36dd0b74df82646634442896de553ed8e",
+    "same-host-preflight.py": "f2df85c6c8608d2a77df72e8120c8e71b9f429e5316d6d17bc418ecec3690bf1",
+    "first-site-daily-restore.py": "c83e9c4bc3490c869b7a5da83340dbaa2b06de0a2be5cce8fcae24e21efb84d3",
+    "queue-s3-adapter.py": "447ed6f7c3ce59539a9eba8466fe30feeddf92f5d96e119e8afd9503a1c55a9d",
+    "lab-s3-request.py": "b796e39b6c96a10bd9ad0e69158d653db84437503b0a8adeb9ecfdf1384e3694",
+    "same-host-roundtrip-cases.py": "84a9b3fd405b58b1ae91cd1f945ae1aba29acb753329e296cac78cd986f4ea04",
+    "same-host-s3-roundtrip-cases.py": "1b74450c4a9acb445f9c5367b0c51d4e1d4323ffb0e0a5fa09cdf43e5bee3e72"
+  },
+  "classification": {
+    "environment": "No new failure observed in this run",
+    "test_infrastructure": "Dedicated harness reuses existing SSH/S3 integration; private root trust fixture; no approval bypass",
+    "plugin": "No new runtime change required for real S3 integration"
+  },
+  "limits": [
+    "Generated-site Docker capture; SSH inventory is not restricted SSH capture",
+    "Same physical host; not independent host verification",
+    "Generated signer/current registry; not production recovery approval",
+    "Object retention is not proof of absence of compromise",
+    "Existing lab objects retained; no delete/IAM/production changes"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "format": "owr-same-host-priority1-evidence-v1",
+  "image_id": "sha256:6277ab668b2ad3c3ab851d370faa1690d324b30db29d342527f61fed28f20f36",
+  "unit_tests_passed": 13,
+  "dedicated_docker_cases_passed": [
+    "read_only_cli_valid_stopped_container",
+    "actual_nonroot_readonly_root_loopback_only_tmpfs",
+    "production_mount",
+    "docker_socket_mount",
+    "external_network",
+    "unbounded_memory",
+    "root_user",
+    "low_memory_injected_observation",
+    "disk_requirement_above_real_free_capacity",
+    "production_fixture_unchanged"
+  ],
+  "cleanup_complete": true,
+  "production_accessed": false,
+  "approval_changed": false,
+  "initial_failure": {
+    "category": "product_checker",
+    "reason": "NetworkMode none did not exclude additional network membership",
+    "fix": "Require NetworkSettings.Networks to contain exactly none",
+    "regression": "unit and real Docker checks passed"
+  },
+  "limits": [
+    "Generated fixtures only; no actual WordPress restore",
+    "Low memory injected; no resource-exhaustion stress test",
+    "Snapshot preflight is not atomic launch authorization",
+    "No independent-host-compromise assurance",
+    "No changes to historical closed observation"
+  ],
+  "regression": {
+    "recurring_capture_review_passed": 16,
+    "current_recovery_trust_skipped": 28,
+    "deployment_preflight_passed": 21,
+    "skip_reason": "requires dedicated root-owned registry lab; not counted as passes"
+  },
+  "recorded_at": "2026-10-22T04:41:46.9777910+00:00"
+}

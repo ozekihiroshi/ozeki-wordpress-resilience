@@ -1,0 +1,54 @@
+{
+  "format": "owr-same-host-runtime-evidence-v1",
+  "date": "2026-10-22",
+  "scope": "Dedicated generated data; local fixed-version substitute, not AWS; no production changes",
+  "approval_conditions_changed": false,
+  "tests": {
+    "preflight_and_runtime": 22,
+    "current_trust": 28,
+    "recovery_worker": 10,
+    "recovery_cleanup": 11,
+    "roundtrip_cases": 8
+  },
+  "roundtrip_report": "/run/owr-pair-roundtrip-20261022-04/result.json",
+  "roundtrip_passed": true,
+  "stages": [
+    "prepared",
+    "db_started",
+    "running"
+  ],
+  "assets_verified": true,
+  "result_registered": true,
+  "resources_removed": true,
+  "source_workspace_available": false,
+  "resolved_failures": [
+    {
+      "category": "runtime contract implementation",
+      "fix": "Normalize prefix and compare exact capability set",
+      "issue": "Docker CAP_ canonical capability names rejected"
+    },
+    {
+      "category": "runtime contract implementation",
+      "fix": "Explicit /run/mysqld tmpfs",
+      "issue": "MariaDB runtime directory missing beneath tmpfs /run"
+    },
+    {
+      "category": "runtime contract implementation",
+      "fix": "Bounded max-file=2",
+      "issue": "Local logging compression rejects max-file=1"
+    }
+  ],
+  "limits": [
+    "Same-host verification is not independent verification",
+    "Generated-site content assertions and lab sizing remain",
+    "No malware-cleanliness or production-recovery approval claim",
+    "Host resource checks are snapshots, not reservations"
+  ],
+  "final_pair_smoke": {
+    "prepared_cli": true,
+    "db_started": true,
+    "pair_running": true,
+    "root_writes_denied": true,
+    "loopback_only": true
+  }
+}
