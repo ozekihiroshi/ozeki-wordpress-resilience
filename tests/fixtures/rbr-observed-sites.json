@@ -1,0 +1,307 @@
+{
+  "expected": {
+    "actual_status": "draft",
+    "images": {
+      "logo": {
+        "alt": "",
+        "height": 2,
+        "sha256": "2023d33cdcbc92384e340071f2f3a3ccbbd62712f938b15cf1fe823f93cbca59",
+        "width": 2
+      }
+    },
+    "pages": {
+      "company": {
+        "paragraphs": [
+          "Independent company information."
+        ],
+        "role": "company",
+        "slug": "company",
+        "title": "Example Company"
+      },
+      "contact": {
+        "paragraphs": [
+          "Email: contact@example.invalid",
+          "Telephone: TEST-0001"
+        ],
+        "role": "contact",
+        "slug": "contact",
+        "title": "Contact"
+      },
+      "services": {
+        "paragraphs": [
+          "Inspection and maintenance."
+        ],
+        "role": "services",
+        "slug": "services",
+        "title": "Services"
+      }
+    },
+    "relations": [
+      {
+        "from": "company",
+        "position": 0,
+        "to": "logo",
+        "type": "image"
+      },
+      {
+        "from": "company",
+        "position": 1,
+        "to": "services",
+        "type": "link"
+      },
+      {
+        "from": "services",
+        "position": 0,
+        "to": "contact",
+        "type": "navigation"
+      }
+    ],
+    "schema": "owr-rbr-expected-v1",
+    "scope": {
+      "business_expectations": {
+        "company": [
+          "Independent company information."
+        ],
+        "contact": [
+          "contact@example.invalid",
+          "TEST-0001"
+        ],
+        "services": [
+          "Inspection and maintenance."
+        ]
+      },
+      "images": [
+        "logo"
+      ],
+      "roles": [
+        "company",
+        "services",
+        "contact"
+      ]
+    }
+  },
+  "runs": [
+    {
+      "observation": {
+        "active_plugins": [],
+        "attempt_trace": [],
+        "bootstrap_blocked_attempts": 3,
+        "cron_disabled": true,
+        "landing": "company",
+        "map": {
+          "company": 101,
+          "contact": 103,
+          "logo": 100,
+          "services": 102
+        },
+        "navigation": [
+          {
+            "label": "Example Company",
+            "target_asset_id": "company"
+          },
+          {
+            "label": "Services",
+            "target_asset_id": "services"
+          },
+          {
+            "label": "Contact",
+            "target_asset_id": "contact"
+          }
+        ],
+        "roles": {
+          "company": "company",
+          "contact": "contact",
+          "services": "services"
+        },
+        "rows": [
+          {
+            "alt": "",
+            "asset_id": "logo",
+            "body": "",
+            "caption": "",
+            "height": 2,
+            "id": 100,
+            "mime": "image/png",
+            "parent": 0,
+            "role": "",
+            "sha256": "2023d33cdcbc92384e340071f2f3a3ccbbd62712f938b15cf1fe823f93cbca59",
+            "slug": "logo",
+            "status": "inherit",
+            "title": "logo",
+            "type": "attachment",
+            "url": "http://owr-rbr-ecb46452a9-wp/wp-content/uploads/2026/10/logo.png",
+            "width": 2
+          },
+          {
+            "asset_id": "company",
+            "body": "<img src=\"http://owr-rbr-ecb46452a9-wp/wp-content/uploads/2026/10/logo.png\" alt=\"\"><p>Independent company information.</p><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=102\">Services</a><nav class=\"related\"></nav>",
+            "caption": "",
+            "id": 101,
+            "parent": 0,
+            "role": "company",
+            "slug": "company",
+            "status": "draft",
+            "title": "Example Company",
+            "type": "page"
+          },
+          {
+            "asset_id": "services",
+            "body": "<p>Inspection and maintenance.</p><nav class=\"related\"><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=103\">Contact</a></nav>",
+            "caption": "",
+            "id": 102,
+            "parent": 0,
+            "role": "services",
+            "slug": "services",
+            "status": "draft",
+            "title": "Services",
+            "type": "page"
+          },
+          {
+            "asset_id": "contact",
+            "body": "<p>Email: contact@example.invalid</p><p>Telephone: TEST-0001</p><nav class=\"related\"></nav>",
+            "caption": "",
+            "id": 103,
+            "parent": 0,
+            "role": "contact",
+            "slug": "contact",
+            "status": "draft",
+            "title": "Contact",
+            "type": "page"
+          }
+        ],
+        "run_state": "applied",
+        "runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "side_effect_attempts": 0
+      },
+      "html": {
+        "company": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=101\">Example Company</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=102\">Services</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=103\">Contact</a></nav><h1>Example Company</h1><main><img src=\"http://owr-rbr-ecb46452a9-wp/wp-content/uploads/2026/10/logo.png\" alt=\"\"><p>Independent company information.</p><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=102\">Services</a><nav class=\"related\"></nav></main></body></html>",
+        "contact": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=101\">Example Company</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=102\">Services</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=103\">Contact</a></nav><h1>Contact</h1><main><p>Email: contact@example.invalid</p><p>Telephone: TEST-0001</p><nav class=\"related\"></nav></main></body></html>",
+        "services": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=101\">Example Company</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=102\">Services</a><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=103\">Contact</a></nav><h1>Services</h1><main><p>Inspection and maintenance.</p><nav class=\"related\"><a href=\"http://owr-rbr-ecb46452a9-wp/?page_id=103\">Contact</a></nav></main></body></html>"
+      },
+      "origin": "http://owr-rbr-ecb46452a9-wp",
+      "media": {
+        "logo": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAC0lEQVQImWNgQAYAAA4AAbGa6gYAAAAASUVORK5CYII="
+      }
+    },
+    {
+      "observation": {
+        "active_plugins": [],
+        "attempt_trace": [],
+        "bootstrap_blocked_attempts": 3,
+        "cron_disabled": true,
+        "landing": "company",
+        "map": {
+          "company": 201,
+          "contact": 203,
+          "logo": 200,
+          "services": 202
+        },
+        "navigation": [
+          {
+            "label": "Example Company",
+            "target_asset_id": "company"
+          },
+          {
+            "label": "Services",
+            "target_asset_id": "services"
+          },
+          {
+            "label": "Contact",
+            "target_asset_id": "contact"
+          }
+        ],
+        "roles": {
+          "company": "company",
+          "contact": "contact",
+          "services": "services"
+        },
+        "rows": [
+          {
+            "alt": "",
+            "asset_id": "logo",
+            "body": "",
+            "caption": "",
+            "height": 2,
+            "id": 200,
+            "mime": "image/png",
+            "parent": 0,
+            "role": "",
+            "sha256": "2023d33cdcbc92384e340071f2f3a3ccbbd62712f938b15cf1fe823f93cbca59",
+            "slug": "logo",
+            "status": "inherit",
+            "title": "logo",
+            "type": "attachment",
+            "url": "http://owr-rbr-44874cdd5e-wp/wp-content/uploads/2026/10/logo.png",
+            "width": 2
+          },
+          {
+            "asset_id": "company",
+            "body": "<img src=\"http://owr-rbr-44874cdd5e-wp/wp-content/uploads/2026/10/logo.png\" alt=\"\"><p>Independent company information.</p><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=202\">Services</a><nav class=\"related\"></nav>",
+            "caption": "",
+            "id": 201,
+            "parent": 0,
+            "role": "company",
+            "slug": "company",
+            "status": "draft",
+            "title": "Example Company",
+            "type": "page"
+          },
+          {
+            "asset_id": "services",
+            "body": "<p>Inspection and maintenance.</p><nav class=\"related\"><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=203\">Contact</a></nav>",
+            "caption": "",
+            "id": 202,
+            "parent": 0,
+            "role": "services",
+            "slug": "services",
+            "status": "draft",
+            "title": "Services",
+            "type": "page"
+          },
+          {
+            "asset_id": "contact",
+            "body": "<p>Email: contact@example.invalid</p><p>Telephone: TEST-0001</p><nav class=\"related\"></nav>",
+            "caption": "",
+            "id": 203,
+            "parent": 0,
+            "role": "contact",
+            "slug": "contact",
+            "status": "draft",
+            "title": "Contact",
+            "type": "page"
+          }
+        ],
+        "run_state": "applied",
+        "runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "side_effect_attempts": 0
+      },
+      "html": {
+        "company": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=201\">Example Company</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=202\">Services</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=203\">Contact</a></nav><h1>Example Company</h1><main><img src=\"http://owr-rbr-44874cdd5e-wp/wp-content/uploads/2026/10/logo.png\" alt=\"\"><p>Independent company information.</p><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=202\">Services</a><nav class=\"related\"></nav></main></body></html>",
+        "contact": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=201\">Example Company</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=202\">Services</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=203\">Contact</a></nav><h1>Contact</h1><main><p>Email: contact@example.invalid</p><p>Telephone: TEST-0001</p><nav class=\"related\"></nav></main></body></html>",
+        "services": "<!doctype html><html><head><style>p {white-space:pre-wrap;}</style></head><body><nav id=\"global\"><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=201\">Example Company</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=202\">Services</a><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=203\">Contact</a></nav><h1>Services</h1><main><p>Inspection and maintenance.</p><nav class=\"related\"><a href=\"http://owr-rbr-44874cdd5e-wp/?page_id=203\">Contact</a></nav></main></body></html>"
+      },
+      "origin": "http://owr-rbr-44874cdd5e-wp",
+      "media": {
+        "logo": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAC0lEQVQImWNgQAYAAA4AAbGa6gYAAAAASUVORK5CYII="
+      }
+    }
+  ]
+}

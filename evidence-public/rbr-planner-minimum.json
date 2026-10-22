@@ -1,0 +1,176 @@
+{
+  "kind": "rbr_planner_offline_tests",
+  "checked_at": "2026-10-22T09:34:00+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "name": "existing generation and pinned closure produce bounded plan without WP",
+      "passed": true
+    },
+    {
+      "name": "repeat and independent planner same input yield byte-identical plans",
+      "passed": true
+    },
+    {
+      "name": "source input files absent after storage still plans",
+      "passed": true
+    },
+    {
+      "name": "cache order and unrelated cache objects cannot alter plan",
+      "passed": true
+    },
+    {
+      "name": "missing and changed pinned bytes rejected",
+      "passed": true
+    },
+    {
+      "name": "null version and foreign site rejected",
+      "passed": true
+    },
+    {
+      "name": "unknown schema and fields rejected",
+      "passed": true
+    },
+    {
+      "name": "duplicate JSON keys cannot be silently accepted",
+      "passed": true
+    },
+    {
+      "name": "unbound environment package and latest alias rejected",
+      "passed": true
+    },
+    {
+      "name": "loaded engine identity must match E",
+      "passed": true
+    },
+    {
+      "name": "missing role and duplicate slug rejected",
+      "passed": true
+    },
+    {
+      "name": "unresolved and out-of-range relations rejected",
+      "passed": true
+    },
+    {
+      "name": "duplicate edge and navigation position rejected",
+      "passed": true
+    },
+    {
+      "name": "informative image and missing image declaration not guessed",
+      "passed": true
+    },
+    {
+      "name": "missing image declaration and weakened containment rejected",
+      "passed": true
+    },
+    {
+      "name": "required contact values cannot silently disappear",
+      "passed": true
+    },
+    {
+      "name": "expected output is bound but never copied into generated operations",
+      "passed": true
+    },
+    {
+      "name": "C and Q dependencies must exist and cover scope",
+      "passed": true
+    },
+    {
+      "name": "source format extensions rejected rather than silently dropped",
+      "passed": true
+    },
+    {
+      "name": "offline CLI in two fresh PHP processes produces identical P; cannot overwrite",
+      "passed": true
+    }
+  ],
+  "wp_invocations": 0,
+  "network_requests": 0,
+  "runtime_compatibility_verified": false,
+  "logical_site_comparison_executed": false,
+  "environment_artifacts": "synthetic non-executable placeholders except loaded planner source bundle",
+  "source_sha256": {
+    "src/RbrReconstructionPlanner.php": "d35f4d96d566660ac7d975f3aa51e2c4f586f0323db2e019a67eb2bff4aec600",
+    "src/RbrGenerationCoordinator.php": "cd616d3e8f82d98946e0f1af4086ae572c83d7c14c8089655c1663c528a1689a",
+    "tools/rbr-plan.php": "06cdf383d33755ba976fd1607f453ce27d6f86e7682c6069b197396784e551d5",
+    "tools/rbr-planner-build.php": "5afe9cb836e9df7bef1e9a8ca075df30b8b3c82da7333b68c67859cadf255d7d",
+    "tools/rbr-create-plan-fixture.php": "95e4533cbcad86550d39ad716bb5259da5ddd21dd6c7c20d5c3507b80dd9acb8",
+    "tests/test-rbr-planner.php": "5c1e0d1ce018cba3077d173df6a63c55a7bfd2a939fedbfe073a52cc9f911a42",
+    "tests/support/RbrPlannerFixture.php": "8040dd4277b478a282b1155f336489e8f258484ee9600bba3a150b09dbfe3509"
+  },
+  "regression_runs": [
+    {
+      "test": "test-backup-core.php",
+      "passed": true
+    },
+    {
+      "test": "test-rbr-generation.php",
+      "passed": true
+    },
+    {
+      "test": "test-rbr-planner.php",
+      "passed": true
+    },
+    {
+      "test": "test-temporary-role-auth.php",
+      "passed": true
+    },
+    {
+      "test": "test-versioned-transfer.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_transfer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_daily_watchdog_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_observer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_observer_transfer_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_operator_review_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_preflight_watchdog_admin.php",
+      "passed": true
+    },
+    {
+      "test": "test_distribution.py",
+      "passed": true
+    },
+    {
+      "test": "test_core_distribution.py",
+      "passed": true
+    }
+  ],
+  "cli_acceptance": [
+    {
+      "state": "planned",
+      "plan_sha256": "a60b49faa162752950c086cb3b9f414421cc17938f2412a58c1af5f9c96b6f56",
+      "steps": 9,
+      "execution_authorized": false,
+      "environment_mode": "synthetic-plan-only"
+    },
+    {
+      "state": "planned",
+      "plan_sha256": "a60b49faa162752950c086cb3b9f414421cc17938f2412a58c1af5f9c96b6f56",
+      "steps": 9,
+      "execution_authorized": false,
+      "environment_mode": "synthetic-plan-only"
+    }
+  ],
+  "plan_steps": 9
+}

@@ -1,5 +1,8 @@
 # Ozeki WordPress Resilience
 
+> **Target architecture — Immutable Assets, Deterministic Reconstruction:** regenerate business information from immutable assets and pinned rules/environment, without the original database. See the [design principle and logical-equivalence acceptance contract](docs/spec/immutable-assets-deterministic-reconstruction.md). The bounded corporate-site CLI now reconstructs a private WordPress from pinned A/R/E and a signed fixed-version S3 kit; a general production reconstruction engine is not implemented.
+
+
 > **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](docs/releases/shortened-observation-final.md).
 
 English | [日本語](RAADME-jp.md)
@@ -17,7 +20,7 @@ The [initial edition summary](docs/releases/initial-experimental-edition.md) ide
 
 ## Current status
 
-PR #8 is merged (main `71e54a7`). Both CI jobs (PHP 8.1/8.3) passed. The candidate remains `0.1.0-dev.1`, an experimental prototype; no formal release was made. Recurring trust operations and the corrected final-v2 ZIP acceptance are included in the current evidence. Previously tested ZIPs and historical tags remain unchanged.
+The Git baseline is PR #10 (main `f5ebf8c`). This working candidate adds the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. It remains `0.1.0-dev.1`, an experimental prototype, with no formal release or automatic production deployment. Older tested archives remain unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
@@ -105,3 +108,30 @@ Experimental CLI tools are in **owr-development-kit**, not in the WordPress admi
 | Escaped allowlisted body markup and local review pages | Forms, shortcodes, dynamic blocks, builders, custom metadata and active content are not recreated |
 
 Markdown export, general import into a new WordPress, automatic publication, production enrollment and proof that content is uncompromised are not implemented. Losses remain in issues.json and the preview. Existing approval rules are unchanged. Keep packages and generated output outside the code directory; update the kit by extracting into a new directory and explicitly selecting that version. Do not overwrite private material or existing output. Plugin updates use the WordPress ZIP updater; this prototype retains the same development version, so the test covers overwrite and state retention, not a schema migration.
+
+## S3-first reconstruction storage prototype
+
+The following links record successive implementation stages. Their stage-specific limitations do not negate the later private reconstruction and signed-kit results below; production editor integration is still absent. Final frozen ZIP results, including separate environment/test-infrastructure findings, are in [the acceptance report](docs/releases/rbr-signed-kit-zip-results.md).
+
+[Minimum implementation and evidence](docs/spec/rbr-generation-minimum.md): CLI/development-kit PHP components for S3-first originals, conditional site generations, retries and protected-copy renewal. Offline fault/race tests only; live AWS/IAM, WordPress editor/application and reconstruction are not verified or integrated. No production-ready claim.
+
+Planning-only follow-up: [definition validator and deterministic plan generator](docs/spec/rbr-planner-minimum.md). Validates explicit pinned inputs and emits P offline; synthetic environment fixtures do not establish runnable WordPress or reconstructed-site equivalence.
+
+- [Private WordPress reconstruction and logical comparison](docs/spec/rbr-wordpress-reconstruction-minimum.md) — prototype CLI lab; no automatic publication.
+
+- [Fixed-version S3 reconstruction kit](docs/spec/rbr-s3-reconstruction-kit.md) — generated-data cold-cache experiment; private preview only.
+
+- [Independent approval for S3 reconstruction kits](docs/spec/rbr-signed-kit.md) — prototype / 試作
+
+## Signed S3 reconstruction kit: distribution scope
+
+| Artifact | What it provides | What installation does not do |
+| --- | --- | --- |
+| WordPress plugin ZIP | Existing administration/status screens | Does not install or run the reconstruction CLI, enroll a production site, sign approvals or start external services |
+| Development kit ZIP | A/R/E/D/Q planning, bounded private WordPress reconstruction, experimental S3 fixed-version kit and independent approval CLI | Does not contain private keys, credentials, runtime images, recovery data or a production setup wizard |
+
+The supported reconstruction subset is company, services and contact pages with plain text, PNG/JPEG assets and explicit page/link relationships under pinned rules/environment. The approved S3 entry validates the complete fixed root receipt, signature, independently supplied key pin, current generation/revocation registry and expiry before retrieval and before execution. It revalidates downloaded code, assets, image inventory and plan. The unsigned S3 fetch CLI is disabled. Full received kits may be revalidated with `--received`; partially reconstructed WordPress targets are not resumed. Approval is never automatically extended and success never publishes the site.
+
+A technician still provisions Python/PHP/OpenSSL and Composer dependencies (`composer install --no-interaction --prefer-dist` using the shipped lock file), a compatible isolated Docker runtime, S3 reader access, a trusted bootstrap, public-key pins and the independent current registry. The experimental S3 adapter uses the existing dedicated bucket and SSH role brokers; it is not a configurable general S3 connector. Account-separated signing was tested on one dedicated host, not independent physical hosts. Classic Docker image-store/architecture compatibility remains required. Arbitrary themes/plugins/forms, production WordPress save interception and end-to-end production S3-first authoring remain outside this tested subset. A valid signature is approval/integrity evidence, not proof of clean content.
+
+Keep configuration, root receipts, approvals, trust pins, histories and assets outside the code tree. Extract a new development kit into a new directory and explicitly switch versions; do not copy private material into the package. Plugin updates use WordPress's ZIP updater. This same-version candidate verifies overwrite and preservation, not a versioned database migration. See [ZIP acceptance procedure](docs/releases/rbr-signed-kit-zip.md), [signed-kit operation](docs/spec/rbr-signed-kit.md) and [reconstruction comparison contract](docs/spec/immutable-assets-deterministic-reconstruction.md).

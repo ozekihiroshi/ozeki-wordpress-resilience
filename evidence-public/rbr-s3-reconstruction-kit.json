@@ -1,0 +1,1136 @@
+{
+  "state": "PASS",
+  "scope": "generated corporate site, S3 fixed-version complete reconstruction kit, private draft targets only",
+  "bucket": "ceri-link-resilience-lock-lab-121426368082",
+  "root_receipt": {
+    "locator": {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-root.json",
+      "kind": "s3",
+      "region": "ap-northeast-1",
+      "version_id": "tcSuYPknBXaUMODyjYwhnuyzdPDw7IX4"
+    },
+    "sha256": "e1f1c81326ca848c43fb1336fc50221939576290da8d1fdb7b72e7046674855b",
+    "size_bytes": 3910
+  },
+  "stored_objects": 75,
+  "stored_bytes": 412585057,
+  "fixed_get_requests": 75,
+  "unique_fixed_versions_verified": 75,
+  "writer_role": "my-ssm-role",
+  "reader_role": "OwrM1RecoveryReader",
+  "unknown_puts": 0,
+  "retention": "All objects GOVERNANCE, >=35 days from LastModified, unexpired at retrieval; explicit experimental retention headers",
+  "transfer_records": [
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-root.json",
+      "version_id": "tcSuYPknBXaUMODyjYwhnuyzdPDw7IX4",
+      "sha256": "e1f1c81326ca848c43fb1336fc50221939576290da8d1fdb7b72e7046674855b",
+      "bytes": 3910,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:36Z",
+        "last_modified": "2026-10-22T10:20:37+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-84fa2023d58c295ff845365cef5e68a557b905cfe57e16c310b21da790965476.blob",
+      "version_id": "DoyBLDw4UGjAQoIDxdwSc3Skeq7nkv2w",
+      "sha256": "84fa2023d58c295ff845365cef5e68a557b905cfe57e16c310b21da790965476",
+      "bytes": 2284,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:12Z",
+        "last_modified": "2026-10-22T10:20:13+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-69c11a0009f09bc16682650d2d27b465abb54e2c82069bd687adf6df01d164ec.blob",
+      "version_id": ".i_uB008Cy0j8cdl0hVk9SK2FLEH0uAf",
+      "sha256": "69c11a0009f09bc16682650d2d27b465abb54e2c82069bd687adf6df01d164ec",
+      "bytes": 3656,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:42Z",
+        "last_modified": "2026-10-22T10:19:44+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-9ac381f15bb4234ca1fea578c960a5da0495b00c22884afbe9bd448eb8d7acda.blob",
+      "version_id": "QtW28F9mIoDXuZpU2PXyyvuwNtshhzxS",
+      "sha256": "9ac381f15bb4234ca1fea578c960a5da0495b00c22884afbe9bd448eb8d7acda",
+      "bytes": 95,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:29Z",
+        "last_modified": "2026-10-22T10:19:30+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-cd6756d7b1cb29ef828d2cd34691eb7797d5b77a866e5fc8a6d0324ef73f335f.blob",
+      "version_id": "RXHhqz5zxdtlIEui48OlSNgTy6VtclcK",
+      "sha256": "cd6756d7b1cb29ef828d2cd34691eb7797d5b77a866e5fc8a6d0324ef73f335f",
+      "bytes": 84,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:31Z",
+        "last_modified": "2026-10-22T10:19:32+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-5643d56050a180c55d41280af43632eeab5532d9c821e2ebbf16b68359707463.blob",
+      "version_id": "sfpU8kOek8OfVWBM.MRrxAu77N63dqJv",
+      "sha256": "5643d56050a180c55d41280af43632eeab5532d9c821e2ebbf16b68359707463",
+      "bytes": 108,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:33Z",
+        "last_modified": "2026-10-22T10:19:35+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-2023d33cdcbc92384e340071f2f3a3ccbbd62712f938b15cf1fe823f93cbca59.blob",
+      "version_id": "j69pmpRk2VrdNXc4k.Q1F3.pvKdP_TaX",
+      "sha256": "2023d33cdcbc92384e340071f2f3a3ccbbd62712f938b15cf1fe823f93cbca59",
+      "bytes": 89,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:36Z",
+        "last_modified": "2026-10-22T10:19:37+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-c92112d43c8f24d252b48ee23e6e59784ab05aed96ffd091bee34609ef312a21.blob",
+      "version_id": "gGVjKkVHXLeH_WvbBJcsDBga0H.Wm3oE",
+      "sha256": "c92112d43c8f24d252b48ee23e6e59784ab05aed96ffd091bee34609ef312a21",
+      "bytes": 104,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:38Z",
+        "last_modified": "2026-10-22T10:19:39+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-380853475dab6b7820a3fa20678fc0f093526677dede1cb7eda3cd07de0d2e57.blob",
+      "version_id": "Uv9Ad2qQPXJHiME3PBlGcRgHyGl6yju8",
+      "sha256": "380853475dab6b7820a3fa20678fc0f093526677dede1cb7eda3cd07de0d2e57",
+      "bytes": 201,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:40Z",
+        "last_modified": "2026-10-22T10:19:41+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-dbd34409638f6f53c231d55d7745d015d704dbe92f922cf9a445dea2bebb6adf.blob",
+      "version_id": "1Hi0p4689WPpJRJTuaIZ1d7pAm.r43lb",
+      "sha256": "dbd34409638f6f53c231d55d7745d015d704dbe92f922cf9a445dea2bebb6adf",
+      "bytes": 493,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:48Z",
+        "last_modified": "2026-10-22T10:19:49+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-d5f338a452db94519941c1e4d48f221ce6308564a4b9f22c8e17f6dbee436fac.blob",
+      "version_id": "EqNJikHDU3BkXGrcbN2wnIZ6XU09MUod",
+      "sha256": "d5f338a452db94519941c1e4d48f221ce6308564a4b9f22c8e17f6dbee436fac",
+      "bytes": 4775,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:45Z",
+        "last_modified": "2026-10-22T10:19:46+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-3a9d84f156b9728ffb4f27227ae2a016e4896331feb61519ca44b9a028d05513.blob",
+      "version_id": "E21e9Itu0vZ9ix0HjL4B7V1qMMnWQrRx",
+      "sha256": "3a9d84f156b9728ffb4f27227ae2a016e4896331feb61519ca44b9a028d05513",
+      "bytes": 2555,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:58Z",
+        "last_modified": "2026-10-22T10:19:59+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-ff566372f8d2eb51134ce25c7fb13b3f80c3dec6f0df9aa4611e6c23b965888e.blob",
+      "version_id": "B6K17F.Lb8eXO.EAeTcIvBV0MjFT.6yM",
+      "sha256": "ff566372f8d2eb51134ce25c7fb13b3f80c3dec6f0df9aa4611e6c23b965888e",
+      "bytes": 5625,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:50Z",
+        "last_modified": "2026-10-22T10:19:51+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-1badb05027e6afa054e4e4defde4ee01a7e29879d2729a940a45be53dba52334.blob",
+      "version_id": ".6e7xec1Audgv3XMezWWPGWqsw7plnat",
+      "sha256": "1badb05027e6afa054e4e4defde4ee01a7e29879d2729a940a45be53dba52334",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:28:46Z",
+        "last_modified": "2026-10-22T10:18:48+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-88c1acbc71fe2eccaca05eba82d3a842c648fa361e3612304526e2be0536fc36.blob",
+      "version_id": "IKJRhPgCgclKYDBzQDRIyaLgCq8u1eUc",
+      "sha256": "88c1acbc71fe2eccaca05eba82d3a842c648fa361e3612304526e2be0536fc36",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:28:49Z",
+        "last_modified": "2026-10-22T10:18:51+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-bf57159daf6887bf84416def5e5a43f226def0cb96af95bd672be258ffd577ba.blob",
+      "version_id": "pkx1e6Ieb9x9Dobpo9ik7vV95DyNSwva",
+      "sha256": "bf57159daf6887bf84416def5e5a43f226def0cb96af95bd672be258ffd577ba",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:28:52Z",
+        "last_modified": "2026-10-22T10:18:54+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-8792eb9b7e3acaef4734a483e621ca3bba471fae4669884370e971b3628a4772.blob",
+      "version_id": "cu8RInWXwwOnFDCVgwvdTEAQAYUbbrA_",
+      "sha256": "8792eb9b7e3acaef4734a483e621ca3bba471fae4669884370e971b3628a4772",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:28:56Z",
+        "last_modified": "2026-10-22T10:18:57+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-768bb6f29225d3364ac11d19fdd78505d4b3d563161b6330ba5c270f6de4b490.blob",
+      "version_id": "shHMA_3RckbTUYunse_c33AnmDHiqsJC",
+      "sha256": "768bb6f29225d3364ac11d19fdd78505d4b3d563161b6330ba5c270f6de4b490",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:28:58Z",
+        "last_modified": "2026-10-22T10:19:00+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-ff25fb83000d97cdf44304324f78931874f52fcecf5e8e61b04568deb8a88636.blob",
+      "version_id": "9JTAHOJZGRassnmAZ2Td3LQBbpmQ3rIj",
+      "sha256": "ff25fb83000d97cdf44304324f78931874f52fcecf5e8e61b04568deb8a88636",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:02Z",
+        "last_modified": "2026-10-22T10:19:04+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-eefbf34a72ac8190a53a86285fe3c68e51ef456784d6f57bbbff02ed544fdf3d.blob",
+      "version_id": "rRYBqDwQUpi8wVGFVNrv4NKxKe8ZxJ_.",
+      "sha256": "eefbf34a72ac8190a53a86285fe3c68e51ef456784d6f57bbbff02ed544fdf3d",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:05Z",
+        "last_modified": "2026-10-22T10:19:07+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-b27d0edb5527f324496e312d65d8c89a79c31dd808c73bfc10f7e5e6fdca094c.blob",
+      "version_id": "G7HeRAM6GIjQ7vhJyXj0Il8hIbk9S.My",
+      "sha256": "b27d0edb5527f324496e312d65d8c89a79c31dd808c73bfc10f7e5e6fdca094c",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:08Z",
+        "last_modified": "2026-10-22T10:19:10+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-cc62db7d4d872f26a3fe876af806f09438c2d9469a305a90a77ee066311cd002.blob",
+      "version_id": "IFxHlx0rFthh1j0Fzh1z2Jn2GzwyIu5k",
+      "sha256": "cc62db7d4d872f26a3fe876af806f09438c2d9469a305a90a77ee066311cd002",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:11Z",
+        "last_modified": "2026-10-22T10:19:13+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-70dd5e00129b8dfff6cfa8dc4b925d0a3adccbe7f398dda8d687caccb62a6f97.blob",
+      "version_id": "M6UNaS0hGogac1NbwHoL7ojOTRDJ7tCA",
+      "sha256": "70dd5e00129b8dfff6cfa8dc4b925d0a3adccbe7f398dda8d687caccb62a6f97",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:14Z",
+        "last_modified": "2026-10-22T10:19:16+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-e1a0d245ddf4eecea956e40b1595eb2b3931acd728bfab944c84dd0881865892.blob",
+      "version_id": "Igk132mPoeebhZ0YyUltprtDAhEM8Bgw",
+      "sha256": "e1a0d245ddf4eecea956e40b1595eb2b3931acd728bfab944c84dd0881865892",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:17Z",
+        "last_modified": "2026-10-22T10:19:19+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-862945e8dea46c62d9573a9bd582b0ea737fe333a506454e4ef82d53aa7d73bd.blob",
+      "version_id": "K9NJJLfv7f6MHrEC6_BvlvQM0RmEe6W6",
+      "sha256": "862945e8dea46c62d9573a9bd582b0ea737fe333a506454e4ef82d53aa7d73bd",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:20Z",
+        "last_modified": "2026-10-22T10:19:22+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-f92ea6e6c637d7291112902b6b3212e5eb870b8195f54fdc8e083cc12d6cc274.blob",
+      "version_id": "OiLIFKSu_A.AV6a1iOjtoDsqVBK5fCmo",
+      "sha256": "f92ea6e6c637d7291112902b6b3212e5eb870b8195f54fdc8e083cc12d6cc274",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:24Z",
+        "last_modified": "2026-10-22T10:19:26+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-d9834fbeb25f63d00315d5473364c3d2d6019cd01437c1a114e6f4795d2aeed4.blob",
+      "version_id": "D659sIHERwe65g9qlhf6e7CjOcI4SuyH",
+      "sha256": "d9834fbeb25f63d00315d5473364c3d2d6019cd01437c1a114e6f4795d2aeed4",
+      "bytes": 5418304,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:27Z",
+        "last_modified": "2026-10-22T10:19:28+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-3c57085e3bea90ae3196dd43d2114ed5518ad1bf05f77f84844691cd878f7ffb.blob",
+      "version_id": "Uh_KixE4uJK5g1mhsM6Czq9RokrRBOCj",
+      "sha256": "3c57085e3bea90ae3196dd43d2114ed5518ad1bf05f77f84844691cd878f7ffb",
+      "bytes": 74610,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:52Z",
+        "last_modified": "2026-10-22T10:19:53+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-cd371b83a6db10552a233cebcbe587b39a977bcee56bb7343e5f3a56c0db84d3.blob",
+      "version_id": "9QA6SeX26ZYQo0FWKVlviTTdqmO3jhfn",
+      "sha256": "cd371b83a6db10552a233cebcbe587b39a977bcee56bb7343e5f3a56c0db84d3",
+      "bytes": 14073,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:54Z",
+        "last_modified": "2026-10-22T10:19:55+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-3bc031d87e057c1e4d57f802b341d94875dc86abdc6bdaf4b12df5766aecb88a.blob",
+      "version_id": "ivNjgk.OSZN6diF8ToRfIcJt4LSXxZ8d",
+      "sha256": "3bc031d87e057c1e4d57f802b341d94875dc86abdc6bdaf4b12df5766aecb88a",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:13Z",
+        "last_modified": "2026-10-22T10:15:23+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-7b6dec66c4b7b46002566ae079b1c3c8cc4e2310fdbf9bed4b86537f294059cb.blob",
+      "version_id": "y0CrZXHXndOgmQ2mdZZdmPcQHcVgnVrH",
+      "sha256": "7b6dec66c4b7b46002566ae079b1c3c8cc4e2310fdbf9bed4b86537f294059cb",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:25Z",
+        "last_modified": "2026-10-22T10:15:26+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-4979a85804249b6ba451b4e0b30b2c6936b77b36828ae87dfd6a654426903a77.blob",
+      "version_id": "xfzPfX.hyR2K5SyZObSQh3V5xe0RjCPi",
+      "sha256": "4979a85804249b6ba451b4e0b30b2c6936b77b36828ae87dfd6a654426903a77",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:28Z",
+        "last_modified": "2026-10-22T10:15:30+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-9da4affad419b0426e2d75a3fc9345e78573f600b58893c73cba6fd78675c52a.blob",
+      "version_id": "E_U.MdrcWUwtDbNIaNRrN0vKxs0VWenu",
+      "sha256": "9da4affad419b0426e2d75a3fc9345e78573f600b58893c73cba6fd78675c52a",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:31Z",
+        "last_modified": "2026-10-22T10:15:33+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-cd619dc1046b49ee9dd652c054550c3547897114e271083585e87d70558ce4d8.blob",
+      "version_id": "4ilfDq0wrYtkLI2DINjJlc_p6APafLgp",
+      "sha256": "cd619dc1046b49ee9dd652c054550c3547897114e271083585e87d70558ce4d8",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:34Z",
+        "last_modified": "2026-10-22T10:15:36+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-4ec47cca8e963bdc86c0dcda44ae16e10cec3029cfe57b9a178ca82579d251fb.blob",
+      "version_id": "uzC6ISOpzOWMhY_BBWolNIQsCXZXJrNt",
+      "sha256": "4ec47cca8e963bdc86c0dcda44ae16e10cec3029cfe57b9a178ca82579d251fb",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:37Z",
+        "last_modified": "2026-10-22T10:15:39+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-f790187b8ccbc43367886937e361eca8ffb1c4f195b475cf34ea84b94cdf4cb4.blob",
+      "version_id": "ekh5EG99bZ28yk6f45LbXMRRZU00EAmY",
+      "sha256": "f790187b8ccbc43367886937e361eca8ffb1c4f195b475cf34ea84b94cdf4cb4",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:41Z",
+        "last_modified": "2026-10-22T10:15:43+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-4066f947b772d77383f38532dbe577dab8d9ca34c43c286538a63fa67dba037d.blob",
+      "version_id": "cNY78VQmnU6PKisBLDhpqfLJTbMVFRMm",
+      "sha256": "4066f947b772d77383f38532dbe577dab8d9ca34c43c286538a63fa67dba037d",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:44Z",
+        "last_modified": "2026-10-22T10:15:47+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-093252938cf30049176b3049cc5831bd61eb06d2725e3d14797d834b7e1edf49.blob",
+      "version_id": "WpvOJoEG5eGIhldNX47c6QyXhRu9eVGG",
+      "sha256": "093252938cf30049176b3049cc5831bd61eb06d2725e3d14797d834b7e1edf49",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:48Z",
+        "last_modified": "2026-10-22T10:15:50+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-28fc7fcf1d65088ecece681afaeaabf34aac561abe4e8bb655edb1e17ac0630f.blob",
+      "version_id": "WDnWGKRuYVB.5BNXV3MnggCzWAv06rat",
+      "sha256": "28fc7fcf1d65088ecece681afaeaabf34aac561abe4e8bb655edb1e17ac0630f",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:51Z",
+        "last_modified": "2026-10-22T10:15:54+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-c735bdb1f0d72d684384b053ec074ff978feec2129c8e8793f95e74097cae57b.blob",
+      "version_id": "LigJet3GWMDHOpDuaDFlnb.EhjbEKzZG",
+      "sha256": "c735bdb1f0d72d684384b053ec074ff978feec2129c8e8793f95e74097cae57b",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:56Z",
+        "last_modified": "2026-10-22T10:15:58+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-159da89502a2ab804e61a0a85d671c720cb915935726373222a6cb0b5c0db563.blob",
+      "version_id": "69n6BocNAWFjp.Mzn54Ic55hOxzTPBq7",
+      "sha256": "159da89502a2ab804e61a0a85d671c720cb915935726373222a6cb0b5c0db563",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:25:59Z",
+        "last_modified": "2026-10-22T10:16:01+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-3acbfc84f955b173383504a2b9ea6ac1d48f1b706a8c351618dd4d5f2d351c74.blob",
+      "version_id": "MSBddykEcilc8KzRcXRUSZNL6I9JZFdy",
+      "sha256": "3acbfc84f955b173383504a2b9ea6ac1d48f1b706a8c351618dd4d5f2d351c74",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:04Z",
+        "last_modified": "2026-10-22T10:16:06+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-f7674bdb2aea9b4ac4235d34754704358f2d38a87ad5f2c3ff9f00b3f316e652.blob",
+      "version_id": "HbFaetC4SoEnbP_PUIxCQYu0Tz7hlTLa",
+      "sha256": "f7674bdb2aea9b4ac4235d34754704358f2d38a87ad5f2c3ff9f00b3f316e652",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:08Z",
+        "last_modified": "2026-10-22T10:16:10+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-a8bfb87ccbbf3cecc611bfb79cc24f74de6c09be38a74d29036649b6413ceff5.blob",
+      "version_id": "QMN.oOwLE6OoXKy1FNrZ.x5dXfGP4b1z",
+      "sha256": "a8bfb87ccbbf3cecc611bfb79cc24f74de6c09be38a74d29036649b6413ceff5",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:12Z",
+        "last_modified": "2026-10-22T10:16:14+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-379f149fd713323a0cf602f65ac589a6169fcbf045e7f2a309997f3679f20cb9.blob",
+      "version_id": "PvrE37FXrfkZxYP0.EXiGcyOS54GElOe",
+      "sha256": "379f149fd713323a0cf602f65ac589a6169fcbf045e7f2a309997f3679f20cb9",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:15Z",
+        "last_modified": "2026-10-22T10:16:17+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-29e7ae071cc058a9358709581054a49682365d49b02a1267e329f29cc898f29d.blob",
+      "version_id": "PuPHM6JmVlv3I9LIHhgGH1_6OtKs.VuG",
+      "sha256": "29e7ae071cc058a9358709581054a49682365d49b02a1267e329f29cc898f29d",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:19Z",
+        "last_modified": "2026-10-22T10:16:21+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-5250d8d453d16a678f06bcd0c0167f0c5d05f95eaed233ee6343e9761e6db272.blob",
+      "version_id": "ltPAI1sKq7c.JcwRT2bX2GwAbGdGtDvD",
+      "sha256": "5250d8d453d16a678f06bcd0c0167f0c5d05f95eaed233ee6343e9761e6db272",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:22Z",
+        "last_modified": "2026-10-22T10:16:24+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-b35df2cecf603927a0769d27c86aea230cd2696bf408d22a14d3c5e8ce27ac2d.blob",
+      "version_id": "k4nY1QNZutVbKi1huHMaxfnOYDu538Ds",
+      "sha256": "b35df2cecf603927a0769d27c86aea230cd2696bf408d22a14d3c5e8ce27ac2d",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:27Z",
+        "last_modified": "2026-10-22T10:16:28+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-e81715f6f731cdcdebe41556d9e13fc831a6ce9175c1ddee97725fb275fbb770.blob",
+      "version_id": "cq4KcpRjpYVnMOYhchzaApANlx75twpl",
+      "sha256": "e81715f6f731cdcdebe41556d9e13fc831a6ce9175c1ddee97725fb275fbb770",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:30Z",
+        "last_modified": "2026-10-22T10:16:32+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-c8622fbbd80343d758bd9a4ac34d85207e8c8cfcb3e9bdee07d634aea062bcdb.blob",
+      "version_id": "XI9BEjpz8cInvCuE26rjKUzeQrA_iVRz",
+      "sha256": "c8622fbbd80343d758bd9a4ac34d85207e8c8cfcb3e9bdee07d634aea062bcdb",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:33Z",
+        "last_modified": "2026-10-22T10:16:35+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-49170c114befe4cd51476b7537e54963e17f4dc911be8d5555e2ec5f388c69ca.blob",
+      "version_id": "kOGyUndie.Ji.doNV9H5QBblnUWMluNN",
+      "sha256": "49170c114befe4cd51476b7537e54963e17f4dc911be8d5555e2ec5f388c69ca",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:36Z",
+        "last_modified": "2026-10-22T10:16:38+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-ff91f5e9cca2f1d76cce7f7cace7bf1d19c3e3b3a557c574995d1688c8f3e719.blob",
+      "version_id": "t4cga8xGkxv7T2g.usS.1mvE_4zbfwB_",
+      "sha256": "ff91f5e9cca2f1d76cce7f7cace7bf1d19c3e3b3a557c574995d1688c8f3e719",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:40Z",
+        "last_modified": "2026-10-22T10:16:42+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-9c6c7ec498bafb0943a42296338be94ffcb5439fa54abe366b6e4882fb1286c9.blob",
+      "version_id": "PdY2SqRuUX01ZcnZ4_s_sW7ooqVxzH_0",
+      "sha256": "9c6c7ec498bafb0943a42296338be94ffcb5439fa54abe366b6e4882fb1286c9",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:43Z",
+        "last_modified": "2026-10-22T10:16:45+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-f1c8b3768e6f3b64df5e38f0fb6d87b0d77b20e0e7bea03f287b129cf4fa63fc.blob",
+      "version_id": "KhVYyOhwNkZ3DBeQv_gbhbqWpXQVvzFG",
+      "sha256": "f1c8b3768e6f3b64df5e38f0fb6d87b0d77b20e0e7bea03f287b129cf4fa63fc",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:47Z",
+        "last_modified": "2026-10-22T10:16:49+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-ec72c351658a7d7f8c77a736921799474369fe4c08abfb51b3045fc31c1a4ce9.blob",
+      "version_id": "M1GfBACWafbFrav1UmmpIUTeejw5BIpC",
+      "sha256": "ec72c351658a7d7f8c77a736921799474369fe4c08abfb51b3045fc31c1a4ce9",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:50Z",
+        "last_modified": "2026-10-22T10:16:52+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-8f330a5044b8adc6c5bf989d818530ca59601292999f4619c4e80bcafa7df60c.blob",
+      "version_id": "Z3oMn7.W8U5XoI4pcpn6HnTcEHscoFV4",
+      "sha256": "8f330a5044b8adc6c5bf989d818530ca59601292999f4619c4e80bcafa7df60c",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:54Z",
+        "last_modified": "2026-10-22T10:16:56+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-bcb9408587a210e15b8128761214ce1511262604cbf279673ffe626bdf0f2e34.blob",
+      "version_id": "uJoskdKXwR6a7kiYJq__Hx6MEb4DpqTM",
+      "sha256": "bcb9408587a210e15b8128761214ce1511262604cbf279673ffe626bdf0f2e34",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:26:58Z",
+        "last_modified": "2026-10-22T10:17:00+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-963b48c137d18a62ef9fd5640962e90cbaeaaabda6ce6845bb149c46ea2b2812.blob",
+      "version_id": "ICo8R6yGodsblZiMnOsof8KpNoudmUlT",
+      "sha256": "963b48c137d18a62ef9fd5640962e90cbaeaaabda6ce6845bb149c46ea2b2812",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:02Z",
+        "last_modified": "2026-10-22T10:17:04+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-c2647679486dad9e10892c248306f2947b6a7ce66144eacc108fc3abde2ae2fa.blob",
+      "version_id": "wk4qt9pCWdAccd0k7lckmwUngOul3grt",
+      "sha256": "c2647679486dad9e10892c248306f2947b6a7ce66144eacc108fc3abde2ae2fa",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:06Z",
+        "last_modified": "2026-10-22T10:17:08+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-d871ffa3df49af89f556265e8ce63f0432683a3e03eca5a69dea72e6a4ebdcf7.blob",
+      "version_id": "EwSzyyqcP8.kqHE1guoV9ZF5vWC2zuIW",
+      "sha256": "d871ffa3df49af89f556265e8ce63f0432683a3e03eca5a69dea72e6a4ebdcf7",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:10Z",
+        "last_modified": "2026-10-22T10:17:12+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-e27bebeec3142ea34e7c6c2afaa8ea974c409448f0a15775f6c0f219fb50e1c1.blob",
+      "version_id": "uA8IOwHozl4FVBzq_Lder5LNk7_K2XAG",
+      "sha256": "e27bebeec3142ea34e7c6c2afaa8ea974c409448f0a15775f6c0f219fb50e1c1",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:13Z",
+        "last_modified": "2026-10-22T10:17:15+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-e0c187a06c936b1061b5f39eebab977bfa34b03c8a3e882d21b15e9e05e3742b.blob",
+      "version_id": "aF7FnHtHPnKo8MdV6bsMG4rRkuRoD_5E",
+      "sha256": "e0c187a06c936b1061b5f39eebab977bfa34b03c8a3e882d21b15e9e05e3742b",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:16Z",
+        "last_modified": "2026-10-22T10:17:18+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-073d01f95d919ac18e5e8aa87169ca5a667bdc6efc2fc011530e73457d6e4987.blob",
+      "version_id": "rAaMOVtTpiNgTqWbZRUTS5rTRJ5gh3Ea",
+      "sha256": "073d01f95d919ac18e5e8aa87169ca5a667bdc6efc2fc011530e73457d6e4987",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:20Z",
+        "last_modified": "2026-10-22T10:17:22+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-2b2b0e889ac57264925fa72eb74a5141eccbafc47c196ebc82fbd7dea2f76ca2.blob",
+      "version_id": "ERKGTYnaMQcCTdbB8xboCJN0ri.3z2LC",
+      "sha256": "2b2b0e889ac57264925fa72eb74a5141eccbafc47c196ebc82fbd7dea2f76ca2",
+      "bytes": 8388608,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:23Z",
+        "last_modified": "2026-10-22T10:17:25+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-d0648492c9f4cc1a8f967746bd078526c9167c6323e3005dac8ba72a54b43778.blob",
+      "version_id": "puo8ooFbPKwcqdMkQ6I2hWC6Nc9OgJYF",
+      "sha256": "d0648492c9f4cc1a8f967746bd078526c9167c6323e3005dac8ba72a54b43778",
+      "bytes": 4344750,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:27:26Z",
+        "last_modified": "2026-10-22T10:17:28+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-5758580d7602f7105ea431317608bf1a8649bea5c12e28333f75dc6803eb243e.blob",
+      "version_id": "q1odGHu2eh3UMwTpNwKLTGolOK2purR2",
+      "sha256": "5758580d7602f7105ea431317608bf1a8649bea5c12e28333f75dc6803eb243e",
+      "bytes": 887,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:29:56Z",
+        "last_modified": "2026-10-22T10:19:57+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464.blob",
+      "version_id": "V5grnK6yvRm8tcv4rCby5Oylg6I1yfdX",
+      "sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+      "bytes": 1001,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:00Z",
+        "last_modified": "2026-10-22T10:20:01+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-3ce7fbf860557ee9bf6e993a8d9960e24bea8c0c81175aabeb1af6c9bac294b6.blob",
+      "version_id": "0Pbyc7pxCCD9ihI8j_1lhC.u5U63OUzI",
+      "sha256": "3ce7fbf860557ee9bf6e993a8d9960e24bea8c0c81175aabeb1af6c9bac294b6",
+      "bytes": 353,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:05Z",
+        "last_modified": "2026-10-22T10:20:06+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-cd616d3e8f82d98946e0f1af4086ae572c83d7c14c8089655c1663c528a1689a.blob",
+      "version_id": "30.x9nM.KdtM73EjK26kKgVoRSOsvG2F",
+      "sha256": "cd616d3e8f82d98946e0f1af4086ae572c83d7c14c8089655c1663c528a1689a",
+      "bytes": 11273,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:16Z",
+        "last_modified": "2026-10-22T10:20:17+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-d35f4d96d566660ac7d975f3aa51e2c4f586f0323db2e019a67eb2bff4aec600.blob",
+      "version_id": "nwQv9xx4DyFI4WQsYO4kxs6ILx7bp8oH",
+      "sha256": "d35f4d96d566660ac7d975f3aa51e2c4f586f0323db2e019a67eb2bff4aec600",
+      "bytes": 18961,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:20Z",
+        "last_modified": "2026-10-22T10:20:21+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-1b4a1f84c64cdb824d3581874168a62b6af9e8f920e1e32c224a0cb4cb665992.blob",
+      "version_id": "R5Rp9L49HZfL_OEbm.WvaJgig5xXDwMa",
+      "sha256": "1b4a1f84c64cdb824d3581874168a62b6af9e8f920e1e32c224a0cb4cb665992",
+      "bytes": 4121,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:25Z",
+        "last_modified": "2026-10-22T10:20:26+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-15ac8e14cfe1cc112b6b74f81d03996409422bfbb80221b9332ff8f8b45c4f5c.blob",
+      "version_id": "24732_TLgCq5uGFuJmU9IOyH7OjVBCxx",
+      "sha256": "15ac8e14cfe1cc112b6b74f81d03996409422bfbb80221b9332ff8f8b45c4f5c",
+      "bytes": 1741,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:27Z",
+        "last_modified": "2026-10-22T10:20:28+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-da9f110b5d3c08975691a5907aaae98034499e23e6a87a0e9fdc756db354d43b.blob",
+      "version_id": "A7jMTVuxThBthVuIzZ9NHg8.6c6pAG8E",
+      "sha256": "da9f110b5d3c08975691a5907aaae98034499e23e6a87a0e9fdc756db354d43b",
+      "bytes": 14886,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:29Z",
+        "last_modified": "2026-10-22T10:20:30+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-06cdf383d33755ba976fd1607f453ce27d6f86e7682c6069b197396784e551d5.blob",
+      "version_id": "RScK94Ium09qKHCLnccLGjwxMVB4p1SR",
+      "sha256": "06cdf383d33755ba976fd1607f453ce27d6f86e7682c6069b197396784e551d5",
+      "bytes": 2200,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:31Z",
+        "last_modified": "2026-10-22T10:20:33+00:00"
+      }
+    },
+    {
+      "method": "GET",
+      "key": "sites/isolated-queue-lab/sets/AWS-9701cf732b421892/rbr-0f38c4da5299340b541460b946f3800228f3ea8ac76f2d20a7566f1617ceebbb.blob",
+      "version_id": "8f4MoMe2tc82cDQdHyHPvyDLsUupFHoc",
+      "sha256": "0f38c4da5299340b541460b946f3800228f3ea8ac76f2d20a7566f1617ceebbb",
+      "bytes": 734,
+      "retention": {
+        "mode": "GOVERNANCE",
+        "retain_until": "2026-11-26T10:30:34Z",
+        "last_modified": "2026-10-22T10:20:35+00:00"
+      }
+    }
+  ],
+  "runtime_archives": [
+    {
+      "image_id": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "sha256": "82fdf541ae442fd371ca39734e20438f40a8116f3259a58c56801092d396873b",
+      "size_bytes": 114470208
+    },
+    {
+      "image_id": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd",
+      "sha256": "442fa120695e10bf1550adea851b7754e18161357e6e86637e046a7714d8c9f3",
+      "size_bytes": 297946030
+    }
+  ],
+  "source_independence": {
+    "started_without_images": true,
+    "loaded_from_verified_S3_archives": [
+      "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    ],
+    "source_paths_absent": true,
+    "source_and_publication_sealed_permission_denied": true
+  },
+  "mounts_checked": 4,
+  "received_execution_code_matches_repository": true,
+  "reconstruction": {
+    "definition_sha256": "84fa2023d58c295ff845365cef5e68a557b905cfe57e16c310b21da790965476",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-order",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "ef46b381c8047a8fdc15faeebe0268de67cff1b89909bae0083727f468313ed8",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "network_rules_cleanup": {
+    "rules": [
+      {
+        "rule": [
+          "FORWARD",
+          "-i",
+          "br-7ce5d73a1fb8",
+          "-o",
+          "br-7ce5d73a1fb8",
+          "-m",
+          "comment",
+          "--comment",
+          "owr-rbr-temporary-20261022",
+          "-j",
+          "ACCEPT"
+        ],
+        "removed": true
+      },
+      {
+        "rule": [
+          "FORWARD",
+          "-i",
+          "br-c75a8773cdf3",
+          "-o",
+          "br-c75a8773cdf3",
+          "-m",
+          "comment",
+          "--comment",
+          "owr-rbr-temporary-20261022",
+          "-j",
+          "ACCEPT"
+        ],
+        "removed": true
+      }
+    ],
+    "all_removed": true
+  },
+  "dedicated_daemons_stopped": true,
+  "regressions": [
+    {
+      "name": "test-backup-core.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-rbr-generation.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-rbr-planner.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-temporary-role-auth.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-versioned-transfer.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_transfer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_watchdog_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_observer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_observer_transfer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_operator_review_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_preflight_watchdog_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_rbr_s3_kit.py",
+      "exit_code": 0
+    },
+    {
+      "name": "test_rbr_comparison.py",
+      "exit_code": 0
+    },
+    {
+      "name": "test_distribution.py",
+      "exit_code": 0
+    },
+    {
+      "name": "test_core_distribution.py",
+      "exit_code": 0
+    }
+  ],
+  "classified_findings": {
+    "environment": [
+      "Host forwarding policy blocked dedicated Docker bridge TCP while DNS and DB startup worked; temporary same-bridge-only rules allowed the experiment and were removed."
+    ],
+    "test_infrastructure": [
+      "Default containerd image store exposed a different image identity; exact-ID gate refused before WP startup. Classic overlay2 matched original IDs.",
+      "Untagged image inventory required --all.",
+      "Containerd execution namespaces separated; monitor handled container removal races.",
+      "Docker crashed with a nil-pointer panic in a separate Linux network namespace; root cause remains undetermined. That attempt is not counted as success."
+    ],
+    "product_limits": [
+      "Classic-compatible image identity and architecture required; automated cross-image-store admission/translation is not implemented.",
+      "Complete host-runtime compatibility profile not yet represented in E.",
+      "No generic deployment wizard, partial-WP resume or independent signed approval of the new kit."
+    ]
+  },
+  "production_changed": false,
+  "automatic_publication": false,
+  "source_permissions_restored_after_experiment": true,
+  "retained_s3_objects_deleted": false,
+  "source_hashes": {
+    "tools/rbr-s3-kit.py": "46d604022c5ca343e3b53e75d8ad1e8876cf3d1493157ca7fc5c43e2b0f81ad0",
+    "tools/rbr-reconstruct-lab.py": "da9f110b5d3c08975691a5907aaae98034499e23e6a87a0e9fdc756db354d43b",
+    "tools/queue-s3-adapter.py": "447ed6f7c3ce59539a9eba8466fe30feeddf92f5d96e119e8afd9503a1c55a9d",
+    "tools/lab-s3-request.py": "b796e39b6c96a10bd9ad0e69158d653db84437503b0a8adeb9ecfdf1384e3694",
+    "tests/test_rbr_s3_kit.py": "5f5663a11c6979478df69f0f83647696cf51b35f9822995167d23981bdba8848"
+  }
+}

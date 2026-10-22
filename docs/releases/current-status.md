@@ -2,7 +2,9 @@
 
 > **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](shortened-observation-final.md).
 
-Snapshot: October 22, 2026, after PR #8 merged into main `71e54a7`. Both PR CI jobs (PHP 8.1/8.3) passed. Version `0.1.0-dev.1` remains an experimental prototype, not a production release. English is the primary README; [RAADME-jp.md](../../RAADME-jp.md) is the Japanese companion.
+Snapshot: October 22, 2026. Git baseline PR #10 (`f5ebf8c`), with subsequent bounded reconstruction/S3-kit/signature work in the current working candidate. Version `0.1.0-dev.1` is a prototype, not a formal release. See the [current ZIP scope](rbr-signed-kit-zip.md), primary [English README](../../README.md) and [Japanese README](../../RAADME-jp.md).
+
+The development kit now plans A/R/E/D/Q, reconstructs the three-page corporate subset, stores runtime/input/code closure as fixed experimental S3 versions, and gates retrieval/execution with independent signatures and the current registry. Two fresh private WordPress targets matched Q. This is CLI functionality outside the installable administration plugin; generic production setup and S3-first WordPress authoring are not complete. Prior short-observation and legacy Restore evidence are separate from this scope.
 
 ## Implemented and checked
 

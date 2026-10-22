@@ -1,0 +1,157 @@
+{
+  "definition_sha256": "ab4670a1b9e8e15fd5f2f31b97b68ae7544caa16863f992af39cf983608addec",
+  "images": {
+    "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+    "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+  },
+  "negative_controls": [
+    "contact-character",
+    "paragraph-order",
+    "link-target",
+    "missing-image-http"
+  ],
+  "plan_sha256": "fd6d75649b58d724bb02f1fd201676ce0a1a9efbec5cf8e1da4202b2df96ee91",
+  "public_activation": false,
+  "resources_removed": true,
+  "runs": [
+    {
+      "actual_runtime": {
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci",
+        "database": "11.8.8-MariaDB-ubu2404",
+        "locale": "en_US",
+        "php": "8.3.35",
+        "theme": "rbr-lab",
+        "timezone": "UTC",
+        "wordpress": "7.1.3"
+      },
+      "duplicate_rejected": true,
+      "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+      "matched_Q": true,
+      "private_routes": true,
+      "run": 1,
+      "side_effect_attempts": 0
+    },
+    {
+      "actual_runtime": {
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci",
+        "database": "11.8.8-MariaDB-ubu2404",
+        "locale": "en_US",
+        "php": "8.3.35",
+        "theme": "rbr-lab",
+        "timezone": "UTC",
+        "wordpress": "7.1.3"
+      },
+      "duplicate_rejected": true,
+      "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+      "matched_Q": true,
+      "private_routes": true,
+      "run": 2,
+      "side_effect_attempts": 0
+    }
+  ],
+  "scope": "generated-only, local pinned OCI, no S3 calls or production",
+  "state": "PASS",
+  "source_hashes": {
+    "src/RbrReconstructionPlanner.php": "d35f4d96d566660ac7d975f3aa51e2c4f586f0323db2e019a67eb2bff4aec600",
+    "tools/rbr-planner-build.php": "0f38c4da5299340b541460b946f3800228f3ea8ac76f2d20a7566f1617ceebbb",
+    "tools/rbr-wordpress-apply.php": "1b4a1f84c64cdb824d3581874168a62b6af9e8f920e1e32c224a0cb4cb665992",
+    "tools/rbr-wordpress-observe.php": "15ac8e14cfe1cc112b6b74f81d03996409422bfbb80221b9332ff8f8b45c4f5c",
+    "tools/rbr-compare.py": "d5f338a452db94519941c1e4d48f221ce6308564a4b9f22c8e17f6dbee436fac",
+    "tools/rbr-reconstruct-lab.py": "4a8f58add7a506d3664d069dfd5a1b46e25edd218d410cd7f2427f73666b8d19",
+    "tests/fixtures/rbr-theme/index.php": "fddda4cd85c635023eaff217f183960ba9fae9731de8f5a135d5cc77e12dddcd",
+    "tests/fixtures/rbr-theme/style.css": "9f15c84ae99a7a86d17462c0b8e48bcef33d61931ce44e6a539a4e5c4e77ddad",
+    "tests/test_rbr_comparison.py": "133bec6616a6730fdff0b9a11ba793ab3dc4caac98125394373ba249e9251763",
+    "tests/fixtures/rbr-observed-sites.json": "5ce8a50e7c1fbb0e492bccef8ec596bf0f70b70a6c9907f95653d55e88be9cf0"
+  },
+  "regressions": [
+    {
+      "name": "test-backup-core.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-rbr-generation.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-rbr-planner.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-temporary-role-auth.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test-versioned-transfer.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_transfer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_daily_watchdog_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_observer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_observer_transfer_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_operator_review_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_preflight_watchdog_admin.php",
+      "exit_code": 0
+    },
+    {
+      "name": "test_rbr_comparison.py",
+      "exit_code": 0
+    },
+    {
+      "name": "test_distribution.py",
+      "exit_code": 0
+    },
+    {
+      "name": "test_core_distribution.py",
+      "exit_code": 0
+    }
+  ],
+  "comparator_replay_checks": 9,
+  "plan_checks": 20,
+  "build_matches_E": true,
+  "actual_A_storage": "local S3 contract double, not live S3",
+  "execution_mode": "explicit disposable lab only; P execution_authorized remains false",
+  "limitations": [
+    "no production deployment or publication",
+    "no resume of partial targets",
+    "local OCI availability only; no S3 OCI archive",
+    "three plain pages and decorative PNG; general WP themes/plugins/forms not validated",
+    "security approval is separate from equality to Q"
+  ],
+  "classified_initial_failures": {
+    "environment": [
+      "Docker default address pool exhaustion"
+    ],
+    "test_infrastructure": [
+      "initial copy readiness",
+      "PHP string-generation quoting",
+      "WP_INSTALLING initialization",
+      "numeric option string handling",
+      "Docker DB_COLLATE environment binding"
+    ],
+    "implementation": [
+      "WordPress checked() helper collision fixed by rbr_checked()"
+    ]
+  }
+}
