@@ -1,5 +1,7 @@
 # Ozeki WordPress Resilience
 
+> **短縮観測は終了済みです。** 実測68時間28分24秒、3日次枠完了、観測空白2区間を保持。72時間達成や連続稼働の証明とは扱いません。[最終評価（日本語）](docs/releases/shortened-observation-final-jp.md)。
+
 [English](README.md) | 日本語（ユーザー指定のファイル名 RAADME-jp.md）
 
 > **試作・開発版 / Experimental prototype**
@@ -11,20 +13,26 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 
 **研究・開発版です。署名・ハッシュ一致は無感染の証明ではなく、復元成功も安全な本番再公開の承認ではありません。** インストールだけで日次保護が始まる完成版プラグインではありません。
 
+## 初版の取りまとめ（2026-10-22）
+
+検証済み `0.1.0-dev.1` を試作初版として整理しました。[初版の範囲・使い方・既知の制限（英語）](docs/releases/initial-experimental-edition.md)を参照してください。72時間は外部規格の引用を確認できないプロジェクト内の観測目標であり、初版整理の待機条件から外します。観測は利用者指定により68時間28分24秒で終了しました。3日次枠の成功・経過時間・観測空白を区別し、電源設定の復帰とフォローアップの停止を確認済みです。
+
+配布物は検証済み final-v2 ZIP を変更せず使用し、新しい文書は別添です。限定SSHでの実取得・収集側喪失時の保存元解除は未確認の接続課題として残し、初版へ実装済みとして含めません。本番導入・正式Releaseとは別です。環境の問題、原因未確定を含む試験基盤の問題、製品の未達を区別します。
+
 ## インストール用開発候補
 
-`0.1.0-dev.1` は管理画面のインストール用候補です。[機能と配布構成](docs/releases/plugin-candidate-scope.md)・[ZIP導入と停止／再開](docs/guides/plugin-candidate-install.md)を参照してください。外部ツールは開発キットとして分けます。[公開候補の検証と制限](docs/releases/plugin-candidate-review.md)も参照してください。3日間の外部構成観測と、この候補の導入・配布準備は並行して進めます。
+`0.1.0-dev.1` は管理画面のインストール用候補です。[機能と配布構成](docs/releases/plugin-candidate-scope.md)・[ZIP導入と停止／再開](docs/guides/plugin-candidate-install.md)を参照してください。外部ツールは開発キットとして分けます。[公開候補の検証と制限](docs/releases/plugin-candidate-review.md)も参照してください。外部構成の短縮観測は終了し、その最終評価と配布候補の導入検証を区別しています。
 
 ## 最初に読む
 
-1. [現在の到達点と残課題](docs/releases/current-status.md)／[初版判定](docs/releases/initial-release-readiness.md)／[外部設定作成と導入計画](docs/guides/external-deployment-plan.md)
+1. [実運用へ進むための確認表（日本語）](docs/guides/production-pilot-acceptance-jp.md)／[現在の到達点と残課題](docs/releases/current-status.md)／[初版判定](docs/releases/initial-release-readiness.md)／[外部設定作成と導入計画](docs/guides/external-deployment-plan.md)
 2. [導入・起動・確認・停止・再開](docs/guides/initial-release-setup.md)
 3. [開発環境](docs/guides/development-setup.md)と[ツール一覧](tools/README.md)
 4. [検証記録の索引](evidence-public/README.md)と[侵害耐性の公開受入条件](docs/spec/07-cyber-resilience-release-gates.md)
 
 次の実装対象：[最初のサイト構成と取得方式](docs/spec/13-first-site-capture-profile.md)／[導入から復旧までの担当者操作](docs/guides/first-site-operator-runbook.md)。実装済み操作と未実装工程を区別しています。
 
-新規の[収集設定検査と取得アダプター](docs/guides/first-site-capture-lab.md)を専用生成環境で検証しました。限定構成でS3保管・署名・隔離復元と日次状態表示まで専用環境で検証済みです。実サイトへの統合導入は未完了です。既存の72時間観測と配布候補は変更していません。
+新規の[収集設定検査と取得アダプター](docs/guides/first-site-capture-lab.md)を専用生成環境で検証しました。限定構成でS3保管・署名・隔離復元と日次状態表示まで専用環境で検証済みです。実サイトへの統合導入は未完了です。この取得試験と短縮観測は別の検証です。検証済み配布候補は変更していません。
 
 ## 現在確認できていること
 
@@ -49,10 +57,10 @@ WordPressが侵害や障害で利用不能になっても、復旧資産と復�
 1. 現状の棚卸しと初版範囲を確定。
 2. 導入・定期起動・停止・再開の手順を統合。
 3. 新しい専用セットで取得→実S3固定版→独立試験署名→隔離復元を検証。
-4. 3日次枠・72時間以上を観測し、欠測・承認待ち・停止・通知失敗・容量変化を確認。
+4. 3日次枠と利用者指定で短縮した68時間28分24秒の観測を評価。観測空白と未確認範囲を保持。
 5. 結果と既知の制限をそろえ、GitHubの研究・開発版候補として整備。
 
-2026年10月21日時点で3日次枠は完了、72時間観測は継続中です。最短到達は10月22日15:55:56 JST。既知の2つの観測空白を保持し、日次成功・実経過・観測網羅性を別々に評価します。[現状一覧](docs/releases/current-status.md)を参照してください。
+2026年10月22日12:24:21 JSTに短縮観測を終了しました。127回の監査、3日次枠の完了、最終時点の未解消警報・未配送0件を確認しました。約4時間26分と約4時間24分の空白は残し、連続稼働とは扱いません。電源復帰・フォローアップ停止も完了。[最終評価](docs/releases/shortened-observation-final-jp.md)を参照してください。
 
 初回実サイト候補の署名期限は2026年10月25日18:15:47（日本時間）。期限切れ時の検証省略は禁止です。今回の試験鍵による承認は、その候補の承認更新ではありません。
 
@@ -147,12 +155,11 @@ SSH棚卸しの定期実行と受渡しは [導入前検査の定期更新](docs
 
 導入前検査・独立watchdogを含む最終試作ZIPは `dist/candidate-20261021-preflight-validated`。 [導入・更新ガイド](docs/guides/preflight-zip.md) と [新規導入・更新・状態保持の検証結果](evidence-public/preflight-zip.json) を参照してください。72時間観測・公開の判定は別です。
 
-
 署名鍵・担当交代・別媒体更新の運用と検証範囲：[Trust lifecycle](docs/guides/trust-lifecycle.md)。PR #6までマージ済み。既存の説明と観測値は各記録の時点のものです。
 
 ## 復旧入口の最新信頼情報との照合（試作版）
 
-復旧入口では、管理者が独立して配置した最新世代・失効台帳との照合が必須になりました。古い信頼情報一式が台帳と一致しない場合や、台帳が欠落・期限切れの場合は復旧を開始しません。管理者による配置と更新が必要です。オンラインでの即時失効配信は未実装です。[設定と制限（英語）](docs/guides/current-recovery-trust.md)を参照してください。72時間観測は継続し、この新機能の検証とは分離しています。
+復旧入口では、管理者が独立して配置した最新世代・失効台帳との照合が必須になりました。古い信頼情報一式が台帳と一致しない場合や、台帳が欠落・期限切れの場合は復旧を開始しません。管理者による配置と更新が必要です。オンラインでの即時失効配信は未実装です。[設定と制限（英語）](docs/guides/current-recovery-trust.md)を参照してください。終了済みの短縮観測は、この後発機能の時間的な検証実績にはなりません。
 
 台帳の更新入口を追加しました。確認済みハッシュとの一致、世代の増加、失効情報の維持を検査して原子的に配置します。[管理者向け更新・失敗時の手順（英語）](docs/guides/trust-registry-update.md)を参照してください。rootによる直接の巻戻しは防御範囲外です。
 
@@ -164,10 +171,10 @@ SSH配置済み台帳から実復旧入口への接続を検証しました。�
 
 最新世代・失効台帳の最終候補ZIPで導入・更新・保持を確認しました。[検証結果とハッシュ](docs/releases/trust-final-zip.md)。試作版のままで、72時間観測の最終判定とは別です。
 
-## PR #7後の継続運用
+## PR #8後の継続運用
 
-PR #7はmain `5cd2564`へマージ済み。最新台帳の継続更新・全対象ホストの配置確認・失敗や期限切れへの対応は[運用手順](docs/guides/trust-recurring-operations.md)を参照してください。台帳更新では署名承認を延長しません。最新の実装状況は[現状文書](docs/releases/current-status.md)を参照。過去の試験記録と72時間観測の対象は書き換えません。
+PR #8はmain `71e54a7`へマージ済みで、PHP 8.1/8.3のCIは成功しています。`0.1.0-dev.1`の試作版を維持し、正式リリースは行っていません。最新台帳の継続更新・全対象ホストの配置確認・失敗や期限切れへの対応は[運用手順](docs/guides/trust-recurring-operations.md)を参照してください。台帳更新では署名承認を延長しません。最新の実装状況は[現状文書](docs/releases/current-status.md)を参照。過去の試験記録と72時間観測の対象は書き換えません。
 
 [継続更新の2台VM・実SSH検証](docs/guides/trust-recurring-ssh.md)：配置確認、一部認証失敗、実時間の期限切れと明示更新後の回復の7項目に成功。署名承認は変更せず、72時間観測とは別の結果です。
 
-[Recurring trust final ZIP acceptance](docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.
+[継続運用の最終ZIP検証](docs/releases/recurring-trust-final-zip.md)：修正版final-v2で新規導入・同版更新・設定と履歴の保持を確認し、同梱キットから6件の運用試験が成功しました。署名承認は延長していません。初回失敗は試験用報告の時刻が古くなる試験基盤の問題で、修正前の記録も保持しています。以前の原因未確定のブラウザ起動問題とは別です。
