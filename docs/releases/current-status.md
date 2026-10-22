@@ -1,6 +1,8 @@
 # Current implementation and remaining work
 
-Snapshot: October 22, 2026, after PR #7 merged into main `5cd2564`. Both PR CI jobs (PHP 8.1/8.3) passed. Version `0.1.0-dev.1` remains an experimental prototype, not a production release. English is the primary README; [RAADME-jp.md](../../RAADME-jp.md) is the Japanese companion.
+> **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](shortened-observation-final.md).
+
+Snapshot: October 22, 2026, after PR #8 merged into main `71e54a7`. Both PR CI jobs (PHP 8.1/8.3) passed. Version `0.1.0-dev.1` remains an experimental prototype, not a production release. English is the primary README; [RAADME-jp.md](../../RAADME-jp.md) is the Japanese companion.
 
 ## Implemented and checked
 
@@ -14,36 +16,44 @@ Snapshot: October 22, 2026, after PR #7 merged into main `5cd2564`. Both PR CI j
 
 Trust lifecycle operations and their boundaries are described in [key lifecycle](../guides/trust-lifecycle.md), [current registry](../guides/current-recovery-trust.md), [SSH deployment](../guides/trust-registry-ssh.md) and [recurring operations](../guides/trust-recurring-operations.md). Local generation enforcement is now implemented; earlier lifecycle evidence showing old-bundle acceptance describes the historical signature primitive, not the current mandatory recovery entry.
 
+## Initial edition boundary
+
+The operator removed waiting for 72 hours as a prerequisite to initial-edition assembly on October 22. Use the [initial edition summary](initial-experimental-edition.md) and verified final-v2 artifacts. No unfinished restricted-SSH capture implementation is included. Observation has since closed at the operator's request after 68h28m24s; formal production acceptance is not implied.
+
 ## Observation is a separate assessment
 
 Three generated-data daily slots (October 19–21) completed storage, pending-approval observation, test signing and fixed-version isolated restoration. Maximum three stored sets reached: do not add saves or repeat restores to refresh evidence.
 
-Latest checked audit: October 22 10:16:22 JST, 123 samples; three approved sets totaling 89,527,925 bytes; uncertain PUTs 0; 15 trust files unchanged; unresolved trial incidents 0; undelivered trial notifications 0. No new capacity/continuity issue or gap longer than two hours. This is a dated snapshot, not live telemetry.
+Final audit: October 22 12:24:21 JST, 127 samples; three approved sets totaling 89,527,925 bytes; uncertain PUTs 0; 15 trust files unchanged; unresolved trial incidents 0; undelivered trial notifications 0. No new capacity/continuity issue or gap longer than two hours. This is a dated snapshot, not live telemetry.
 
-Earliest 72-hour threshold: **October 22, 2026 15:55:56 JST**. It has not yet been reached at this snapshot. Existing gaps of 4h26m33s and 4h24m8s remain. Daily success, elapsed time and observation coverage must be evaluated separately. Periodic audits are not continuous observation. Features added later, including PR #7, do not inherit 72-hour coverage from the older running trial.
+Earliest 72-hour threshold: **October 22, 2026 15:55:56 JST**. The operator closed the observation early; it was not reached. Existing gaps of 4h26m33s and 4h24m8s remain. Daily success, elapsed time and observation coverage must be evaluated separately. Periodic audits are not continuous observation. Features added later, including PR #7 and PR #8, do not inherit 72-hour coverage from the older running trial.
 
-On actual observation completion, restore battery sleep to three minutes while retaining AC no-sleep, using the recorded restoration procedure; stop follow-up only after final assessment and power restoration. Do not overwrite user changes to the power plan.
+At closure, battery sleep was restored to three minutes and AC no-sleep retained and verified. The scheduled follow-up is paused. Original plan and audit records are preserved.
 
 ## Classification of remaining issues
 
 - **Environment:** the latest audit establishes no new capacity/continuity problem. Production PHP/SMTP/HTTPS maintenance is separate from product acceptance; unrelated database administration and other-host PHP issues are not resolved by this plugin.
-- **Test infrastructure:** historical WebDriver startup timeout remains unexplained despite later successful runs. Python-path and dedicated SSH runtime-directory defects were diagnosed and corrected; initial failed evidence remains. Shared kernels, development Docker socket and test S3 broker limit isolation claims. See [environment and infrastructure records](initial-release-environment-notes.md).
+- **Test infrastructure:** historical WebDriver startup timeout remains unexplained despite later successful runs. Python-path and dedicated SSH runtime-directory defects were diagnosed and corrected; initial failed evidence remains. PR #8 also fixes a test-only freshness baseline: a static report expired during browser setup, and the product correctly showed unconfirmed validity. The corrected final-v2 trial passed without changing approval expiry or production rules. This is distinct from the unexplained startup timeout. Shared kernels, development Docker socket and test S3 broker limit isolation claims. See [environment and infrastructure records](initial-release-environment-notes.md).
 - **Product:** current-registry transitions and recovery checks are implemented, including the corrected SSH semantic-outcome classification. Global immediate revocation, administrator-resistant rollback, continuous cancellation after the final check and atomic fleet rollout are not implemented. All production write paths, independent placement, safe republication and ongoing operator coverage remain to be accepted.
 - **Human operations:** actual substitute-operator access, physical USB rotation and production approval renewal are not satisfied by generated directory tests. The documented real candidate approval expiry remains October 25, 2026 18:15:47 JST; no test refresh extends it.
 
 ## Next work, without repeating completed trials
 
 1. Follow the recurring trust runbook: independently review current authority, refresh explicitly, confirm every intended host, retain unknown outcomes and expiry incidents. Automated signing/approval extension is prohibited.
-2. Complete actual deployment/operating ownership decisions separately from dedicated tests. Do not broaden notifications or redo all SSH/systemd/ZIP tests without a changed requirement.
-3. After the threshold, finalize the original observation with its gaps and frozen scope, restore power settings and close its follow-up. Formal release remains a separate decision.
+2. Use the [production pilot acceptance checklist](../guides/production-pilot-acceptance.md) ([Japanese](../guides/production-pilot-acceptance-jp.md)) to complete actual deployment/operating ownership decisions separately from dedicated tests. Do not broaden notifications or redo all SSH/systemd/ZIP tests without a changed requirement.
+3. Use the completed shortened-observation assessment with its gaps and frozen scope. Power restoration and follow-up closure are complete. Formal release remains a separate decision.
 
 ## Evidence entry points
 
 - [Onboarding through recovery](../guides/onboarding-recovery.md), [actual SSH/S3 connection](../guides/onboarding-ssh-s3.md), [onboarding ZIP](../guides/onboarding-zip.md).
 - [Current trust real S3 recovery](../guides/trust-real-s3-recovery.md) and [frozen trust ZIP acceptance](trust-final-zip.md).
 - [Daily admission](../guides/daily-capture-admission.md), [operator confirmation](../guides/recurring-capture-review.md), [generated systemd deployment](../guides/generated-systemd-lab.md).
-- [Recurring trust connection checks](../../evidence-public/trust-recurring-operations.json). Frozen ZIPs predate these new docs/tests and are not rebuilt here.
+- [Recurring trust connection checks](../../evidence-public/trust-recurring-operations.json). Six operational tests passed from the corrected final-v2 kit; see [exact ZIP hashes and acceptance](recurring-trust-final-zip.md). Acceptance reports were written after the ZIP freeze and are not claimed to be inside those bytes. CI ran 677 tests on each PHP job with 54 root-required skips; skips are not passes. Dedicated packaged tests provide separate evidence.
 
 Backup for S3 is independent: no mandatory mutual dependency or automatic installation. Shared components and Backup for S3 are unchanged.
 
 Additional [two-VM recurring SSH verification](../guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
+
+## Evidence reuse review
+
+See [what earlier tests establish and the collector gaps](evidence-reuse-and-collector-gaps.md). In particular, earlier real-SSH/S3 onboarding still captured through DockerBackend. Remote least-privilege capture and loss of the collector while the source is paused remain new integration questions. Repeated unchanged ZIP/UI/lifecycle trials are not additional product coverage. Pilot infrastructure choices are provisional, not plugin requirements.

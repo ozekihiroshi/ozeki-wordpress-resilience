@@ -62,3 +62,7 @@ Recurring current-trust operations: [runbook and six targeted connection checks]
 Additional [two-VM recurring SSH verification](../docs/guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
 
 [Recurring trust final ZIP acceptance](../docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.
+
+## Closed shortened observation (October 22, 2026)
+
+[Final machine-readable summary](initial-release-shortened-observation.json) and [assessment](../docs/releases/shortened-observation-final.md): 68h28m24s by operator decision, three daily slots, two retained gaps; not a 72-hour pass, continuous coverage or production acceptance. Original dated records remain unchanged.

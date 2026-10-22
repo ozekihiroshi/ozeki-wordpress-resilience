@@ -1,5 +1,7 @@
 # Ozeki WordPress Resilience
 
+> **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](docs/releases/shortened-observation-final.md).
+
 English | [日本語](RAADME-jp.md)
 
 > **Experimental prototype — not a completed production protection product.**
@@ -9,17 +11,21 @@ The project aims to preserve recovery assets and recovery capability when WordPr
 
 **A valid signature or matching hash does not prove that a backup is malware-free. A successful isolated restore does not authorize production republication.**
 
+## Initial experimental edition
+
+The [initial edition summary](docs/releases/initial-experimental-edition.md) identifies the verified ZIPs, operating sequence and remaining boundaries. The shortened observation is closed; no continuous-coverage or production-readiness claim is made.
+
 ## Current status
 
-PR #7 is merged (main `5cd2564`). The candidate remains `0.1.0-dev.1`; the current trust-lifecycle changes are not a formal release. Existing tested ZIPs and historical tags are unchanged.
+PR #8 is merged (main `71e54a7`). Both CI jobs (PHP 8.1/8.3) passed. The candidate remains `0.1.0-dev.1`, an experimental prototype; no formal release was made. Recurring trust operations and the corrected final-v2 ZIP acceptance are included in the current evidence. Previously tested ZIPs and historical tags remain unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
-Three daily trial slots (October 19–21, 2026) are complete. The 72-hour observation remains in progress; its earliest completion is **October 22, 2026, 15:55:56 JST**. Existing gaps of approximately 4h26m and 4h24m remain part of the evidence. Daily success, elapsed time and observation coverage will be assessed separately.
+Three daily trial slots (October 19–21, 2026) are complete. At the operator's request, observation closed after **68h28m24s** on October 22 at 12:24:21 JST. Gaps of approximately 4h26m and 4h24m remain. This is not a 72-hour pass or continuous coverage. See the final assessment above.
 
 ## Start here
 
-- [Current capabilities and gaps](docs/releases/current-status.md) and [release readiness](docs/releases/initial-release-readiness.md).
+- [Current capabilities and gaps](docs/releases/current-status.md), [production pilot acceptance checklist](docs/guides/production-pilot-acceptance.md), and [release readiness](docs/releases/initial-release-readiness.md).
 - [Installation, operation and stopping](docs/guides/initial-release-setup.md), [candidate ZIP installation](docs/guides/plugin-candidate-install.md), and [external deployment planning](docs/guides/external-deployment-plan.md).
 - [Onboarding through recovery](docs/guides/onboarding-recovery.md), [real SSH/S3 integration](docs/guides/onboarding-ssh-s3.md), and [ZIP acceptance](docs/guides/onboarding-zip.md).
 - [Signing key rotation, revocation, handover and recovery media](docs/guides/trust-lifecycle.md).
@@ -55,7 +61,7 @@ License: GPL-2.0-or-later.
 
 ## Current trust at recovery entry (prototype)
 
-Recovery entry now requires a root-owned independent current-generation/revocation checkpoint. Whole old trust bundles are rejected when they conflict with that checkpoint. Missing or expired checkpoints block recovery. Administrator provisioning is required; online global freshness is not implemented. See [deployment and limits](docs/guides/current-recovery-trust.md). The ongoing 72-hour observation is unchanged and is not final evidence for this new gate.
+Recovery entry now requires a root-owned independent current-generation/revocation checkpoint. Whole old trust bundles are rejected when they conflict with that checkpoint. Missing or expired checkpoints block recovery. Administrator provisioning is required; online global freshness is not implemented. See [deployment and limits](docs/guides/current-recovery-trust.md). The closed shortened observation does not provide duration evidence for this later gate.
 
 Registry updates now have a reviewed compare-and-swap entry with atomic replacement and sticky revocations. See [administrator update procedure](docs/guides/trust-registry-update.md).
 
@@ -67,7 +73,7 @@ The SSH-installed registry/recovery-entry integration also passed with actual ex
 
 Frozen trust-lifecycle candidate ZIPs passed installation/update and retention checks; see [acceptance and exact hashes](docs/releases/trust-final-zip.md). Still a prototype, separate from 72-hour final evaluation.
 
-Recurring registry refresh, per-host readback, failure and expiry procedures are documented in the [operating runbook](docs/guides/trust-recurring-operations.md). Registry refresh never renews a signed approval. Six new dedicated operational-connection checks are separate from the frozen ZIP and ongoing observation.
+Recurring registry refresh, per-host readback, failure and expiry procedures are documented in the [operating runbook](docs/guides/trust-recurring-operations.md). Registry refresh never renews a signed approval. Six operational-connection checks passed from the corrected final-v2 development kit. The closed observation covers its original scope, not these later additions.
 
 Additional [two-VM recurring SSH verification](docs/guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
 
