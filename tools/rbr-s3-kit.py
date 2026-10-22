@@ -6,11 +6,20 @@ ROOT=Path(__file__).resolve().parents[1]
 def load(name,path):
  s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 transport=load('rbr_s3_transport',Path(__file__).with_name('queue-s3-adapter.py'))
-def authorize(actor,**request):
+COORDINATOR_KEY=r'sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/[a-z0-9-]+/(?:operations/[A-Za-z0-9_-]+\.json|commits/[0-9]{12}\.json|originals/[A-Za-z0-9_-]+/[A-Za-z0-9_-]+/(?:source|copies/[A-Za-z0-9_-]+))'
+
+def authorize(actor,retention_days=35,**request):
+ if retention_days not in (35,36):raise ValueError("Unsupported lab retention")
  script=Path(__file__).with_name('lab-s3-request.py').read_text()
+ if retention_days==36:
+  if script.count('days=35,minutes=10')!=1:raise ValueError('Unrecognized retention signer template')
+  script=script.replace('days=35,minutes=10','days=36,minutes=10')
  old='(database.sql|wordpress-files.tar.gz|queue.sqlite|recovery-set.json|recovery-set.sig|permission-probe.txt)'
  assert old in script
  script=script.replace(old,r'(rbr-[a-f0-9]{64}\.blob|rbr-root\.json)').replace("assert q['method'] in ('PUT','GET','DELETE')", "assert q['method'] in ('PUT','GET')")
+ if request.get('method')=='GET' and re.fullmatch(COORDINATOR_KEY,request.get('key','')):
+  line=next(x for x in script.splitlines() if x.startswith("assert re.fullmatch(r'sites/"))
+  script=script.replace(line,"assert q['method']=='GET' and re.fullmatch("+repr(COORDINATOR_KEY)+",q['key'])")
  host={'writer':'community','reader':'dm'}[actor]
  p=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=15',host,'python3 -c '+shlex.quote(script)],input=json.dumps({'actor':actor,**request}).encode(),capture_output=True,timeout=120)
  if p.returncode:raise RuntimeError('Existing lab authorization failed; sensitive details suppressed')
@@ -35,7 +44,7 @@ class Store:
   else:version=self.adapter.put(transport.BUCKET,key,raw)
   return {'locator':{'kind':'s3','bucket':transport.BUCKET,'region':transport.REGION,'key':key,'version_id':version},'size_bytes':len(raw),'sha256':sha(raw)}
  def get(self,ref):
-  if not re.fullmatch(r'sites/isolated-queue-lab/sets/AWS-[a-f0-9]{16}/(rbr-[a-f0-9]{64}\.blob|rbr-root\.json)',ref['locator']['key']):raise ValueError('Not a lab RBR key')
+  if not (re.fullmatch(r'sites/isolated-queue-lab/sets/AWS-[a-f0-9]{16}/(rbr-[a-f0-9]{64}\.blob|rbr-root\.json)',ref['locator']['key']) or re.fullmatch(COORDINATOR_KEY,ref['locator']['key'])):raise ValueError('Not a lab RBR key')
   if not 0<ref['size_bytes']<=CHUNK:raise ValueError('Object bound')
   result=self.adapter.get(dict(ref['locator'],size_bytes=ref['size_bytes']))
   if result['version_id']!=ref['locator']['version_id'] or sha(result['body'])!=ref['sha256']:raise ValueError('Fixed object mismatch')

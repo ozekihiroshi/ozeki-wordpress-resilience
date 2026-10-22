@@ -139,3 +139,7 @@ Current recovery trust: [mandatory checkpoint deployment](../docs/guides/current
 `run-trust-ssh-recovery-lab.py --real-s3` reuses existing experimental object versions with the existing real reader via `trust-recovery-s3-broker.py`; no PUT. See [scope](../docs/guides/trust-real-s3-recovery.md).
 
 Recurring current-trust operations: [runbook and six targeted connection checks](../docs/guides/trust-recurring-operations.md). Generated data, temporary local host representations; no new real SSH/S3 or 72-hour acceptance claim.
+
+- `rbr-generation-kit.py`: fixed S3 generation receipt + explicit R/E/C/Q profile to an approval-pending kit. Preserves the generation, checks common retention horizon, copies short-protected profile dependencies; no fixture generation, signing or WordPress execution. See [contract](../docs/spec/rbr-generation-kit.md).
+
+- `rbr-coordinate-s3-lab.php` / `rbr-coordinator-transport.py`: scoped experimental real-S3 generation coordinator; see [connection guide](../docs/spec/rbr-live-coordinator.md).

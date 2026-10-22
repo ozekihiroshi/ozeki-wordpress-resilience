@@ -1,0 +1,298 @@
+{
+  "initial_failed_kit": {
+    "generation_ref": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "vh5oxxfco1Hv8VCMllzCvt4U1UnaJrKE"
+      },
+      "retain_until": 1795788314,
+      "sha256": "7c4d4365a9b5c8d4a03aeb7891568a002c6d6c69212b536dd25871c6c0ec5ef3",
+      "size_bytes": 3779,
+      "stored_at": 1792677920
+    },
+    "plan_sha256": "faf0c1c0acba775fae99521da4ad821b019c08dc1b47d4c8305aec62d0104418",
+    "protect_until": 1795705333,
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-258de74caf2cfb79/rbr-9f3b542c2f19c81e384e7d9750ddc46790fdf36d71ceba3afa0ca264b9f4d6bc.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "JBCSqSf3GWUHUfEQqxOT_bfC_bNMSYxm"
+      },
+      "sha256": "9f3b542c2f19c81e384e7d9750ddc46790fdf36d71ceba3afa0ca264b9f4d6bc",
+      "size_bytes": 3910
+    },
+    "state": "stored_awaiting_independent_approval"
+  },
+  "initial_failure": "Ambiguous reference: identical execution bytes at distinct fixed refs; stopped before planner/WordPress; corrected in builder, not by weakening receiver",
+  "cli_replay": {
+    "passed": true,
+    "new_puts": 0,
+    "same_version": true
+  },
+  "schema": "owr-rbr-live-coordinator-evidence-v1",
+  "checked_at": "2026-10-22T14:28:15.275535+00:00",
+  "state": "PASS",
+  "prototype": true,
+  "scope": "generated-only experimental S3 and private WordPress",
+  "read_only_access": {
+    "prefix": "sites/isolated-queue-lab/sets/AWS-c057202610220001/",
+    "inside": {
+      "success": true,
+      "response": {
+        "IsTruncated": false,
+        "Name": "ceri-link-resilience-lock-lab-121426368082",
+        "Prefix": "sites/isolated-queue-lab/sets/AWS-c057202610220001/",
+        "MaxKeys": 1,
+        "EncodingType": "url",
+        "KeyCount": 0
+      }
+    },
+    "outside": {
+      "success": false,
+      "error_code": "AccessDenied"
+    }
+  },
+  "coordinator": {
+    "concurrent_single_winner": true,
+    "resume_after_before_put_failure": true,
+    "lost_response_same_version": true,
+    "short_retention_rejected": true,
+    "generation": {
+      "stored_at": 1792677920,
+      "locator": {
+        "kind": "s3",
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "region": "ap-northeast-1",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+        "version_id": "vh5oxxfco1Hv8VCMllzCvt4U1UnaJrKE"
+      },
+      "size_bytes": 3779,
+      "sha256": "7c4d4365a9b5c8d4a03aeb7891568a002c6d6c69212b536dd25871c6c0ec5ef3",
+      "retain_until": 1795788314
+    },
+    "race_scope": "Two distinct operation IDs with the same generated asset payload contend for sequence1; not a browser editor test"
+  },
+  "retained_copy": {
+    "passed": true,
+    "old": {
+      "locator": {
+        "kind": "s3",
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "region": "ap-northeast-1",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/short/originals/company/rev1/source",
+        "version_id": "274aDDlV5fwruMXdTHPfTVMXDAxWp_cj"
+      },
+      "size_bytes": 95,
+      "sha256": "9ac381f15bb4234ca1fea578c960a5da0495b00c22884afbe9bd448eb8d7acda"
+    },
+    "new": {
+      "stored_at": 1792678457,
+      "locator": {
+        "kind": "s3",
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "region": "ap-northeast-1",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/short/originals/company/rev1/copies/retained-copy-op",
+        "version_id": "Jkx_.vzuLSr_tPIucGUuw5bH55FGM_xR"
+      },
+      "size_bytes": 95,
+      "sha256": "9ac381f15bb4234ca1fea578c960a5da0495b00c22884afbe9bd448eb8d7acda",
+      "retain_until": 1795788854,
+      "copied_from": {
+        "locator": {
+          "kind": "s3",
+          "bucket": "ceri-link-resilience-lock-lab-121426368082",
+          "region": "ap-northeast-1",
+          "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/short/originals/company/rev1/source",
+          "version_id": "274aDDlV5fwruMXdTHPfTVMXDAxWp_cj"
+        },
+        "sha256": "9ac381f15bb4234ca1fea578c960a5da0495b00c22884afbe9bd448eb8d7acda"
+      }
+    },
+    "existing_retention_mutated": false
+  },
+  "retention": {
+    "old_retention_unchanged": true,
+    "old_retention": {
+      "Mode": "GOVERNANCE",
+      "RetainUntilDate": "2026-11-26T14:14:17Z"
+    },
+    "bucket_default_unchanged": {
+      "ObjectLockConfiguration": {
+        "ObjectLockEnabled": "Enabled"
+      }
+    }
+  },
+  "kit": {
+    "generation_ref": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "vh5oxxfco1Hv8VCMllzCvt4U1UnaJrKE"
+      },
+      "retain_until": 1795788314,
+      "sha256": "7c4d4365a9b5c8d4a03aeb7891568a002c6d6c69212b536dd25871c6c0ec5ef3",
+      "size_bytes": 3779,
+      "stored_at": 1792677920
+    },
+    "plan_sha256": "faf0c1c0acba775fae99521da4ad821b019c08dc1b47d4c8305aec62d0104418",
+    "protect_until": 1795705333,
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-fbcf1c2e93769a7e/rbr-901ac0b032f69bfa88e33b4825d2433ef7f0ee40b2dbab337eeca3bbaea05ede.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "9mnuEhE1ytPv_FibhWx5XQmkkzTWl4mR"
+      },
+      "sha256": "901ac0b032f69bfa88e33b4825d2433ef7f0ee40b2dbab337eeca3bbaea05ede",
+      "size_bytes": 3910
+    },
+    "state": "stored_awaiting_independent_approval"
+  },
+  "coordinator_put_acknowledgements": 35,
+  "race_commit_put_events": [
+    {
+      "operation": "PutObject",
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+      "version": null,
+      "state": "started"
+    },
+    {
+      "operation": "PutObject",
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+      "version": null,
+      "state": "acknowledged",
+      "result": {
+        "VersionId": "vh5oxxfco1Hv8VCMllzCvt4U1UnaJrKE",
+        "ContentLength": 0,
+        "LastModified": null,
+        "@metadata": {
+          "headers": {
+            "date": "Thu, 22 Oct 2026 14:05:20 GMT"
+          }
+        },
+        "mode": null,
+        "until": null
+      }
+    },
+    {
+      "operation": "PutObject",
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+      "version": null,
+      "state": "started"
+    },
+    {
+      "operation": "PutObject",
+      "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/race/commits/000000000001.json",
+      "version": null,
+      "state": "failed",
+      "status": 412
+    }
+  ],
+  "lost_response_replay_puts": 0,
+  "kit_puts": 9,
+  "kit_put_bytes": 60128,
+  "signed_fixed_gets": 75,
+  "all_fetched_versions_cover_generation_horizon": true,
+  "reconstruction": {
+    "definition_sha256": "e985f0dc07248a7eb12bbcbb24b4fa14a447c2851f2c1eec781516920a5350e2",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-order",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "faf0c1c0acba775fae99521da4ad821b019c08dc1b47d4c8305aec62d0104418",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "ffa9b94c7d0466b75ee044850e7f42d54f2de547de2fd655a7b5dc3d2b58a464",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "source_sha256": {
+    "src/RbrObjectStore.php": "54c17360c4002c45d3b6c3b7cd70ad0f9ade2e0d7870faf4bc97c465ae1aa3bf",
+    "tools/rbr-coordinate-s3-lab.php": "8f966ec9b05adbd18f8e5cb0dcefbb2bd1d68d6ab104293bbe45754fdabd4ddd",
+    "tools/rbr-coordinator-transport.py": "1c16f8be8e78adfdcc28c91904f69e554b56f8352b2be6579da80fedbfcdfff7",
+    "tools/rbr-s3-kit.py": "8c9a6b4adf26a4abbc12c45fc3d484093f95f0fd1bfd35fb623c36bebe2c80df",
+    "tools/rbr-generation-kit.py": "93d238e5f17580a18ff7464c6640e591cd93aad6dcf19713e6158d9f747447f5"
+  },
+  "cleanup": {
+    "temporary_rules_removed": true,
+    "dedicated_daemon_stopped": true,
+    "host_trust_unchanged": true
+  },
+  "regressions": {
+    "generation": 21,
+    "planner": 20,
+    "explicit_retention": 5,
+    "transport": 6,
+    "generation_kit": 17,
+    "s3_kit": 7,
+    "approval": 15
+  },
+  "classification": {
+    "environment": "Actual bucket Object Lock enabled/no default rule unchanged; earlier35-day-default assumption corrected from preflight evidence; scoped reader discovery addition verified; existing dedicated Docker store reused.",
+    "test_infrastructure": "Fault injection around real requests; not actual AWS outages. One sandbox-denied non-escalated WSL invocation retried through authorized tool boundary. Final check initially assumed a35day default; corrected to compare actual before/after configuration, which has no default rule.",
+    "product": "Initial signed fetch stopped before WordPress: reused code and a fresh copy had identical digests but different fixed refs. Builder now reuses an already verified sufficiently retained exact reference; receiver and approval checks unchanged. Failed kit/download retained. No production authoring hooks or generic connector."
+  },
+  "limitations": [
+    "Generated company/services/contact and image only",
+    "CLI development kit, no WP editor interception",
+    "Independent signer is a different local account, not physical-host independence",
+    "Existing image store reused, no new cold-cache claim",
+    "Retained experimental versions intentionally preserved",
+    "No production changes, automatic publication, ZIP, PR or release",
+    "Closed shortened observation not restarted",
+    "Live cases commit sequence1; long parent-lineage retention and production editor integration are not established by this run"
+  ]
+}

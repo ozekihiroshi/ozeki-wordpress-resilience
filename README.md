@@ -20,7 +20,7 @@ The [initial edition summary](docs/releases/initial-experimental-edition.md) ide
 
 ## Current status
 
-The Git baseline is PR #10 (main `f5ebf8c`). This working candidate adds the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. It remains `0.1.0-dev.1`, an experimental prototype, with no formal release or automatic production deployment. Older tested archives remain unchanged.
+The Git baseline is merged PR #11 (main `d00188d`). That prototype includes the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. It remains `0.1.0-dev.1`, an experimental prototype, with no formal release or automatic production deployment. Older tested archives remain unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
@@ -135,3 +135,22 @@ The supported reconstruction subset is company, services and contact pages with 
 A technician still provisions Python/PHP/OpenSSL and Composer dependencies (`composer install --no-interaction --prefer-dist` using the shipped lock file), a compatible isolated Docker runtime, S3 reader access, a trusted bootstrap, public-key pins and the independent current registry. The experimental S3 adapter uses the existing dedicated bucket and SSH role brokers; it is not a configurable general S3 connector. Account-separated signing was tested on one dedicated host, not independent physical hosts. Classic Docker image-store/architecture compatibility remains required. Arbitrary themes/plugins/forms, production WordPress save interception and end-to-end production S3-first authoring remain outside this tested subset. A valid signature is approval/integrity evidence, not proof of clean content.
 
 Keep configuration, root receipts, approvals, trust pins, histories and assets outside the code tree. Extract a new development kit into a new directory and explicitly switch versions; do not copy private material into the package. Plugin updates use WordPress's ZIP updater. This same-version candidate verifies overwrite and preservation, not a versioned database migration. See [ZIP acceptance procedure](docs/releases/rbr-signed-kit-zip.md), [signed-kit operation](docs/spec/rbr-signed-kit.md) and [reconstruction comparison contract](docs/spec/immutable-assets-deterministic-reconstruction.md).
+
+
+## Committed-generation reconstruction inlet (prototype)
+
+The [fixed-generation inlet](docs/spec/rbr-generation-kit.md) accepts an actual S3 generation receipt plus an explicit R/E/C/Q profile, preserves the selected generation reference, aligns dependency retention by protected copies and emits an independent-approval-pending kit. It does not invoke fixture generators or change approval conditions. This is development-kit CLI functionality; production editor integration and the PHP generation coordinator's live-AWS race/IAM validation remain separate gaps.
+
+Real S3 coordinator connection: [scope, retention and CLI prerequisites](docs/spec/rbr-live-coordinator.md).
+
+## Real S3 generation to signed reconstruction: final candidate
+
+Based on merged PR #11, this unmerged prototype connects the actual generation coordinator to experimental S3 and directly supplies its committed fixed version to the signed reconstruction entry. The generated-data live trial covers concurrent commit contention, resume after a failed save, reconciliation after a lost response, retained copies, independent test approval and two private WordPress reconstructions matching Q. See [live evidence and limits](docs/spec/rbr-live-coordinator.md).
+
+**Fixed defect:** identical execution-code bytes could be registered under different fixed references, causing the strict receiver to reject an ambiguous reference. The builder now reuses an already verified exact reference with sufficient retention. Receiver checks and approval requirements remain unchanged; the original failed attempt is retained in the evidence.
+
+**Retention:** the experimental bucket has Object Lock enabled but no default retention rule. New objects receive explicit retention; committed sources must cover the generation deadline plus 35 days. Existing object retention and bucket settings are not changed. The earlier assumption of a bucket default was a test/documentation error, separate from the reference defect.
+
+**Limits:** CLI/generated-data prototype; no production WordPress save interception, editor integration, generic S3 connector or automatic publication. Live contention used matching generated payloads and sequence-one commits, not browser editing or a long generation chain. Test signing used account separation on one host; runtime images were cached, so this is not proof of recovery from a cold cache or independent physical signer. A signature expresses approval/integrity, not absence of compromise.
+
+The plugin ZIP remains the administration UI; the development kit contains the new CLI. The final ZIP acceptance checks fresh install, same-version overwrite from the PR #11 candidate, and preservation of separately stored settings/history. It does not repeat cloud writes or renew approvals. Results and hashes are recorded after archive freeze in `evidence-public/rbr-coordinator-zip.json` (not retroactively inserted into the tested ZIP).

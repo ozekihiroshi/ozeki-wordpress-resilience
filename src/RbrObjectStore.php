@@ -8,17 +8,27 @@ final class RbrObjectStore
     private VersionedAssetStore $transfer;
     public function __construct(private \Closure $request, private string $bucket,
         private string $region, private string $owner, private string $prefix,
-        private string $scratch, private \Closure $clock)
+        private string $scratch, private \Closure $clock, private ?string $logicalSite = null,
+        private bool $explicitRetention = false)
     {
         if (!is_dir($scratch) || is_link($scratch) || !is_writable($scratch)) {
             throw new \InvalidArgumentException('Private scratch directory required');
         }
-        if (!preg_match('~^sites/([A-Za-z0-9_-]{1,80})/$~D',$prefix)) {
+        if (($logicalSite===null && !preg_match('~^sites/([A-Za-z0-9_-]{1,80})/$~D',$prefix))
+            || ($logicalSite!==null && (!preg_match('/^[A-Za-z0-9_-]{1,80}$/D',$logicalSite)
+                || !preg_match('~^sites/(?:[A-Za-z0-9_-]+/)+$~D',$prefix)))) {
             throw new \InvalidArgumentException('Independent RBR site prefix required');
         }
-        $this->transfer = new VersionedAssetStore($request, $bucket, $region, $owner, $prefix);
+        $transferRequest=function(string $op,array $args): array {
+            if ($op==='PutObject' && $this->explicitRetention) {
+                $args['ObjectLockMode']='GOVERNANCE';
+                $args['ObjectLockRetainUntilDate']=new \DateTimeImmutable('@'.($this->now()+36*86400));
+            }
+            return ($this->request)($op,$args);
+        };
+        $this->transfer = new VersionedAssetStore($transferRequest, $bucket, $region, $owner, $prefix);
     }
-    public function siteId(): string { return explode('/', $this->prefix)[1]; }
+    public function siteId(): string { return $this->logicalSite ?? explode('/', $this->prefix)[1]; }
     public function now(): int { return ($this->clock)(); }
     public function key(string $relative): string {
         if (!preg_match('~^[A-Za-z0-9_-]+(?:/[A-Za-z0-9_.-]+)*$~D', $relative)
@@ -41,7 +51,8 @@ final class RbrObjectStore
         $c=$l['ObjectLockConfiguration']??[];
         $d=$c['Rule']['DefaultRetention']??[];
         if (($v['Status']??null)!=='Enabled' || ($c['ObjectLockEnabled']??null)!=='Enabled'
-            || ($d['Mode']??null)!=='GOVERNANCE' || ($d['Days']??null)!==36 || isset($d['Years'])) {
+            || (!$this->explicitRetention && (($d['Mode']??null)!=='GOVERNANCE'
+                || ($d['Days']??null)!==36 || isset($d['Years'])))) {
             throw new \RuntimeException('RBR requires dedicated 36-day governance default');
         }
     }

@@ -1,0 +1,88 @@
+{
+  "format": "owr-rbr-coordinator-zip-v1",
+  "recorded_at": "2026-10-22T14:43:37.580551+00:00",
+  "passed": true,
+  "prototype": true,
+  "version": "0.1.0-dev.1",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "168a2ee73cf7a80d2076faaf79ede146f55edb6361350099874da5c1abcd25be",
+      "bytes": 15029483
+    }
+  ],
+  "kit": {
+    "passed": true,
+    "tests": [
+      "test_distribution.py.log",
+      "test-rbr-planner.php.log",
+      "test_rbr_approval.py.log",
+      "test_rbr_coordinator_transport.py.log",
+      "test_rbr_generation_kit.py.log",
+      "test-rbr-generation.php.log",
+      "test_rbr_comparison.py.log",
+      "test_core_distribution.py.log",
+      "test-rbr-explicit-retention.php.log",
+      "test_rbr_s3_kit.py.log"
+    ],
+    "external_files_preserved": 10,
+    "external_hashes": {
+      "retrieval-history.json": "5dd9b110ecc33d779f9ddae3adf28388591af8a6d1ea114b846a4dd28b7e9096",
+      "approval.sig": "ab1ad2c863f4b4fb390c79484d9cb320266e190c3c60ea1033f269a04c0fc65c",
+      "approval-verification.json": "8bcfddd27db5897f4d6ba43807796476627e2c06337f75e74ebb56d366d1fa26",
+      "reconstruction-history.json": "93df050c1540407ff9f05507a8832a5896cde3143be3e7f499772fc0c90cc04a",
+      "receipt.json": "1f621f437fb0e3045630b4dc7160ee852fd9367e7c6b3f12a54c57461a774ae1",
+      "registry.json": "ca0723e938ca09490e1c8e5eefe937d5b967c1dc783f652122f431732daff2f8",
+      "approval.json": "87265867351a745ede82a41b10c3edad143120b94f5415c5e400684035a15b66",
+      "configuration.json": "4d020051832da7be32d211589b091f56988adc9babe1b34a4963786372722a21",
+      "trust/public.pem": "90c98d98400f204b68e7a4c02f0aaa11e09ad1badd090dd4bc44238c282a16d2",
+      "trust/pin.json": "96324a23d5fd4e65e0d8e560606d08988cdb321bdab1366c695bd55211ecc455"
+    },
+    "original_records_unchanged": true,
+    "old_code_unchanged": true,
+    "packaged_files_unchanged": true,
+    "unsigned_entry_rejected": true,
+    "S3_calls": 0,
+    "signature_renewal": false,
+    "schema_migration_tested": false,
+    "kit_sha256": "168a2ee73cf7a80d2076faaf79ede146f55edb6361350099874da5c1abcd25be",
+    "test_infrastructure_notes": [
+      "Initial test started before build manifest existed; rerun after build completion.",
+      "Lifecycle imports created Python bytecode caches in extracted kit. Every shipped file is unchanged; only vendor and explicit __pycache__/*.pyc additions allowed."
+    ]
+  },
+  "wordpress": {
+    "passed": true,
+    "roundtrip_preserved_files": 0,
+    "operator_review": true,
+    "checks": [
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "live_evidence": "rbr-live-coordinator.json",
+  "live_test_repeated": false,
+  "production_changed": false,
+  "published": false,
+  "approval_renewed": false,
+  "classification": {
+    "plugin": "Prior duplicate execution-code reference defect fixed; strict receiver and approval requirements unchanged. No new plugin failure in ZIP acceptance.",
+    "test_infrastructure": [
+      "Initial test started before build manifest existed; rerun after build completion.",
+      "Lifecycle imports created Python bytecode caches in extracted kit. Every shipped file is unchanged; only vendor and explicit __pycache__/*.pyc additions allowed.",
+      "A summary helper initially expected success text from a silent passing test; corrected to rely on the runner exit-code checks.",
+      "Previously repaired bounded Selenium startup/element waits reused; historical browser root cause remains undetermined."
+    ],
+    "environment": "No production or host service configuration changed."
+  },
+  "post_freeze_sidecar": true
+}
