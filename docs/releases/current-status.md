@@ -1,6 +1,6 @@
 # 現状と残課題
 
-2026-10-21。基準はPR #5マージ済み main `0b10e54`。初回取得・日次接続・担当者確認はマージ済み。`0.1.0-dev.1` は試作版。PR #5のCI（PHP 8.1/8.3）は成功。正式Releaseではなく、既存の検証済みZIPは変更しない。
+2026-10-22。基準はPR #6マージ済み main `55ea023`。導入から復旧までの実SSH/S3接続と固定ZIP受入もマージ済み。初回取得・日次接続・担当者確認はマージ済み。`0.1.0-dev.1` は試作版。PR #6のCI（PHP 8.1/8.3）は成功。正式Releaseではなく、既存の検証済みZIPは変更しない。
 
 |領域|実装・専用環境での確認|実環境・残課題|
 |---|---|---|
@@ -10,7 +10,7 @@
 |外部通信・定期実行|固定SSH、別VM、通信断、停止再開、OS再起動と表示回復を確認|同一物理ホストの試験を物理障害への耐性とは扱わない|
 |設定作成・導入計画|棚卸し→導入前検査→watchdog→WordPressの設定下書きと読取り専用計画を追加|ホスト接続、配置、サービス登録、秘密情報、通知先の設定は自動化しない|
 |通知|Pushoverの実機受付・受信を確認。専用試験ではローカル受信先も使用|実SMTP・本番監視常設化は未達。今回の生成設定に配送先はない|
-|配布|PR #5までのCI、最終ZIPの新規導入・更新・状態保持を確認|試作版を維持。新しい正式リリースではない|
+|配布|PR #6までのCI、最終ZIPの新規導入・更新・状態保持を確認|試作版を維持。新しい正式リリースではない|
 
 ## 72時間観測は独立した判定
 
@@ -67,3 +67,14 @@ PR #5でマージ済みの[読取り専用ゲートと担当者確認仕様](../
 実経路の追加確認：[実SSH・実験S3の一貫試験](../guides/onboarding-ssh-s3.md)で、同じ生成サイトのSSH棚卸し→取得判定→2 PUT→試験署名→固定版隔離復元→日次登録を確認。9項目と回帰22件成功。実S3の保持証拠を使用。取得backendのリモートSSH化、本番配置・物理ホスト独立性・72時間の最終判定は別。
 
 導入・復旧接続の[固定ZIP受入](../guides/onboarding-zip.md)：新規導入、前回候補への実上書き、設定・履歴と完了済み実SSH/S3試験記録32件の保持を確認。プラグインは前回と同一内容、development kitのみ更新。正式リリース・72時間観測判定とは別。
+
+
+## 2026-10-22 信頼情報の継続運用
+
+[鍵更新・失効・担当交代・USB更新](../guides/trust-lifecycle.md)を追加。既存の署名ゲートを試験用鍵・データで検証し、物理USB・別担当者本人確認・最新信頼情報の強制配布とは区別する。信頼情報一式の巻戻しを検出する独立した世代管理は未実装。今回のPHP/メール/HTTPS本番保守はResilienceの本番保護完了を意味しない。
+
+08:55:57 JST監査は121標本、3セット89,527,925bytes、未配送0、信頼情報15件不変。既存2欠測を保持。72時間は15:55:56 JSTまで未達。最新監査値は運用記録を参照。署名承認と日次の担当者確認は別の有効期限・権限で運用する。
+
+## Current trust at recovery entry (prototype)
+
+Recovery entry now requires a root-owned independent current-generation/revocation checkpoint. Whole old trust bundles are rejected when they conflict with that checkpoint. Missing or expired checkpoints block recovery. Administrator provisioning is required; online global freshness is not implemented. See [deployment and limits](../guides/current-recovery-trust.md). The ongoing 72-hour observation is unchanged and is not final evidence for this new gate.

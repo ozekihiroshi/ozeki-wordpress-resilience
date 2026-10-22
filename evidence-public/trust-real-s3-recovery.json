@@ -1,0 +1,113 @@
+{
+  "format": "owr-trust-ssh-recovery-v1",
+  "checks": [
+    {
+      "name": "old_complete_bundle_blocked_before_get",
+      "passed": true
+    },
+    {
+      "name": "revoked_complete_bundle_blocked_before_get",
+      "passed": true
+    },
+    {
+      "name": "latest_registry_does_not_bypass_signature",
+      "passed": true
+    },
+    {
+      "name": "latest_approved_actual_wordpress_restore",
+      "passed": true
+    }
+  ],
+  "passed": 4,
+  "counts": {
+    "constructed": 1,
+    "gets": 2
+  },
+  "isolated_restore": {
+    "passed": true,
+    "resources_removed": true,
+    "containers": [
+      "owr-daily-restore-3bc198c9b96d-db",
+      "owr-daily-restore-3bc198c9b96d-web"
+    ],
+    "network": "none + shared private namespace",
+    "published_ports": false,
+    "source_mounts": false,
+    "fresh_database_credentials": true,
+    "wordpress": {
+      "post": 1,
+      "attachment": "one.png",
+      "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+      "cron_disabled": true,
+      "http_blocked": true
+    },
+    "http": {
+      "status": 200,
+      "post": true
+    }
+  },
+  "registry_sha256": "9b6577840f0117505de224c5c66a969741e9fa2af534a7ed54003c1e0f823425",
+  "production_changes": false,
+  "observation_changes": false,
+  "ssh_deployment": {
+    "state": "applied",
+    "revision": 1,
+    "sha256": "9b6577840f0117505de224c5c66a969741e9fa2af534a7ed54003c1e0f823425",
+    "previous_sha256": "absent",
+    "applied": true
+  },
+  "ssh_inspection": {
+    "state": "inspected",
+    "sha256": "9b6577840f0117505de224c5c66a969741e9fa2af534a7ed54003c1e0f823425",
+    "revision": 1
+  },
+  "storage": "real experimental S3 fixed versions via allow-listed test broker",
+  "receiver": "dedicated container filesystem; shared WSL kernel",
+  "docker_daemon": "dedicated development daemon shared with lab orchestration; no claim of daemon independence",
+  "real_s3": {
+    "requests": 2,
+    "operations": [
+      {
+        "method": "GET",
+        "key": "sites/isolated-queue-lab/sets/AWS-d60193cc1c4c0630/database.sql",
+        "version_id": "QcLmUydFVd3BR3wdDXd5Cs_im6ha1fny",
+        "sha256": "334537f78d502bdf50ce540f3dad20dd967ca301dc564fd6bd096cee338b7256",
+        "bytes": 92829,
+        "retention": {
+          "mode": "GOVERNANCE",
+          "retain_until": "2026-11-25T14:07:26Z",
+          "last_modified": "2026-10-21T13:57:27+00:00"
+        }
+      },
+      {
+        "method": "GET",
+        "key": "sites/isolated-queue-lab/sets/AWS-d60193cc1c4c0630/wordpress-files.tar.gz",
+        "version_id": "uJJjgGuBZJyMXzN6xMEqdSo1qHNhjyBz",
+        "sha256": "234538322906d8497053281e2990aa5183cea0b05d5c39a105273ecb5b4e05f0",
+        "bytes": 29718659,
+        "retention": {
+          "mode": "GOVERNANCE",
+          "retain_until": "2026-11-25T14:07:31Z",
+          "last_modified": "2026-10-21T13:57:33+00:00"
+        }
+      }
+    ],
+    "no_put": true
+  },
+  "dedicated_ssh_containers_removed": true,
+  "recorded_at": "2026-10-22T00:47:12.058757+00:00",
+  "classification": {
+    "environment": "No new host/SSH/AWS failure observed; production unchanged",
+    "test_infrastructure": "Credential-isolating Unix broker delegates to existing real S3 adapter; container shares WSL kernel/development Docker daemon",
+    "product": "Actual recovery gate/current-trust checks and default offline restore unchanged and exercised; no new product defect observed"
+  },
+  "no_object_get_before_denial": true,
+  "reused_non_observation_generated_versions": true,
+  "source_sha256": {
+    "run-trust-ssh-recovery-lab.py": "b779f8409a4d401b9d43c2be13b3f88b41b4c414c76caa2dbf49d3cd468fa0f5",
+    "trust-ssh-recovery-cases.py": "6e046d75813247fe31b6fcbae275bb2e6b1b77aa44d05791d3011e8d2be106bb",
+    "trust-recovery-s3-broker.py": "45d6981bff862e44dc6c2c8645ae3ad128f2b4e12c1852b8f71388f8167b2091",
+    "queue-s3-adapter.py": "447ed6f7c3ce59539a9eba8466fe30feeddf92f5d96e119e8afd9503a1c55a9d",
+    "first-site-daily-restore.py": "0f33bc6da63287374fa00c9d88319c9675d47f2fe43cccd60e2f4b2df1177530"
+  }
+}

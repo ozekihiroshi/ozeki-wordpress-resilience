@@ -16,6 +16,9 @@ import importlib.util
 trust=Path.home()/'.local/share/owr-trust/wp-ceri-link/RS-WP-CERI-20261018-001'
 spec=importlib.util.spec_from_file_location('candidate_gate',Path('/mnt/d/workspace/ozeki-wordpress-resilience/tools/verify-protected-candidate.py'))
 gate=importlib.util.module_from_spec(spec);spec.loader.exec_module(gate)
+spec=importlib.util.spec_from_file_location("pilot_current_trust",Path(__file__).resolve().parents[1]/"current-recovery-trust.py")
+current_trust=importlib.util.module_from_spec(spec);spec.loader.exec_module(current_trust)
+checkpoint=current_trust.current(trust,source/"candidate-approval.json","wp-ceri-link","RS-WP-CERI-20261018-001")
 verified=gate.verify(trust,source/'candidate-approval.json',source/'candidate-approval.sig',source/'candidate-anchor.json',source,'wp-ceri-link','RS-WP-CERI-20261018-001')
 # Mandatory gate before output creation or Docker operations.
 assert json.loads((source/'fresh-fetch-result.json').read_text())['passed']
@@ -80,6 +83,7 @@ healthphp="<?php require '/var/www/html/wp-load.php'; global $wpdb; echo json_en
 (vdir/'health.php').write_text(healthphp);(vdir/'health.php').chmod(0o644)
 base=['--security-opt','no-new-privileges:true','--pids-limit','128','--cpus','1']
 try:
+ current_trust.unchanged(checkpoint,trust,source/"candidate-approval.json","wp-ceri-link","RS-WP-CERI-20261018-001")
  for n in [web,db]:
   p=subprocess.run(['docker','container','inspect',n],capture_output=True);assert p.returncode!=0,'Container already exists'
  for n in [wv,dv]:

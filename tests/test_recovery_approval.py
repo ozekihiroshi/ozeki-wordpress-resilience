@@ -1,4 +1,5 @@
 """Security regression tests: rejected approvals must never reach Docker."""
+import shutil
 import hashlib, json, os, subprocess, sys, tarfile, tempfile, unittest
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -6,6 +7,10 @@ ROOT = Path(__file__).resolve().parents[1]
 class ApprovalGateTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
+  self.testtools=self.root/'tools';self.testtools.mkdir()
+  for name in ['run-independent-recovery.py','verify-recovery-approval.py']:shutil.copyfile(ROOT/'tools'/name,self.testtools/name)
+  # Only this copied legacy test runner stubs authority; production entry never has an override.
+  (self.testtools/'current-recovery-trust.py').write_text('def current(*args): return {}\ndef unchanged(*args): return None\n')
   self.bundle=self.root/'bundle';self.bundle.mkdir();self.trust=self.root/'trust';self.trust.mkdir()
   boot=self.bundle/'bootstrap';boot.mkdir();(boot/'verify.php').write_text('<?php /* test */')
   with tarfile.open(self.bundle/'bootstrap.tar.gz','w:gz') as t:t.add(boot,arcname='bootstrap')
@@ -30,7 +35,7 @@ class ApprovalGateTests(unittest.TestCase):
   subprocess.run(['openssl','dgst','-sha256','-sign',str(self.trust/'private.pem'),'-out',str(self.trust/'approval.sig'),str(self.trust/'approval.json')],check=True,capture_output=True)
   self.pin['approved_document_sha256']=self.sha(self.trust/'approval.json');self.write(self.trust/'pin.json',self.pin)
  def run_gate(self,verify_only=False,omit=False):
-  cmd=[sys.executable,'-O',str(ROOT/'tools/run-independent-recovery.py'),'--bundle',str(self.bundle),'--output',str(self.root/'out'),'--run','1']
+  cmd=[sys.executable,'-O',str(self.testtools/'run-independent-recovery.py'),'--bundle',str(self.bundle),'--output',str(self.root/'out'),'--run','1']
   if not omit:cmd+=['--trust-dir',str(self.trust),'--approval',str(self.trust/'approval.json'),'--signature',str(self.trust/'approval.sig'),'--site-id','site','--set-id','set']
   if verify_only:cmd+=['--verify-only']
   return subprocess.run(cmd,capture_output=True,text=True,env={**os.environ,'PATH':str(self.bin)+os.pathsep+os.environ['PATH'],'OWR_TEST_MARKER':str(self.marker)})

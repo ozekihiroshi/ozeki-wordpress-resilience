@@ -1,0 +1,88 @@
+{
+  "format": "owr-trust-ssh-recovery-v1",
+  "checks": [
+    {
+      "name": "old_complete_bundle_blocked_before_get",
+      "passed": true
+    },
+    {
+      "name": "revoked_complete_bundle_blocked_before_get",
+      "passed": true
+    },
+    {
+      "name": "latest_registry_does_not_bypass_signature",
+      "passed": true
+    },
+    {
+      "name": "latest_approved_actual_wordpress_restore",
+      "passed": true
+    }
+  ],
+  "passed": 4,
+  "counts": {
+    "constructed": 1,
+    "gets": 2
+  },
+  "isolated_restore": {
+    "passed": true,
+    "resources_removed": true,
+    "containers": [
+      "owr-daily-restore-3e1eb3979f75-db",
+      "owr-daily-restore-3e1eb3979f75-web"
+    ],
+    "network": "none + shared private namespace",
+    "published_ports": false,
+    "source_mounts": false,
+    "fresh_database_credentials": true,
+    "wordpress": {
+      "post": 1,
+      "attachment": "one.png",
+      "media": "349ad88fe3bfec16ff771e983e5771c49242b8820be599888a614ee602ed6cc7",
+      "cron_disabled": true,
+      "http_blocked": true
+    },
+    "http": {
+      "status": 200,
+      "post": true
+    }
+  },
+  "registry_sha256": "a8f3beb9b19974ecf306cb5bd08213f182677b0c15e4d71925bebf36a9a315fe",
+  "production_changes": false,
+  "observation_changes": false,
+  "ssh_deployment": {
+    "state": "applied",
+    "revision": 1,
+    "sha256": "a8f3beb9b19974ecf306cb5bd08213f182677b0c15e4d71925bebf36a9a315fe",
+    "previous_sha256": "absent",
+    "applied": true
+  },
+  "ssh_inspection": {
+    "state": "inspected",
+    "sha256": "a8f3beb9b19974ecf306cb5bd08213f182677b0c15e4d71925bebf36a9a315fe",
+    "revision": 1
+  },
+  "storage": "local generated fixed-version adapter; no real S3",
+  "receiver": "dedicated container filesystem; shared WSL kernel",
+  "docker_daemon": "dedicated development daemon shared with lab orchestration; no claim of daemon independence",
+  "dedicated_ssh_containers_removed": true,
+  "recorded_at": "2026-10-22T00:41:22.880216+00:00",
+  "initial_failure": {
+    "category": "test_infrastructure",
+    "cause": "Forced SSH command referenced nonexistent /usr/local/bin/python3 in the chosen image; confirmed by direct image execution",
+    "fix": "Use /usr/bin/python3; incomplete later runs retain containers for diagnosis",
+    "first_attempt_output": "owr-trust-ssh-recovery-20261022",
+    "successful_output": "owr-trust-ssh-recovery-20261022-v2"
+  },
+  "classification": {
+    "environment": "No new unexplained environment failure; production FTP/MySQL and observation unchanged",
+    "test_infrastructure": "Local fixed-version/retention responses; receiver shares WSL kernel/development Docker daemon; initial fixed-command Python path corrected",
+    "product": "Existing actual recovery gate and default offline restore used without bypass; no production runtime change required"
+  },
+  "source_sha256": {
+    "run-trust-ssh-recovery-lab.py": "8b1ae588c8ebb6dce85dd414cd876ff37e7521d001ceaaf8a50a72cac1879ebe",
+    "trust-ssh-recovery-cases.py": "2d28a0a08703d68ef9f9cb10cef12d661d5d07174699dd451a058aa5c449c615",
+    "first-site-daily-restore.py": "0f33bc6da63287374fa00c9d88319c9675d47f2fe43cccd60e2f4b2df1177530",
+    "current-recovery-trust.py": "b1e5179a50c96c3508bb32a833226f35eee7884716390b7fe427c7c19dce3ccd",
+    "trust-registry-ssh.py": "f766d5264f293f335bd4c9881b08358e1192e5f79533604ccfc63eef53f37165"
+  }
+}

@@ -27,6 +27,10 @@ class ApprovedRestoreTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.keys.cleanup()
     def setUp(self):
+        # Authority boundary is exercised separately; retain existing transport/signature contracts.
+        for method in ("current", "unchanged"):
+            stub=patch.object(r.current_trust,method,return_value={"revision":1})
+            stub.start();self.addCleanup(stub.stop)
         fixture.DailyS3Tests.setUp(self)
         self.assets['files']=archive([('./index.php',tarfile.REGTYPE)])
         self.paired['assets']['files']=r.gate.sha(self.assets['files'])

@@ -27,9 +27,13 @@ def main():
  # Load verification code from this independently installed tool directory, never the bundle.
  spec=importlib.util.spec_from_file_location("approval_gate",Path(__file__).with_name("verify-recovery-approval.py"))
  verifier=importlib.util.module_from_spec(spec);spec.loader.exec_module(verifier)
+ spec=importlib.util.spec_from_file_location("current_trust",Path(__file__).with_name("current-recovery-trust.py"))
+ current_trust=importlib.util.module_from_spec(spec);spec.loader.exec_module(current_trust)
+ checkpoint=current_trust.current(Path(a.trust_dir),Path(a.approval),a.site_id,a.set_id)
  approval_result=verifier.verify_restore_gate(Path(a.trust_dir),Path(a.approval),Path(a.signature),bundle,a.site_id,a.set_id)
  if a.verify_only:
   print(json.dumps(approval_result));return
+ current_trust.unchanged(checkpoint,Path(a.trust_dir),Path(a.approval),a.site_id,a.set_id)
  os.umask(0o077);out.mkdir(parents=True,exist_ok=False)
  report={"kind":"E3","started_at":now(),"run":a.run,"passed":False,"source_access":"none","approval":approval_result}
  try:

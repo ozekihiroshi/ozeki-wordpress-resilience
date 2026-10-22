@@ -100,6 +100,10 @@ class Worker:
                              'approval mismatch')
                 inputs=dict(trust=trust,set_id=r['set_id'],config_hash=r['config_sha256'],
                             document_hash=a['manifest_sha256'],key_hash=a['public_key_sha256'])
+                # Reject a known pre-start trust failure before persisting a running attempt.
+                if recover is None:
+                    load('worker_current_trust','current-recovery-trust.py').current(
+                        Path(trust),Path(trust)/'approved.json',d.SITE,r['set_id'])
                 output=self.root/'recovery-attempts'/request_id
                 d.gate.check(not output.exists(),'recovery destination already exists')
                 db.execute('INSERT INTO recovery_attempts(request_id,day,inputs,state,outcome,registration) VALUES(?,?,?,?,?,?)',

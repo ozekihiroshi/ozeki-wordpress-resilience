@@ -1,0 +1,69 @@
+{
+  "format": "owr-trust-lifecycle-lab-v1",
+  "checked_at": "2026-10-22T00:07:15.921539+00:00",
+  "passed_checks": 12,
+  "checks": [
+    {
+      "case": "original_approval",
+      "passed": true
+    },
+    {
+      "case": "reviewed_rotation_new_key_new_sequence",
+      "passed": true
+    },
+    {
+      "case": "old_document_against_current_pin_rejected",
+      "passed": true
+    },
+    {
+      "case": "revocation_rejected",
+      "passed": true
+    },
+    {
+      "case": "expired_rejected_with_valid_signature",
+      "passed": true
+    },
+    {
+      "case": "old_sequence_rejected",
+      "passed": true
+    },
+    {
+      "case": "mixed_key_pin_rejected",
+      "passed": true
+    },
+    {
+      "case": "partial_or_tampered_bundle_rejected",
+      "passed": true
+    },
+    {
+      "case": "wrong_media_password_rejected",
+      "passed": true
+    },
+    {
+      "case": "encrypted_readback_signing_without_plaintext_key",
+      "passed": true
+    },
+    {
+      "case": "successor_current_bundle_accepted",
+      "passed": true
+    },
+    {
+      "case": "incomplete_copy_rejected",
+      "passed": true
+    }
+  ],
+  "known_limitations": [
+    {
+      "case": "complete_old_trust_bundle_rollback",
+      "observed": "accepted while original approval remains valid",
+      "security_requirement_met": false,
+      "reason": "Current verifier trusts the operator-selected pin; no independent latest generation or global revocation registry."
+    }
+  ],
+  "real_s3": false,
+  "physical_usb": false,
+  "separate_operator_identity": false,
+  "production_keys_used": false,
+  "private_keys_retained": false,
+  "assets_fetched_or_executed": false
+}

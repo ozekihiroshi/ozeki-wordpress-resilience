@@ -118,3 +118,16 @@ ZIP admission/review acceptance: `run-deployment-zip-lab.py --operator-review` u
 `run-onboarding-recovery-lab.py`：生成WordPress/MariaDBで取得判定付き日次処理→試験署名→隔離復元→日次結果登録を接続。ローカル固定版代替を使用し、実AWS/実SSHは対象外。[操作と範囲](../docs/guides/onboarding-recovery.md)。
 
 `run-onboarding-ssh-s3-lab.py`：生成サイトの実SSH棚卸しから、取得判定・実験S3・試験署名・隔離復元・日次登録まで。[構成・保存先・再実行時の注意](../docs/guides/onboarding-ssh-s3.md)。
+
+
+Trust lifecycle: `trust-lifecycle-cases.py` checks disposable signing-key rotation/revocation and simulated media readback against the existing gate. See [scope and known rollback limitation](../docs/guides/trust-lifecycle.md). No S3, production keys or physical USB.
+
+Current recovery trust: [mandatory checkpoint deployment](../docs/guides/current-recovery-trust.md), [generated acceptance evidence](../evidence-public/current-recovery-trust.json). Missing administrator checkpoint now blocks recovery; no production checkpoint was installed.
+
+`update-current-recovery-trust.py`: administrator-only validation/deployment of the fixed current registry. See [procedure](../docs/guides/trust-registry-update.md).
+
+`trust-registry-ssh.py`: bounded pinned SSH delivery to the existing registry updater; never automatically retries. See [SSH guide](../docs/guides/trust-registry-ssh.md).
+
+`run-trust-ssh-recovery-lab.py` / `trust-ssh-recovery-cases.py`: explicit generated-data SSH-to-recovery integration using actual offline restore and fixture storage. Requires dedicated development Docker privileges; see [scope](../docs/guides/trust-ssh-recovery.md).
+
+`run-trust-ssh-recovery-lab.py --real-s3` reuses existing experimental object versions with the existing real reader via `trust-recovery-s3-broker.py`; no PUT. See [scope](../docs/guides/trust-real-s3-recovery.md).

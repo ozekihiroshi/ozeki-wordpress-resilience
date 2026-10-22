@@ -1,0 +1,65 @@
+{
+  "format": "owr-trust-final-zip-v1",
+  "recorded_at": "2026-10-22T01:06:12.449830+00:00",
+  "passed": true,
+  "version": "0.1.0-dev.1",
+  "production_ready": false,
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-dev.1.zip",
+      "sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+      "bytes": 35162
+    },
+    {
+      "file": "owr-development-kit-0.1.0-dev.1.zip",
+      "sha256": "7ec68ead36a57eb216336c928621cc3118ef4b51a6dd577679d1360f6ad6db13",
+      "bytes": 14646733
+    }
+  ],
+  "plugin_identical_to_previous_candidate": true,
+  "kit_checks": [
+    "kit ZIP bytes and every extracted file match manifest",
+    "packaged plan is read-only and not production-ready",
+    "packaged generate creates new draft",
+    "existing reviewed draft overwrite refused without changes",
+    "separate code extraction preserves external configuration"
+  ],
+  "wordpress": {
+    "passed": true,
+    "roundtrip_preserved_files": 32,
+    "operator_review": true,
+    "checks": [
+      "completed real roundtrip records copied for byte-preservation only; no migration or resumed execution",
+      "fresh: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate",
+      "upgrade: exact ZIP files, active plugin, browser current reports/history, editor denied, POST405, settings/cron/config/requests/external ledgers preserved through deactivate/reactivate"
+    ],
+    "zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "old_zip_sha256": "0537301b4f85b52cbd363c2b5909806b367c5a3d9bc40933325b31f88af51cfb",
+    "containers_removed": true,
+    "scope": "Generated fixtures; real WordPress Plugin_Upgrader install/overwrite and Chromium; no S3 or external notifications; not a repeat of systemd reboot trial"
+  },
+  "retained_roundtrip_file_count": 32,
+  "source_records_unchanged": true,
+  "packaged_trust_tests": {
+    "current": 28,
+    "update": 20,
+    "ssh_protocol": 4
+  },
+  "external_trust_state": {
+    "passed": true,
+    "checks": [
+      "old/new kit extraction preserves separate registry, trust and history",
+      "fresh unprovisioned authority refuses",
+      "packaged gate accepts preserved current authority without mutation"
+    ],
+    "file_count": 6,
+    "registry_sha256": "9b6577840f0117505de224c5c66a969741e9fa2af534a7ed54003c1e0f823425"
+  },
+  "real_s3_tested_sources_match_kit": 5,
+  "classification": {
+    "environment": "Dedicated offline Docker trial; production and observation unchanged",
+    "test_infrastructure": "Actual WordPress updater and browser, same-version reinstall since PHP unchanged; external state retained by byte comparison, not automatic migration",
+    "product": "Trust/current-registry update/deploy lives in separate development kit; administrator registry provisioning remains required"
+  },
+  "scope": "Final ZIP install/update/retention; no new S3 save/sign/restore, no formal release or 72h final verdict"
+}
