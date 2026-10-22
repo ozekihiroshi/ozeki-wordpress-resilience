@@ -78,3 +78,7 @@ Recurring registry refresh, per-host readback, failure and expiry procedures are
 Additional [two-VM recurring SSH verification](docs/guides/trust-recurring-ssh.md) passed seven checks: per-host readback, partial authentication failure, actual expiry and explicit refresh recovery, with signed approvals unchanged. No new S3/restore or 72-hour coverage claim.
 
 [Recurring trust final ZIP acceptance](docs/releases/recurring-trust-final-zip.md): fresh install, same-version update, settings/history and unchanged approval retention verified; prototype only, separate from 72-hour evaluation.
+
+## Proposed next operating model
+
+The [initial selectable-recovery specification](docs/spec/selectable-recovery-spec.md) describes same-host verification, optional independent verification, incident quarantine and on-demand recovery environments. **Design only: these are not shipped capabilities or relaxed approval rules.** [Japanese specification](docs/spec/selectable-recovery-spec-jp.md).
