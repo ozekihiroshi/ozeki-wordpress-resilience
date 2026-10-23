@@ -20,6 +20,40 @@ def atomic(path,value):
     fd=os.open(path.parent,os.O_RDONLY)
     try:os.fsync(fd)
     finally:os.close(fd)
+
+def validate_block(node):
+    from html.parser import HTMLParser
+    from urllib.parse import urlsplit
+    require(node['name'] in ('core/paragraph','core/heading','core/list','core/quote','core/image','core/freeform'),'Unsupported block')
+    require(isinstance(node['html'],str) and len(node['html'])<=200000,'Block size')
+    attrs=node.get('attrs',{});require(isinstance(attrs,dict),'Block attributes')
+    allowed={'core/heading':{'level'},'core/image':{'sizeSlug','linkDestination'},'core/list':{'ordered','start'}}.get(node['name'],set())
+    require(set(attrs)<=allowed,'Unsupported block setting')
+    if 'level' in attrs:require(type(attrs['level']) is int and 1<=attrs['level']<=6,'Heading level')
+    if 'ordered' in attrs:require(type(attrs['ordered']) is bool,'List order')
+    if 'start' in attrs:require(type(attrs['start']) is int and 1<=attrs['start']<=100000,'List start')
+    if 'sizeSlug' in attrs:require(attrs['sizeSlug'] in ('thumbnail','medium','large','full'),'Image size')
+    if 'linkDestination' in attrs:require(attrs['linkDestination']=='none','Image link')
+    class Check(HTMLParser):
+        def __init__(self):super().__init__(convert_charrefs=True);self.refs=[];self.stack=[]
+        def handle_starttag(self,tag,attrs):
+            require(tag in ('p','h1','h2','h3','h4','h5','h6','strong','b','em','i','s','del','br','a','ul','ol','li','blockquote','cite','figure','figcaption','img'),'Unsupported block HTML')
+            require(len(dict(attrs))==len(attrs),'Duplicate HTML attribute')
+            for key,value in attrs:
+                if (tag,key) in (('a','href'),('img','src')):
+                    require(isinstance(value,str) and not any(ord(c)<32 for c in value),'URL controls')
+                    if re.fullmatch('asset:[a-z][a-z0-9_-]{0,79}',value):self.refs.append((value[6:],tag))
+                    else:require(tag=='a' and (urlsplit(value).scheme in ('http','https','mailto','tel') or re.fullmatch('#[a-zA-Z0-9_-]+',value)),'Unsafe or dependent URL')
+                else:require((tag,key)==('img','alt') or ((tag,key)==('ol','start') and value.isdigit()),'Unsupported HTML attribute')
+            if tag=='img':require('src' in dict(attrs),'Image source required')
+            if tag not in ('img','br'):self.stack.append(tag)
+        def handle_endtag(self,tag):
+            require(self.stack and self.stack.pop()==tag,'Unbalanced HTML')
+        def handle_comment(self,data):raise ValueError('Unexpected HTML comment')
+        def handle_decl(self,data):raise ValueError('HTML declaration')
+        def handle_pi(self,data):raise ValueError('HTML instruction')
+    p=Check();p.feed(node['html']);p.close();require(not p.stack,'Unclosed HTML');return p.refs
+
 def normalize(site):
     require(set(site)=={'schema','title','landing','entries'},'Explicit site fields required')
     require(site['schema']=='owr-site-materials-v1','Site schema')
@@ -36,14 +70,16 @@ def normalize(site):
             require(0<len(raw)<=4*1024*1024 and isinstance(row['alt'],str) and len(row['alt'])<=1000,'Image bounds')
             require((row['mime']=='image/png' and raw.startswith(b'\x89PNG\r\n\x1a\n')) or (row['mime']=='image/jpeg' and raw.startswith(b'\xff\xd8\xff')),'Supported image signature')
         else:
-            require(kind in ('page','post') and set(row)=={'id','kind','title','slug','parent','nodes'},'Supported post/page fields')
+            require(kind in ('page','post') and set(row) in ({'id','kind','title','slug','parent','nodes'},{'id','kind','title','slug','parent','nodes','status'}),'Supported post/page fields')
+            require(row.get('status','draft') in ('draft','publish','private','pending'),'Publication status')
             require(isinstance(row['title'],str) and 0<len(row['title'])<=200,'Title bound')
             require(isinstance(row['slug'],str) and re.fullmatch('[a-z0-9]+(?:-[a-z0-9]+)*',row['slug']) and row['slug'] not in slugs,'Unique portable slug');slugs.add(row['slug'])
             require(isinstance(row['nodes'],list) and len(row['nodes'])<=500,'Body bounds')
             for n in row['nodes']:
-                typ=n.get('type');keys={'paragraph':{'type','text'},'heading':{'type','text','level'},'link':{'type','text','target'},'image':{'type','target'}}
-                require(typ in keys and set(n)==keys[typ],'Unsupported content node; no silent conversion')
+                typ=n.get('type');keys={'paragraph':{'type','text'},'heading':{'type','text','level'},'link':{'type','text','target'},'image':{'type','target'},'block':{'type','name','html'}}
+                require(typ in keys and (set(n)==keys[typ] or (typ=='block' and set(n)==keys[typ]|{'attrs'})),'Unsupported content node; no silent conversion')
                 if 'text' in n:require(isinstance(n['text'],str) and len(n['text'])<=20000,'Text bound')
+                if typ=='block':validate_block(n)
                 if typ=='heading':require(type(n['level']) is int and 2<=n['level']<=6,'Heading level')
         require(len(canon(row))<=MAX_ASSET_BYTES,'Canonical asset size bound')
         out.append(row)
@@ -56,6 +92,8 @@ def normalize(site):
         while p is not None:
             require(p not in visited,'Parent cycle');visited.add(p);p=byid[p]['parent']
         for n in row['nodes']:
+            if n['type']=='block':
+                for target,kind in validate_block(n):require(target in byid and (byid[target]['kind']=='image')==(kind=='img'),'Unprotected block relation')
             if 'target' in n:require(n['target'] in byid and (byid[n['target']]['kind']=='image')==(n['type']=='image'),'Dangling or wrong-kind relation')
     require(len(canon(site))<=MAX_SITE_BYTES,'Submitted material size bound')
     return dict(site,entries=sorted(out,key=lambda x:x['id']))
@@ -128,7 +166,7 @@ class Repository:
                 require(0<len(packed)<=MAX_STORED_BYTES,'Stored object size bound')
                 payloads.append(packed)
                 reserved.append({'id':row['id'],'ref':'x'*(MAX_REFERENCE_BYTES-2),'raw_sha256':sha(raw),'raw_size':len(raw),'encoding':'gzip'})
-            manifest={'schema':'owr-site-generation-v1','site_title':site['title'],'landing':site['landing'],'objects':reserved,'expected':expected(site),'parent':parent,'operation':operation,'policy':policy,'approval_ref':approval_ref,'protect_until':op['horizon'],'rules':'portable-nodes-v1'}
+            manifest={'schema':'owr-site-generation-v1','site_title':site['title'],'landing':site['landing'],'objects':reserved,'expected':expected(site),'parent':parent,'operation':operation,'policy':policy,'approval_ref':approval_ref,'protect_until':op['horizon'],'rules':'portable-nodes-v2' if any('status' in x or any(n.get('type')=='block' for n in x.get('nodes',[])) for x in site['entries']) else 'portable-nodes-v1'}
             require(len(canon(manifest))<=MAX_STORED_BYTES,'Manifest size budget exceeded before storage')
             atomic(opfile,op)
             for item,packed in zip(reserved,payloads):item['ref']=self.put(packed,op['horizon'])
@@ -138,7 +176,7 @@ class Repository:
 
 def receive(store,receipt,verify_signature=None):
     raw,until,_=store.get(receipt);require(0<len(raw)<=MAX_STORED_BYTES,'Stored manifest size bound');require(sha(raw)==receipt['sha256'],'Manifest hash')
-    m=json.loads(raw);require(m['schema']=='owr-site-generation-v1' and m['rules']=='portable-nodes-v1','Generation contract')
+    m=json.loads(raw);require(m['schema']=='owr-site-generation-v1' and m['rules'] in ('portable-nodes-v1','portable-nodes-v2'),'Generation contract')
     require(until>=m['protect_until']>time.time(),'Generation retention')
     if m['policy']=='independent-signature':
         require(verify_signature is not None,'Independent signature verifier required');verify_signature(receipt,m['approval_ref'])

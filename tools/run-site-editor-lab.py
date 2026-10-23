@@ -6,7 +6,7 @@ def load(name,file):
     s=importlib.util.spec_from_file_location(name,ROOT/'tools'/file);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 l=load('material_lab','run-site-materials-lab.py');w=load('editor_worker','site-editor-worker.py');run=l.run
 
-def main(out,live,plugin_zip=None,old_plugin_zip=None,recovery=False):
+def main(out,live,plugin_zip=None,old_plugin_zip=None,recovery=False,native=False):
     out.mkdir(mode=0o700,exist_ok=False);shared=out/'shared';shared.mkdir();bridge=shared/'bridge';(bridge/'requests').mkdir(parents=True);(bridge/'reports').mkdir();operator=out/'operator';operator.mkdir();prefix='sites/isolated-queue-lab/sets/AWS-'+secrets.token_hex(8)+'/' if live else 'dedicated-editor/'
     if live:(out/'preflight.json').write_bytes(w.m.canon(l.k.k.transport.preflight()))
     config={'transport':'experimental-s3' if live else 'filesystem-lab','prefix':prefix,'work':str(operator),'bridge':str(bridge)};(out/'worker.json').write_bytes(w.m.canon(config));(shared/'control.json').write_text('{}')
@@ -71,10 +71,10 @@ def main(out,live,plugin_zip=None,old_plugin_zip=None,recovery=False):
             recovery_thread=threading.Thread(target=recoveryloop);recovery_thread.start()
         run('docker','run','-d','--name',browser,'--network','container:'+web,'--user','1000:1000','--memory','2g','--shm-size','1g','-e','HOME=/tmp','-v',str(ROOT)+':/kit:ro','-v',str(shared)+':/lab','--entrypoint','sleep','selenium/standalone-chrome:latest','infinity');created.append(('container',browser))
         with (out/'browser.log').open('wb') as log:
-            p=subprocess.Popen(['docker','exec',browser,'python3','/kit/lab/site-materials-editor/browser.py'],stdout=log,stderr=log)
+            p=subprocess.Popen(['docker','exec',browser,'python3','/kit/lab/site-materials-editor/native-browser.py' if native else '/kit/lab/site-materials-editor/browser.py'],stdout=log,stderr=log)
             code=p.wait(timeout=2400)
         if code:raise RuntimeError('Browser trial failed; inspect private browser.log')
-        result=json.loads((shared/'browser-result.json').read_text());(out/'result.json').write_bytes(w.m.canon({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live,'public_activation':False,'native_entries_redirect_to_protected_editor':True}));print(json.dumps({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live}),flush=True)
+        result=json.loads((shared/'browser-result.json').read_text());(out/'result.json').write_bytes(w.m.canon({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live,'public_activation':False,'native_editor':native,'native_entries_redirect_to_protected_editor':False}));print(json.dumps({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live}),flush=True)
     finally:
         stop.set()
         if recovery_thread:recovery_thread.join(timeout=1000)
@@ -89,6 +89,6 @@ def main(out,live,plugin_zip=None,old_plugin_zip=None,recovery=False):
                 run('docker','network','rm',target['network'],check=False)
         for kind,name in reversed(created):run('docker','rm','-f','-v',name) if kind=='container' else run('docker','network','rm',name)
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--live-s3',action='store_true');p.add_argument('--recovery',action='store_true');p.add_argument('--plugin-zip',type=Path);p.add_argument('--old-plugin-zip',type=Path);p.add_argument('--allow-dedicated-lab',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--native',action='store_true');p.add_argument('--live-s3',action='store_true');p.add_argument('--recovery',action='store_true');p.add_argument('--plugin-zip',type=Path);p.add_argument('--old-plugin-zip',type=Path);p.add_argument('--allow-dedicated-lab',action='store_true');a=p.parse_args()
     if not a.allow_dedicated_lab:p.error('Explicit dedicated lab opt-in required')
-    main(a.output,a.live_s3,a.plugin_zip,a.old_plugin_zip,a.recovery)
+    main(a.output,a.live_s3,a.plugin_zip,a.old_plugin_zip,a.recovery,a.native)

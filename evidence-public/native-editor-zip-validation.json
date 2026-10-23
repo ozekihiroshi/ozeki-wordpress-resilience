@@ -1,0 +1,178 @@
+{
+  "schema": "owr-native-editor-zip-validation-v1",
+  "state": "PASS",
+  "recorded_at": "2026-10-23T15:12:45.817790+00:00",
+  "version": "0.2.0",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.2.0.zip",
+      "sha256": "84fb80d8303898fcdef18f1090edff8d77628331ad091e130f00b4202e10cfcb",
+      "bytes": 57772
+    },
+    {
+      "file": "owr-development-kit-0.2.0.zip",
+      "sha256": "1292aca61efcb7ec413381d933b4252b4d11bbd1109ed798aecb8a75562f3269",
+      "bytes": 15892728
+    }
+  ],
+  "lifecycle": {
+    "fresh": {
+      "result": {
+        "browser_checks": 21,
+        "native_editor": true,
+        "native_entries_redirect_to_protected_editor": false,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "checks": [
+        "standard editor remains open",
+        "new post published after material save",
+        "S3 generation contains publication intent",
+        "failed native save preserves public DB",
+        "ZIP update preserves failed request settings and history",
+        "same request can resume",
+        "stored retry applied",
+        "resumed publication updated same post",
+        "stale editor rejected",
+        "new page published",
+        "heading list quote remain editable",
+        "native image upload returns attachment",
+        "image inserted after S3 save",
+        "saved blocks remain editable after reload",
+        "standard media modal image registration",
+        "interruption after storage keeps published DB unchanged",
+        "restart uses the same stored generation",
+        "restart updates same page without duplicate",
+        "unsupported block rejected without DB write",
+        "completed journal has no pending request",
+        "ZIP reinstall preserves completed generations and history"
+      ]
+    },
+    "upgrade-pr18": {
+      "result": {
+        "browser_checks": 21,
+        "native_editor": true,
+        "native_entries_redirect_to_protected_editor": false,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "checks": [
+        "standard editor remains open",
+        "new post published after material save",
+        "S3 generation contains publication intent",
+        "failed native save preserves public DB",
+        "ZIP update preserves failed request settings and history",
+        "same request can resume",
+        "stored retry applied",
+        "resumed publication updated same post",
+        "stale editor rejected",
+        "new page published",
+        "heading list quote remain editable",
+        "native image upload returns attachment",
+        "image inserted after S3 save",
+        "saved blocks remain editable after reload",
+        "standard media modal image registration",
+        "interruption after storage keeps published DB unchanged",
+        "restart uses the same stored generation",
+        "restart updates same page without duplicate",
+        "unsupported block rejected without DB write",
+        "completed journal has no pending request",
+        "ZIP reinstall preserves completed generations and history"
+      ]
+    }
+  },
+  "contracts": {
+    "site_materials": 39,
+    "native_materials": 6,
+    "distribution": 8,
+    "php_guards": 5,
+    "php_rendering": 2,
+    "async_media": 3,
+    "internal_link_fragments": 4
+  },
+  "real_s3_in_this_zip_trial": false,
+  "prior_live_s3_evidence": "native-editor-live-s3-validation.json",
+  "production_changes": false,
+  "automatic_publication": false,
+  "external_runtime_upgrade": {
+    "legacy_three_page_conversion": false,
+    "new_worker_extends_old_generation": true,
+    "old_generation_still_readable": true,
+    "old_runtime_zip_sha256": "726fbebe8be472f2b0e7d75368a68f2f39dda494ade1f46a76c76b7676186169",
+    "preserved_files": 4,
+    "state": "PASS"
+  },
+  "reconstruction": {
+    "final_zip_runtime": true,
+    "request_q_matches": true,
+    "result": {
+      "failed_projection_rolled_back": true,
+      "logical_sha256": "49cf396371640ab8a4bb8378d77003264eaae1ce2d636c07ce7dc6309f2d203f",
+      "map": {
+        "company": 4,
+        "image-8bee15244d8da71fcdac6d9d86148cc1f8e1fbc1bc4432a01c14727da5760e89": 5,
+        "image-bbdca202d46de1b9aefe8be557db4864097d3214d747468a90e59be31fbf18a8": 6,
+        "logo": 7,
+        "native-11": 8,
+        "native-9": 9,
+        "news": 10,
+        "services": 11
+      },
+      "public_activation": false,
+      "side_effect_attempts": 0,
+      "state": "verified-private",
+      "target": {
+        "database": "owr-materials-e0eb67f271-db",
+        "network": "owr-materials-e0eb67f271-net",
+        "retained_private": false,
+        "web": "owr-materials-e0eb67f271-web"
+      },
+      "verified_ids": [
+        "company",
+        "image-8bee15244d8da71fcdac6d9d86148cc1f8e1fbc1bc4432a01c14727da5760e89",
+        "image-bbdca202d46de1b9aefe8be557db4864097d3214d747468a90e59be31fbf18a8",
+        "logo",
+        "native-11",
+        "native-9",
+        "news",
+        "services"
+      ]
+    },
+    "source_removed_before_reconstruction": true,
+    "state": "PASS",
+    "transport": "filesystem-lab"
+  },
+  "classification": {
+    "product_fixes": [
+      "Shared KSES canonicalization prevents source/reconstruction HTML mismatch.",
+      "Asynchronous native media completion replaces the 12-second synchronous wait.",
+      "Internal link fragments reject before queueing instead of losing the fragment."
+    ],
+    "environment": [
+      "Previously observed WSL user-session warnings, Docker startup delays and process-scoped IPv4 preference are separate from plugin defects.",
+      "No new environment failure blocked this ZIP validation; no WSL/Docker restart."
+    ],
+    "test_infrastructure": [
+      "Media completion waits up to220s and checks queue drain.",
+      "ZIP scenario adds failed-request and completed-history reinstall assertions."
+    ],
+    "limitations": [
+      "Administrator-only explicit dedicated enrollment and matching external runtime required.",
+      "Basic core blocks and PNG/JPEG only; no Classic/Markdown plugins, forms, dynamic blocks, arbitrary metadata or scheduling.",
+      "No automatic legacy three-page migration, production deployment or recovery publication.",
+      "Final ZIP lifecycle used filesystem S3 double; prior real-S3 native trial is separately recorded."
+    ]
+  }
+}

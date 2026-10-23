@@ -1,0 +1,86 @@
+{
+  "browser_checks": [
+    "standard editor remains open",
+    "new post published after material save",
+    "S3 generation contains publication intent",
+    "failed native save preserves public DB",
+    "same request can resume",
+    "stored retry applied",
+    "resumed publication updated same post",
+    "stale editor rejected",
+    "new page published",
+    "heading list quote remain editable",
+    "native image upload returns attachment",
+    "image inserted after S3 save",
+    "saved blocks remain editable after reload",
+    "standard media modal image registration",
+    "interruption after storage keeps published DB unchanged",
+    "restart uses the same stored generation",
+    "restart updates same page without duplicate",
+    "unsupported block rejected without DB write",
+    "completed journal has no pending request"
+  ],
+  "environment_issue": "Docker initially activating; no restart. Trial processes use IPv4 preference. S3 listing is denied; random namespace and conditional PUT prevent overwrite.",
+  "real_s3": true,
+  "reconstruction": {
+    "public_activation": false,
+    "request_q_matches": true,
+    "side_effect_attempts": 0,
+    "source_environment_removed_before_reconstruction": true,
+    "state": "verified-private"
+  },
+  "schema": "owr-native-editor-validation-v1",
+  "scope": "Dedicated WordPress only; no production changes. Standard core block subset, administrators only.",
+  "state": "PASS",
+  "transport": "experimental-s3",
+  "recorded_at": "2026-10-23T14:53:10.291419+00:00",
+  "s3": {
+    "acknowledged_puts": 19,
+    "fixed_version_gets": 125,
+    "uncertain_puts": 0,
+    "retention_checks": "GOVERNANCE, >=35 days from stored time and unexpired; SHA256 and exact Version ID verified",
+    "namespace_check": {
+      "prefix": "sites/isolated-queue-lab/sets/AWS-8d0fc0503bb1093e/",
+      "unused": null,
+      "listing": "AccessDenied",
+      "historical_versions_checked": false,
+      "collision_guard": "random 64-bit scope plus If-None-Match: * on every PUT; no overwrite"
+    }
+  },
+  "source_generation": {
+    "locator": {
+      "bucket": "ceri-link-resilience-lock-lab-121426368082",
+      "key": "sites/isolated-queue-lab/sets/AWS-8d0fc0503bb1093e/rbr-c1ac9e155c6d2d1cc7430445ca21ad28f2ab21ab1dc89cc530241c8b7eb29823.blob",
+      "kind": "s3",
+      "region": "ap-northeast-1",
+      "version_id": "nUj6.NPIEGwwOD5rnq7ySWC3k5fsNuNn"
+    },
+    "sha256": "7c7fce6d245eaf4026bf83b4d49bf4259d803686dc29e31c5c07851ac41db8d9",
+    "size_bytes": 6660
+  },
+  "product_fix": {
+    "issue": "Native media-modal synchronous 12-second wait reported an error while live S3 storage continued. First run failed; its evidence was retained.",
+    "change": "Queue acceptance returns immediately; media uploader polls the existing state API, checks operation identity, applies only stored material and resumes its queue after a real attachment exists.",
+    "first_trial": "owr-native-live-20261023-a",
+    "first_trial_acknowledged_puts": 17,
+    "first_trial_uncertain_puts": 0
+  },
+  "test_infrastructure": {
+    "change": "Media completion assertion waits up to 220 seconds and requires native uploader queue to drain, instead of a 40-second snapshot-only timeout. No manual completion assistance.",
+    "failure_injection": "Worker fail_before prevents PUT; stop_after_store interrupts after committed generation. These are deterministic injected failures, not induced AWS outages."
+  },
+  "regression_checks": {
+    "native_materials_python": 6,
+    "native_entry_guards": 5,
+    "asynchronous_media_cases": 3
+  },
+  "source_sha256": {
+    "src/NativeMaterialsEditor.php": "bbe85020dd01dbe2506430f4eb903daa4685956ee5c28f96f92d53d0e932e026",
+    "src/SiteMaterialsEditor.php": "1fded58b414dae6f6f345b976ec17a27f745f6fa797a8949d2dc30d91213214b",
+    "src/SiteMaterialsProjection.php": "97eea39d150f38cb66ccb1426452a053da7ba379fbc094b93bd9df09bc1b9b68",
+    "assets/native-materials-upload.js": "1b1ca39fa88dba9cbd58b42b4c61f2bda19eba8c57621727aaa371df1ae4c1ca",
+    "assets/native-materials-editor.js": "ec166caeeafbade58872a5a137224c691e6f55a188ba7f551bd0c6167e0067d9",
+    "tools/site-materials.py": "2cb12cdbd2259b78b0671452c689705ff2ce8232fda13723c8bcc4df5a2436fb",
+    "lab/site-materials-editor/native-browser.py": "bf724255569382db9ef52d91cf4f542050db17b24b7f534fb6a2c3356a6bd6f3"
+  }
+}

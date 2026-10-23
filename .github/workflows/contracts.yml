@@ -19,7 +19,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mysqli, gd, pcntl
+          extensions: mysqli, gd, pcntl, dom
           coverage: none
           tools: composer
       - name: Install declared dependencies
@@ -32,6 +32,7 @@ jobs:
           test ! -e .local
           /tmp/owr-ci-venv/bin/python -m unittest discover -s tests
           for test in tests/*.php; do php "$test"; done
+          node tests/native-upload-async.js
       - name: Build development distributions
         run: |
           /tmp/owr-ci-venv/bin/python tools/build-release.py --output dist/candidate
