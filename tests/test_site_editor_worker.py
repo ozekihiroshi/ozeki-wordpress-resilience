@@ -22,4 +22,13 @@ class Tests(unittest.TestCase):
         self.q['site']['title']='Changed';self.write()
         with self.assertRaises(ValueError):w.process(self.c)
         self.assertFalse((self.b/'work/journal/head.json').exists())
+    def test_oversize_reports_failure_without_objects_or_head(self):
+        self.q['site']['entries'][0]['nodes']=[{'type':'paragraph','text':'a'*20000} for _ in range(320)]
+        self.q['request_sha256']=w.m.sha(w.m.canon({'parent':None,'site':self.q['site']}));self.write()
+        w.process(self.c)
+        self.assertEqual(self.report()['state'],'failed')
+        self.assertEqual(self.report()['reason'],'validation-or-save-failed')
+        self.assertEqual(list((self.b/'work/objects').glob('*.json')),[])
+        self.assertFalse((self.b/'work/journal/head.json').exists())
+        self.assertEqual(list((self.b/'work/journal').glob('*.json')),[])
 if __name__=='__main__':unittest.main()

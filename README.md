@@ -65,6 +65,8 @@ Older whole-backup, monitoring and three-page workflows are compatibility/resear
 
 [License](LICENSE) · [Contributing](CONTRIBUTING.md)
 
-## Final review status
+## Size admission and final validation
 
-**Release blocked:** the save path can commit a text asset larger than the reconstruction reader accepts (6 MiB per canonical asset). The 64 MiB generation limit alone is insufficient. The frozen ZIP remains unchanged; see [review and required corrections](docs/releases/site-materials-020-review.md). Successful bounded trials do not cover this defect.
+Save and reconstruction share a 6 MiB limit per canonical UTF-8 asset and an 8 MiB limit per stored object. The 64 MiB total and 1,000-asset ceilings are additional limits, not guarantees that every combination fits. Before the first S3 write, save computes compressed assets and a complete manifest budget including Q, parent, approval metadata and 4 KiB reserved per fixed-version reference. If any limit is exceeded, it rejects the request without committing an operation or changing the generation head. This conservative budget can reject a manifest whose eventual references would have been shorter.
+
+The previous size-contract defect is corrected in source; the replacement ZIP must be identified by the new validation record, not the earlier v3 hashes. [Correction and validation](docs/releases/site-materials-020-size-fix.md). Old signed-path approval conditions are unchanged.

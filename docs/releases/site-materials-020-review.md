@@ -2,7 +2,7 @@
 
 ## Decision
 
-Draft PR for review; **not ready for release**. Preserve the frozen candidate ZIPs and their successful bounded lifecycle evidence. No merge, tag, release, production change or automatic publication is included.
+Initial review found a release blocker. See [size-contract correction](site-materials-020-size-fix.md) for the subsequent fix and replacement validation. This document preserves the original finding. Preserve the frozen candidate ZIPs and their successful bounded lifecycle evidence. No merge, tag, release, production change or automatic publication is included.
 
 ## Architecture and scope
 

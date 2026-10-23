@@ -2,6 +2,12 @@
 import base64, contextlib, fcntl, gzip, hashlib, json, os, re, time, zlib
 from pathlib import Path
 
+# Byte limits apply to canonical UTF-8 JSON, not character counts.
+MAX_ASSET_BYTES = 6 * 1024 * 1024
+MAX_STORED_BYTES = 8 * 1024 * 1024
+MAX_SITE_BYTES = 64 * 1024 * 1024
+MAX_REFERENCE_BYTES = 4096
+
 def canon(v): return (json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(',',':'))+'\n').encode()
 def sha(v): return hashlib.sha256(v).hexdigest()
 def require(v,reason):
@@ -39,6 +45,7 @@ def normalize(site):
                 require(typ in keys and set(n)==keys[typ],'Unsupported content node; no silent conversion')
                 if 'text' in n:require(isinstance(n['text'],str) and len(n['text'])<=20000,'Text bound')
                 if typ=='heading':require(type(n['level']) is int and 2<=n['level']<=6,'Heading level')
+        require(len(canon(row))<=MAX_ASSET_BYTES,'Canonical asset size bound')
         out.append(row)
     byid={x['id']:x for x in out}
     require(site['landing'] in byid and byid[site['landing']]['kind']=='page','Landing page')
@@ -50,7 +57,7 @@ def normalize(site):
             require(p not in visited,'Parent cycle');visited.add(p);p=byid[p]['parent']
         for n in row['nodes']:
             if 'target' in n:require(n['target'] in byid and (byid[n['target']]['kind']=='image')==(n['type']=='image'),'Dangling or wrong-kind relation')
-    require(len(canon(site))<=64*1024*1024,'Submitted material size bound')
+    require(len(canon(site))<=MAX_SITE_BYTES,'Submitted material size bound')
     return dict(site,entries=sorted(out,key=lambda x:x['id']))
 
 def expected(site):
@@ -79,7 +86,7 @@ class Repository:
         self.store=store;self.work=Path(work);self.work.mkdir(mode=0o700,parents=True,exist_ok=True);self.prefix=prefix
         require(not self.work.is_symlink(),'Private writer directory required')
     def put(self,raw,horizon):
-        require(0<len(raw)<=8*1024*1024,'Stored object size bound')
+        require(0<len(raw)<=MAX_STORED_BYTES,'Stored object size bound')
         # A bounded retention window avoids trying to reuse an already expired original.
         # Deduplication applies within a window; fixed references remain authoritative.
         key_digest=sha(raw+b'\0retention-window:'+str(horizon//86400).encode())
@@ -91,6 +98,7 @@ class Repository:
             ref=self.store.put(raw,self.prefix+'rbr-'+sha(raw+str(horizon).encode())+'.blob')
             actual,until,_=self.store.get(ref)
         require(actual==raw and until>=horizon,'Stored bytes/retention mismatch')
+        require(len(canon(ref))<=MAX_REFERENCE_BYTES,'Transport reference size bound')
         return ref
     def save(self,operation,parent,site,policy='integrity',approval_ref=None):
         require(re.fullmatch('[a-zA-Z0-9_-]{1,80}',operation),'Operation ID')
@@ -109,20 +117,27 @@ class Repository:
                     return op['receipt']
             else:
                 require(head==parent,'Stale parent; no writes started')
-                op={'request_sha256':sha(canon(request)),'horizon':int(time.time())+35*86400,'state':'saving'};atomic(opfile,op)
+                op={'request_sha256':sha(canon(request)),'horizon':int(time.time())+35*86400,'state':'saving'}
             require(head==parent,'Stale resumed operation')
-            refs=[]
+            # Prepare every payload and a conservative complete manifest BEFORE any PUT
+            # or operation journal write. Reserve the transport contract's maximum
+            # canonical reference bytes; actual Version IDs are only known after PUT.
+            payloads=[];reserved=[]
             for row in site['entries']:
                 raw=canon(row);packed=gzip.compress(raw,compresslevel=6,mtime=0)
-                ref=self.put(packed,op['horizon'])
-                refs.append({'id':row['id'],'ref':ref,'raw_sha256':sha(raw),'raw_size':len(raw),'encoding':'gzip'})
-            manifest={'schema':'owr-site-generation-v1','site_title':site['title'],'landing':site['landing'],'objects':refs,'expected':expected(site),'parent':parent,'operation':operation,'policy':policy,'approval_ref':approval_ref,'protect_until':op['horizon'],'rules':'portable-nodes-v1'}
+                require(0<len(packed)<=MAX_STORED_BYTES,'Stored object size bound')
+                payloads.append(packed)
+                reserved.append({'id':row['id'],'ref':'x'*(MAX_REFERENCE_BYTES-2),'raw_sha256':sha(raw),'raw_size':len(raw),'encoding':'gzip'})
+            manifest={'schema':'owr-site-generation-v1','site_title':site['title'],'landing':site['landing'],'objects':reserved,'expected':expected(site),'parent':parent,'operation':operation,'policy':policy,'approval_ref':approval_ref,'protect_until':op['horizon'],'rules':'portable-nodes-v1'}
+            require(len(canon(manifest))<=MAX_STORED_BYTES,'Manifest size budget exceeded before storage')
+            atomic(opfile,op)
+            for item,packed in zip(reserved,payloads):item['ref']=self.put(packed,op['horizon'])
             receipt=self.put(canon(manifest),op['horizon'])
             op.update(state='committed',receipt=receipt);atomic(opfile,op);atomic(headfile,receipt)
             return receipt
 
 def receive(store,receipt,verify_signature=None):
-    raw,until,_=store.get(receipt);require(sha(raw)==receipt['sha256'],'Manifest hash')
+    raw,until,_=store.get(receipt);require(0<len(raw)<=MAX_STORED_BYTES,'Stored manifest size bound');require(sha(raw)==receipt['sha256'],'Manifest hash')
     m=json.loads(raw);require(m['schema']=='owr-site-generation-v1' and m['rules']=='portable-nodes-v1','Generation contract')
     require(until>=m['protect_until']>time.time(),'Generation retention')
     if m['policy']=='independent-signature':
@@ -131,12 +146,12 @@ def receive(store,receipt,verify_signature=None):
     require(1<=len(m['objects'])<=1000,'Object count')
     entries=[];total=0
     for item in m['objects']:
-        require(item['encoding']=='gzip' and 0<item['raw_size']<=6*1024*1024,'Compressed object bounds')
-        packed,retained,_=store.get(item['ref']);require(retained>=m['protect_until'],'Asset retention')
+        require(item['encoding']=='gzip' and 0<item['raw_size']<=MAX_ASSET_BYTES,'Compressed object bounds')
+        packed,retained,_=store.get(item['ref']);require(0<len(packed)<=MAX_STORED_BYTES,'Stored asset size bound');require(retained>=m['protect_until'],'Asset retention')
         require(sha(packed)==item['ref']['sha256'],'Asset compressed hash')
         decoder=zlib.decompressobj(31);raw=decoder.decompress(packed,item['raw_size']+1)
         require(decoder.eof and not decoder.unused_data and not decoder.unconsumed_tail and len(raw)==item['raw_size'] and sha(raw)==item['raw_sha256'],'Compressed content mismatch')
-        total+=len(raw);require(total<=64*1024*1024,'Total material bound')
+        total+=len(raw);require(total<=MAX_SITE_BYTES,'Total material bound')
         row=json.loads(raw);require(row['id']==item['id'],'Asset identity');entries.append(row)
     site=normalize({'schema':'owr-site-materials-v1','title':m['site_title'],'landing':m['landing'],'entries':entries})
     require(expected(site)==m['expected'],'Request-derived expected state mismatch')
