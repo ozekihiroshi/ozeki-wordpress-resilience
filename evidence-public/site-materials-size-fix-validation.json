@@ -1,0 +1,151 @@
+{
+  "schema": "owr-site-materials-size-fix-validation-v1",
+  "version": "0.2.0",
+  "state": "PASS",
+  "cases": {
+    "fresh": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    },
+    "upgrade-alpha4": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    },
+    "upgrade-alpha5": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    },
+    "upgrade-020-v3": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    }
+  },
+  "unit_tests": 25,
+  "ci": {
+    "run": 39906832182,
+    "php": [
+      "8.1",
+      "8.3"
+    ],
+    "discovered_per_job": 843,
+    "skipped_per_job": 54,
+    "state": "PASS"
+  },
+  "boundaries": {
+    "canonical_asset_bytes": 6291456,
+    "stored_object_bytes": 8388608,
+    "reference_budget_bytes": 4096,
+    "asset_cases": [
+      "minus_one",
+      "exact",
+      "plus_one"
+    ],
+    "encodings": [
+      "ASCII",
+      "Japanese UTF-8"
+    ],
+    "manifest_budget_cases": [
+      "minus_one",
+      "exact",
+      "plus_one"
+    ],
+    "oversize_writes": 0,
+    "oversize_head_commits": 0,
+    "prior_head_and_journal_preserved": true,
+    "accepted_inputs_roundtrip_equal": true,
+    "worker_oversize_state": "failed"
+  },
+  "runtime_upgrade": {
+    "legacy_three_page_conversion": false,
+    "new_worker_extends_old_generation": true,
+    "old_generation_still_readable": true,
+    "old_runtime_zip_sha256": "071b02af966b40b81a2c72efb9d1bcb7518270bcc3571cf4975f49d595bf36c4",
+    "preserved_files": 4,
+    "state": "PASS"
+  },
+  "reconstruction": {
+    "failed_projection_rolled_back": true,
+    "logical_sha256": "a05c68fb20159e25f53245efea59bc26adede424c6194c22bbe44207b51b7586",
+    "map": {
+      "company": 4,
+      "image-efb649601ea1": 5,
+      "logo": 6,
+      "news": 7,
+      "page-8dca6b98d548": 8,
+      "post-7bc300ffe67b": 9,
+      "services": 10
+    },
+    "public_activation": false,
+    "side_effect_attempts": 0,
+    "state": "verified-private",
+    "verified_ids": [
+      "company",
+      "image-efb649601ea1",
+      "logo",
+      "news",
+      "page-8dca6b98d548",
+      "post-7bc300ffe67b",
+      "services"
+    ]
+  },
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.2.0.zip",
+      "sha256": "54e0a5996138564d7c66c4919dda862667d901fe898ac6ff000b7390df79937c",
+      "bytes": 44350
+    },
+    {
+      "file": "owr-development-kit-0.2.0.zip",
+      "sha256": "43f606032b6b6961397daf2f24ee5f291ad5d44f5ccf29c2ec8206ebf107a99b",
+      "bytes": 15817396
+    }
+  ],
+  "cloud_operations": 0,
+  "storage": "persistent S3 double; fixed references, retention and resume tests; earlier real-S3 proof remains separate",
+  "public_activation": false,
+  "production_changes": false,
+  "classification": {
+    "product": "save/receive size mismatch fixed; preflight also budgets complete manifest before PUT",
+    "test_infrastructure": "existing lifecycle fixture ownership correction reused; no new fixture fix required",
+    "environment": "no new environment failure in this successful validation; historical WSL issue not claimed fixed"
+  },
+  "unchanged_approval_conditions": true,
+  "frozen_source_commit": "57f7005",
+  "postfreeze_evidence_only": true
+}
