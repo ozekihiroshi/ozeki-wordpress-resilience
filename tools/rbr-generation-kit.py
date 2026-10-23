@@ -53,7 +53,7 @@ class Builder:
                 if isinstance(v,dict):
                     if {'locator','size_bytes','sha256'}<=set(v):
                         target=self.walk(v,horizon,preserve);changed|=target!=v;return target
-                    return {key:rewrite(item) for key,item in v.items()}
+                    return dict(v,**{key:rewrite(item) for key,item in k.dependency_items(v)})
                 if isinstance(v,list):return [rewrite(item) for item in v]
                 return v
             rewritten=rewrite(value) if value is not None else None
@@ -76,18 +76,26 @@ class Builder:
             if observed==raw and until>=horizon:
                 return json.loads(identity)
         return self.put(raw,horizon)
-    def prepare(self,generation,profile):
-        d=definition(profile,generation);raw,until,stored_at=self.read(generation);a=json.loads(raw)
+    def prepare(self,generation,profile,expected_sequence=None,expected_binding=None):
+        if expected_binding is not None:
+            check(set(profile)=={'schema','site_id','rules_ref','environment_ref','comparison_ref'} and profile['schema']=='owr-rbr-request-profile-v1','Request-Q profile required; no manual Q override')
+            d=dict(profile,schema='owr-rbr-definition-v1',assets_ref=generation)
+        else:d=definition(profile,generation)
+        raw,until,stored_at=self.read(generation);a=json.loads(raw)
+        if expected_sequence is not None:check(a.get('sequence')==expected_sequence,'Save receipt sequence mismatch')
         check(a.get('schema')=='owr-rbr-generation-v1' and a.get('site_id')==profile['site_id'],'Generation/site mismatch')
         check(type(a.get('deadline')) is int and type(a.get('protect_until')) is int,'Generation times')
         check(stored_at<=a['deadline'],'Generation committed after deadline')
         horizon=a['protect_until'];now=dt.datetime.now(dt.timezone.utc).timestamp()
         check(horizon==a['deadline']+35*86400 and now<horizon<=now+36*86400,'Expired or unsupported generation horizon')
         check(type(a.get('sequence')) is int and a['sequence']>=1,'Generation sequence')
-        # Parent manifests are historical provenance, not reconstruction dependencies. Their full
-        # retention is currently required too; this bounded inlet intentionally fails closed.
+        # Preserve the exact full-snapshot manifest; parent is signed provenance, not a read dependency.
         self.walk(generation,horizon,True)
-        for field in ['rules_ref','environment_ref','comparison_ref','expected_ref']:
+        if expected_binding is not None:
+            bound,protected,_=self.read(expected_binding);check(protected>=horizon,'Bound Q retention insufficient')
+            q=k.bound_expected(json.loads(bound),generation,a,lambda ref:self.read(ref)[0])
+            d['expected_ref']=self.put(k.canonical(q),horizon);d['required_scope']=q['scope']
+        for field in ['rules_ref','environment_ref','comparison_ref']+([] if expected_binding is not None else ['expected_ref']):
             d[field]=self.walk(profile[field],horizon)
         definition_path=self.work/'definition.json';definition_path.write_bytes(k.canonical(d))
         plan=self.work/'plan.json'
@@ -99,6 +107,7 @@ class Builder:
         dref=self.put(definition_path.read_bytes(),horizon)
         code=[{'path':name,'ref':self.execution_ref((ROOT/name).read_bytes(),horizon)} for name in CODE]
         root={'schema':'owr-rbr-s3-kit-v1','definition_ref':dref,'code':code,'scope':'generated-corporate-site','public_activation':False}
+        if expected_binding is not None:root.update(schema='owr-rbr-s3-kit-v2',expected_binding_ref=expected_binding)
         receipt=self.put(k.canonical(root),horizon)
         result={'state':'stored_awaiting_independent_approval','generation_ref':generation,'root_receipt':receipt,'protect_until':horizon,'plan_sha256':k.sha(plan.read_bytes()),'public_activation':False}
         (self.work/'root-receipt.json').write_bytes(k.canonical(receipt));(self.work/'result.json').write_bytes(k.canonical(result))
@@ -106,8 +115,17 @@ class Builder:
         return result
 
 def _main(generation,profile,work):
-    request={'generation':json.loads(generation.read_bytes()),'profile':json.loads(profile.read_bytes())}
-    definition(request['profile'],request['generation'])
+    selected=json.loads(generation.read_bytes());expected_sequence=None;expected_binding=None
+    if 'state' in selected:
+        check(selected.get('state')=='applied','Applied save receipt required')
+        check({'state','generation','sequence'}<=set(selected)<= {'state','replayed','generation','sequence','expected_ref'} and type(selected.get('sequence')) is int and selected['sequence']>=1,'Invalid save receipt')
+        expected_sequence=selected['sequence'];expected_binding=selected.get('expected_ref');selected=selected['generation']
+    request={'generation':selected,'profile':json.loads(profile.read_bytes())}
+    if expected_sequence is not None:request['expected_sequence']=expected_sequence
+    if expected_binding is not None:
+        request['expected_binding']=expected_binding
+        check(set(request['profile'])=={'schema','site_id','rules_ref','environment_ref','comparison_ref'} and request['profile']['schema']=='owr-rbr-request-profile-v1','Request-Q profile required')
+    else:definition(request['profile'],request['generation'])
     work.mkdir(mode=0o700,exist_ok=True)
     state=work/'input.json'
     if state.exists():check(state.read_bytes()==k.canonical(request),'Resume input changed')
@@ -119,7 +137,7 @@ def _main(generation,profile,work):
     k.transport.authorize=lambda actor,**q:k.authorize(actor,retention_days=36,**q)
     (work/'preflight.json').write_bytes(k.canonical(k.transport.preflight()))
     store=LiveStore(work/'transport')
-    return Builder(store,work,json.loads(prefix_path.read_bytes())['prefix']).prepare(request['generation'],request['profile'])
+    return Builder(store,work,json.loads(prefix_path.read_bytes())['prefix']).prepare(request['generation'],request['profile'],expected_sequence,expected_binding)
 
 def main(generation,profile,work):
     check(not work.is_symlink(), 'Private non-symlink workspace required')

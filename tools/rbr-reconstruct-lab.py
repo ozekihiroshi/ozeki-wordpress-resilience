@@ -100,7 +100,7 @@ def execute(out,inputs):
             for asset,raw in media.items():(folder/(asset+'.image')).write_bytes(raw)
             # Mutate actual stored DB/media and render again; a comparator that copies P/Q cannot pass these controls.
             if iteration==1:
-                mutations=[('contact-character',"UPDATE {p} SET post_content=REPLACE(post_content,'TEST-0001','TEST-0002') WHERE ID="+str(obs['map']['contact'])),('paragraph-order',"UPDATE {p} SET post_content='<p>Telephone: TEST-0001</p><p>Email: contact@example.invalid</p><nav class=related></nav>' WHERE ID="+str(obs['map']['contact'])),('link-target',"UPDATE {p} SET post_content=REPLACE(post_content,'page_id="+str(obs['map']['services'])+"','page_id="+str(obs['map']['contact'])+"') WHERE ID="+str(obs['map']['company']))]
+                mutations=[('contact-character',"UPDATE {p} SET post_content=REPLACE(post_content,'<p>','<p>unexpected-character:') WHERE ID="+str(obs['map']['contact'])),('paragraph-content-replaced',"UPDATE {p} SET post_content='<p>Telephone: TEST-0001</p><p>Email: contact@example.invalid</p><nav class=related></nav>' WHERE ID="+str(obs['map']['contact'])),('link-target',"UPDATE {p} SET post_content=REPLACE(post_content,'page_id="+str(obs['map']['services'])+"','page_id="+str(obs['map']['contact'])+"') WHERE ID="+str(obs['map']['company']))]
                 for name,sql in mutations:
                     php("require '/var/www/html/wp-load.php';global $wpdb;$wpdb->query(str_replace('{p}',$wpdb->posts,"+lit(sql)+"));")
                     bad=json.loads(run('docker','exec',web,'php','/kit/tools/rbr-wordpress-observe.php').stdout);bh={a:http('/?page_id='+str(row['id']))[1].decode() for a,row in [(x['asset_id'],x) for x in bad['rows'] if x['type']=='page']}

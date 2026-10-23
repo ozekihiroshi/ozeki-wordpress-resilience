@@ -2,13 +2,13 @@ from pathlib import Path
 import subprocess,json,time,secrets,shutil,os,hashlib
 import argparse
 ROOT=Path(__file__).resolve().parents[1];SRC=ROOT/'lab/rbr-protected-save'
-p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--vendor-cache',type=Path);args=p.parse_args()
 b=args.output.resolve();b.mkdir(mode=0o700,exist_ok=False);lab=b/'lab';lab.mkdir(mode=0o777);os.chmod(lab,0o777)
 for n in ['s3','s3/objects','scratch','originals']:(lab/n).mkdir(mode=0o777);os.chmod(lab/n,0o777)
 kit=b/'kit';kit.mkdir();(kit/'src').mkdir();(kit/'tools').mkdir();(kit/'tests/support').mkdir(parents=True)
 for n in ['VersionedAssetStore','RbrObjectStore','RbrGenerationCoordinator','RbrWordPressSave','RbrWordPressSaveApi']:shutil.copy2(ROOT/'src'/(n+'.php'),kit/'src'/(n+'.php'))
 for n in ['aws-autoload.php','rbr-create-fixture.php']:shutil.copy2(ROOT/'tools'/n,kit/'tools'/n)
-shutil.copytree(ROOT/'vendor',kit/'vendor');shutil.copy2(ROOT/'tests/support/RbrS3Double.php',kit/'tests/support/RbrS3Double.php')
+shutil.copytree(args.vendor_cache or ROOT/'vendor',kit/'vendor');shutil.copy2(ROOT/'tests/support/RbrS3Double.php',kit/'tests/support/RbrS3Double.php')
 for n in ['testboot.php','wp-test.php']:(kit/n).write_text((SRC/n).read_text(encoding='utf-8-sig'))
 images=dict(line.split('=',1) for line in (ROOT/'lab/m1/images.env').read_text().splitlines() if '=' in line)
 name='owr-save-api-'+secrets.token_hex(4);db=name+'-db';web=name+'-web';created=[];checks=[]
@@ -74,9 +74,27 @@ try:
  check('old completed replay cannot overwrite newer state',api(a,admin)['status']==200 and state()['pages']==s['pages'] and state()['state']['sequence']==4)
  bad=dict(four);bad['pages']=payload('unused-op',3,'Changed')['pages'];check('same operation changed payload rejected',api(bad,admin)['status']==409)
  check('invalid page scope rejected',api({'operation_id':'invalid-save','expected_sequence':4,'pages':{}},admin)['status']==400)
+ # Request-derived expected state is frozen before commit and bound to its exact generation.
+ import base64,importlib.util
+ spec=importlib.util.spec_from_file_location('qkit',ROOT/'tools/rbr-s3-kit.py');qkit=importlib.util.module_from_spec(spec);spec.loader.exec_module(qkit)
+ def readref(ref):
+  record=json.loads((lab/'s3/objects'/(hashlib.sha256(ref['locator']['key'].encode()).hexdigest()+'.json')).read_bytes())
+  raw=base64.b64decode(record['raw']);assert record['version']==ref['locator']['version_id'] and hashlib.sha256(raw).hexdigest()==ref['sha256'];return raw
+ fifth=payload('q-binding-save',4,'Expected from request');prior=state();control(fail='originals/request-expectation/q-binding-save/source')
+ check('Q storage failure does not project committed content',api(fifth,admin)['status']==409 and state()['pages']==prior['pages'] and len(commits())==5)
+ frozen=state()['state']['operations']['q-binding-save']['expected'];fifth_version=next(x['version'] for x in commits() if x['key'].endswith('000000000005.json'))
+ check('Q frozen before generation and no reconstruction used',frozen['pages']['company']['paragraphs']==fifth['pages']['company']['paragraphs'] and frozen['actual_status']=='draft')
+ control();reply=api(fifth,admin);receipt=json.loads(reply['body'])
+ check('same request resumes Q storage and projection',reply['status']==200 and len(commits())==5 and next(x['version'] for x in commits() if x['key'].endswith('000000000005.json'))==fifth_version)
+ bound=json.loads(readref(receipt['expected_ref']));manifest=json.loads(readref(receipt['generation']));expected=qkit.bound_expected(bound,receipt['generation'],manifest,readref)
+ check('fixed Q intent and generation binding verified',expected==frozen and bound['intent']['expected_sha256']==hashlib.sha256(qkit.canonical(expected)).hexdigest())
+ check('Q covers selected generation retention',receipt['expected_ref']['retain_until']>=manifest['protect_until'])
+ check('completed replay preserves Q version',json.loads(api(fifth,admin)['body'])['expected_ref']==receipt['expected_ref'])
+ old=json.loads(api(a,admin)['body']);check('older operation returns older Q without overwrite',old['expected_ref']!=receipt['expected_ref'] and state()['state']['sequence']==5)
+ (b/'request-q.json').write_text(json.dumps({'request':fifth,'receipt':receipt,'binding':bound,'manifest':manifest,'expected':expected},ensure_ascii=False,indent=2))
  # Deliberate out-of-band drift in this disposable test only.
  run('docker','exec','-u','www-data',web,'php','-r','require "/var/www/html/wp-load.php";global $wpdb;$wpdb->update($wpdb->posts,["post_content"=>"outside change"],["ID"=>'+str(config['ids']['company'])+']);')
- before=state();check('out-of-band change detected before S3 write',api(payload('drift-save',4,'Drift'),admin)['status']==409 and len(commits())==4 and state()['pages']==before['pages'])
+ before=state();check('out-of-band change detected before S3 write',api(payload('drift-save',5,'Drift'),admin)['status']==409 and len(commits())==5 and state()['pages']==before['pages'])
  (b/'result.json').write_text(json.dumps({'passed':True,'checks':checks,'scope':'real WordPress HTTP REST + MariaDB; existing filesystem S3 protocol double; no live S3 claim','commits':len(commits()),'containers_removed':False},indent=2))
 finally:
  for n in reversed(created):run('docker','rm','-f',n,check=False)

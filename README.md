@@ -1,5 +1,7 @@
 # Ozeki WordPress Resilience
 
+> **First reconstruction preview: v0.1.0-alpha.4.** [Start here: downloads, visible editor and limitations](docs/releases/alpha4-preview.md). GitHub pre-release; not production-ready.
+
 > **Target architecture — Immutable Assets, Deterministic Reconstruction:** regenerate business information from immutable assets and pinned rules/environment, without the original database. See the [design principle and logical-equivalence acceptance contract](docs/spec/immutable-assets-deterministic-reconstruction.md). The bounded corporate-site CLI now reconstructs a private WordPress from pinned A/R/E and a signed fixed-version S3 kit; a general production reconstruction engine is not implemented.
 
 
@@ -20,7 +22,7 @@ The [initial edition summary](docs/releases/initial-experimental-edition.md) ide
 
 ## Current status
 
-The Git baseline is merged PR #11 (main `d00188d`). That prototype includes the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. It remains `0.1.0-dev.1`, an experimental prototype, with no formal release or automatic production deployment. Older tested archives remain unchanged.
+The Git baseline is merged PR #13 (main `328f6e2`). That prototype includes the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. The reconstruction preview is packaged as `0.1.0-alpha.4`; it remains experimental, with no automatic production deployment. Older tested archives remain unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
@@ -176,3 +178,16 @@ The final candidate acceptance covers fresh plugin installation, overwrite from 
 ZIP harness note: the first lifecycle run stopped after 24 passing browser checks because the browser-created control fixture was not writable by the host. The harness now pre-creates that shared test file; this is a test-infrastructure correction, not a plugin failure.
 
 The subsequent harness run reached pending-save creation but could not hash WordPress-owned private originals from the host. Preservation hashes are now computed as the WordPress user, retaining original file permissions. Both failed test attempts remain recorded separately.
+
+
+## Edited-generation reconstruction connection (prototype)
+
+The actual applied save API receipt now feeds the existing signed-kit inlet, without replacing edited assets with fixture data. The fixed generation and receipt sequence must agree. Q explicitly describes the intended edited content; it is reviewed/pinned separately and never rewritten from reconstructed output. Full-snapshot generations preserve their parent reference as provenance; only the selected snapshot assets are reconstruction dependencies, and their retention is still enforced. Prior generations retain their own deadlines. See [operation and boundaries](docs/spec/rbr-editor-reconstruction.md).
+
+This development-kit connection does not enable ordinary editing by plugin installation, automate Q authoring/approval, add media uploads or publish a reconstructed site. Signature, current-registry, revocation and expiry gates are unchanged.
+
+## Request-derived expected state (prototype)
+
+New bounded editor enrollments now freeze Q from the save request and enrolled media/relations, bind its hash into the committed intent, and retain an exact-generation Q sidecar before WordPress projection. The request-Q profile no longer needs a manually authored Q. Kit v2 carries and verifies this binding; independent approval stays mandatory. See [contract and limits](docs/spec/rbr-request-q.md) and [dedicated evidence](evidence-public/rbr-request-q.json). Legacy journals are not silently migrated. This increment uses a storage contract double and real HTTP/PHP planning, not a new live-S3 reconstruction claim.
+
+The request-derived Q path has also passed [real experimental S3 and signed two-target reconstruction](evidence-public/rbr-request-q-live.json), using the actual editor receipt without manual Q. Source/builder workspaces were hidden; existing approval conditions remain unchanged. This is dedicated generated-data prototype evidence, not production qualification.

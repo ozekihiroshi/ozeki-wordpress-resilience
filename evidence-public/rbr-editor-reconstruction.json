@@ -1,0 +1,135 @@
+{
+  "state": "PASS",
+  "scope": "Dedicated generated corporate site; actual browser saves and experimental fixed-version S3; no production/public activation",
+  "baseline": "PR #13, 328f6e2",
+  "browser": {
+    "passed": true,
+    "checks": [
+      "anonymous editor requires login",
+      "normal page edit opens protected editor",
+      "resume button hidden when editable",
+      "initial paragraph from enrolled public page",
+      "typing does not update public content",
+      "storage failure leaves public text unchanged",
+      "failed request locks content for exact retry",
+      "resume button visible only for unresolved request",
+      "different pending operation shows conflict",
+      "reload retrieves frozen operation from server",
+      "resume applies exactly one generation",
+      "other two pages retained",
+      "text escaped in projection",
+      "resume button hidden after completion",
+      "stale editor rejected without overwrite",
+      "S3 committed but not projected state visible",
+      "interrupted HTTP save resumes same fixed generation",
+      "editor status GET requires nonce",
+      "classic form POST bypass blocked",
+      "unrelated page retains normal editor",
+      "subscriber has no protected form"
+    ],
+    "commits": 3,
+    "containers_removed": true,
+    "scope": "Real Chromium editor + WordPress HTTP + MariaDB + scoped real S3; injected pre-commit failure"
+  },
+  "selected_sequence": 3,
+  "same_generation_in_received_definition": true,
+  "selected_generation_sha256": "a1e4356ded66fc43d081ea7e4104d5a26ea956cef4bb51994ccc7b9986befa9b",
+  "same_generation_in_kit": true,
+  "Q_fixed_object_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+  "Q_canonical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+  "stale_Q_rejected": true,
+  "parent_provenance_preserved": true,
+  "parent_not_fetched": true,
+  "parent_expiry_or_absence_test": "offline regression only; real S3 parents not removed/expired",
+  "retention_horizon": 1795741403,
+  "selected_asset_retention_checked": true,
+  "source_containers_removed": true,
+  "source_and_builder_workspaces_hidden_during_recovery": {
+    "source_workspace_hidden": true,
+    "builder_workspace_hidden": true,
+    "private_mount_namespace": true
+  },
+  "reconstruction": {
+    "definition_sha256": "1cc4f676f0efaba9ff9369934ec85392c871032ee843165f0080bf7e614c4c5e",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-content-replaced",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "2b4537c56a13324e71de011ad0c560490717ab0ca4aceda345f7fea17e497cec",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "independent_approval_verified": true,
+  "kit_puts_acknowledged": 9,
+  "unknown_kit_puts": 0,
+  "approval_conditions_changed": false,
+  "regression_tests": {
+    "rbr_python": 61
+  },
+  "initial_build_failure": {
+    "state": "rejected",
+    "reason": "Loaded planner differs from E engine",
+    "cause": "negative-control harness changed but old E still pinned previous rbr-reconstruct-lab.py",
+    "changed_bundle_files": [
+      "tools/rbr-reconstruct-lab.py"
+    ],
+    "cloud_puts": 0,
+    "signature_created": false,
+    "wordpress_started": false,
+    "resolution": "Explicitly pin updated engine bundle in new E and profile; preserve failed kit workspace"
+  },
+  "test_infrastructure_correction": "Negative control used old TEST-0001 text; changed before execution to inject a character independent of edited text. Not a product/approval defect.",
+  "limitations": [
+    "Explicit opt-in editor for 3 existing root pages, plain text only",
+    "Q/profile is reviewed manually and pinned; automatic Q authoring is not implemented",
+    "Test signer account separated on same host; cached runtime images reused",
+    "No production deployment, automatic publication or new media authoring"
+  ],
+  "public_activation": false
+}

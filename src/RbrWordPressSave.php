@@ -52,7 +52,7 @@ final class RbrWordPressSave
                 if(!$m[0] || implode('', $m[0])!==$html)throw new \RuntimeException('Initial editor content must be plain paragraphs');
                 $initial[$role]=['title'=>$row['post_title'],'slug'=>$row['post_name'],'paragraphs'=>array_map(fn($v)=>html_entity_decode($v,ENT_QUOTES|ENT_HTML5,'UTF-8'),$m[1])];
             }
-            $this->write(['editor_pages'=>$initial,'enrolled'=>true,'sequence'=>0,'generation'=>null,'manifest'=>null,'pending'=>null,'operations'=>[],
+            $this->write(['expected_context'=>$this->expectedContext(),'editor_pages'=>$initial,'enrolled'=>true,'sequence'=>0,'generation'=>null,'manifest'=>null,'pending'=>null,'operations'=>[],
                 'fingerprint'=>$this->snapshot(),'configuration'=>$this->configuration()]);
         });
     }
@@ -89,6 +89,39 @@ final class RbrWordPressSave
         }
         if(strlen(RbrGenerationCoordinator::encode($input))>262144)throw new \InvalidArgumentException('Request too large');
     }
+    /** Enrollment metadata only: no reconstructed DB or served HTML is observed. */
+    private function expectedContext(): array {
+        $c=['roles'=>[],'images'=>[],'relations'=>[]];
+        foreach($this->seed as $a){
+            if($a['id']==='request-expectation')throw new \RuntimeException('Reserved expectation asset identity');
+            if($a['kind']==='page'){$c['roles'][$a['role']]=$a['id'];continue;}
+            if(!in_array($a['kind'],['image','relations'],true))continue;
+            if(isset($a['storage']))$raw=$this->store->bytes($a['storage']);
+            elseif(isset($a['existing']))$raw=$this->store->bytes($a['existing']);
+            else {if(is_link($a['path']))throw new \RuntimeException('Invalid enrollment original');$raw=file_get_contents($a['path']);}
+            if(!is_string($raw)||strlen($raw)!==$a['size_bytes']||hash('sha256',$raw)!==$a['sha256'])throw new \RuntimeException('Enrollment original differs');
+            if($a['kind']==='image'){
+                $im=getimagesizefromstring($raw);if(!$im||!in_array($im[2],[IMAGETYPE_PNG,IMAGETYPE_JPEG],true))throw new \RuntimeException('Unsupported expected image');
+                $c['images'][$a['id']]=['sha256'=>$a['sha256'],'width'=>$im[0],'height'=>$im[1],'alt'=>''];
+            }else $c['relations']=json_decode($raw,true,64,JSON_THROW_ON_ERROR)['edges'];
+        }
+        ksort($c['images']);return $c;
+    }
+    /** Pure request-to-Q projection. Context is frozen at explicit enrollment. */
+    public static function expectedFromRequest(array $input,array $context): array {
+        $q=['schema'=>'owr-rbr-expected-v1','actual_status'=>'draft','scope'=>['roles'=>['company','services','contact'],'images'=>array_keys($context['images']),'business_expectations'=>[]],
+            'pages'=>[],'images'=>$context['images'],'relations'=>$context['relations']];
+        foreach(['company','services','contact'] as $role){
+            $p=$input['pages'][$role];$q['pages'][$context['roles'][$role]]=array_merge($p,['role'=>$role]);
+            $texts=array_values(array_filter($p['paragraphs'],fn($v)=>trim($v)!==''));
+            if(!$texts)throw new \InvalidArgumentException('Expected business text required');
+            $q['scope']['business_expectations'][$role]=$texts;
+        }
+        foreach($q['relations'] as $e){
+            if(!isset($q['pages'][$e['from']])||($e['type']!=='navigation'&&$e['position']>count($q['pages'][$e['from']]['paragraphs'])))throw new \InvalidArgumentException('Expected relation outside edited page');
+        }
+        return $q;
+    }
     private function job(array $input,array $state): array {
         $now=$this->store->now();$assets=[];$prior=$state['manifest']['assets']??$this->seed;
         foreach($prior as $asset){
@@ -114,26 +147,35 @@ final class RbrWordPressSave
                 if($s['pending']!==null)throw new \RuntimeException('Pending save must be reconciled');
                 if($s['sequence']!==$input['expected_sequence'])throw new \RuntimeException('Stale generation');
                 if(count($s['operations'])>=100)throw new \RuntimeException('Prototype operation limit');
-                $e=['input'=>$input,'digest'=>$digest,'state'=>'prepared','job'=>$this->job($input,$s)];
+                if(!isset($s['expected_context']))throw new \RuntimeException('Expected-state enrollment required');
+                $q=self::expectedFromRequest($input,$s['expected_context']);$job=$this->job($input,$s);
+                $job['expected_sha256']=hash('sha256',RbrGenerationCoordinator::encode($q));
+                $e=['input'=>$input,'digest'=>$digest,'expected'=>$q,'state'=>'prepared','job'=>$job];
                 $s['operations'][$op]=$e;$s['pending']=$op;
             }
             if($s['fingerprint']!==$this->snapshot())throw new \RuntimeException('Protected page drift');
             $this->write($s);return $e;
         });
-        if($entry['state']==='applied')return ['state'=>'applied','replayed'=>true,'generation'=>$entry['generation'],'sequence'=>$entry['job']['sequence']];
+        if($entry['state']==='applied')return ['state'=>'applied','replayed'=>true,'generation'=>$entry['generation'],'sequence'=>$entry['job']['sequence']]+(isset($entry['expected_ref'])?['expected_ref'=>$entry['expected_ref']]:[]);
         // This journal's per-operation source files are immutable; no DB transaction spans S3.
         foreach($entry['job']['assets'] as $a){if($a['kind']!=='page')continue;
             $raw=RbrGenerationCoordinator::encode($input['pages'][$a['role']]);
             $f=@fopen($a['path'],'x');if($f){chmod($a['path'],0600);fwrite($f,$raw);fflush($f);fclose($f);}
             if(is_link($a['path'])||file_get_contents($a['path'])!==$raw)throw new \RuntimeException('Local original differs');
         }
+        if(!isset($entry['expected'])||hash('sha256',RbrGenerationCoordinator::encode($entry['expected']))!==($entry['job']['expected_sha256']??''))throw new \RuntimeException('Frozen expected state unavailable');
         $result=(new RbrGenerationCoordinator($this->store))->save($entry['job']);
-        $this->tx(function()use($op,$digest,$result){
+        $intent=$entry['job'];foreach($intent['assets'] as &$a){unset($a['path']);}unset($a);
+        $bound=['schema'=>'owr-rbr-bound-expected-v1','generation'=>$result['generation'],'intent'=>$intent,'expected'=>$entry['expected']];
+        $expectedRef=$this->store->ensureBytes($this->store->key('originals/request-expectation/'.$op.'/source'),RbrGenerationCoordinator::encode($bound));
+        if($expectedRef['retain_until']<$result['manifest']['protect_until'])throw new \RuntimeException('Expected-state retention insufficient');
+
+        $this->tx(function()use($op,$digest,$result,$expectedRef){
             $s=$this->state();$e=$s['operations'][$op]??null;
             if(!$e || $e['digest']!==$digest)throw new \RuntimeException('Operation input conflict');
             if($e['state']==='applied')return;
             if($s['pending']!==$op)throw new \RuntimeException('Pending operation mismatch');
-            $s['operations'][$op]['state']='stored';$s['operations'][$op]['generation']=$result['generation'];$this->write($s);
+            $s['operations'][$op]['expected_ref']=$expectedRef;$s['operations'][$op]['state']='stored';$s['operations'][$op]['generation']=$result['generation'];$this->write($s);
         });
         $this->fault?->__invoke('after_s3');
         // Read exact originals from the confirmed manifest; never project unconfirmed request bytes.
@@ -154,7 +196,7 @@ final class RbrWordPressSave
         });
         foreach($this->ids as $id){wp_cache_delete($id,'posts');wp_cache_delete($id,'post_meta');}
         wp_cache_set_posts_last_changed();
-        return ['state'=>'applied','replayed'=>false,'generation'=>$result['generation'],'sequence'=>$result['manifest']['sequence']];
+        return ['state'=>'applied','replayed'=>false,'generation'=>$result['generation'],'sequence'=>$result['manifest']['sequence'],'expected_ref'=>$expectedRef];
     }
     private function render(array $manifest): array {
         $pages=[];$byId=[];$edges=[];

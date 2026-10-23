@@ -42,13 +42,14 @@ def verify_received(work,receipt):
    if isinstance(value,dict):
     if {'locator','sha256','size_bytes'}<=set(value):visit(value)
     else:
-     for x in value.values():walk(x)
+     for _,x in k.dependency_items(value):walk(x)
    elif isinstance(value,list):
     for x in value:walk(x)
   walk(value)
   if isinstance(value,dict) and value.get('kind')=='docker-save-gzip-chunks-v1':archives.append(value)
   return raw
  v.checked((work/'bundle/definition.json').read_bytes()==visit(root['definition_ref']),'Definition changed')
+ k.verify_bound_root(root,visit)
  expected=set()
  for item in root['code']:
   expected.add(item['path']);path=work/'kit'/item['path']
