@@ -34,7 +34,9 @@ class Store:
   self.work=work
   if work.exists():
    ops=json.loads((work/'operations.json').read_text());self.adapter=transport.S3Adapter.__new__(transport.S3Adapter);self.adapter.work=work;self.adapter.client=transport.urllib.request.build_opener(transport.NoRedirect);self.adapter.operations=ops;self.adapter.request_count=0
-  else:self.adapter=transport.S3Adapter(work)
+  else:
+   self.adapter=transport.S3Adapter(work)
+   self.adapter.save()  # Persist an empty journal before the first request can fail.
  def put(self,raw,key):
   for o in self.adapter.operations:
    if o['method']=='PUT' and o['key']==key:

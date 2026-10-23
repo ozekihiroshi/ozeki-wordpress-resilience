@@ -2,7 +2,7 @@
 import argparse,hashlib,json,stat,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-FILES=['src/SiteReconstructionAdmin.php','assets/site-reconstruction.js','tools/site-reconstruction-worker.py','tools/site-reconstruct-private.py','tools/run-site-materials-lab.py','docs/site-reconstruction-console.md','src/SiteMaterialsProjection.php','src/SiteMaterialsEditor.php','assets/site-materials-editor.js','tools/site-editor-worker.py','tools/site-materials.py','tools/site-materials-command.py','tools/site-wordpress-apply.php','tools/rbr-generation-kit.py','tools/rbr-s3-kit.py','tools/queue-s3-adapter.py','tools/lab-s3-request.py','docs/site-materials-v1.md','docs/site-materials-v1-jp.md','docs/legacy-transfer-inventory.md','LICENSE']
+FILES=['tools/site-preview-export.php','src/SiteReconstructionAdmin.php','assets/site-reconstruction.js','tools/site-reconstruction-worker.py','tools/site-reconstruct-private.py','tools/run-site-materials-lab.py','docs/site-reconstruction-console.md','src/SiteMaterialsProjection.php','src/SiteMaterialsEditor.php','assets/site-materials-editor.js','tools/site-editor-worker.py','tools/site-materials.py','tools/site-materials-command.py','tools/site-wordpress-apply.php','tools/rbr-generation-kit.py','tools/rbr-s3-kit.py','tools/queue-s3-adapter.py','tools/lab-s3-request.py','docs/site-materials-v1.md','docs/site-materials-v1-jp.md','docs/legacy-transfer-inventory.md','LICENSE']
 def build(path):
     if path.exists():raise ValueError('Output exists')
     records={}

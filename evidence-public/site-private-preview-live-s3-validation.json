@@ -1,0 +1,107 @@
+{
+  "browser_checks": 58,
+  "native_entries_redirect_to_protected_editor": true,
+  "public_activation": false,
+  "real_s3": true,
+  "state": "PASS",
+  "scope": "real S3 editor generations to private reconstructed-content preview",
+  "checks": [
+    "normal new-post entry opens S3-first editor",
+    "typing leaves WordPress unchanged",
+    "save failure leaves posts and media unchanged",
+    "different pending request rejected",
+    "reload preserves exact pending title",
+    "confirmed save updates WordPress",
+    "stale editor generation rejected",
+    "new post reflected after S3",
+    "new page reflected after S3",
+    "normal media entry opens S3-first registration",
+    "selecting image creates no attachment",
+    "image registered after S3",
+    "image replacement keeps logical ID",
+    "worker actually exited after S3 commit",
+    "commit without projection leaves WordPress unchanged",
+    "resumes committed generation",
+    "resumed content appears",
+    "ordinary REST post write rejected",
+    "ordinary REST image write rejected",
+    "bypass attempts change nothing",
+    "read-only status does not change content",
+    "subscriber denied state",
+    "subscriber denied save",
+    "new schema generation catalog shown",
+    "Q and material summary visible",
+    "catalog reads do not change source",
+    "subscriber denied recovery state",
+    "subscriber denied recovery request",
+    "mismatched Q rejected 0",
+    "selected generation reconstructed 0",
+    "complete chosen material set 0",
+    "private target no publication 0",
+    "preview available 0",
+    "preview sandbox has no privileges 0",
+    "actual reconstructed titles visible 0",
+    "edited body visible",
+    "reconstructed image rendered",
+    "page relationship navigates inside preview",
+    "preview contains no active external content 0",
+    "subscriber cannot read preview 0",
+    "anonymous cannot read preview 0",
+    "duplicate request keeps same job 0",
+    "no duplicate target 0",
+    "mismatched Q rejected 1",
+    "selected generation reconstructed 1",
+    "complete chosen material set 1",
+    "private target no publication 1",
+    "preview available 1",
+    "preview sandbox has no privileges 1",
+    "actual reconstructed titles visible 1",
+    "preview contains no active external content 1",
+    "subscriber cannot read preview 1",
+    "anonymous cannot read preview 1",
+    "duplicate request keeps same job 1",
+    "no duplicate target 1",
+    "reconstruction leaves source unchanged",
+    "stale status blocks request",
+    "report resumes without new job"
+  ],
+  "bindings": [
+    {
+      "generation": "e7658c486e05d9248b0d672f5e359182daea373f9322eba9124b0a503f3769e9",
+      "q": "da68c4d3f74d1b4defa5e32b23e7a6519479a3edb132471bd2901b0fb43ef687",
+      "job": "0873e897000864b9ece8aed62ea78e0103bbd57e214ef4bbaf02dc340e956c9c",
+      "preview_sha256": "a2a073d009c40cbd277a699fa2c6b27c896519e1bb92c1860d6429a8d9d9e99a"
+    },
+    {
+      "generation": "0380ced60fcc2158a9c8fccd0b5773fb9125dd8d93722223cc5b9354f07e1dc5",
+      "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+      "job": "e1f4b7ac3650a3889246a4a4fc5253f917cb1e0868fc979d4c7b322a3cc11051",
+      "preview_sha256": "3cb071c800ac5360b2d5d5438a6868714ee3a9f795ae844c0ad111029aad77d4"
+    }
+  ],
+  "unassisted_browser": true,
+  "environment_issues": [
+    "Initial trial stopped: S3 IPv6 TCP timeout; IPv4 connected in 0.05 seconds. Host IPv6 routing root cause not established.",
+    "Dedicated Python process preferred IPv4 for S3 and SSH authorization. No OS or production networking changes."
+  ],
+  "adapter_issue": {
+    "fixed": "New empty real-S3 adapter journal is persisted before first request; restart after initial failure no longer encounters an absent journal. Existing missing/uncertain journals are NOT reset.",
+    "regression_tests": 9
+  },
+  "first_trial": {
+    "state": "INCOMPLETE",
+    "checks_completed": 5,
+    "unresolved_put_preserved": true,
+    "resent": false
+  },
+  "test_infrastructure_issues": [
+    "No browser assistance; earlier double-trial timing fixes reused. IPv4-only trial environment workaround documented separately."
+  ],
+  "limitations": [
+    "Content snapshot from reconstructed target, not live theme rendering.",
+    "No production or automatic publication.",
+    "S3 trial transport uses existing scoped laboratory roles; not a production configuration wizard."
+  ],
+  "worker_regressions": 14,
+  "production_changes": false
+}
