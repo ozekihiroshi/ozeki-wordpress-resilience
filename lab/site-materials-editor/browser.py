@@ -30,7 +30,7 @@ def choose(id):d.execute_script("const e=document.getElementById('owr-material-s
 def save():d.find_element(By.ID,'owr-material-save').click()
 try:
     d.get(root+'/wp-login.php');field('user_login','operator');field('user_pass','lab-only-password');d.find_element(By.ID,'wp-submit').click()
-    d.get(root+'/wp-admin/post-new.php');wait('ready');check('normal new-post entry opens S3-first editor','page=owr-site-materials' in d.current_url)
+    d.get(root+'/wp-admin/admin.php?page=owr-site-materials');wait('ready');check('legacy material editor remains available','page=owr-site-materials' in d.current_url)
     before=snapshot();original=state();choose('company');field('owr-material-title','編集した会社案内');field('owr-material-body','## 見出し\n編集前にS3へ保存する本文\n[サービス](asset:services)\n![画像](asset:logo)')
     check('typing leaves WordPress unchanged',snapshot()==before)
     control.write_text(json.dumps({'fail_before':True}));save();wait('failed');check('save failure leaves posts and media unchanged',snapshot()==before)

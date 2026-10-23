@@ -1,5 +1,30 @@
 # Ozeki WordPress Resilience
 
+## Native editing integration (current working change)
+
+The standard WordPress block editor is now connected to the existing S3-first
+save queue for enrolled posts and pages, including publication intent and basic
+images. This remains explicitly enrolled, administrator-only dedicated-environment
+functionality; it is not general Gutenberg, Classic Editor or Markdown-plugin
+compatibility. Unsupported blocks/settings are rejected, and source publication
+never automatically publishes a reconstructed target. See the
+[native editor scope and restart instructions](docs/native-wordpress-editor.md).
+
+The native editor path has now passed a dedicated live-S3 run (19 browser checks).
+After removal of the source WordPress, its final generation rebuilt privately with
+request-derived Q matching. A media-modal timeout was fixed with asynchronous
+completion; see the [evidence and limitations](docs/native-wordpress-editor.md#live-s3-validation-2026-10-23).
+
+
+
+Deploy the plugin ZIP and its matching external runtime kit together. Installation
+alone does not enroll a site or enable S3 protection; explicit enrollment, storage
+configuration and a worker are required. Updates retain settings, histories and
+journals; they do not migrate the legacy three-page path or activate production.
+
+
+Internal page-anchor links are unsupported and rejected before queueing; external link fragments are retained.
+
 **Immutable Assets, Deterministic Reconstruction.**
 
 Preserve business information independently of the WordPress system that presents it. Save an accepted original to S3 **before** applying it to WordPress; when needed, rebuild a new WordPress from those originals instead of restoring the old database.
@@ -28,7 +53,7 @@ The release candidate provides a multi-material editor and reconstruction tools.
 | Available | Boundary |
 |---|---|
 | Multiple posts and pages, stable IDs, page hierarchy | Dedicated enrollment; no automatic existing-site conversion |
-| Paragraphs, headings, explicit internal links and image references | No general HTML, Gutenberg blocks, shortcodes or arbitrary Markdown |
+| Core paragraph/heading/list/quote/image blocks, basic emphasis and links | Explicit enrollment and bounded markup; no custom/dynamic blocks, forms, shortcodes or arbitrary Markdown |
 | PNG/JPEG registration and replacement | Up to 4 MiB per image; no PDF support |
 | S3-first queue, fixed generations, retry and stale-edit rejection | One designated writer host; no distributed writer coordination |
 | Rebuild supported content from S3 without the old DB | Private drafts; no automatic public activation |
@@ -73,7 +98,7 @@ The previous size-contract defect is corrected in source; the replacement ZIP mu
 
 ## Multi-material reconstruction screen
 
-With the dedicated recovery worker configured, **S3先行編集 → 素材世代から再構築** lists saved material generations, fixed references, Q digests and results. Select a generation to create and verify a new private WordPress using the existing CLI. This new-schema console is separate from the legacy three-page workflow. It requires operator setup and locally pinned images; targets are disposable drafts without public ports, not durable production deployment. [Setup and remaining boundaries](docs/site-reconstruction-console.md).
+Native editing uses Posts / Pages and the standard media uploader; **S3先行編集** remains the status/resume and legacy-material screen. With the dedicated recovery worker configured, **S3先行編集 → 素材世代から再構築** lists saved material generations, fixed references, Q digests and results. Select a generation to create and verify a new private WordPress using the existing CLI. This new-schema console is separate from the legacy three-page workflow. It requires operator setup and locally pinned images; targets are disposable drafts without public ports, not durable production deployment. [Setup and remaining boundaries](docs/site-reconstruction-console.md).
 
 The generation console reuses bounded, previously verified catalog summaries; each reconstruction still performs fresh fixed-version, retention and Q verification. An unassisted live-S3 browser trial passed 43 checks. See [catalog validation](evidence-public/site-reconstruction-catalog-cache-validation.json).
 

@@ -47,30 +47,26 @@ final class SiteMaterialsEditor {
         $wanted=$p['site'];usort($wanted['entries'],fn($a,$b)=>strcmp($a['id'],$b['id']));
         if(self::canonical($received['site']??null)!==self::canonical($wanted)||self::canonical($received['parent']??null)!==self::canonical($p['parent'])){throw new \RuntimeException('Stored material mismatch');}
         require_once __DIR__.'/SiteMaterialsProjection.php';self::$applying=true;
-        try{$result=\owr_site_materials_apply($received,true);}finally{self::$applying=false;}
+        try{$result=\owr_site_materials_apply($received,true,true);}finally{self::$applying=false;}
         // If interrupted here, the projection replays the same receipt without duplicate rows.
         update_option('owr_site_editor',['site'=>$received['site'],'receipt'=>$received['receipt'],'last_operation'=>$p['operation'],'result'=>$result],false);return self::status();
     });}
     public static function boot(string $dir):void {
         if(getenv('OWR_RBR_DISPOSABLE')!=='1'||!is_dir($dir.'/requests')||!is_dir($dir.'/reports')){throw new \RuntimeException('Explicit dedicated enrollment required');}self::$dir=$dir;
+        require_once __DIR__.'/NativeMaterialsEditor.php';NativeMaterialsEditor::boot();
         require_once __DIR__.'/SiteReconstructionAdmin.php';SiteReconstructionAdmin::boot($dir);
         add_action('rest_api_init',function(){foreach(['state'=>'GET','save'=>'POST','resume'=>'POST','apply'=>'POST'] as $action=>$method){register_rest_route('owr-materials/v1','/'.$action,['methods'=>$method,'permission_callback'=>fn()=>current_user_can('manage_options'),'callback'=>function($request)use($action){
             try{if(strlen($request->get_body())>16*1024*1024){throw new \InvalidArgumentException('Input bound');}
                 $value=match($action){'state'=>self::status(),'save'=>self::submit($request->get_json_params()??[]),'resume'=>self::resume(),'apply'=>self::apply()};$response=new \WP_REST_Response($value);$response->header('Cache-Control','no-store');return $response;
             }catch(\Throwable $e){return new \WP_Error('owr_materials_stopped',$e instanceof \InvalidArgumentException?'Unsupported input':'Save stopped; preserve and resume the same request.',['status'=>409]);}
         }]);}});
+        add_action('rest_api_init',function(){register_rest_route('owr-materials/v1','/native-result',['methods'=>'GET','permission_callback'=>fn()=>current_user_can('manage_options'),'callback'=>function($q){$s=self::status();$map=get_option('owr_site_projection',[])['map']??[];$asset=(string)$q['asset'];if(!isset($map[$asset]))return new \WP_Error('missing','Material is not applied',['status'=>409]);$id=$map[$asset];$p=get_post($id);$response=new \WP_REST_Response(['attachment'=>$p->post_type==='attachment'?wp_prepare_attachment_for_js($id):null,'id'=>$id,'route'=>$p->post_type==='attachment'?'media':($p->post_type==='page'?'pages':'posts'),'parent'=>hash('sha256',self::canonical($s['receipt']))]);$response->header('Cache-Control','no-store');return $response;}]);});
         add_filter('login_redirect',fn($redirect)=>admin_url('admin.php?page=owr-site-materials'));
         add_action('wp_dashboard_setup',function(){remove_meta_box('dashboard_quick_press','dashboard','side');},99);
         add_action('admin_menu',function(){add_menu_page('S3先行編集','S3先行編集','manage_options','owr-site-materials',[self::class,'screen'],'dashicons-cloud');});
-        add_action('admin_init',function(){global $pagenow;
-            if(in_array($pagenow,['post.php','post-new.php','media-new.php','media.php'],true)&&($_SERVER['REQUEST_METHOD']??'GET')==='GET'){
-                $id=isset($_GET['post'])?(int)$_GET['post']:0;$asset=$id?get_post_meta($id,'owr_material_id',true):'';
-                wp_safe_redirect(admin_url('admin.php?page=owr-site-materials').($asset?'&asset='.rawurlencode($asset):''));exit;
-            }
-        });
         // S3-first must not be bypassed by another UI or REST endpoint.
-        add_filter('rest_pre_dispatch',function($result,$server,$request){if(!in_array($request->get_method(),['GET','HEAD','OPTIONS'],true)&&preg_match('~^/wp/v2/(posts|pages|media)(/|$)~',$request->get_route())){return new \WP_Error('owr_materials_entry','Use the S3-first editor',['status'=>409]);}return $result;},10,3);
-        add_filter('wp_insert_post_data',function($data){if(!self::$applying&&in_array($data['post_type'],['post','page','attachment'],true)){throw new \RuntimeException('S3-first editor required');}return $data;},1);
+        add_filter('rest_pre_dispatch',function($result,$server,$request){if($result!==null)return $result;if(!in_array($request->get_method(),['GET','HEAD','OPTIONS'],true)&&preg_match('~^/wp/v2/(posts|pages|media)(/|$)~',$request->get_route())){return new \WP_Error('owr_materials_entry','Use the S3-first editor',['status'=>409]);}return $result;},10,3);
+        add_filter('wp_insert_post_data',function($data,$postarr){if(!self::$applying&&in_array($data['post_type'],['post','page','attachment'],true)&&!(empty($postarr['ID'])&&$data['post_status']==='auto-draft'&&$data['post_content']===''&&$data['post_excerpt']==='')){throw new \RuntimeException('S3-first editor required');}return $data;},1,2);
         add_filter('pre_delete_post',fn($delete)=>self::$applying?$delete:false,1);add_filter('pre_delete_attachment',fn($delete)=>self::$applying?$delete:false,1);
         add_filter('wp_handle_upload_prefilter',function($file){$file['error']='Use S3-first image registration';return $file;});
     }

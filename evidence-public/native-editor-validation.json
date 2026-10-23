@@ -1,0 +1,57 @@
+{
+  "browser_checks": [
+    "standard editor remains open",
+    "new post published after material save",
+    "S3 generation contains publication intent",
+    "failed native save preserves public DB",
+    "same request can resume",
+    "stored retry applied",
+    "resumed publication updated same post",
+    "stale editor rejected",
+    "new page published",
+    "heading list quote remain editable",
+    "native image upload returns attachment",
+    "image inserted after S3 save",
+    "saved blocks remain editable after reload",
+    "standard media modal image registration",
+    "interruption after storage keeps published DB unchanged",
+    "restart uses the same stored generation",
+    "restart updates same page without duplicate",
+    "unsupported block rejected without DB write",
+    "completed journal has no pending request"
+  ],
+  "environment_issue": "WSL systemd user-session warnings and Docker activating state/read-only image-inspect timeouts before trial setup. Separate from the reproduced HTML canonicalization defect; no service restart or production change performed.",
+  "real_s3": false,
+  "reconstruction": {
+    "public_activation": false,
+    "request_q_matches": true,
+    "side_effect_attempts": 0,
+    "source_environment_removed_before_reconstruction": true,
+    "state": "verified-private"
+  },
+  "schema": "owr-native-editor-validation-v1",
+  "scope": "Dedicated WordPress only; no production changes. Standard core block subset, administrators only.",
+  "state": "PASS",
+  "transport": "filesystem-lab",
+  "browser_after_canonicalization_fix": true,
+  "checks": {
+    "native_material_contract_tests": 6,
+    "existing_site_tests": 39,
+    "distribution_tests": 8,
+    "native_guard_checks": 5,
+    "reference_render_checks": 2,
+    "wordpress_kses_canonicalization": true
+  },
+  "product_fix": "Canonicalize generated block HTML through WordPress KSES before source/target insertion, so filtered CLI writes and administrator writes compare identically. Preserve strict Q/content checks.",
+  "test_infrastructure": "An extra internal-link coverage assertion stopped the d follow-on before reconstruction; e explicitly included the link. Failed attempts are retained, not relabeled as successful.",
+  "source_sha256": {
+    "src/NativeMaterialsEditor.php": "17c400b343047f853d6584f694efa270e2c8ece3e5f6c28bf3856ab7e4c02a24",
+    "src/SiteMaterialsEditor.php": "0846c27968a3d09624452559a2b2c828171756eb2b286dc7ae1703084fa77dd5",
+    "src/SiteMaterialsProjection.php": "97eea39d150f38cb66ccb1426452a053da7ba379fbc094b93bd9df09bc1b9b68",
+    "assets/native-materials-editor.js": "ec166caeeafbade58872a5a137224c691e6f55a188ba7f551bd0c6167e0067d9",
+    "assets/native-materials-upload.js": "7bf1e6fe8da26b4a7661a616a4f4a9afa6f3a83aae6c9a8b8328de6db3a0c55b",
+    "assets/site-materials-editor.js": "f94caea648992d647f1d0b7fe79de5e534fa18edd9d62a8328d28a93dcbd77dd",
+    "tools/site-materials.py": "2cb12cdbd2259b78b0671452c689705ff2ce8232fda13723c8bcc4df5a2436fb"
+  },
+  "recorded_at": "2026-10-23T10:51:18.877488+00:00"
+}
