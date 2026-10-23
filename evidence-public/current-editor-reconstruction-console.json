@@ -1,0 +1,122 @@
+{
+  "schema": "owr-current-editor-console-validation-v1",
+  "state": "PASS",
+  "binding": {
+    "matched_request_Q": true,
+    "preserved_user_edit": true,
+    "operation_id": "editor-12d1c6ef-6a50-4914-85db-928e1598835e",
+    "generation": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-console-20261023-a/commits/000000000001.json",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "pULLvSiFq0RBvOQ.u92cduegwAs7pNUy"
+      },
+      "retain_until": 1795832090,
+      "sha256": "682dc0d6011123665d0309ee916b594812472ac7db04fbecaff70326ca27705a",
+      "size_bytes": 4192,
+      "stored_at": 1792721695
+    },
+    "q_sha256": "13184ee98c6f21e0185e894fd8eba1898971ba15ae995eb196982416c1e082aa",
+    "sequence": 1,
+    "source": "actual browser POST and actual API response; no reconstruction output used"
+  },
+  "same_browser_saved_and_requested": true,
+  "request_Q_not_derived_from_reconstruction": true,
+  "old_mock_journal_archived": true,
+  "source_isolation": {
+    "source_assets_hidden": true,
+    "builder_hidden": true,
+    "private_mount_namespace": true
+  },
+  "saved_objects": 9,
+  "reconstruction": {
+    "definition_sha256": "5d1f7c24c460da834ab5fe6435e501e7daa9d5073233f16f192f8d9592ffbf59",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-content-replaced",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "65e252cfaf141fe7ba8204d4f98f97a0cff0a239cb0c88c29e38096f98dff07a",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "13184ee98c6f21e0185e894fd8eba1898971ba15ae995eb196982416c1e082aa",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "13184ee98c6f21e0185e894fd8eba1898971ba15ae995eb196982416c1e082aa",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "console_outcome": {
+    "public_activation": false,
+    "q_match": true,
+    "request_id": "ddefc32f7f4bb17ad4216170b20b1ac95faf3a6c2fb7f4ff7c1f2ca62fbcce9f",
+    "state": "verified"
+  },
+  "negative_checks": [
+    "different generation",
+    "different Q",
+    "different fixed Version ID",
+    "pending save",
+    "missing local history",
+    "invalid token",
+    "missing nonce",
+    "duplicate request"
+  ],
+  "production_changed": false,
+  "public_activation": false,
+  "signer_scope": "Dedicated root-only test key on same host; not a physically separate signing machine",
+  "limitations": [
+    "Three enrolled pages and existing images/relations",
+    "Kit creation/signature approval remain external operator steps",
+    "Generated-data one-off mock-to-real re-enrollment is not a general migration feature",
+    "Existing browser/kernel startup and intermittent WSL issues remain separately recorded; no new such failure in this trial"
+  ],
+  "cleanup": {
+    "host_trust_unchanged": true,
+    "policy_removed": true,
+    "dedicated_daemon_stop_requested": true
+  },
+  "overall_real_s3": true,
+  "executor_scope_note": "Nested executor runs after signed fixed-version S3 fetch; its no-S3 scope does not describe the whole trial"
+}

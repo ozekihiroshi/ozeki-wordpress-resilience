@@ -71,6 +71,20 @@ final class RbrWordPressSave
             return ['applied_operation'=>$applied,'sequence'=>$s['sequence'],'pages'=>$s['editor_pages'],'pending'=>$pending,'drift'=>$s['fingerprint']!==$this->snapshot()];
         });
     }
+    /** Read-only, bounded public metadata; never exposes job paths or credentials. */
+    public function generationHistory(): array {
+        return $this->tx(function(){
+            $s=$this->state();
+            if(($s['configuration']??'')!==$this->configuration())throw new \RuntimeException('Configuration changed');
+            $out=[];
+            foreach(array_slice($s['operations'],-20,null,true) as $id=>$e){
+                $out[]=['operation'=>$id,'sequence'=>$e['job']['sequence']??null,'state'=>$e['state'],
+                    'generation'=>$e['generation']??null,'expected_ref'=>$e['expected_ref']??null,
+                    'q_sha256'=>$e['job']['expected_sha256']??null,'expected_q'=>$e['expected']??null];
+            }
+            return ['sequence'=>$s['sequence'],'generations'=>$out];
+        });
+    }
     private function configuration(): string {return hash('sha256',RbrGenerationCoordinator::encode(['ids'=>$this->ids,'seed'=>$this->seed,'images'=>$this->images]));}
     private function validate(array $input): void {
         $keys=array_keys($input);sort($keys);if($keys!==['expected_sequence','operation_id','pages']

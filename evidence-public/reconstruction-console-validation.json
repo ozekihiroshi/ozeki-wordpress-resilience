@@ -1,0 +1,86 @@
+{
+  "schema": "owr-console-validation-v1",
+  "scope": "generated local WordPress + previously fetched experiment S3 fixed-version kit",
+  "browser_request": true,
+  "browser_verified_result": true,
+  "nonce_required": true,
+  "admin_only": true,
+  "queue_checks": 6,
+  "worker_unit_checks": 7,
+  "outcome": {
+    "public_activation": false,
+    "q_match": true,
+    "request_id": "0c9425b27c1b626206ea13e5f52873d3a0f3b3bc077ca730ad641f3b35d4e0b7",
+    "state": "verified"
+  },
+  "reconstruction": {
+    "definition_sha256": "37580ebefd8c5e930aaf5b7b74fb1b495a6aea277eeccef08501679f650f7b3f",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-content-replaced",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "c08279e4da2759f7eca730f51bae762e0c6149e4fd21e22db8db14b71b6741f1",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "production_changed": false,
+  "public_activation": false,
+  "limitations": [
+    "Local editor uses filesystem S3 double; imported S3 generation 3 is a separate source",
+    "Kit registration and independent approval remain operator tasks",
+    "Worker stopped after trial; stale report disables requests"
+  ],
+  "environment_issue": "Transient Wsl/Service/WSAETIMEDOUT during final polling; later connection recovered; cause undetermined",
+  "test_infrastructure_issue": "Browser namespace required loopback port 18714 relay; initial missing relay repaired",
+  "cleanup": {
+    "host_trust_unchanged": true,
+    "policy_removed": true,
+    "dedicated_daemon_stop_requested": true
+  }
+}

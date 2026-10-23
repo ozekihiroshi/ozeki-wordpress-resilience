@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ozeki WordPress Resilience
  * Description: Notification settings and independent delivery status (development version).
- * Version: 0.1.0-alpha.4
+ * Version: 0.1.0-alpha.5
  * Requires PHP: 8.1
  * License: GPL-2.0-or-later
  */

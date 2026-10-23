@@ -1,0 +1,90 @@
+{
+  "schema": "owr-console-alpha5-zip-validation-v1",
+  "production_ready": false,
+  "published": false,
+  "version": "0.1.0-alpha.5",
+  "baseline": "published alpha.4 plugin and external kit",
+  "result": {
+    "passed": true,
+    "checks": [
+      "anonymous editor requires login",
+      "normal page edit opens protected editor",
+      "resume button hidden when editable",
+      "initial paragraph from enrolled public page",
+      "typing does not update public content",
+      "storage failure leaves public text unchanged",
+      "failed request locks content for exact retry",
+      "resume button visible only for unresolved request",
+      "different pending operation shows conflict",
+      "reload retrieves frozen operation from server",
+      "resume applies exactly one generation",
+      "other two pages retained",
+      "text escaped in projection",
+      "resume button hidden after completion",
+      "stale editor rejected without overwrite",
+      "S3 committed but not projected state visible",
+      "interrupted HTTP save resumes same fixed generation",
+      "invalid input stays editable without creating a generation",
+      "lost successful save response reconciles as applied not conflict",
+      "state-refresh failure never displays false completion",
+      "editor status GET requires nonce",
+      "classic form POST bypass blocked",
+      "unrelated page retains normal editor",
+      "subscriber has no protected form"
+    ],
+    "commits": 5,
+    "containers_removed": true,
+    "scope": "Real Chromium editor + WordPress HTTP + MariaDB; persistent S3 double for controlled faults",
+    "lifecycle_checks": [
+      "fresh final plugin ZIP installs and activates",
+      "fresh installed files match final ZIP",
+      "network isolated; optional demo bound to loopback only",
+      "pending committed save created before update",
+      "deactivate preserves pages, pending journal and completed history",
+      "activate preserves pages, pending journal and completed history",
+      "upgrade preserves settings and cron",
+      "upgrade preserves external assets and configuration",
+      "upgraded plugin remains active",
+      "upgraded files match final ZIP",
+      "kit redeployment preserves pending state",
+      "final console reads preserved generation history and stale external report",
+      "console rejects subscriber",
+      "stale report cannot enqueue reconstruction",
+      "operator approval signature request and outcome bytes unchanged",
+      "console reads do not mutate saved state",
+      "pending request resumes after ZIP update without new generation",
+      "pending Q preserved across update and bound after resume"
+    ],
+    "external_files_preserved": 59,
+    "schema_migration_tested": false,
+    "plugin_sha256": "30c156e853829aae87aa08a88f4c4cc6c6589f9a5b4c285b3dd5c539bef7c444",
+    "old_plugin_sha256": "e17082e502e76e688c95faf8825bd63926124b77ff9f3fd68e3789652090f762",
+    "local_demo_retained": false
+  },
+  "python_rbr_tests": 88,
+  "console_python_tests_included": 13,
+  "php_console_contract": "PASS",
+  "cloud_reconstruction_repeated": false,
+  "real_s3_evidence": "current-editor-reconstruction-console.json",
+  "signature_policy_changed": false,
+  "external_record_fixtures": "Expired approval, inert signature, queued request and interrupted result; byte preservation only, not cryptographic validation",
+  "environment": "Sandbox WSL E_ACCESSDENIED required authorized execution; no WSL configuration changes. A read-only polling command returned Wsl/Service/WSAETIMEDOUT; the existing test continued and completed. Subsequent access recovered without restart or replay. Root cause remains undetermined, not attributed to plugin.",
+  "limitations": [
+    "External kit/config/enrollment/kit preparation/signing/registration/worker required",
+    "No general Gutenberg/posts/media/Markdown ingress",
+    "No legacy Q-less enrollment migration",
+    "No production activation or automatic approval renewal"
+  ],
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.1.0-alpha.5.zip",
+      "sha256": "30c156e853829aae87aa08a88f4c4cc6c6589f9a5b4c285b3dd5c539bef7c444",
+      "bytes": 35190
+    },
+    {
+      "file": "owr-development-kit-0.1.0-alpha.5.zip",
+      "sha256": "96de034c22c0af93046df2e812a1670a50a1eb6664b5e67112c38dff252a9c8b",
+      "bytes": 15728972
+    }
+  ]
+}
