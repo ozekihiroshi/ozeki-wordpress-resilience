@@ -30,3 +30,8 @@ The ZIP lifecycle result and this review were added after archive freeze. README
 - Product: size-contract defect above; listed supported-scope and deployment limitations.
 - Test infrastructure: root-owned WordPress updater directories caused an earlier HTTP update failure; corrected dedicated fixture ownership passed with the same plugin hash. Builder version lookup was corrected before the final archives.
 - Environment: historical read-only WSL timeout has no established root cause or plugin fix. It does not invalidate successful bounded evidence, nor establish coverage of the size boundary.
+
+## CI fixture correction
+
+Initial GitHub CI failed five distribution tests: fixtures still placed the version in PLUGIN[0] and assumed no assets directory. Corrected fixtures to name the main plugin explicitly and allow the already-created directory; the version-mismatch test now also targets the main plugin. This is a test-only correction, with no change to the frozen plugin/worker. Final CI status is recorded in the PR.
+
