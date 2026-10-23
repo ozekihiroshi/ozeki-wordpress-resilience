@@ -8,7 +8,7 @@ function owr_lab_install(string $zip):void {
 }
 function owr_lab_snapshot():array {
     global $wpdb;$options=[];foreach(['owr_notification_settings_v1','owr_legacy_history_fixture','owr_site_editor','owr_site_projection','cron']as $key)$options[$key]=get_option($key);
-    $files=[];foreach(['requests','reports']as $dir){foreach(glob('/bundle/bridge/'.$dir.'/*.json')as $p)$files[$p]=hash_file('sha256',$p);}ksort($files);
+    $files=[];foreach(['requests','reports']as $dir){foreach(glob('/bundle/bridge/'.$dir.'/*.json')as $p)$files[$p]=hash_file('sha256',$p);}foreach(['reconstruction/status.json'] as $rel){$p='/bundle/bridge/'.$rel;if(is_file($p))$files[$p]=hash_file('sha256',$p);}foreach(glob('/bundle/bridge/reconstruction/requests/*.json')as $p)$files[$p]=hash_file('sha256',$p);ksort($files);
     return ['options'=>$options,'posts'=>$wpdb->get_results("SELECT * FROM {$wpdb->posts} ORDER BY ID",ARRAY_A),'meta'=>$wpdb->get_results("SELECT * FROM {$wpdb->postmeta} ORDER BY meta_id",ARRAY_A),'bridge'=>$files];
 }
 function owr_lab_routes():void {

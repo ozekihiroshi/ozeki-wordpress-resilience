@@ -53,6 +53,7 @@ final class SiteMaterialsEditor {
     });}
     public static function boot(string $dir):void {
         if(getenv('OWR_RBR_DISPOSABLE')!=='1'||!is_dir($dir.'/requests')||!is_dir($dir.'/reports')){throw new \RuntimeException('Explicit dedicated enrollment required');}self::$dir=$dir;
+        require_once __DIR__.'/SiteReconstructionAdmin.php';SiteReconstructionAdmin::boot($dir);
         add_action('rest_api_init',function(){foreach(['state'=>'GET','save'=>'POST','resume'=>'POST','apply'=>'POST'] as $action=>$method){register_rest_route('owr-materials/v1','/'.$action,['methods'=>$method,'permission_callback'=>fn()=>current_user_can('manage_options'),'callback'=>function($request)use($action){
             try{if(strlen($request->get_body())>16*1024*1024){throw new \InvalidArgumentException('Input bound');}
                 $value=match($action){'state'=>self::status(),'save'=>self::submit($request->get_json_params()??[]),'resume'=>self::resume(),'apply'=>self::apply()};$response=new \WP_REST_Response($value);$response->header('Cache-Control','no-store');return $response;

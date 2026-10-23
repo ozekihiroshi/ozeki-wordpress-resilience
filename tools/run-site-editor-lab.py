@@ -6,13 +6,13 @@ def load(name,file):
     s=importlib.util.spec_from_file_location(name,ROOT/'tools'/file);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 l=load('material_lab','run-site-materials-lab.py');w=load('editor_worker','site-editor-worker.py');run=l.run
 
-def main(out,live,plugin_zip=None,old_plugin_zip=None):
+def main(out,live,plugin_zip=None,old_plugin_zip=None,recovery=False):
     out.mkdir(mode=0o700,exist_ok=False);shared=out/'shared';shared.mkdir();bridge=shared/'bridge';(bridge/'requests').mkdir(parents=True);(bridge/'reports').mkdir();operator=out/'operator';operator.mkdir();prefix='sites/isolated-queue-lab/sets/AWS-'+secrets.token_hex(8)+'/' if live else 'dedicated-editor/'
     if live:(out/'preflight.json').write_bytes(w.m.canon(l.k.k.transport.preflight()))
     config={'transport':'experimental-s3' if live else 'filesystem-lab','prefix':prefix,'work':str(operator),'bridge':str(bridge)};(out/'worker.json').write_bytes(w.m.canon(config));(shared/'control.json').write_text('{}')
     site={'schema':'owr-site-materials-v1','title':'編集接続試験','landing':'company','entries':[l.page('company'),l.page('services'),l.page('news','post'),{'id':'logo','kind':'image','mime':'image/png','data':base64.b64encode(l.png((10,40,90))).decode(),'alt':'試験ロゴ'}]}
     transport=w.store(config);repo=w.m.Repository(transport,operator/'journal',prefix);receipt=repo.save('enroll',None,site);received=w.m.receive(transport,receipt);(shared/'received.json').write_bytes(w.m.canon(received));(shared/'normal.png').write_bytes(l.png((20,90,40)));(shared/'replacement.png').write_bytes(l.png((90,40,20)))
-    tag='owr-editor-'+uuid.uuid4().hex[:10];net=tag+'-net';db=tag+'-db';web=tag+'-web';browser=tag+'-browser';created=[];stop=threading.Event();worker_thread=None;active_process=[None]
+    tag='owr-editor-'+uuid.uuid4().hex[:10];net=tag+'-net';db=tag+'-db';web=tag+'-web';browser=tag+'-browser';created=[];stop=threading.Event();worker_thread=None;recovery_thread=None;active_process=[None]
     wpimage=run('docker','image','inspect','wordpress:php8.3-apache','--format','{{.Id}}').stdout.decode().strip();dbimage=run('docker','image','inspect','mariadb:11.8','--format','{{.Id}}').stdout.decode().strip()
     try:
         ids=run('docker','network','ls','-q').stdout.decode().split();used=[ipaddress.ip_network(c['Subnet']) for n in json.loads(run('docker','network','inspect',*ids).stdout) for c in n['IPAM']['Config']or[] if'Subnet'in c];subnet=next(str(n) for n in ipaddress.ip_network('10.252.0.0/16').subnets(new_prefix=28) if not any(n.overlaps(u) for u in used if n.version==u.version))
@@ -59,6 +59,16 @@ def main(out,live,plugin_zip=None,old_plugin_zip=None):
                     while not stop.is_set() and json.loads((shared/'control.json').read_text()).get('stop_after_store'):time.sleep(.2)
                 if stop.wait(.3):break
         worker_thread=threading.Thread(target=workloop);worker_thread.start()
+        if recovery:
+            recovery_config=dict(config,target_label='Dedicated private Docker target',wordpress_image=wpimage,database_image=dbimage,recovery_work=str(out/'recovery'))
+            (out/'recovery.json').write_bytes(w.m.canon(recovery_config));(shared/'recovery-enabled').write_text('1')
+            def recoveryloop():
+                while not stop.is_set():
+                    if not json.loads((shared/'control.json').read_text()).get('pause_recovery'):
+                        with (out/'recovery.log').open('ab') as log:
+                            subprocess.run(['python3',str(ROOT/'tools/site-reconstruction-worker.py'),'--config',str(out/'recovery.json'),'--once'],stdout=log,stderr=log,check=True)
+                    if stop.wait(2):break
+            recovery_thread=threading.Thread(target=recoveryloop);recovery_thread.start()
         run('docker','run','-d','--name',browser,'--network','container:'+web,'--user','1000:1000','--memory','2g','--shm-size','1g','-e','HOME=/tmp','-v',str(ROOT)+':/kit:ro','-v',str(shared)+':/lab','--entrypoint','sleep','selenium/standalone-chrome:latest','infinity');created.append(('container',browser))
         with (out/'browser.log').open('wb') as log:
             p=subprocess.Popen(['docker','exec',browser,'python3','/kit/lab/site-materials-editor/browser.py'],stdout=log,stderr=log)
@@ -67,10 +77,18 @@ def main(out,live,plugin_zip=None,old_plugin_zip=None):
         result=json.loads((shared/'browser-result.json').read_text());(out/'result.json').write_bytes(w.m.canon({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live,'public_activation':False,'native_entries_redirect_to_protected_editor':True}));print(json.dumps({'state':'PASS','browser_checks':len(result['checks']),'real_s3':live}),flush=True)
     finally:
         stop.set()
+        if recovery_thread:recovery_thread.join(timeout=1000)
+        if recovery_thread and recovery_thread.is_alive():raise RuntimeError('Recovery worker still active; preserve targets')
         if worker_thread:worker_thread.join(timeout=300)
         if worker_thread and worker_thread.is_alive():raise RuntimeError('Worker still active; preserve resources and inspect before cleanup')
+        if recovery:
+            for inventory in (out/'recovery').glob('target-*/resources.json'):
+                target=json.loads(inventory.read_bytes())
+                if not all(str(target[k]).startswith('owr-materials-') for k in ('web','database','network')):raise RuntimeError('Unexpected private target')
+                for key in ('web','database'):run('docker','rm','-f','-v',target[key],check=False)
+                run('docker','network','rm',target['network'],check=False)
         for kind,name in reversed(created):run('docker','rm','-f','-v',name) if kind=='container' else run('docker','network','rm',name)
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--live-s3',action='store_true');p.add_argument('--plugin-zip',type=Path);p.add_argument('--old-plugin-zip',type=Path);p.add_argument('--allow-dedicated-lab',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--live-s3',action='store_true');p.add_argument('--recovery',action='store_true');p.add_argument('--plugin-zip',type=Path);p.add_argument('--old-plugin-zip',type=Path);p.add_argument('--allow-dedicated-lab',action='store_true');a=p.parse_args()
     if not a.allow_dedicated_lab:p.error('Explicit dedicated lab opt-in required')
-    main(a.output,a.live_s3,a.plugin_zip,a.old_plugin_zip)
+    main(a.output,a.live_s3,a.plugin_zip,a.old_plugin_zip,a.recovery)

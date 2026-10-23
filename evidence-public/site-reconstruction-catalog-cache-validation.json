@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-23",
+  "state": "PASS",
+  "real_s3": true,
+  "browser_checks": 43,
+  "browser_assistance": false,
+  "regression_tests": 38,
+  "catalog_performance": {
+    "elapsed_seconds": 0.11495184199884534,
+    "storage_get_calls": 0,
+    "generations": 7,
+    "cached_generations": 7
+  },
+  "generations": [
+    {
+      "id": "ff8c77b4cc155e0d97423775bb748e500d3f8f4fc822e009eb42cb15f28e8f9e",
+      "q": "5df377dd5353e450423f7bee82e47136e83305068489b4813eabeb289bacdd93",
+      "logical_sha256": "5df377dd5353e450423f7bee82e47136e83305068489b4813eabeb289bacdd93",
+      "assets": 7,
+      "state": "verified"
+    },
+    {
+      "id": "8531c94cd37049bda7870005f92e5b923edd112fc40ed6d4d7d9f5f905b880ff",
+      "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+      "logical_sha256": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+      "assets": 4,
+      "state": "verified"
+    }
+  ],
+  "checks": [
+    "normal new-post entry opens S3-first editor",
+    "typing leaves WordPress unchanged",
+    "save failure leaves posts and media unchanged",
+    "different pending request rejected",
+    "reload preserves exact pending title",
+    "confirmed save updates WordPress",
+    "stale editor generation rejected",
+    "new post reflected after S3",
+    "new page reflected after S3",
+    "normal media entry opens S3-first registration",
+    "selecting image creates no attachment",
+    "image registered after S3",
+    "image replacement keeps logical ID",
+    "worker actually exited after S3 commit",
+    "commit without projection leaves WordPress unchanged",
+    "resumes committed generation",
+    "resumed content appears",
+    "ordinary REST post write rejected",
+    "ordinary REST image write rejected",
+    "bypass attempts change nothing",
+    "read-only status does not change content",
+    "subscriber denied state",
+    "subscriber denied save",
+    "new schema generation catalog shown",
+    "Q and material summary visible",
+    "catalog reads do not change source",
+    "subscriber denied recovery state",
+    "subscriber denied recovery request",
+    "mismatched Q rejected 0",
+    "selected generation reconstructed 0",
+    "complete chosen material set 0",
+    "private target no publication 0",
+    "duplicate request keeps same job 0",
+    "no duplicate target 0",
+    "mismatched Q rejected 1",
+    "selected generation reconstructed 1",
+    "complete chosen material set 1",
+    "private target no publication 1",
+    "duplicate request keeps same job 1",
+    "no duplicate target 1",
+    "reconstruction leaves source unchanged",
+    "stale status blocks request",
+    "report resumes without new job"
+  ],
+  "cache_contract": {
+    "max_age_seconds": 3600,
+    "bounded_by_generation_retention": true,
+    "key": "storage context and full fixed receipt",
+    "execution": "always fresh fixed-version receive, retention and Q verification; cache is not execution authorization"
+  },
+  "limitations": [
+    "First/new/expired catalog entries still require full remote validation",
+    "Catalog may show prior check for up to one hour; last check and worker heartbeat are distinct",
+    "Long single generation verification/reconstruction may still make worker report stale; freshness threshold unchanged",
+    "Dedicated temporary private targets only"
+  ],
+  "environment_issues": [],
+  "test_infrastructure_issues": [],
+  "production_changes": false,
+  "automatic_publication": false
+}

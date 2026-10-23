@@ -1,0 +1,57 @@
+{
+  "schema": "owr-validation-summary-v1",
+  "scope": "multi-material reconstruction admin console",
+  "date": "2026-10-23",
+  "base": "af930b2",
+  "storage": "persistent S3 test double; not live S3",
+  "browser_checks": 43,
+  "worker_unit_tests": 9,
+  "php_contracts": "PASS",
+  "selected_generations": [
+    {
+      "generation": "2fdcd13fccd612c5763274c6d3696ed68f9ef6354cddbd86374b235781668104",
+      "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+      "logical_sha256": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+      "asset_count": 4,
+      "state": "verified",
+      "side_effect_attempts": 0,
+      "public_activation": false
+    },
+    {
+      "generation": "771009414d27d1c2434014c623b88c567f042b46c398d6cae46bd495b1c1cafc",
+      "q": "b38a477257aca918c3c77dacd26050143795980ab0c7a6f94203f4d9c9473ca1",
+      "logical_sha256": "b38a477257aca918c3c77dacd26050143795980ab0c7a6f94203f4d9c9473ca1",
+      "asset_count": 7,
+      "state": "verified",
+      "side_effect_attempts": 0,
+      "public_activation": false
+    }
+  ],
+  "checks": [
+    "administrator browser generation selection",
+    "subscriber GET/POST denied",
+    "wrong Q rejected",
+    "repeat same request creates no duplicate target",
+    "stale report blocks request and recovers when refreshed",
+    "source content unchanged by reconstruction",
+    "private target reconstructs from stored material generation without source database"
+  ],
+  "product_fixes": [
+    "submenu registration after parent menu",
+    "request identity independent of JSON key order",
+    "separate recovery S3 reader transport ledger"
+  ],
+  "environment_issues": [
+    "WSL WSAETIMEDOUT during optional test-helper launch; subsequent helper and tests succeeded; root cause not established"
+  ],
+  "test_infrastructure_issues": [],
+  "limitations": [
+    "dedicated disposable Docker target only; temporary storage",
+    "external worker and pinned local image setup required",
+    "no retry cleanup or preview UI",
+    "Q digest and material summary rather than full Q document",
+    "latest 50 journal records only",
+    "not tested against live S3 in this change",
+    "no production deployment or automatic publication"
+  ]
+}
