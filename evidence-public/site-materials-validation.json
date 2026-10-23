@@ -1,0 +1,236 @@
+{
+  "schema": "owr-site-materials-validation-v1",
+  "date": "2026-10-23",
+  "state": "PASS-for-reported-scope",
+  "live_s3": {
+    "dedicated_containers_removed": true,
+    "generations": 8,
+    "native_editor_connected": false,
+    "policy": "integrity",
+    "public_activation": false,
+    "real_s3": true,
+    "reconstructed_generations": [
+      1,
+      8,
+      8
+    ],
+    "results": [
+      {
+        "logical_sha256": "e843c9800f96b7b99c68c6c3edf4915126af06787685e620869ed77a800e2fb4",
+        "map": {
+          "company": 4,
+          "contact": 5,
+          "logo": 6,
+          "news": 7,
+          "services": 8
+        },
+        "public_activation": false,
+        "side_effect_attempts": 0,
+        "state": "verified-private",
+        "verified_ids": [
+          "company",
+          "contact",
+          "logo",
+          "news",
+          "services"
+        ]
+      },
+      {
+        "logical_sha256": "aff261d6faf159dac0f9f5e84b7cce0abc5b56d45ec84f9c98248180e3fe06e4",
+        "map": {
+          "company": 4,
+          "contact": 5,
+          "details": 6,
+          "logo": 7,
+          "news": 8,
+          "services": 9
+        },
+        "public_activation": false,
+        "side_effect_attempts": 0,
+        "state": "verified-private",
+        "verified_ids": [
+          "company",
+          "contact",
+          "details",
+          "logo",
+          "news",
+          "services"
+        ]
+      },
+      {
+        "logical_sha256": "aff261d6faf159dac0f9f5e84b7cce0abc5b56d45ec84f9c98248180e3fe06e4",
+        "map": {
+          "company": 4,
+          "contact": 5,
+          "details": 6,
+          "logo": 7,
+          "news": 8,
+          "services": 9
+        },
+        "public_activation": false,
+        "side_effect_attempts": 0,
+        "state": "verified-private",
+        "verified_ids": [
+          "company",
+          "contact",
+          "details",
+          "logo",
+          "news",
+          "services"
+        ]
+      }
+    ],
+    "runtime_images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "runtime_images_from_local_cache": true,
+    "source_database_used": false,
+    "state": "PASS"
+  },
+  "sequential_projection": {
+    "logical_sha256": "aff261d6faf159dac0f9f5e84b7cce0abc5b56d45ec84f9c98248180e3fe06e4",
+    "map": {
+      "company": 4,
+      "contact": 5,
+      "details": 9,
+      "logo": 11,
+      "news": 7,
+      "services": 8
+    },
+    "public_activation": false,
+    "sequential_generations": 8,
+    "side_effect_attempts": 0,
+    "stale_rejected_without_changes": true,
+    "state": "verified-private",
+    "verified_ids": [
+      "company",
+      "contact",
+      "details",
+      "logo",
+      "news",
+      "services"
+    ]
+  },
+  "final_code": {
+    "failed_projection_rolled_back": true,
+    "logical_sha256": "c20bb3e263f296494aefeba7a82774bf3dd2a981507fa8c23e29dafff77d67e2",
+    "map": {
+      "company": 4,
+      "contact": 5,
+      "details": 6,
+      "logo": 7,
+      "news": 8,
+      "services": 9
+    },
+    "public_activation": false,
+    "side_effect_attempts": 0,
+    "state": "verified-private",
+    "verified_ids": [
+      "company",
+      "contact",
+      "details",
+      "logo",
+      "news",
+      "services"
+    ]
+  },
+  "unit_contracts": 15,
+  "unit_sequential_edits": 105,
+  "code_sha256": {
+    "tools/site-materials.py": "e3cb6225416e90c1aaa16d9d2c1e083d98af6e490a76ac76b8490767ae74c13f",
+    "tools/site-wordpress-apply.php": "7d0016593fd5904ae9fbb12df01df42cf79e3260b8452d0fa746fc53067e44ec",
+    "tools/site-materials-command.py": "9f42fbfca96553ae7b35c2125d26326a2a404e2d26be0650905a4fa78c3deb5d"
+  },
+  "limitations": [
+    "CLI contract; ordinary WordPress editing/media upload not connected",
+    "Single designated writer host; distributed writers unsupported",
+    "Pinned runtime images supplied from local cache",
+    "Integrity policy tested; new-schema independent signature verifier not integrated",
+    "No production, public activation, migration to Backup for S3, or historical evidence deletion",
+    "Initial 8-generation trial preceded retention-window/fsync refinement; final_code trial uses final packaged code"
+  ],
+  "issue_categories": {
+    "environment": "No new environment failure observed in these trials",
+    "test_infrastructure": "Generated-data fixtures and private Docker, separate from live demo",
+    "plugin": "Scope limitations above; no general-user release claim"
+  },
+  "archive": {
+    "legacy_ui_in_new_kit": false,
+    "historical_sources_preserved": true,
+    "backup_for_s3_transfer_completed": false
+  },
+  "package": {
+    "path": "site-materials-development-20261023-final.zip",
+    "files": 11,
+    "sha256": "4cd5a611a549f5d4d7677adf67b1a5bedfc3646dc7513a3a59c08f45ce8bcd95",
+    "wordpress_installable": false
+  },
+  "multiple_posts_pages_images": {
+    "images": 2,
+    "pages": 4,
+    "posts": 2,
+    "runs": [
+      {
+        "failed_projection_rolled_back": true,
+        "logical_sha256": "9f05bf49fc020fb0a35c2b93943cd445affc39ac3b9fb4b4a1b626cfb70478a3",
+        "map": {
+          "company": 4,
+          "contact": 5,
+          "details": 6,
+          "logo": 7,
+          "news": 8,
+          "office-photo": 9,
+          "second-news": 10,
+          "services": 11
+        },
+        "public_activation": false,
+        "side_effect_attempts": 0,
+        "state": "verified-private",
+        "verified_ids": [
+          "company",
+          "contact",
+          "details",
+          "logo",
+          "news",
+          "office-photo",
+          "second-news",
+          "services"
+        ]
+      },
+      {
+        "failed_projection_rolled_back": true,
+        "logical_sha256": "9f05bf49fc020fb0a35c2b93943cd445affc39ac3b9fb4b4a1b626cfb70478a3",
+        "map": {
+          "company": 4,
+          "contact": 5,
+          "details": 6,
+          "logo": 7,
+          "news": 8,
+          "office-photo": 9,
+          "second-news": 10,
+          "services": 11
+        },
+        "public_activation": false,
+        "side_effect_attempts": 0,
+        "state": "verified-private",
+        "verified_ids": [
+          "company",
+          "contact",
+          "details",
+          "logo",
+          "news",
+          "office-photo",
+          "second-news",
+          "services"
+        ]
+      }
+    ],
+    "state": "PASS"
+  },
+  "s3_write_ledger": {
+    "puts": 36,
+    "acknowledged": 36,
+    "unresolved": 0
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "owr-site-materials-zip-validation-v1",
+  "version": "0.2.0",
+  "state": "PASS",
+  "cases": {
+    "fresh": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    },
+    "upgrade-alpha4": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    },
+    "upgrade-alpha5": {
+      "browser_checks": 24,
+      "initial": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_update": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "generated_data_only": true
+    }
+  },
+  "unit_tests": 19,
+  "runtime_upgrade": {
+    "legacy_three_page_conversion": false,
+    "new_worker_extends_old_generation": true,
+    "old_generation_still_readable": true,
+    "old_runtime_zip_sha256": "4cd5a611a549f5d4d7677adf67b1a5bedfc3646dc7513a3a59c08f45ce8bcd95",
+    "preserved_files": 4,
+    "state": "PASS"
+  },
+  "reconstruction": {
+    "failed_projection_rolled_back": true,
+    "logical_sha256": "c6403b6d56306d4cd54b937be2d66ca8bbf56bb0b53d44db567ba60d08485390",
+    "map": {
+      "company": 4,
+      "image-7e187c0063b5": 5,
+      "logo": 6,
+      "news": 7,
+      "page-bccd56507928": 8,
+      "post-86cdd0a8f812": 9,
+      "services": 10
+    },
+    "public_activation": false,
+    "side_effect_attempts": 0,
+    "state": "verified-private",
+    "verified_ids": [
+      "company",
+      "image-7e187c0063b5",
+      "logo",
+      "news",
+      "page-bccd56507928",
+      "post-86cdd0a8f812",
+      "services"
+    ]
+  },
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.2.0.zip",
+      "sha256": "54e0a5996138564d7c66c4919dda862667d901fe898ac6ff000b7390df79937c",
+      "bytes": 44350
+    },
+    {
+      "file": "owr-development-kit-0.2.0.zip",
+      "sha256": "071b02af966b40b81a2c72efb9d1bcb7518270bcc3571cf4975f49d595bf36c4",
+      "bytes": 15808228
+    }
+  ],
+  "cloud_operations": 0,
+  "public_activation": false,
+  "production_changes": false,
+  "legacy_three_page_auto_migration": false,
+  "zip_source": "all execution from extracted frozen operator kit; plugin installed and updated through WordPress Plugin_Upgrader",
+  "classification": {
+    "packaging": "version check made independent of PLUGIN list order before ZIP creation",
+    "test_infrastructure": "root-created wp-content updater directories initially unwritable to HTTP worker; ownership aligned in dedicated lab and same plugin bytes passed",
+    "environment": "no new WSL failure in successful final validation; historical unresolved timeout not claimed fixed",
+    "product_limits": [
+      "guarded dedicated enrollment only",
+      "private draft projection only",
+      "bounded text and PNG/JPEG",
+      "single writer host",
+      "new-schema independent signature integration unavailable",
+      "no pending-cancel UI",
+      "local pinned runtime images, no S3-only runtime bootstrap"
+    ]
+  },
+  "readme": "English primary and Japanese aligned; architecture and supported boundaries replace prototype-led narrative; previous README retained as archive"
+}

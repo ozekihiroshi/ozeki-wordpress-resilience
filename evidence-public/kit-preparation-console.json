@@ -1,0 +1,100 @@
+{
+  "schema": "owr-kit-preparation-console-validation-v1",
+  "state": "PASS",
+  "ui": {
+    "passed": true,
+    "checks": [
+      "fresh final plugin ZIP installs and activates",
+      "fresh installed files match final ZIP",
+      "network isolated; optional demo bound to loopback only",
+      "one browser request recorded",
+      "controlled failure displayed",
+      "explicit resume recorded",
+      "real CLI prepared exact generation awaiting approval",
+      "subscriber denied",
+      "anonymous denied",
+      "generation page contents unchanged"
+    ],
+    "report": {
+      "schema": "owr-reconstruction-console-v1",
+      "updated_at": 1792725865,
+      "profile_sha256": "ee02d02737c0bc19e4290a17332869915f9dbf16dcd39746df464709792f6f0d",
+      "items": [
+        {
+          "job_id": "21791f0d3a9f4b92abc9b136b30c792dc49903794d331565a3ccc18a8c6d6461",
+          "attempt": 1,
+          "profile_sha256": "ee02d02737c0bc19e4290a17332869915f9dbf16dcd39746df464709792f6f0d",
+          "generation_sha256": "682dc0d6011123665d0309ee916b594812472ac7db04fbecaff70326ca27705a",
+          "expected_sha256": "a8034137e2a90211dbbe389c8ceaeb7e6c52ba01bc3bcd0e1e2201cb490ad6c4",
+          "state": "stored_awaiting_independent_approval",
+          "reason": "独立署名承認は別操作です",
+          "root_receipt": {
+            "locator": {
+              "bucket": "ceri-link-resilience-lock-lab-121426368082",
+              "key": "sites/isolated-queue-lab/sets/AWS-0ebefd54b2ee94fd/rbr-63c2cd8db869024d3110f18f8cb441f691b70cb2256fb88f4f05648be92e87e0.blob",
+              "kind": "s3",
+              "region": "ap-northeast-1",
+              "version_id": "fBmPNEURYiCBkeRZ97uCYCNXYO0ItkDt"
+            },
+            "sha256": "63c2cd8db869024d3110f18f8cb441f691b70cb2256fb88f4f05648be92e87e0",
+            "size_bytes": 4405
+          }
+        }
+      ]
+    },
+    "scope": "Generated saved-history fixture imported from prior real experimental S3 editor receipt; browser to unchanged real generation-kit CLI; no signing/reconstruction/publication",
+    "containers_removed": true
+  },
+  "real_experimental_s3": true,
+  "new_signature_created": false,
+  "approval_policy_changed": false,
+  "reconstruction_started": false,
+  "production_changed": false,
+  "public_activation": false,
+  "request_q_sha256": "13184ee98c6f21e0185e894fd8eba1898971ba15ae995eb196982416c1e082aa",
+  "put_count": 10,
+  "uncertain_put_count": 0,
+  "result": {
+    "generation_ref": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-c057202610220001/coordinator/api-console-20261023-a/commits/000000000001.json",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "pULLvSiFq0RBvOQ.u92cduegwAs7pNUy"
+      },
+      "retain_until": 1795832090,
+      "sha256": "682dc0d6011123665d0309ee916b594812472ac7db04fbecaff70326ca27705a",
+      "size_bytes": 4192,
+      "stored_at": 1792721695
+    },
+    "plan_sha256": "fa3736898151795338659475438a949d7003977c5b3f2b3d2fbf1783a17dc00d",
+    "protect_until": 1795749147,
+    "public_activation": false,
+    "root_receipt": {
+      "locator": {
+        "bucket": "ceri-link-resilience-lock-lab-121426368082",
+        "key": "sites/isolated-queue-lab/sets/AWS-0ebefd54b2ee94fd/rbr-63c2cd8db869024d3110f18f8cb441f691b70cb2256fb88f4f05648be92e87e0.blob",
+        "kind": "s3",
+        "region": "ap-northeast-1",
+        "version_id": "fBmPNEURYiCBkeRZ97uCYCNXYO0ItkDt"
+      },
+      "sha256": "63c2cd8db869024d3110f18f8cb441f691b70cb2256fb88f4f05648be92e87e0",
+      "size_bytes": 4405
+    },
+    "state": "stored_awaiting_independent_approval"
+  },
+  "tests": {
+    "python_existing_and_initial_new": 95,
+    "additional_cases": 2,
+    "php_contract": "PASS"
+  },
+  "test_boundary": "Saved-history UI fixture imports the actual prior generated-data editor receipt. Controlled first failure occurs before network; explicit browser resume invokes unchanged real generation-kit CLI. Not a new end-to-end editor save or signing/reconstruction trial.",
+  "limitations": [
+    "Explicit external kit setup/profile/worker/privilege separation",
+    "Latest 20 operations",
+    "Whole-stage status, no per-object progress; reports can age during long execution",
+    "Failed/interrupted requests need explicit resume; unknown PUT requires operator reconciliation",
+    "Existing transient WSL environment problem remains unresolved; no product fix claimed"
+  ]
+}
