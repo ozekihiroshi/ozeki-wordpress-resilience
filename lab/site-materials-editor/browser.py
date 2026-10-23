@@ -16,7 +16,7 @@ def check(name,ok):
     checks.append(name);(lab/'checks.json').write_text(json.dumps(checks));print('PASS '+name,flush=True)
 def field(id,text):e=d.find_element(By.ID,id);e.clear();e.send_keys(text)
 def fetch(route,body=None):
-    return d.call('POST','/execute/async',dict(script="const done=arguments[arguments.length-1];fetch(arguments[0],{method:arguments[1]===null?'GET':'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-WP-Nonce':window.owrMaterialsConfig.nonce},body:arguments[1]===null?undefined:JSON.stringify(arguments[1])}).then(async r=>done({status:r.status,body:await r.json()})).catch(e=>done({error:String(e)}));",args=[root+'/?rest_route='+route,body]))
+    return d.call('POST','/execute/async',dict(script="const done=arguments[arguments.length-1];fetch(arguments[0],{method:arguments[1]===null?'GET':'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-WP-Nonce':(window.owrRecoveryConfig||window.owrMaterialsConfig).nonce},body:arguments[1]===null?undefined:JSON.stringify(arguments[1])}).then(async r=>done({status:r.status,body:await r.json()})).catch(e=>done({error:String(e)}));",args=[root+'/?rest_route='+route,body]))
 def state():return fetch('/owr-materials/v1/state')['body']
 def snapshot():return fetch('/owr-test/v1/snapshot')['body']
 def wait(kind,seconds=1200):
@@ -60,5 +60,12 @@ try:
         try:urllib.request.urlopen(req);code=200
         except urllib.error.HTTPError as e:code=e.code
         check('subscriber denied '+path,code==403)
+    if (lab/'recovery-enabled').exists():
+        exec(Path('/kit/lab/site-materials-editor/recovery-checks.py').read_text())
+        if (lab/'plugin.zip').exists():
+            control.write_text(json.dumps({'pause_recovery':True}));time.sleep(6)
+            update=fetch('/owr-test/v1/upgrade',{})
+            check('ZIP reinstall preserves reconstruction report and requests',update['body'].get('state')=='PASS')
+            control.write_text('{}')
     d.save_screenshot('/lab/editor-complete.png');(lab/'browser-result.json').write_text(json.dumps({'state':'PASS','checks':checks,'final':state()},ensure_ascii=False));print(json.dumps({'state':'PASS','checks':len(checks)}))
 finally:d.quit()

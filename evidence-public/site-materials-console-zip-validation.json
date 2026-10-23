@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-23",
+  "state": "PASS",
+  "version": "0.2.0",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.2.0.zip",
+      "sha256": "9ec031bad1df211d8a3b41cfa9f8622513091e9649d37e8feef63971c038f34f",
+      "bytes": 47936
+    },
+    {
+      "file": "owr-development-kit-0.2.0.zip",
+      "sha256": "25b90755542e5bcca94eba363ce0481418cd7468d57c4f6664239ca7aff247c0",
+      "bytes": 15841017
+    }
+  ],
+  "runtime": "extracted frozen operator kit; actual Plugin_Upgrader installation",
+  "storage": "persistent S3 double; prior real S3 validation is separate",
+  "regression_tests": 38,
+  "cases": {
+    "fresh": {
+      "result": {
+        "browser_checks": 45,
+        "native_entries_redirect_to_protected_editor": true,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial_lifecycle": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_lifecycle": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "checks": [
+        "normal new-post entry opens S3-first editor",
+        "typing leaves WordPress unchanged",
+        "save failure leaves posts and media unchanged",
+        "different pending request rejected",
+        "reload preserves exact pending title",
+        "ZIP update preserves pending save and settings",
+        "confirmed save updates WordPress",
+        "stale editor generation rejected",
+        "new post reflected after S3",
+        "new page reflected after S3",
+        "normal media entry opens S3-first registration",
+        "selecting image creates no attachment",
+        "image registered after S3",
+        "image replacement keeps logical ID",
+        "worker actually exited after S3 commit",
+        "commit without projection leaves WordPress unchanged",
+        "resumes committed generation",
+        "resumed content appears",
+        "ordinary REST post write rejected",
+        "ordinary REST image write rejected",
+        "bypass attempts change nothing",
+        "read-only status does not change content",
+        "subscriber denied state",
+        "subscriber denied save",
+        "new schema generation catalog shown",
+        "Q and material summary visible",
+        "catalog reads do not change source",
+        "subscriber denied recovery state",
+        "subscriber denied recovery request",
+        "mismatched Q rejected 0",
+        "selected generation reconstructed 0",
+        "complete chosen material set 0",
+        "private target no publication 0",
+        "duplicate request keeps same job 0",
+        "no duplicate target 0",
+        "mismatched Q rejected 1",
+        "selected generation reconstructed 1",
+        "complete chosen material set 1",
+        "private target no publication 1",
+        "duplicate request keeps same job 1",
+        "no duplicate target 1",
+        "reconstruction leaves source unchanged",
+        "stale status blocks request",
+        "report resumes without new job",
+        "ZIP reinstall preserves reconstruction report and requests"
+      ],
+      "reconstructions": [
+        {
+          "q": "849b9fdb1cd0a1b93ba963cce8fab7f5de0867cf61b7e8beb0d40f212b7ff04b",
+          "actual": "849b9fdb1cd0a1b93ba963cce8fab7f5de0867cf61b7e8beb0d40f212b7ff04b",
+          "assets": 7,
+          "state": "verified"
+        },
+        {
+          "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "actual": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "assets": 4,
+          "state": "verified"
+        }
+      ]
+    },
+    "upgrade020": {
+      "result": {
+        "browser_checks": 45,
+        "native_entries_redirect_to_protected_editor": true,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial_lifecycle": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_lifecycle": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "checks": [
+        "normal new-post entry opens S3-first editor",
+        "typing leaves WordPress unchanged",
+        "save failure leaves posts and media unchanged",
+        "different pending request rejected",
+        "reload preserves exact pending title",
+        "ZIP update preserves pending save and settings",
+        "confirmed save updates WordPress",
+        "stale editor generation rejected",
+        "new post reflected after S3",
+        "new page reflected after S3",
+        "normal media entry opens S3-first registration",
+        "selecting image creates no attachment",
+        "image registered after S3",
+        "image replacement keeps logical ID",
+        "worker actually exited after S3 commit",
+        "commit without projection leaves WordPress unchanged",
+        "resumes committed generation",
+        "resumed content appears",
+        "ordinary REST post write rejected",
+        "ordinary REST image write rejected",
+        "bypass attempts change nothing",
+        "read-only status does not change content",
+        "subscriber denied state",
+        "subscriber denied save",
+        "new schema generation catalog shown",
+        "Q and material summary visible",
+        "catalog reads do not change source",
+        "subscriber denied recovery state",
+        "subscriber denied recovery request",
+        "mismatched Q rejected 0",
+        "selected generation reconstructed 0",
+        "complete chosen material set 0",
+        "private target no publication 0",
+        "duplicate request keeps same job 0",
+        "no duplicate target 0",
+        "mismatched Q rejected 1",
+        "selected generation reconstructed 1",
+        "complete chosen material set 1",
+        "private target no publication 1",
+        "duplicate request keeps same job 1",
+        "no duplicate target 1",
+        "reconstruction leaves source unchanged",
+        "stale status blocks request",
+        "report resumes without new job",
+        "ZIP reinstall preserves reconstruction report and requests"
+      ],
+      "reconstructions": [
+        {
+          "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "actual": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "assets": 4,
+          "state": "verified"
+        },
+        {
+          "q": "15c9ce74c973ee41d831025a7c35401704907853e9b96fb245c2076d7f488e42",
+          "actual": "15c9ce74c973ee41d831025a7c35401704907853e9b96fb245c2076d7f488e42",
+          "assets": 7,
+          "state": "verified"
+        }
+      ]
+    }
+  },
+  "external_upgrade": {
+    "legacy_three_page_conversion": false,
+    "new_worker_extends_old_generation": true,
+    "old_generation_still_readable": true,
+    "old_runtime_zip_sha256": "43f606032b6b6961397daf2f24ee5f291ad5d44f5ccf29c2ec8206ebf107a99b",
+    "preserved_files": 4,
+    "state": "PASS"
+  },
+  "limitations": [
+    "dedicated temporary private targets only",
+    "matching external kit update required",
+    "no automatic legacy three-page migration",
+    "no retry cleanup preview UI or durable publication",
+    "catalog reuse up to3600seconds bounded by retention; execution always fresh validation"
+  ],
+  "environment_issues": [],
+  "test_infrastructure_issues": [],
+  "production_changes": false,
+  "automatic_publication": false
+}

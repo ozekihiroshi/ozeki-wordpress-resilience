@@ -13,8 +13,9 @@ def png(color):
     def chunk(t,b):return struct.pack('>I',len(b))+t+b+struct.pack('>I',zlib.crc32(t+b)&0xffffffff)
     return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',2,2,8,2,0,0,0))+chunk(b'IDAT',zlib.compress((b'\0'+bytes(color)*2)*2))+chunk(b'IEND',b'')
 def page(id,kind='page',parent=None):return {'id':id,'kind':kind,'title':id+' 試験情報','slug':id,'parent':parent,'nodes':[{'type':'paragraph','text':'試験用の会社情報です。'}]}
-def trial_target(folder,bundle,wp,db,sequence=None):
-    folder.mkdir();tag='owr-materials-'+uuid.uuid4().hex[:10];net=tag+'-net';web=tag+'-web';dbn=tag+'-db';created=[]
+def trial_target(folder,bundle,wp,db,sequence=None,validation_checks=True,keep_target=False):
+    folder.mkdir();tag='owr-materials-'+uuid.uuid4().hex[:10];net=tag+'-net';web=tag+'-web';dbn=tag+'-db';created=[];completed=False
+    (folder/'resources.json').write_bytes(m.canon({'web':web,'database':dbn,'network':net,'private_only':True}))
     try:
         ids=run('docker','network','ls','-q').stdout.decode().split();used=[ipaddress.ip_network(c['Subnet']) for n in json.loads(run('docker','network','inspect',*ids).stdout) for c in n['IPAM']['Config'] or [] if 'Subnet'in c]
         subnet=next(str(n) for n in ipaddress.ip_network('10.253.0.0/16').subnets(new_prefix=28) if not any(n.overlaps(u) for u in used if n.version==u.version))
@@ -49,18 +50,21 @@ def trial_target(folder,bundle,wp,db,sequence=None):
         result=json.loads(run('docker','exec',web,'php','/kit/tools/site-wordpress-apply.php').stdout)
         replay=json.loads(run('docker','exec',web,'php','/kit/tools/site-wordpress-apply.php').stdout)
         m.require(result==replay and result['side_effect_attempts']==0,'Idempotent private apply')
-        good=json.loads((bundle/'received.json').read_bytes());bad=copy.deepcopy(good);bad['parent']=good['receipt'];bad['receipt']=dict(good['receipt'],sha256='0'*64);bad['site']['title']='Must roll back';bad['site']['entries'][0]['title']='Must roll back'
-        before=php("require '/var/www/html/wp-load.php';global $wpdb;echo json_encode([$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),get_option('owr_site_projection'),get_option('blogname')]);").stdout
-        (bundle/'received.json').write_bytes(m.canon(bad))
-        rejected=run('docker','exec','-e','OWR_SITE_INCREMENTAL=1',web,'php','/kit/tools/site-wordpress-apply.php',check=False)
-        after=php("require '/var/www/html/wp-load.php';global $wpdb;echo json_encode([$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),get_option('owr_site_projection'),get_option('blogname')]);").stdout
-        (bundle/'received.json').write_bytes(m.canon(good))
-        m.require(rejected.returncode!=0 and before==after,'Failed projection must roll back content and state');result['failed_projection_rolled_back']=True
+        if validation_checks:
+            good=json.loads((bundle/'received.json').read_bytes());bad=copy.deepcopy(good);bad['parent']=good['receipt'];bad['receipt']=dict(good['receipt'],sha256='0'*64);bad['site']['title']='Must roll back';bad['site']['entries'][0]['title']='Must roll back'
+            before=php("require '/var/www/html/wp-load.php';global $wpdb;echo json_encode([$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),get_option('owr_site_projection'),get_option('blogname')]);").stdout
+            (bundle/'received.json').write_bytes(m.canon(bad))
+            rejected=run('docker','exec','-e','OWR_SITE_INCREMENTAL=1',web,'php','/kit/tools/site-wordpress-apply.php',check=False)
+            after=php("require '/var/www/html/wp-load.php';global $wpdb;echo json_encode([$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),get_option('owr_site_projection'),get_option('blogname')]);").stdout
+            (bundle/'received.json').write_bytes(m.canon(good))
+            m.require(rejected.returncode!=0 and before==after,'Failed projection must roll back content and state');result['failed_projection_rolled_back']=True
         if sequence:result.update(sequential_generations=len(sequential),stale_rejected_without_changes=True)
         result['logical_sha256']=m.sha(m.canon(json.loads((bundle/'received.json').read_bytes())['expected']))
-        (folder/'result.json').write_bytes(m.canon(result));return result
+        result['target']={'web':web,'database':dbn,'network':net,'retained_private':keep_target}
+        (folder/'result.json').write_bytes(m.canon(result));completed=True;return result
     finally:
-        for kind,name in reversed(created):run('docker','rm','-f','-v',name) if kind=='container' else run('docker','network','rm',name)
+        if not (completed and keep_target):
+            for kind,name in reversed(created):run('docker','rm','-f','-v',name) if kind=='container' else run('docker','network','rm',name)
 def main(out):
     out.mkdir(mode=0o700,parents=False,exist_ok=False)
     # Read-only account/bucket checks before any PUT. Fresh random prefix is retained in state.

@@ -70,3 +70,11 @@ Older whole-backup, monitoring and three-page workflows are compatibility/resear
 Save and reconstruction share a 6 MiB limit per canonical UTF-8 asset and an 8 MiB limit per stored object. The 64 MiB total and 1,000-asset ceilings are additional limits, not guarantees that every combination fits. Before the first S3 write, save computes compressed assets and a complete manifest budget including Q, parent, approval metadata and 4 KiB reserved per fixed-version reference. If any limit is exceeded, it rejects the request without committing an operation or changing the generation head. This conservative budget can reject a manifest whose eventual references would have been shorter.
 
 The previous size-contract defect is corrected in source; the replacement ZIP must be identified by the new validation record, not the earlier v3 hashes. [Correction and validation](docs/releases/site-materials-020-size-fix.md). Old signed-path approval conditions are unchanged.
+
+## Multi-material reconstruction screen
+
+With the dedicated recovery worker configured, **S3先行編集 → 素材世代から再構築** lists saved material generations, fixed references, Q digests and results. Select a generation to create and verify a new private WordPress using the existing CLI. This new-schema console is separate from the legacy three-page workflow. It requires operator setup and locally pinned images; targets are disposable drafts without public ports, not durable production deployment. [Setup and remaining boundaries](docs/site-reconstruction-console.md).
+
+The generation console reuses bounded, previously verified catalog summaries; each reconstruction still performs fresh fixed-version, retention and Q verification. An unassisted live-S3 browser trial passed 43 checks. See [catalog validation](evidence-public/site-reconstruction-catalog-cache-validation.json).
+
+For this console update, install the matching WordPress plugin ZIP **and** update the external operator kit. A plugin-only update does not install the reconstruction worker or catalog optimization. Existing settings, pending editor requests and history are retained; legacy three-page data is not automatically converted. The dedicated target is temporary, and retry/cleanup/preview controls and durable production deployment remain outside this release scope.

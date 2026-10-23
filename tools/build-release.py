@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,stat,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 VERSION='0.2.0'
-PLUGIN=['src/SiteMaterialsEditor.php','src/SiteMaterialsProjection.php','assets/site-materials-editor.js','ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
+PLUGIN=['src/SiteReconstructionAdmin.php','assets/site-reconstruction.js','src/SiteMaterialsEditor.php','src/SiteMaterialsProjection.php','assets/site-materials-editor.js','ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
 DIRS=['assets','src','tools','tests','schemas','examples','lab','docs','packages','evidence-public']
 TOP=['README.md','RAADME-jp.md','readme.txt','LICENSE','THIRD_PARTY_NOTICES.md','composer.json','composer.lock','requirements-dev.txt','ozeki-wordpress-resilience.php']
 EXT={'.php','.py','.md','.json','.sh','.ps1','.txt','.yml','.yaml','.ini','.conf','.sql','.js','.css','.html','.service','.timer','.toml','.Dockerfile','.png'}

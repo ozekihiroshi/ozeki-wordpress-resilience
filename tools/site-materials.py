@@ -155,4 +155,4 @@ def receive(store,receipt,verify_signature=None):
         row=json.loads(raw);require(row['id']==item['id'],'Asset identity');entries.append(row)
     site=normalize({'schema':'owr-site-materials-v1','title':m['site_title'],'landing':m['landing'],'entries':entries})
     require(expected(site)==m['expected'],'Request-derived expected state mismatch')
-    return {'schema':'owr-site-received-v1','receipt':receipt,'site':site,'expected':m['expected'],'policy':m['policy'],'parent':m['parent']}
+    return {'schema':'owr-site-received-v1','receipt':receipt,'site':site,'expected':m['expected'],'policy':m['policy'],'parent':m['parent'],'protect_until':m['protect_until']}
