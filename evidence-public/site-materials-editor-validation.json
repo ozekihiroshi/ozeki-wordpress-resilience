@@ -1,0 +1,104 @@
+{
+  "schema": "owr-site-editor-validation-v1",
+  "state": "PASS",
+  "scope": "dedicated generated data only",
+  "browser_checks": [
+    "normal new-post entry opens S3-first editor",
+    "typing leaves WordPress unchanged",
+    "save failure leaves posts and media unchanged",
+    "different pending request rejected",
+    "reload preserves exact pending title",
+    "confirmed save updates WordPress",
+    "stale editor generation rejected",
+    "new post reflected after S3",
+    "new page reflected after S3",
+    "normal media entry opens S3-first registration",
+    "selecting image creates no attachment",
+    "image registered after S3",
+    "image replacement keeps logical ID",
+    "worker actually exited after S3 commit",
+    "commit without projection leaves WordPress unchanged",
+    "resumes committed generation",
+    "resumed content appears",
+    "ordinary REST post write rejected",
+    "ordinary REST image write rejected",
+    "bypass attempts change nothing",
+    "read-only status does not change content",
+    "subscriber denied state",
+    "subscriber denied save"
+  ],
+  "browser_check_count": 23,
+  "core_worker_unit_tests": 19,
+  "real_s3": true,
+  "s3_put_acknowledged": 17,
+  "s3_unknown_puts": 0,
+  "final_entries": 7,
+  "fresh_reconstruction": {
+    "fresh_s3_reader": true,
+    "local_runtime_images": true,
+    "result": {
+      "failed_projection_rolled_back": true,
+      "logical_sha256": "95169e09610824e9a9f2dab326e3e0db5f6b85d35a35ca42357f8aab347a59c4",
+      "map": {
+        "company": 4,
+        "image-45da959c8399": 5,
+        "logo": 6,
+        "news": 7,
+        "page-58e4243fd4c0": 8,
+        "post-ed28634cf6b8": 9,
+        "services": 10
+      },
+      "public_activation": false,
+      "side_effect_attempts": 0,
+      "state": "verified-private",
+      "verified_ids": [
+        "company",
+        "image-45da959c8399",
+        "logo",
+        "news",
+        "page-58e4243fd4c0",
+        "post-ed28634cf6b8",
+        "services"
+      ]
+    },
+    "source_database_used": false,
+    "state": "PASS"
+  },
+  "files_sha256": {
+    "src/SiteMaterialsEditor.php": "b7b341cc8818a39d94f41caeb2e1b6077ffbba400dabdf447dbd6ac2b1ede422",
+    "src/SiteMaterialsProjection.php": "897bbec1d2a0c3f061b5d4dc594165b67020b3a73fcc880705c270162a67bbfa",
+    "assets/site-materials-editor.js": "2e898820bc1890a931385fede446b3dc5afde751d695173b0b2198cb71859872",
+    "tools/site-editor-worker.py": "6d0c6c76533d6641990046d59b3201313f968efa53587c44e9a42159102da63f",
+    "tools/site-wordpress-apply.php": "2706aed9fc31b5ea7dadf54f13844c2c52ace649792d646eb4575c9caf4456a2",
+    "tools/run-site-editor-lab.py": "4bfa9abd2cfed45535a39591769daa87dbfd7b66c33ec341f64ccda7050b6a94",
+    "lab/site-materials-editor/browser.py": "14b263ae5bc627551b6ded72aa2770cce58727bd35130f1368b6c8da3ecd417f",
+    "tests/test_site_editor_worker.py": "fc08d8c8c50c9ea573fd98b6082153e7e152b579bdb4b0d62db14ae308711217"
+  },
+  "publication": false,
+  "production_changes": false,
+  "existing_demo_changed": false,
+  "limits": [
+    "dedicated opt-in protected editor, not full Gutenberg/classic integration",
+    "drafts only; production published-state updates unverified",
+    "one designated writer host; no distributed writer coordination",
+    "new integrity policy distinct from legacy independent-signature path",
+    "runtime images pinned local cache; not S3-only runtime bootstrap",
+    "invalid queued material needs operator correction; pending cancellation UI not implemented"
+  ],
+  "classification": {
+    "product_fixed": [
+      "WordPress navigation incorrectly counted as managed material",
+      "dashboard quick draft collided with S3-first insertion guard",
+      "save request busy-state timing and duplicate clicks",
+      "WordPress slashing for literal input",
+      "apply failure retries stop until explicit resume"
+    ],
+    "test_infrastructure": [
+      "legacy WebDriver async argument mismatch corrected",
+      "browser viewport increased after element interaction error; original HTTP400 exact cause not independently established"
+    ],
+    "environment": [
+      "read-only WSL command timed out; no WSL restart or unknown storage replay"
+    ]
+  }
+}

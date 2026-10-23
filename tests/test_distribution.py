@@ -6,7 +6,7 @@ class DistributionTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)/'source';self.root.mkdir()
   for name in set(b.PLUGIN+b.TOP):
-   p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('Version: '+b.VERSION if name==b.PLUGIN[0] else 'fixture')
+   p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('Version: '+b.VERSION if name=='ozeki-wordpress-resilience.php' else 'fixture')
  def build(self,name):
   out=Path(self.tmp.name)/name
   with patch.object(b,'ROOT',self.root),contextlib.redirect_stdout(io.StringIO()):b.build(out)
@@ -16,7 +16,7 @@ class DistributionTests(unittest.TestCase):
   with zipfile.ZipFile(out/item['file']) as z:self.assertEqual(set(z.namelist()),{'ozeki-wordpress-resilience/'+x for x in b.PLUGIN})
   self.assertEqual(item['sha256'],hashlib.sha256((out/item['file']).read_bytes()).hexdigest())
  def test_editor_asset_shipped_in_development_kit_only(self):
-  asset=self.root/'assets/rbr-editor.js';asset.parent.mkdir();asset.write_text('/* editor asset */')
+  asset=self.root/'assets/rbr-editor.js';asset.parent.mkdir(exist_ok=True);asset.write_text('/* editor asset */')
   out,m=self.build('editor');plugin,kit=m['artifacts']
   self.assertNotIn('assets/rbr-editor.js',plugin['files'])
   self.assertIn('assets/rbr-editor.js',kit['files'])
@@ -31,7 +31,7 @@ class DistributionTests(unittest.TestCase):
   (self.root/'src/NotificationAdmin.php').write_text('-----BEGIN '+'PRIVATE KEY-----')
   with self.assertRaises(ValueError):self.build('one')
  def test_version_mismatch_rejected(self):
-  (self.root/b.PLUGIN[0]).write_text('Version: wrong')
+  (self.root/'ozeki-wordpress-resilience.php').write_text('Version: wrong')
   with self.assertRaises(ValueError):self.build('one')
  def test_symlink_rejected(self):
   p=self.root/'src/NotificationAdmin.php';p.unlink();outside=Path(self.tmp.name)/'external';outside.write_text('external');p.symlink_to(outside)

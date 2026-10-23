@@ -3,8 +3,8 @@
 import argparse,hashlib,json,re,stat,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-VERSION='0.1.0-alpha.5'
-PLUGIN=['ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
+VERSION='0.2.0'
+PLUGIN=['src/SiteMaterialsEditor.php','src/SiteMaterialsProjection.php','assets/site-materials-editor.js','ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
 DIRS=['assets','src','tools','tests','schemas','examples','lab','docs','packages','evidence-public']
 TOP=['README.md','RAADME-jp.md','readme.txt','LICENSE','THIRD_PARTY_NOTICES.md','composer.json','composer.lock','requirements-dev.txt','ozeki-wordpress-resilience.php']
 EXT={'.php','.py','.md','.json','.sh','.ps1','.txt','.yml','.yaml','.ini','.conf','.sql','.js','.css','.html','.service','.timer','.toml','.Dockerfile','.png'}
@@ -17,7 +17,7 @@ def build(output):
   for p in (ROOT/folder).rglob('*'):
    if any(x in ('__pycache__','.local','vendor','.git') for x in p.relative_to(ROOT).parts):continue
    if p.is_file() and (p.suffix in EXT or p.name in ('Dockerfile','LICENSE','images.env','Dockerfile.external')):files.add(p.relative_to(ROOT).as_posix())
- if 'Version: '+VERSION not in (ROOT/PLUGIN[0]).read_text():raise ValueError('version mismatch')
+ if 'Version: '+VERSION not in (ROOT/'ozeki-wordpress-resilience.php').read_text():raise ValueError('version mismatch')
  records=[]
  for name,paths,prefix in [('ozeki-wordpress-resilience',PLUGIN,'ozeki-wordpress-resilience'),('owr-development-kit',sorted(files),'owr-development-kit')]:
   target=output/(name+'-'+VERSION+'.zip');entries={}
