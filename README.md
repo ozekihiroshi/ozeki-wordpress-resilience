@@ -1,5 +1,14 @@
 # Ozeki WordPress Resilience
 
+## Alpha.5 candidate: editor to reconstruction console
+
+Unpublished experimental candidate based on merged PR #14 / alpha.4. The protected editor saves three enrolled plain-text pages to S3 first; request-derived Q is bound to the committed generation. An operator prepares the matching fixed-version kit, obtains independent approval and registers it. The same administration console then requests disposable reconstruction and shows Q comparison results. Original WordPress data is not a reconstruction input.
+
+The installable plugin alone remains administration-only: external kit deployment, AWS credentials/retention, page enrollment, trusted registry, signing, kit registration and isolated worker configuration are explicit prerequisites. Ordinary Gutenberg/posts/media/Markdown editing, automatic approval, production recovery activation and general legacy enrollment migration are unsupported. Failed/interrupted work needs operator review; expired or stale approval is not extended. The actual S3 editor-to-console trial is documented separately from ZIP lifecycle tests using a persistent S3 double. Same-host separate-account signing is not physical host independence.
+
+Final ZIP lifecycle testing passed on a new private WordPress with generated data: 24 browser checks, 18 lifecycle checks and 88 related Python tests, including an upgrade from the published alpha.4 plugin and external runtime. Preservation fixtures do not constitute new cryptographic approval or real reconstruction evidence. A read-only polling command again returned Wsl/Service/WSAETIMEDOUT during validation; the existing trial completed and access recovered without restart or replay. Its root cause remains undetermined. Prior WSL/browser-tool failures remain environment issues; test setup corrections remain test-infrastructure issues. Product limitations above remain unresolved. No production changes or publication. See [console operation](docs/reconstruction-console.md).
+
+
 > **First reconstruction preview: v0.1.0-alpha.4.** [Start here: downloads, visible editor and limitations](docs/releases/alpha4-preview.md). GitHub pre-release; not production-ready.
 
 > **Target architecture — Immutable Assets, Deterministic Reconstruction:** regenerate business information from immutable assets and pinned rules/environment, without the original database. See the [design principle and logical-equivalence acceptance contract](docs/spec/immutable-assets-deterministic-reconstruction.md). The bounded corporate-site CLI now reconstructs a private WordPress from pinned A/R/E and a signed fixed-version S3 kit; a general production reconstruction engine is not implemented.
@@ -22,7 +31,7 @@ The [initial edition summary](docs/releases/initial-experimental-edition.md) ide
 
 ## Current status
 
-The Git baseline is merged PR #13 (main `328f6e2`). That prototype includes the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. The reconstruction preview is packaged as `0.1.0-alpha.4`; it remains experimental, with no automatic production deployment. Older tested archives remain unchanged.
+The Git baseline is merged PR #14 (main `751924d`). That prototype includes the subsequent bounded reconstruction, fixed-version S3 kit and independent signature gate. The reconstruction preview is packaged as `0.1.0-alpha.4`; it remains experimental, with no automatic production deployment. Older tested archives remain unchanged.
 
 Dedicated generated-data tests cover the admission gate, capture, real experimental S3 storage with fixed Version IDs and retention evidence, separate reader/writer roles, test signing, isolated restore and result registration. Fresh installation, candidate upgrades and settings/history preservation have also been tested. These results do not establish production-wide deployment or physical host independence.
 
@@ -191,3 +200,11 @@ This development-kit connection does not enable ordinary editing by plugin insta
 New bounded editor enrollments now freeze Q from the save request and enrolled media/relations, bind its hash into the committed intent, and retain an exact-generation Q sidecar before WordPress projection. The request-Q profile no longer needs a manually authored Q. Kit v2 carries and verifies this binding; independent approval stays mandatory. See [contract and limits](docs/spec/rbr-request-q.md) and [dedicated evidence](evidence-public/rbr-request-q.json). Legacy journals are not silently migrated. This increment uses a storage contract double and real HTTP/PHP planning, not a new live-S3 reconstruction claim.
 
 The request-derived Q path has also passed [real experimental S3 and signed two-target reconstruction](evidence-public/rbr-request-q-live.json), using the actual editor receipt without manual Q. Source/builder workspaces were hidden; existing approval conditions remain unchanged. This is dedicated generated-data prototype evidence, not production qualification.
+
+### Reconstruction console (opt-in prototype)
+
+The external kit can show saved generations, request-derived Q, independent approval and reconstruction results, and queue an approved private reconstruction. Kit registration/signing remain external operator tasks. See [console workflow and boundaries](docs/reconstruction-console.md). No automatic publication or approval renewal.
+
+The console can now bind a received, independently approved kit to the exact editor save receipt and request-derived Q (`rbr-console-register.py`). Locally unmatched generations are refused; kit preparation and approval remain external steps.
+
+ZIP identity and final review: [alpha.5 candidate review](docs/releases/alpha5-candidate-review.md). Runtime files match the validated archives; subsequent evidence and documentation updates are listed separately.

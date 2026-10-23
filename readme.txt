@@ -1,6 +1,6 @@
 === Ozeki WordPress Resilience ===
 Requires PHP: 8.1
-Stable tag: 0.1.0-alpha.4
+Stable tag: 0.1.0-alpha.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,5 +23,5 @@ Reconstruction preview: administration screens; explicit external kit required f
 削除時の設定自動消去は実装していません。既存設定の消去は別途管理者が判断します。
 
 == Changelog ==
-= 0.1.0-alpha.4 =
+= 0.1.0-alpha.5 =
 初回インストール用開発候補。通知設定、外部状態表示、テスト送信要求。

@@ -2,7 +2,7 @@ from pathlib import Path
 import subprocess,json,time,secrets,shutil,os,hashlib
 import argparse,zipfile,ipaddress
 ROOT=Path(__file__).resolve().parents[1];SRC=ROOT/'lab/rbr-protected-save'
-p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--vendor-cache',required=True,type=Path);p.add_argument('--plugin-zip',required=True,type=Path);p.add_argument('--old-zip',required=True,type=Path);p.add_argument('--keep-local-demo',action='store_true');p.add_argument('--demo-port',type=int,default=18714);args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--vendor-cache',required=True,type=Path);p.add_argument('--plugin-zip',required=True,type=Path);p.add_argument('--old-zip',required=True,type=Path);p.add_argument('--old-kit',required=True,type=Path);p.add_argument('--keep-local-demo',action='store_true');p.add_argument('--demo-port',type=int,default=18714);args=p.parse_args()
 if not 1024<=args.demo_port<=65535:raise ValueError('Invalid demo port')
 b=args.output.resolve();b.mkdir(mode=0o700,exist_ok=False);lab=b/'lab';lab.mkdir(mode=0o777);os.chmod(lab,0o777)
 for n in ['s3','s3/objects','scratch','originals']:(lab/n).mkdir(mode=0o777);os.chmod(lab/n,0o777)
@@ -86,6 +86,15 @@ try:
  result=json.loads((lab/'browser-result.json').read_text());result['containers_removed']=False;result['scope']='Real Chromium editor + WordPress HTTP + MariaDB; persistent S3 double for controlled faults'
  # Existing administration candidate -> final ZIP, with active saved history and a pending operation.
  install(args.old_zip);activate()
+ with zipfile.ZipFile(args.old_kit) as old:
+  for n in ['VersionedAssetStore','RbrObjectStore','RbrGenerationCoordinator','RbrWordPressSave','RbrWordPressSaveApi','RbrWordPressEditor']:
+   (kit/'src'/(n+'.php')).write_bytes(old.read('owr-development-kit/src/'+n+'.php'))
+  (kit/'assets/rbr-editor.js').write_bytes(old.read('owr-development-kit/assets/rbr-editor.js'))
+ # Operator-owned fixture records: preservation only, not a new signature/reconstruction proof.
+ records=kit/'operator-records';records.mkdir()
+ for n,v in {'approval.json':{'fixture':True,'expires_at':'2020-01-01T00:00:00Z'},'signature.txt':'fixture-not-valid','request.json':{'token':'a'*64},'outcome.json':{'state':'interrupted','fixture':True}}.items():
+  (records/n).write_text(json.dumps(v))
+ record_hashes={x.name:hashlib.sha256(x.read_bytes()).hexdigest() for x in records.iterdir()}
  wp('update_option("owr_zip_test_settings",["enabled"=>false,"site"=>"generated-only"]);')
  pending=payload('zip-pending-save',5,'After ZIP update');control(stop='after_s3')
  q=php('dispatch',write('zip-pending.json',pending),check=False)
@@ -109,6 +118,20 @@ try:
  for n in ['VersionedAssetStore','RbrObjectStore','RbrGenerationCoordinator','RbrWordPressSave','RbrWordPressSaveApi','RbrWordPressEditor']:shutil.copy2(ROOT/'src'/(n+'.php'),kit/'src'/(n+'.php'))
  shutil.copy2(ROOT/'assets/rbr-editor.js',kit/'assets/rbr-editor.js')
  check('kit redeployment preserves pending state',state()==before and external()==saved)
+ shutil.copy2(ROOT/'src/RbrReconstructionConsole.php',kit/'src/RbrReconstructionConsole.php')
+ shutil.copy2(ROOT/'assets/rbr-reconstruction-console.js',kit/'assets/rbr-reconstruction-console.js')
+ (lab/'console-inbox').mkdir(mode=0o777);os.chmod(lab/'console-inbox',0o777)
+ (kit/'console-report.json').write_text(json.dumps({'schema':'owr-reconstruction-console-v1','updated_at':int(time.time())-120,'items':[{'item_id':'preserved-fixture','approval':'blocked','state':'interrupted','fixture':True}]}))
+ (kit/'console-boot.php').write_text("<?php require_once '/kit/src/RbrReconstructionConsole.php'; Owr\\RbrReconstructionConsole::boot(owr_test_factory(...),json_decode(file_get_contents('/lab/config.json'),true)['ids'],'/kit/console-report.json','/lab/console-inbox');")
+ run('docker','exec',web,'cp','/kit/console-boot.php','/var/www/html/wp-content/mu-plugins/zz-console.php')
+ endpoint='/index.php?rest_route=/owr-rbr/v1/reconstruction'
+ console=api(None,admin,path=endpoint,method='GET');body=json.loads(console['body'])
+ check('final console reads preserved generation history and stale external report',console['status']==200 and len(body['local']['generations'])>=5 and body['external']['stale'] and body['external']['items'][0]['state']=='interrupted')
+ check('console rejects subscriber',api(None,sub,path=endpoint,method='GET')['status']==403)
+ check('stale report cannot enqueue reconstruction',api({'item_id':'preserved-fixture','token':'a'*64},admin,path=endpoint)['status']==409 and not list((lab/'console-inbox').iterdir()))
+ check('operator approval signature request and outcome bytes unchanged',record_hashes=={x.name:hashlib.sha256(x.read_bytes()).hexdigest() for x in records.iterdir()})
+ check('console reads do not mutate saved state',state()==before and external()==saved)
+
  version=next(x['version'] for x in commits() if x['key'].endswith('000000000006.json'));control();response=api(pending,admin)
  check('pending request resumes after ZIP update without new generation',response['status']==200 and len(commits())==6 and version in [x['version'] for x in commits()] and state()['state']['sequence']==6)
  check('pending Q preserved across update and bound after resume',state()['state']['operations']['zip-pending-save']['expected']==frozen_q and 'expected_ref' in json.loads(response['body']))
