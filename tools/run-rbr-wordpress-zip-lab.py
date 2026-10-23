@@ -51,7 +51,7 @@ try:
   used.extend(ipaddress.ip_network(x['dst'],strict=False) for x in json.loads(run('ip','-j','route').stdout) if x.get('dst') not in [None,'default'])
   subnet=next((ipaddress.ip_network('10.254.'+str(i)+'.0/28') for i in range(200,240) if not any(ipaddress.ip_network('10.254.'+str(i)+'.0/28').overlaps(n) for n in used if n.version==4)),None)
   if subnet is None:raise RuntimeError('No unused dedicated demo subnet')
-  demo_network=name+'-net';run('docker','network','create','--internal','--subnet',str(subnet),demo_network);dbnet=['--network',demo_network,'-p','127.0.0.1:'+str(args.demo_port)+':80']
+  demo_network=name+'-net';run('docker','network','create','--internal','--subnet',str(subnet),demo_network);dbnet=['--network',demo_network]
  run('docker','run','-d','--name',db,*dbnet,'--memory','512m','--env-file',str(env),images['OWR_DB_IMAGE']);created.append(db)
  end=time.monotonic()+120
  while run('docker','exec',db,'healthcheck.sh','--connect','--innodb_initialized',check=False).returncode:
@@ -121,7 +121,10 @@ try:
   wp('update_option("home",'+json.dumps(url)+');update_option("siteurl",'+json.dumps(url)+');')
   gate=kit/'demo-login.php';gate.write_text('<?php if(!defined("ABSPATH"))exit;add_action("init",function(){if(!isset($_GET["owr_demo"])||!hash_equals('+json.dumps(token)+',(string)$_GET["owr_demo"]))return;$u=get_user_by("login","labadmin");wp_set_current_user($u->ID);wp_set_auth_cookie($u->ID);wp_safe_redirect(admin_url("edit.php?post_type=page"));exit;});')
   run('docker','exec',web,'cp','/kit/demo-login.php','/var/www/html/wp-content/mu-plugins/demo-login.php')
-  info={'url':url+'/?owr_demo='+token,'pages_url':url+'/wp-admin/edit.php?post_type=page','web':web,'db':db,'network':demo_network,'storage':'persistent filesystem S3 protocol double; no AWS calls','generated_only':True}
+  address=json.loads(run('docker','inspect',db).stdout)[0]['NetworkSettings']['Networks'][demo_network]['IPAddress']
+  proxylog=(b/'demo-proxy.log').open('ab');proxy=subprocess.Popen(['python3',str(ROOT/'tools/rbr-local-demo-proxy.py'),'--upstream',address,'--port',str(args.demo_port)],stdout=proxylog,stderr=proxylog,start_new_session=True);time.sleep(1)
+  if proxy.poll() is not None:raise RuntimeError('Demo loopback proxy failed')
+  info={'proxy_pid':proxy.pid,'url':url+'/?owr_demo='+token,'pages_url':url+'/wp-admin/edit.php?post_type=page','web':web,'db':db,'network':demo_network,'storage':'persistent filesystem S3 protocol double; no AWS calls','generated_only':True}
   (b/'demo.json').write_text(json.dumps(info));(b/'demo.json').chmod(0o600);demo_ready=True
 finally:
  for n in reversed(created):

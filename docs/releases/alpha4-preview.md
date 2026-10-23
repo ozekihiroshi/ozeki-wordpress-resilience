@@ -45,3 +45,5 @@ Real experimental S3: three edited generations, 21 browser checks, fixed request
 Final archive installation/update evidence is published as a separate Release attachment after the archives are frozen. Auxiliary JSON canonicalization, shell quoting and earlier browser startup issues belong to test infrastructure; they are not claims of product vulnerability or product success. Existing production and AWS permissions remain unchanged.
 
 Local environment note: the first demo preparation exhausted Docker automatic address pools before WordPress started. The runner now checks existing Docker subnets and host routes, then selects an unused dedicated /28. It does not remove or alter existing networks.
+
+The internal Docker network intentionally has no published port. A dedicated Python TCP relay listens only on 127.0.0.1 and forwards to that single test WordPress address. Stop its `proxy_pid` from private `demo.json` when stopping the demo; restart `tools/rbr-local-demo-proxy.py --upstream <current dedicated container IPv4> --port 18714` if needed. Never bind it to all interfaces.
