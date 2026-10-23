@@ -118,9 +118,48 @@ def publish(source,work):
  receipt=store.put(canonical(root),prefix+'rbr-root.json');(work/'root-receipt.json').write_bytes(canonical(receipt))
  print(json.dumps({'state':'stored','root_receipt':str(work/'root-receipt.json'),'objects':len([x for x in store.adapter.operations if x['method']=='PUT']),'bytes':sum(x['bytes'] for x in store.adapter.operations if x['method']=='PUT')}),flush=True)
 
+def bound_expected(binding,generation_ref,manifest,read):
+ if set(binding)!={'schema','generation','intent','expected'} or binding['schema']!='owr-rbr-bound-expected-v1':raise ValueError('Bound Q schema')
+ if binding['generation']!=generation_ref:raise ValueError('Q belongs to another generation')
+ intent=binding['intent'];q=binding['expected']
+ if sha(canonical(intent))!=manifest['intent_sha256'] or intent.get('expected_sha256')!=sha(canonical(q)):raise ValueError('Q intent digest mismatch')
+ for field in ['site_id','operation_id','sequence','parent','deadline']:
+  if intent.get(field)!=manifest.get(field):raise ValueError('Q intent generation mismatch')
+ # Compare request material hashes, never derive Q from reconstructed output.
+ for asset in intent['assets']:
+  if asset['kind']=='page':
+   page=q['pages'][asset['id']]
+   if page['role']!=asset['role'] or sha(canonical({k:page[k] for k in ['title','slug','paragraphs']}))!=asset['sha256']:raise ValueError('Q differs from save request')
+  elif asset['kind']=='image':
+   if q['images'][asset['id']]['sha256']!=asset['sha256']:raise ValueError('Q image differs from intent')
+  elif asset['kind']=='relations':
+   selected=next(x for x in manifest['assets'] if x['id']==asset['id'])
+   if json.loads(read(selected['storage']))['edges']!=q['relations']:raise ValueError('Q relations differ from intent')
+ return q
+
+def verify_bound_root(root,read):
+ if root.get('schema')=='owr-rbr-s3-kit-v2':
+  if 'expected_binding_ref' not in root:raise ValueError('Bound Q required by kit v2')
+ elif 'expected_binding_ref' in root:raise ValueError('Bound Q requires kit v2')
+ else:return
+ d=json.loads(read(root['definition_ref']));generation=d['assets_ref'];manifest=json.loads(read(generation))
+ q=bound_expected(json.loads(read(root['expected_binding_ref'])),generation,manifest,read)
+ if canonical(q)!=canonical(json.loads(read(d['expected_ref']))) or q['scope']!=d['required_scope']:raise ValueError('Definition Q binding differs')
+
+def dependency_items(value):
+ # Full snapshot parents are provenance only. Do not exempt fields in other schemas.
+ fields={'schema','site_id','sequence','operation_id','intent_sha256','parent','protect_until','deadline','assets'}
+ if value.get('schema')=='owr-rbr-generation-v1':
+  if set(value)!=fields:raise ValueError('Invalid generation fields')
+  return [(key,item) for key,item in value.items() if key!='parent']
+ if value.get('schema')=='owr-rbr-bound-expected-v1':
+  if set(value)!={'schema','generation','intent','expected'}:raise ValueError('Invalid bound Q fields')
+  return [(key,value[key]) for key in ['generation','expected']]
+ return list(value.items())
+
 def fetch(receipt,out,before_execute=None):
  out.mkdir(mode=0o700);store=Store(out/'reader');root_raw=store.get(json.loads(receipt.read_bytes()));root=json.loads(root_raw);(out/'root-manifest.json').write_bytes(root_raw)
- if root['schema']!='owr-rbr-s3-kit-v1' or root['public_activation'] is not False:raise ValueError('Unsupported kit')
+ if root['schema'] not in ['owr-rbr-s3-kit-v1','owr-rbr-s3-kit-v2'] or root['public_activation'] is not False:raise ValueError('Unsupported kit')
  bundle=out/'bundle';bundle.mkdir();cache=bundle/'cache';cache.mkdir();code=out/'kit';code.mkdir();seen={};archives=[]
  def visit(ref):
   k=ref['sha256']
@@ -135,13 +174,14 @@ def fetch(receipt,out,before_execute=None):
    if isinstance(v,dict):
     if set(['locator','sha256','size_bytes'])<=set(v):visit(v)
     else:
-     for x in v.values():walk(x)
+     for _,x in dependency_items(v):walk(x)
    elif isinstance(v,list):
     for x in v:walk(x)
   walk(value)
   if isinstance(value,dict) and value.get('kind')=='docker-save-gzip-chunks-v1':archives.append(value)
   return raw
  (bundle/'definition.json').write_bytes(visit(root['definition_ref']))
+ verify_bound_root(root,visit)
  allowed={'src/RbrGenerationCoordinator.php','src/RbrReconstructionPlanner.php','tools/rbr-wordpress-apply.php','tools/rbr-wordpress-observe.php','tools/rbr-compare.py','tools/rbr-reconstruct-lab.py','tools/rbr-plan.php','tools/rbr-planner-build.php'}
  if {x['path'] for x in root['code']}!=allowed or len(root['code'])!=len(allowed):raise ValueError('Unexpected execution code')
  for item in root['code']:

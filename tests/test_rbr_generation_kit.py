@@ -13,7 +13,7 @@ class Inlet(unittest.TestCase):
  def setUp(self):
   self.t=tempfile.TemporaryDirectory();self.addCleanup(self.t.cleanup);self.w=Path(self.t.name);self.s=Store();self.s.now=int(dt.datetime.now(dt.timezone.utc).timestamp());self.h=self.s.now+35*86400+300
   self.asset=self.s.add(b'original',self.h+3600)
-  self.a={'schema':'owr-rbr-generation-v1','site_id':'corporate-test','sequence':1,'deadline':self.s.now+300,'protect_until':self.h,'assets':[{'storage':self.asset}]};self.g=self.s.add(self.a,self.h+3600)
+  self.a={'schema':'owr-rbr-generation-v1','site_id':'corporate-test','sequence':1,'operation_id':'fixture-op','intent_sha256':'a'*64,'parent':None,'deadline':self.s.now+300,'protect_until':self.h,'assets':[{'storage':self.asset}]};self.g=self.s.add(self.a,self.h+3600)
   ref=self.s.add({'value':'fixed-profile'},self.h+3600)
   self.p={'schema':'owr-rbr-definition-profile-v1','site_id':'corporate-test','rules_ref':ref,'environment_ref':ref,'comparison_ref':ref,'expected_ref':ref,'required_scope':{}}
   self.b=m.Builder(self.s,self.w,'test/')
@@ -24,6 +24,40 @@ class Inlet(unittest.TestCase):
   with patch.object(m.subprocess,'run',side_effect=self.planner):return self.b.prepare(self.g,self.p)
  def test_preserves_real_generation_and_awaits_approval(self):
   result=self.run_build();d=json.loads((self.w/'definition.json').read_bytes());self.assertEqual(d['assets_ref'],self.g);self.assertEqual(result['state'],'stored_awaiting_independent_approval');self.assertFalse(result['public_activation'])
+ def test_missing_or_expired_parent_is_provenance_not_dependency(self):
+  parent=self.s.add({'historical':'not available'},self.s.now-1)
+  del self.s.objects[m.k.canonical(parent)]
+  self.a['sequence']=3;self.a['parent']=parent;self.g=self.s.add(self.a,self.h+3600)
+  result=self.run_build();self.assertEqual(result['generation_ref'],self.g)
+  self.assertNotIn(m.k.canonical(parent),self.b.seen)
+ def test_parent_named_field_in_other_schema_is_still_dependency(self):
+  ref=self.s.add({'parent':self.asset},self.h+3600)
+  self.b.walk(ref,self.h,True);self.assertIn(m.k.canonical(self.asset),self.b.seen)
+ def test_generation_unknown_fields_rejected(self):
+  self.a['hidden']=self.asset;self.g=self.s.add(self.a,self.h+3600)
+  with self.assertRaisesRegex(ValueError,'fields'):self.run_build()
+ def test_save_receipt_sequence_mismatch_blocks_before_put(self):
+  with self.assertRaisesRegex(ValueError,'sequence mismatch'):self.b.prepare(self.g,self.p,3)
+  self.assertFalse(self.s.puts)
+ def test_save_receipt_enters_without_replacing_generation(self):
+  receipt=self.w/'receipt.json';profile=self.w/'profile.json';work=self.w/'inlet'
+  receipt.write_text(json.dumps({'state':'applied','replayed':True,'generation':self.g,'sequence':1}));profile.write_text(json.dumps(self.p))
+  with patch.object(m.k.transport,'preflight',return_value={}),patch.object(m,'LiveStore',return_value=self.s),patch.object(m.subprocess,'run',side_effect=self.planner):
+   result=m.main(receipt,profile,work)
+  self.assertEqual(result['generation_ref'],self.g)
+  self.assertEqual(json.loads((work/'input.json').read_text())['expected_sequence'],1)
+ def test_unapplied_save_receipt_rejected_before_network(self):
+  receipt=self.w/'receipt.json';profile=self.w/'profile.json'
+  receipt.write_text(json.dumps({'state':'pending','generation':self.g,'sequence':1}));profile.write_text(json.dumps(self.p))
+  with patch.object(m.k.transport,'preflight') as network:
+   with self.assertRaisesRegex(ValueError,'Applied save receipt'):m.main(receipt,profile,self.w/'inlet')
+   network.assert_not_called()
+ def test_incomplete_save_receipt_rejected_before_network(self):
+  receipt=self.w/'receipt.json';profile=self.w/'profile.json'
+  receipt.write_text(json.dumps({'state':'applied','sequence':1}));profile.write_text(json.dumps(self.p))
+  with patch.object(m.k.transport,'preflight') as network:
+   with self.assertRaisesRegex(ValueError,'Invalid save receipt'):m.main(receipt,profile,self.w/'inlet')
+   network.assert_not_called()
  def test_short_original_blocks_without_put(self):
   raw,_,stored=self.s.objects[m.k.canonical(self.asset)];self.s.objects[m.k.canonical(self.asset)]=(raw,self.h-1,stored)
   with self.assertRaisesRegex(ValueError,'protection'):self.run_build()

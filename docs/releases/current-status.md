@@ -2,7 +2,7 @@
 
 > **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](shortened-observation-final.md).
 
-Snapshot: October 22, 2026. Git baseline merged PR #11 (`d00188d`), including bounded reconstruction/S3-kit/signature work. Subsequent work adds the committed-generation CLI inlet. Version `0.1.0-dev.1` is a prototype, not a formal release. See the [current ZIP scope](rbr-signed-kit-zip.md), primary [English README](../../README.md) and [Japanese README](../../RAADME-jp.md).
+Snapshot: October 23, 2026. Reconstruction preview `0.1.0-alpha.4` includes the protected three-page editor, request-derived Q, exact S3 generation receipt and independently approved reconstruction. The baseline is merged PR #13 (`328f6e2`) plus this release follow-up. See [alpha.4 downloads, visible editor and limits](alpha4-preview.md). It remains a prototype; historical evidence below is not a production-readiness claim.
 
 The development kit now plans A/R/E/D/Q, reconstructs the three-page corporate subset, stores runtime/input/code closure as fixed experimental S3 versions, and gates retrieval/execution with independent signatures and the current registry. Two fresh private WordPress targets matched Q. This is CLI functionality outside the installable administration plugin; generic production setup and S3-first WordPress authoring are not complete. Prior short-observation and legacy Restore evidence are separate from this scope.
 
@@ -73,3 +73,12 @@ After PR #12: opt-in three-page save API and atomic source-WordPress projection 
 Follow-up: the same save API passed 25 checks against actual experimental S3 and private HTTP WordPress. No product runtime changes; the scoped test transport is new. See evidence-public/rbr-wordpress-save-s3.json. The preceding mock-only statement describes the earlier trial. Editor/upload entry integration remains incomplete.
 
 Opt-in three-page editor now connects Edit links to the existing save API with durable frozen input and stored checkpoint. See docs/spec/rbr-wordpress-editor.md and evidence-public/rbr-wordpress-editor.json. Real browser + S3 double, not live S3 in this trial. Generic editing/upload integration and automatic migration remain incomplete.
+
+
+## Edited-generation follow-up
+
+See [the connection contract](../spec/rbr-editor-reconstruction.md). The API receipt selects the exact full snapshot; reviewed Q defines post-edit expectations. Parent provenance is retained but not fetched as a runtime dependency. Selected asset retention and all independent approval gates remain required. Generic Q authoring, production rollout and media-authoring integration remain outstanding. Historical evidence and frozen ZIPs are not retroactively updated.
+
+Request-derived Q is now implemented for new bounded enrollments; [scope and legacy-state limitations](../spec/rbr-request-q.md). It does not automate independent approval.
+
+Request-derived Q live follow-up: actual editor receipt -> experimental fixed-version S3 -> approval-pending v2 kit -> separate test signature -> two fresh WordPress logical-state matches. Browser21 and regression75 PASS. No manual/observed Q, production change or auto-publication. See `evidence-public/rbr-request-q-live.json`. Auxiliary Unicode canonicalization error belongs to the test helper, not the product.

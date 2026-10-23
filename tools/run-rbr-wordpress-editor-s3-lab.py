@@ -100,6 +100,10 @@ try:
  q=run('docker','exec',browser,'python3','/kit/editor-browser.py',check=False,timeout=3600)
  (b/'browser.log').write_bytes(q.stdout+q.stderr);print(q.stdout.decode(),flush=True)
  if q.returncode:raise RuntimeError(q.stderr.decode()[-2500:])
+ final=state()['state'];op=next(k for k,e in final['operations'].items() if e['state']=='applied' and e['job']['sequence']==final['sequence'])
+ receipt=api(final['operations'][op]['input'],admin)
+ if receipt['status']!=200:raise RuntimeError('Final applied receipt readback failed')
+ (b/'save-result.json').write_text(json.dumps(json.loads(receipt['body']),indent=2))
  result=json.loads((lab/'browser-result.json').read_text());result['containers_removed']=False;result['scope']='Real Chromium editor + WordPress HTTP + MariaDB + scoped real S3; injected pre-commit failure';result['prefix']=prefix;result['versions']=commits()
  (b/'result.json').write_text(json.dumps(result,indent=2))
 

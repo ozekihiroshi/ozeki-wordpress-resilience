@@ -1,0 +1,131 @@
+{
+  "state": "PASS",
+  "scope": "Actual browser edits, generated data, experimental S3 fixed versions, independent test signature, two disposable WordPress reconstructions",
+  "browser": {
+    "passed": true,
+    "checks": [
+      "anonymous editor requires login",
+      "normal page edit opens protected editor",
+      "resume button hidden when editable",
+      "initial paragraph from enrolled public page",
+      "typing does not update public content",
+      "storage failure leaves public text unchanged",
+      "failed request locks content for exact retry",
+      "resume button visible only for unresolved request",
+      "different pending operation shows conflict",
+      "reload retrieves frozen operation from server",
+      "resume applies exactly one generation",
+      "other two pages retained",
+      "text escaped in projection",
+      "resume button hidden after completion",
+      "stale editor rejected without overwrite",
+      "S3 committed but not projected state visible",
+      "interrupted HTTP save resumes same fixed generation",
+      "editor status GET requires nonce",
+      "classic form POST bypass blocked",
+      "unrelated page retains normal editor",
+      "subscriber has no protected form"
+    ],
+    "commits": 3,
+    "containers_removed": true,
+    "scope": "Real Chromium editor + WordPress HTTP + MariaDB + scoped real S3; injected pre-commit failure"
+  },
+  "generation_sequence": 3,
+  "Q_origin": "Frozen save request and enrolled image/relationship context before generation commit",
+  "Q_from_reconstruction": false,
+  "Q_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+  "exact_generation_binding": true,
+  "kit_schema": "owr-rbr-s3-kit-v2",
+  "independent_approval_verified": true,
+  "approval_conditions_changed": false,
+  "selected_and_Q_retention_checked": true,
+  "parent_not_fetched": true,
+  "wrong_Q_rejected": true,
+  "reconstruction": {
+    "definition_sha256": "37580ebefd8c5e930aaf5b7b74fb1b495a6aea277eeccef08501679f650f7b3f",
+    "images": {
+      "database": "sha256:6ae88e359ad5f5304005f83dbdba9f402b3b75327f3a576ad2ffb291e708b399",
+      "wordpress_php": "sha256:012bc389a6db208a4c02d3b068a824380ce9f23236a9aedb2acdc67fb1f600dd"
+    },
+    "negative_controls": [
+      "contact-character",
+      "paragraph-content-replaced",
+      "link-target",
+      "missing-image-http"
+    ],
+    "plan_sha256": "c08279e4da2759f7eca730f51bae762e0c6149e4fd21e22db8db14b71b6741f1",
+    "public_activation": false,
+    "resources_removed": true,
+    "runs": [
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 1,
+        "side_effect_attempts": 0
+      },
+      {
+        "actual_runtime": {
+          "charset": "utf8mb4",
+          "collation": "utf8mb4_unicode_ci",
+          "database": "11.8.8-MariaDB-ubu2404",
+          "locale": "en_US",
+          "php": "8.3.35",
+          "theme": "rbr-lab",
+          "timezone": "UTC",
+          "wordpress": "7.1.3"
+        },
+        "duplicate_rejected": true,
+        "logical_sha256": "82b040e53500ada9577cf27c7900c6418302108300f7ea8eecef6cb82a69dbb3",
+        "matched_Q": true,
+        "private_routes": true,
+        "run": 2,
+        "side_effect_attempts": 0
+      }
+    ],
+    "scope": "generated-only, local pinned OCI, no S3 calls or production",
+    "state": "PASS"
+  },
+  "source_isolation": {
+    "source_workspace_hidden": true,
+    "builder_workspace_hidden": true,
+    "private_mount_namespace": true
+  },
+  "kit_PUTs_acknowledged": 10,
+  "public_activation": false,
+  "limitations": [
+    "Bounded three existing pages, plain-text editing and enrolled image/relations",
+    "Test signer uses separate root account on same host; not physically independent host",
+    "Cached OCI images reused",
+    "No automatic legacy enrollment migration",
+    "Injected failure is not an actual AWS outage"
+  ],
+  "source_successful_PUTs": 21,
+  "source_unknown_operations": 0,
+  "regression_tests": 75,
+  "cleanup": {
+    "dedicated_containers_removed": true,
+    "dedicated_daemon_stopped": true,
+    "scoped_network_rules_removed": true,
+    "host_trust_absent": true,
+    "existing_containers": 9
+  },
+  "test_infrastructure": {
+    "auxiliary_Q_hash_check": "Initial helper default ASCII escaping differed from canonical UTF-8 for Japanese; corrected helper only. Stored Q and product checks unchanged.",
+    "sandbox_access": "Initial WSL sandbox access denied; authorized execution worked without environment setting changes.",
+    "cleanup_check": "PowerShell expanded shell exit-status variable in an auxiliary check; repeated with structured Python subprocess exit code."
+  },
+  "product_changes_this_trial": false,
+  "reconstruction_scope_note": "Nested executor scope describes offline reconstruction after verified S3 fetch; the end-to-end trial used real experimental S3."
+}
