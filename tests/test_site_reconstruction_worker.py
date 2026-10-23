@@ -59,4 +59,14 @@ class Recovery(unittest.TestCase):
         self.request()
         with patch.object(w.m,'receive',wraps=w.m.receive) as receive:
             w.cycle(self.c,self.run_target);self.assertEqual(receive.call_count,1)
+    def test_preview_bound_to_verified_job(self):
+        q=self.request()
+        def target(c,bundle,target):
+            w.m.atomic(bundle/'preview.json',{'schema':'owr-private-preview-v1','generation':q['generation'],'html':'<p>actual target</p>'})
+            return self.run_target(c,bundle,target)
+        a=w.cycle(self.c,target)
+        self.assertTrue(a['jobs'][0]['preview_ready'])
+        p=self.p/'bridge/reconstruction/previews'/(q['job']+'.json')
+        v=json.loads(p.read_bytes());self.assertEqual(v['q'],q['q']);self.assertEqual(v['job'],q['job'])
+        self.assertEqual(p.stat().st_mode & 0o777,0o600)
 if __name__=='__main__':unittest.main()

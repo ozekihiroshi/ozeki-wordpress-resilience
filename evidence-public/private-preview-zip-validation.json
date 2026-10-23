@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-23",
+  "state": "PASS",
+  "version": "0.2.0",
+  "artifacts": [
+    {
+      "file": "ozeki-wordpress-resilience-0.2.0.zip",
+      "sha256": "0b2673aef1736d732969a9ed9895a3599be5bddc17d212d12db79a46695564a5",
+      "bytes": 48850
+    },
+    {
+      "file": "owr-development-kit-0.2.0.zip",
+      "sha256": "726fbebe8be472f2b0e7d75368a68f2f39dda494ade1f46a76c76b7676186169",
+      "bytes": 15855196
+    }
+  ],
+  "runtime": "extracted frozen operator kit and actual Plugin_Upgrader",
+  "storage": "persistent S3 double; previous live S3 run is separate evidence",
+  "regression_tests": {
+    "site": 39,
+    "s3_adapter": 9,
+    "distribution": 8,
+    "php_contracts": "PASS"
+  },
+  "cases": {
+    "fresh": {
+      "result": {
+        "browser_checks": 62,
+        "native_entries_redirect_to_protected_editor": true,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial_lifecycle": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_lifecycle": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "checks": [
+        "normal new-post entry opens S3-first editor",
+        "typing leaves WordPress unchanged",
+        "save failure leaves posts and media unchanged",
+        "different pending request rejected",
+        "reload preserves exact pending title",
+        "ZIP update preserves pending save and settings",
+        "confirmed save updates WordPress",
+        "stale editor generation rejected",
+        "new post reflected after S3",
+        "new page reflected after S3",
+        "normal media entry opens S3-first registration",
+        "selecting image creates no attachment",
+        "image registered after S3",
+        "image replacement keeps logical ID",
+        "worker actually exited after S3 commit",
+        "commit without projection leaves WordPress unchanged",
+        "resumes committed generation",
+        "resumed content appears",
+        "ordinary REST post write rejected",
+        "ordinary REST image write rejected",
+        "bypass attempts change nothing",
+        "read-only status does not change content",
+        "subscriber denied state",
+        "subscriber denied save",
+        "new schema generation catalog shown",
+        "Q and material summary visible",
+        "catalog reads do not change source",
+        "subscriber denied recovery state",
+        "subscriber denied recovery request",
+        "mismatched Q rejected 0",
+        "selected generation reconstructed 0",
+        "complete chosen material set 0",
+        "private target no publication 0",
+        "preview available 0",
+        "preview sandbox has no privileges 0",
+        "actual reconstructed titles visible 0",
+        "edited body visible",
+        "reconstructed image rendered",
+        "page relationship navigates inside preview",
+        "preview contains no active external content 0",
+        "subscriber cannot read preview 0",
+        "anonymous cannot read preview 0",
+        "duplicate request keeps same job 0",
+        "no duplicate target 0",
+        "mismatched Q rejected 1",
+        "selected generation reconstructed 1",
+        "complete chosen material set 1",
+        "private target no publication 1",
+        "preview available 1",
+        "preview sandbox has no privileges 1",
+        "actual reconstructed titles visible 1",
+        "preview contains no active external content 1",
+        "subscriber cannot read preview 1",
+        "anonymous cannot read preview 1",
+        "duplicate request keeps same job 1",
+        "no duplicate target 1",
+        "reconstruction leaves source unchanged",
+        "stale status blocks request",
+        "report resumes without new job",
+        "ZIP reinstall preserves reconstruction report requests and previews",
+        "preview readable after ZIP reinstall 96a6af25",
+        "preview readable after ZIP reinstall c7834e10"
+      ],
+      "jobs": [
+        {
+          "generation": "8dc90f2df3b57a015dc8596897ba4795add50ac626d54fa90156aba6d3965904",
+          "q": "f9199840b776e19d382a6ba857016fe05589e64c966cec975d8645706c95020f",
+          "state": "verified",
+          "preview_preserved": true
+        },
+        {
+          "generation": "779767ed02d79cab3e6c2f4899accff7a4959ec49fb382daa2d9fff31c406886",
+          "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "state": "verified",
+          "preview_preserved": true
+        }
+      ]
+    },
+    "upgrade020": {
+      "result": {
+        "browser_checks": 62,
+        "native_entries_redirect_to_protected_editor": true,
+        "public_activation": false,
+        "real_s3": false,
+        "state": "PASS"
+      },
+      "initial_lifecycle": {
+        "state": "PASS",
+        "automatic_enrollment": false,
+        "settings_history_cron_posts_preserved": true
+      },
+      "pending_lifecycle": {
+        "state": "PASS",
+        "pending_requests_reports_history_settings_preserved": true
+      },
+      "checks": [
+        "normal new-post entry opens S3-first editor",
+        "typing leaves WordPress unchanged",
+        "save failure leaves posts and media unchanged",
+        "different pending request rejected",
+        "reload preserves exact pending title",
+        "ZIP update preserves pending save and settings",
+        "confirmed save updates WordPress",
+        "stale editor generation rejected",
+        "new post reflected after S3",
+        "new page reflected after S3",
+        "normal media entry opens S3-first registration",
+        "selecting image creates no attachment",
+        "image registered after S3",
+        "image replacement keeps logical ID",
+        "worker actually exited after S3 commit",
+        "commit without projection leaves WordPress unchanged",
+        "resumes committed generation",
+        "resumed content appears",
+        "ordinary REST post write rejected",
+        "ordinary REST image write rejected",
+        "bypass attempts change nothing",
+        "read-only status does not change content",
+        "subscriber denied state",
+        "subscriber denied save",
+        "new schema generation catalog shown",
+        "Q and material summary visible",
+        "catalog reads do not change source",
+        "subscriber denied recovery state",
+        "subscriber denied recovery request",
+        "mismatched Q rejected 0",
+        "selected generation reconstructed 0",
+        "complete chosen material set 0",
+        "private target no publication 0",
+        "preview available 0",
+        "preview sandbox has no privileges 0",
+        "actual reconstructed titles visible 0",
+        "edited body visible",
+        "reconstructed image rendered",
+        "page relationship navigates inside preview",
+        "preview contains no active external content 0",
+        "subscriber cannot read preview 0",
+        "anonymous cannot read preview 0",
+        "duplicate request keeps same job 0",
+        "no duplicate target 0",
+        "mismatched Q rejected 1",
+        "selected generation reconstructed 1",
+        "complete chosen material set 1",
+        "private target no publication 1",
+        "preview available 1",
+        "preview sandbox has no privileges 1",
+        "actual reconstructed titles visible 1",
+        "preview contains no active external content 1",
+        "subscriber cannot read preview 1",
+        "anonymous cannot read preview 1",
+        "duplicate request keeps same job 1",
+        "no duplicate target 1",
+        "reconstruction leaves source unchanged",
+        "stale status blocks request",
+        "report resumes without new job",
+        "ZIP reinstall preserves reconstruction report requests and previews",
+        "preview readable after ZIP reinstall 549d50a5",
+        "preview readable after ZIP reinstall 64f11056"
+      ],
+      "jobs": [
+        {
+          "generation": "20279a4a9857c75c154459780976891544ac46b4c1857e8acf02618fe1597927",
+          "q": "14335448e1e1413227e0e5735043e9dc2a2be77b913c93777373e930e1e60ccc",
+          "state": "verified",
+          "preview_preserved": true
+        },
+        {
+          "generation": "c5782a3a455b539b8573d5883da96a333b90ddb9c3bc836b692f683c276c8639",
+          "q": "ba85bbe32ae3ea6f4649ca8cdc64b2e5a835a68826bb39509b3e226cb5c88c62",
+          "state": "verified",
+          "preview_preserved": true
+        }
+      ]
+    }
+  },
+  "external_upgrade": {
+    "legacy_three_page_conversion": false,
+    "new_worker_extends_old_generation": true,
+    "old_generation_still_readable": true,
+    "old_runtime_zip_sha256": "25b90755542e5bcca94eba363ce0481418cd7468d57c4f6664239ca7aff247c0",
+    "preserved_files": 4,
+    "state": "PASS"
+  },
+  "limitations": [
+    "matching external kit and plugin required",
+    "snapshot of target content, not live theme rendering",
+    "no automatic preview backfill for existing jobs",
+    "preview lifetime/cleanup remains manual; 128MiB bound",
+    "temporary private draft targets, no production publication",
+    "existing missing/uncertain S3 journal is not reset"
+  ],
+  "environment_issues": {
+    "this_lifecycle_run": [],
+    "prior_live_s3": "WSL IPv6 timeout; dedicated process IPv4 workaround only, underlying routing cause unresolved; not shipped in ZIP"
+  },
+  "fixed_code_defect": "Persist empty real-S3 adapter journal before first request; preserve existing uncertain journals",
+  "test_infrastructure_issues": [
+    "Initial revised wait hit stale-element during iframe replacement; final wait atomically samples visibility and selected generation."
+  ],
+  "earlier_failed_zip": "private-preview-020-final-v1: old frame visible before selected generation loaded; fixed in final v4",
+  "fixed_ui_defect": "Hide old preview, reveal loaded generation only, ignore late responses",
+  "production_changes": false,
+  "automatic_publication": false
+}

@@ -47,7 +47,7 @@ try:
     d.get(root+'/wp-admin/media-new.php');wait('ready');check('normal media entry opens S3-first registration','page=owr-site-materials' in d.current_url)
     before=snapshot();d.find_element(By.ID,'owr-add-image').click();field('owr-material-title','登録した画像');d.find_element(By.ID,'owr-material-file').send_keys('/lab/normal.png');check('selecting image creates no attachment',snapshot()==before);save();wait('ready');check('image registered after S3',len(snapshot()['images'])==len(before['images'])+1)
     image_id=d.find_element(By.ID,'owr-material-select').get_attribute('value');field('owr-material-title','差し替えた画像');d.find_element(By.ID,'owr-material-file').send_keys('/lab/replacement.png');save();wait('ready');check('image replacement keeps logical ID',any(x['id']==image_id and x['alt']=='差し替えた画像' for x in state()['site']['entries']))
-    choose('company');field('owr-material-body','途中停止後も同じ世代で再開する本文\n![新画像](asset:'+image_id+')');before=snapshot();control.write_text(json.dumps({'stop_after_store':True}));save()
+    choose('company');field('owr-material-body','途中停止後も同じ世代で再開する本文\n[サービス](asset:services)\n![新画像](asset:'+image_id+')');before=snapshot();control.write_text(json.dumps({'stop_after_store':True}));save()
     end=time.monotonic()+1200
     while time.monotonic()<end and not (lab/'worker-paused.json').exists():time.sleep(.3)
     check('worker actually exited after S3 commit',(lab/'worker-paused.json').exists());check('commit without projection leaves WordPress unchanged',snapshot()==before)
@@ -65,7 +65,10 @@ try:
         if (lab/'plugin.zip').exists():
             control.write_text(json.dumps({'pause_recovery':True}));time.sleep(6)
             update=fetch('/owr-test/v1/upgrade',{})
-            check('ZIP reinstall preserves reconstruction report and requests',update['body'].get('state')=='PASS')
+            check('ZIP reinstall preserves reconstruction report requests and previews',update['body'].get('state')=='PASS')
+            for job in recovery_state()['jobs']:
+                preview=fetch('/owr-materials-recovery/v1/preview/'+job['job'])
+                check('preview readable after ZIP reinstall '+job['job'][:8],preview['status']==200 and preview['body']['q']==job['q'] and preview['body']['generation']==job['generation'])
             control.write_text('{}')
     d.save_screenshot('/lab/editor-complete.png');(lab/'browser-result.json').write_text(json.dumps({'state':'PASS','checks':checks,'final':state()},ensure_ascii=False));print(json.dumps({'state':'PASS','checks':len(checks)}))
 finally:d.quit()

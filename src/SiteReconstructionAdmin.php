@@ -28,17 +28,28 @@ final class SiteReconstructionAdmin {
             if(!rename($tmp,$path))throw new \RuntimeException('Queue publish failed');return ['job'=>$job];
         }finally{flock($lock,LOCK_UN);fclose($lock);}
     }
+    public static function preview(string $dir,string $job):array {
+        if(!preg_match('/^[a-f0-9]{64}$/D',$job))throw new \RuntimeException('Invalid preview');
+        $state=self::status($dir);$record=null;
+        foreach($state['jobs'] as $item)if(($item['job']??null)===$job&&($item['state']??null)==='verified'&&($item['preview_ready']??false))$record=$item;
+        if(!$record)throw new \RuntimeException('Preview unavailable');
+        $path=$dir.'/previews/'.$job.'.json';if(!is_file($path)||filesize($path)>128*1024*1024)throw new \RuntimeException('Preview unavailable');
+        $v=json_decode(file_get_contents($path),true,64,JSON_THROW_ON_ERROR);
+        if(($v['schema']??null)!=='owr-private-preview-v1'||$v['job']!==$job||$v['generation']!==$record['generation']||$v['q']!==$record['q'])throw new \RuntimeException('Preview mismatch');
+        return $v;
+    }
     public static function boot(string $bridge):void {
         if(getenv('OWR_RBR_DISPOSABLE')!=='1')throw new \RuntimeException('Dedicated environment required');self::$dir=$bridge.'/reconstruction';
         add_action('rest_api_init',function(){foreach(['state'=>'GET','request'=>'POST'] as $action=>$method){register_rest_route('owr-materials-recovery/v1','/'.$action,['methods'=>$method,'permission_callback'=>fn()=>current_user_can('manage_options'),'callback'=>function($request)use($action){try{
             if(strlen($request->get_body())>2048)throw new \RuntimeException('Request too large');
             $value=$action==='state'?self::status(self::$dir):self::request(self::$dir,$request->get_json_params()??[]);$r=new \WP_REST_Response($value);$r->header('Cache-Control','no-store');return $r;
         }catch(\Throwable $e){return new \WP_Error('owr_recovery_stopped','Selection unavailable or report stale; preserve existing jobs.',['status'=>409]);}}]);}});
+        add_action('rest_api_init',function(){register_rest_route('owr-materials-recovery/v1','/preview/(?P<job>[a-f0-9]{64})',['methods'=>'GET','permission_callback'=>fn()=>current_user_can('manage_options'),'callback'=>function($request){try{$r=new \WP_REST_Response(self::preview(self::$dir,$request['job']));$r->header('Cache-Control','no-store');return $r;}catch(\Throwable $e){return new \WP_Error('owr_preview_unavailable','Preview unavailable.',['status'=>404]);}}]);});
         add_action('admin_menu',function(){add_submenu_page('owr-site-materials','素材世代から再構築','素材世代から再構築','manage_options','owr-site-reconstruction',[self::class,'screen']);},20);
     }
     public static function screen():void {
         if(!current_user_can('manage_options'))wp_die('Forbidden');
-        echo '<div class="wrap"><h1>素材世代から再構築</h1><p>選択したS3固定世代から、新しい専用WordPressを非公開で作成します。元サイトのDBは使用しません。公開・既存サイトへの上書きは行いません。</p><p id="owr-recovery-status" role="status"></p><p id="owr-recovery-target"></p><select id="owr-recovery-generation"></select><pre id="owr-recovery-details"></pre><button class="button button-primary" id="owr-recovery-start">選択世代を専用復旧先へ再構築</button><h2>再構築結果</h2><pre id="owr-recovery-jobs"></pre></div>';
+        echo '<div class="wrap"><h1>素材世代から再構築</h1><p>選択したS3固定世代から、新しい専用WordPressを非公開で作成します。元サイトのDBは使用しません。公開・既存サイトへの上書きは行いません。</p><p id="owr-recovery-status" role="status"></p><p id="owr-recovery-target"></p><select id="owr-recovery-generation"></select><pre id="owr-recovery-details"></pre><button class="button button-primary" id="owr-recovery-start">選択世代を専用復旧先へ再構築</button><h2>再構築結果</h2><pre id="owr-recovery-jobs"></pre><h2>非公開プレビュー</h2><div id="owr-preview-links"></div><p id="owr-preview-status"></p><iframe id="owr-private-preview" title="再構築内容の非公開プレビュー" sandbox="" referrerpolicy="no-referrer" style="width:100%;height:650px;border:1px solid #ccd" hidden></iframe></div>';
         echo '<script>window.owrRecoveryConfig='.wp_json_encode(['url'=>rest_url('owr-materials-recovery/v1/'),'nonce'=>wp_create_nonce('wp_rest')]).';</script><script>'.file_get_contents(__DIR__.'/../assets/site-reconstruction.js').'</script>';
     }
 }

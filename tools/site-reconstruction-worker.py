@@ -9,7 +9,14 @@ def profile(c):
 def execute(c,bundle,target):
     with (bundle/'execution.log').open('wb') as log:
         subprocess.run(['python3',str(ROOT/'site-reconstruct-private.py'),'--bundle',str(bundle),'--output',str(target),'--wordpress-image',c['wordpress_image'],'--database-image',c['database_image'],'--allow-dedicated-target'],check=True,stdout=log,stderr=log,timeout=900)
-    return json.loads((target/'result.json').read_bytes())
+    result=json.loads((target/'result.json').read_bytes())
+    # Snapshot only the actual verified target. Export failure does not erase a successful reconstruction.
+    try:
+        raw=subprocess.run(['docker','exec',result['target']['web'],'php',str('/kit/tools/site-preview-export.php')],check=True,capture_output=True,timeout=120).stdout
+        m.require(len(raw)<=128*1024*1024,'Preview size bound')
+        preview=json.loads(raw);m.atomic(bundle/'preview.json',preview)
+    except Exception:result['preview_error']='target-preview-export-failed'
+    return result
 def cycle(c,executor=execute):
     bridge=Path(c['bridge'])/'reconstruction';requests=bridge/'requests';requests.mkdir(parents=True,exist_ok=True)
     work=Path(c['recovery_work']);work.mkdir(parents=True,exist_ok=True);jobs=work/'jobs';jobs.mkdir(exist_ok=True)
@@ -66,6 +73,13 @@ def cycle(c,executor=execute):
                 result=executor(c,bundle,work/('target-'+token))
                 m.require(result['state']=='verified-private' and result['logical_sha256']==q['q'] and result['side_effect_attempts']==0 and not result['public_activation'],'Result does not match requested Q')
                 job.update(state='verified',result=result)
+                if (bundle/'preview.json').exists():
+                    preview=json.loads((bundle/'preview.json').read_bytes())
+                    m.require(preview['schema']=='owr-private-preview-v1' and preview['generation']==ident,'Preview identity')
+                    preview.update(job=token,q=q['q'])
+                    (bridge/'previews').mkdir(exist_ok=True)
+                    m.atomic(bridge/'previews'/(token+'.json'),preview)
+                    job['preview_ready']=True
             except Exception:
                 job.update(state='failed',reason='verification-or-target-failed-inspect-records')
             job['finished_at']=int(time.time());m.atomic(path,job);publish()
