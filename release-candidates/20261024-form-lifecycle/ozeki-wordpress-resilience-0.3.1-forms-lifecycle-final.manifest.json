@@ -1,0 +1,27 @@
+{
+  "zip": "ozeki-wordpress-resilience-0.3.1-forms-lifecycle-final.zip",
+  "sha256": "1eba8cbabfcc18adceedb1d002b9f39da5e43fd220739689f67bd725c77d25ac",
+  "bytes": 7355612,
+  "product_files": {
+    "ozeki-wordpress-resilience.php": "a6ed3c6d4254b7d332a06506df177b01ff8e7422eea44df7c97826f2aef4c1f7",
+    "README.md": "ff90b97cc8a9e811c710da3ae85371dd81cd74ce4d71314f837d36da6d660827",
+    "RAADME-jp.md": "6e8cfccaf932bc6586dc7ca621561e31cbcf104fbe2765b65fa8bfcccc32b90e",
+    "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+    "composer.json": "b38ef96b502c326cb632332b28c9a2249d19e3412ba13d8dc4c3ac80cf375f4a",
+    "composer.lock": "b126922427a70411d72f019816b3e2582dc544bfae9084a96d89760f10f6f7a3",
+    "src/CommentHistory.php": "02b29ff0f8636776df8cf8627675390b87291902db3e01a422d978b6e901a1f8",
+    "src/FormHistory.php": "ede5a4f9da983ea872f6d83aa4ab5d7e0c6436577448786bbe5d89750d1e5353",
+    "src/Plugin.php": "938d98f4ed55c4e98835b13c5a4c37c0726a6a5f3d136e535ed3df2823609a6f",
+    "src/SiteSnapshot.php": "1ca41dc05cacb6139a30a8808c29e9949b69054bb517d582d9e26089a42f7039",
+    "src/Store.php": "4e04cc8eb8a908d9b1152168373b1e25527d3b83de5e3629870916c1ce61b79a",
+    "docs/acceptance-ja.md": "abab2b482bb1a215dba66845cfcf6f79ea50867f1c3afb17400478a3dee01f8b",
+    "docs/acceptance.md": "2603981b3d188f3b4cffdd072eceb2caa901cb5d157b446001d0390cd77486f1",
+    "docs/checkpoints-ja.md": "f8602dc2c096c1275911de99d8f7a45fee5c6c8cba92a6fb83b5397c0ed50eaa",
+    "docs/checkpoints.md": "2a15cf44ad0eb987b0e97294f2ffb92c88832088f2ce0b0112c54e430a74502f",
+    "docs/comments.md": "7dca715144c1266a50676a23b4eb4ef6f38d588afea06d40b346be5a0c35121d",
+    "docs/contract.md": "2b5b6e4d009a2f7919c1840ff7390730e58dcc9a8c10fd81d9edd4fccf85ed08",
+    "docs/forms.md": "2106f9846d41999d2da5197d3b386ecbc6fdd4444677bb2c59bc939b930eac31",
+    "docs/site-snapshot-ja.md": "d36dd918a97c0e1ed13aa9cdcade4ab4136fdf7f3b480ccafecca60ff6969f37",
+    "docs/site-snapshot.md": "3b3a793a5d4454cffe3c606dbc63e82ceb1616ca07474b1a9b84ae96d96ac5df"
+  }
+}

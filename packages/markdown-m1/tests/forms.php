@@ -23,3 +23,18 @@ Owr\M1\FormHistory::replay($d,$raw,$attrs);Owr\M1\FormHistory::replay($d,$raw,$a
 $bad=$attrs;$bad['origin_id']=19;try{Owr\M1\FormHistory::replay($d,$raw,$bad);throw new LogicException('accepted bad identity');}catch(RuntimeException $e){}
 $s3->fail=true;try{$store->prepare('form-18','failure',$raw,$attrs);throw new LogicException('expected failure');}catch(RuntimeException $e){}ok(count($store->history())===1,'failure excluded');
 echo "PASS complete form/inquiry JSON, idempotent replay, channels, identity rejection, failed original exclusion.\n";
+
+$receipt['deleted']=true;$deleted=Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$receipt]]);
+Owr\M1\FormHistory::replay($d,$deleted,$attrs);Owr\M1\FormHistory::replay($d,$deleted,$attrs);
+ok(count($d['tables']['posts'])===1&&!$d['tables']['term_relationships']&&$d['tables']['term_taxonomy'][0]['count']==='0','receipt tombstone removes metadata and relationships idempotently');
+$item['deleted']=true;$attrs['origin_id']=17;Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
+ok(!$d['tables']['posts']&&!$d['tables']['postmeta'],'form deletion');
+echo "PASS receipt/form tombstones and channel counts.\n";
+// Deleting a form must not cascade into retained inquiries.
+$d=['tables'=>['posts'=>[],'postmeta'=>[],'terms'=>[],'term_taxonomy'=>[],'term_relationships'=>[]]];
+unset($item['deleted'],$receipt['deleted']);$attrs['origin_id']=18;
+Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item,$receipt]]),$attrs);
+$item['deleted']=true;$attrs['origin_id']=17;
+Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
+ok(count($d['tables']['posts'])===1&&$d['tables']['posts'][0]['ID']==='18'&&count($d['tables']['term_relationships'])===1,'form deletion preserves inquiry');
+echo "PASS form deletion does not cascade to inquiry.\n";
