@@ -69,6 +69,8 @@
 
 ## 検証と問題の区別
 
+[導入・ZIP更新手順](docs/install-update.md)と[追加の標準管理画面更新試験](../../docs/releases/browser-zip-update-m1-031.md)を参照してください。検証済み0.3.1 ZIPを、同じ表示バージョンの旧試験配置へ標準アップロード・置換操作で適用し、設定・履歴68・空の未確定キュー・復旧結果を保持しました。非空キューのブラウザ更新は未検証です。アップロード上限・ファイル変更禁止・所有権混在は環境設定の問題で、製品コードの修正ではありません。以前の展開／上書き試験とは区別します。この文書更新では検証済みZIPを再生成しません。
+
 [最終ZIP同居試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/combined-final-m1-031.md)では新規導入・更新で設定／履歴を保持し、両環境で実S3のCheckpoint21と後続履歴29までを復旧しました。投稿・固定ページ・画像・コメント・フォーム／受信・会員ログイン／閲覧制限・表を照合済みです。導入試験はZIP展開・有効化と上書き更新で、ブラウザのPlugin_Upgrader試験ではありません。PR #26のPHP 8.1／8.3契約CIも成功しています。
 
 [TablePressブラウザ試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/tablepress-browser-acceptance.md)は標準画面の追加・更新・削除と復旧後の検索・並べ替え・ページ送りを確認しました。全連携のブラウザ試験を意味しません。[標準編集試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/native-m1-031.md)はChromeで画像操作まで確認し、アプリ内ブラウザの本文iframe空白は原因未確定のブラウザ問題として分離しています。

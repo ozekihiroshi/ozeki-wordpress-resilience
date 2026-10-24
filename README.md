@@ -69,6 +69,8 @@ The **initial snapshot** also captures supported uploads (including the tested P
 
 ## Evidence and issue classification
 
+See the [installation and ZIP update procedure](packages/markdown-m1/docs/install-update.md) and [later standard-admin browser update acceptance](docs/releases/browser-zip-update-m1-031.md). The validated 0.3.1 ZIP replaced a prior same-version trial deployment through Upload Plugin / Replace current with uploaded; settings, history 68, empty pending queues and recovery results were preserved. Nonempty pending queues remain untested through browser replacement. Upload limits, file-modification policy and mixed file ownership were environment setup issues, not product code corrections. Earlier extraction/overwrite acceptance is separate. This documentation update does not rebuild the validated ZIP.
+
 [Combined final-ZIP acceptance](docs/releases/combined-final-m1-031.md): fresh install and update preserved settings/history; both installations reconstructed one real-S3 Checkpoint through 21 plus confirmed history through 29. Posts/Pages, images, comments, forms/receipts, member login/restrictions and tables matched. ZIP installation tests used extraction/activation and overwrite update, not browser Plugin_Upgrader. PHP 8.1/8.3 contract CI passed for the PR #26 code.
 
 [TablePress browser acceptance](docs/releases/tablepress-browser-acceptance.md) additionally covers standard-editor add/update/delete and recovered search/sort/pagination. It does not establish browser acceptance for every adapter. [Native editor acceptance](docs/releases/native-m1-031.md) covers standard editing and images in Chrome; the in-app browser's blank editor iframe is a separate unresolved browser issue.
