@@ -1,171 +1,86 @@
-# Ozeki WordPress Resilience — S3 originals and site recovery
+# Ozeki WordPress Resilience
 
-## Choose the recovery operation
+English | [日本語](RAADME-jp.md)
 
-**Site-wide recovery is the primary workflow.** In Tools → Resilience, use **Site-wide recovery — primary workflow** to select a complete initial snapshot / Checkpoint and **Restore complete site**. It reconstructs the supported site state from that baseline and subsequent S3 formal history, including supported images and site relationships. Destination content is replaced; prepare the destination WordPress, plugins and S3 access beforehand. These are normal administrator tasks. On-demand recovery is the product workflow; continuous replication is not required.
+**Preserve WordPress information assets in S3 and reconstruct the supported site state in a new WordPress after losing the original server or database.**
 
-**Individual recovery is supplementary.** Under **Confirmed formal history / Individual recovery**, select one version per asset and use **Restore selected assets (text and attributes)**. This updates matching asset identities or creates missing records, preserving unrelated destination content. It does not restore media files, themes, menus or complete site relationships. Use site-wide recovery for that purpose. The earlier asset-snapshot controls are grouped separately under a collapsed supplementary section; they are not complete site snapshots.
+Resilience is for WordPress maintainers who need independently stored content and an explicit recovery history. The operating database is not the only recovery source. Complete originals, metadata and confirmed operations remain in S3; recovery uses a trusted initial snapshot or independent Checkpoint plus later confirmed history.
 
-**The recovery boundary is confirmed S3 formal history.** A trusted snapshot provides the baseline. Later operations are included only after their formal history is persisted in S3. A prepared original or WordPress application alone is insufficient. If the source is lost while history is pending, omit that operation: an unconfirmed new article is absent, and an unconfirmed update leaves the previous confirmed version. Recovering the final unconfirmed operation is not a completion requirement. While the source remains available, **Resume history** can verify and confirm it. The pending notice distinguishes WordPress application from recovery confirmation.
+This is on-demand reconstruction, not continuous replication or an infrastructure backup. It neither provisions servers nor switches DNS. A permanently running second EC2 instance is not required; an administrator prepares a suitable recovery WordPress when needed. Ozeki Database Backup for S3 is a separate product, not a dependency.
 
-Recorded publication status, including `publish`, is preserved. Internet exposure and DNS are administrator decisions. Periodic execution and formal release remain deferred; this clarification changes no save/recovery conditions.
+## Current package
 
-## Validated native editor and image workflow (2026-10-24)
+The product is **0.3.1** under `packages/markdown-m1`. The directory name is historical: coverage now extends beyond Markdown. The latest reviewed candidate is [combined-final ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261024-combined/ozeki-wordpress-resilience-0.3.1-combined-final.zip), with [manifest and validation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261024-combined/validation.json). It includes all adapters listed below and the CF7 upload-guard correction.
 
-Standard Pages and Posts can be created, published, updated and moved to/from Trash through the normal WordPress editor. Supported local image uploads are stored in S3 before registration; referenced images and generated sizes are bound to the successful article version. Each native body is a complete HTML file, not a database dump or content delta. Recovery uses the complete site baseline plus subsequent S3 formal history and preserves publication status.
+SHA-256: `afbdf0844940569a494e7cd965734d75f6f0f04c810950024d610934787468f2`
 
-Real browser tests used trial articles, image addition and replacement, and recovery on a separate existing WordPress. Chrome's visual inserter and Replace/media-library controls worked without code-editor input (histories 25 and 26). The in-app browser left the blob editor iframe blank while the same site, user and article worked in Chrome without server or plugin changes. This is a browser-environment limitation; its internal cause remains unresolved. Use Chrome for this workflow. It is not evidence of a Resilience save/recovery defect.
+This candidate was merged in PR #26; formal release is deferred. Several older candidates also use version 0.3.1, so identify the package by filename and hash. This README consolidation changes documentation only: the tested ZIP still contains its original, pre-consolidation documentation. Do not install the root 0.2.0 research plugin or external research runtime kit as the current product.
 
-This does not cover featured-image changes, unused media entries, external/CDN resources, arbitrary metadata/taxonomy changes, third-party binary overwrite tools, permanent deletion or scheduled publication guarantees. Images are limited to JPEG/PNG/GIF/WebP/AVIF, 32 MiB per file; source text is limited to 5 MiB. Recovery is manually invoked, not automatic destination synchronization. Wall-clock periodic execution remains deferred. Cleanup code is optional and disabled by default; real-S3 deletion acceptance is not claimed.
+## Design and recovery boundary
 
-The final package validation report is delivered alongside the ZIP. Tests and transport mocks are not shipped. AWS SDK standard authentication remains the product path. Installing or replacing plugin files does not intentionally migrate or clear settings/history; formal history resides in S3. Keep a rollback copy and never erase the configured prefix during an update.
+1. **Establish a trusted starting point.** The administrator judges the existing site suitable, pauses editing and creates a complete initial snapshot. It contains supported content, files, presentation state and selected runtime software.
+2. **Save complete asset versions during normal use.** Markdown stays readable `.md`; native post/page bodies are complete HTML; supported adapter records use JSON; media remains files. Each update saves a complete version of the affected asset, not a content delta or a new whole-site inventory.
+3. **Confirm successful operations in S3.** Protected article saves store the original before WordPress application. Comments and the supported third-party adapters capture completed operation data instead. In both cases, WordPress persistence, S3 storage and formal-history confirmation must succeed before an operation is recoverable.
+4. **Create independent Checkpoints.** The complete-site Checkpoint uses the prior S3 baseline and confirmed history, not a fresh read of the live site. It contains its own required resources, rather than only an inventory referencing old ancestors.
+5. **Reconstruct when requested.** Download and verify the selected complete baseline and its subsequent history, then replace supported content on a prepared destination. The old server, old DB and local pending queue are not recovery inputs.
 
+The administrator-trusted initial state and accepted save data are design assumptions, not malware-free certifications. Fixed S3 Version IDs and hashes verify stored identity; they do not prove that submitted content was harmless. The full baseline also captures selected theme/plugin code and content-table records as portable files/JSON; reconstruction is not a promise to reinstall every component from a clean official distribution.
 
-**Complete site reconstruction:** the new [site baseline and Checkpoint path](docs/site-snapshot.md) also captures pages, media, theme, menus and presentation data. Read its coverage and remaining change-capture limitations; the Markdown-only scope below describes the original M1 path.
+Only **confirmed S3 formal history** extends a trusted baseline. Prepared originals are not automatically adopted. If the source is lost before confirmation, omit that operation: an unconfirmed new article is absent, and an unconfirmed update leaves the previous confirmed version.
 
-Keep independently usable Markdown originals in S3 and reconstruct published documents in a new WordPress, without the original server or database.
+Saved publication state, including `publish`, is reproduced. Internet exposure, server/network access and DNS remain administrator decisions. There is no product requirement to convert everything to drafts or obtain a separate publication approval.
 
-This product path is independent of the earlier research implementation. It consists of a WordPress plugin, Ozeki Markdown Documents, and S3. Python, SSH helpers, a shared worker, Docker and a custom content editor are not product requirements. Existing dm Docker also verified standard EC2 role authentication and restoration without any credential helper.
+## Supported content and plugins
 
-## Normal use
+| Source | Recorded and recovered scope | Important limits |
+|---|---|---|
+| WordPress Posts and Pages | Standard create/publish/update, body, title, slug, recorded attributes, parent/order, discussion settings, Trash/untrash | No complete draft/scheduled-publication guarantee; permanent article deletion, later taxonomy/arbitrary metadata and featured-image changes are outside incremental acceptance |
+| Local images | Supported upload originals before registration; referenced originals/generated sizes, attachment information and alt text bound to an article version | JPEG/PNG/GIF/WebP/AVIF; 32 MiB per file. Unused media, external/CDN assets and arbitrary binary overwrite tools are not tracked |
+| Core comments | Addition, edits, moderation, Trash/untrash, permanent deletion, replies and approved counts | Completed-operation capture; restore through site-wide recovery, not individual text recovery |
+| **Ozeki Markdown Documents** | Normal editor; complete Markdown source, title, state and supported document links; Mermaid, math and code syntax preserved | Separate plugin required for Markdown and the current supplementary text-recovery path. Rendering needs compatible plugin/runtime; arbitrary external links and plugin relations are not a general migration guarantee |
+| **Contact Form 7** | Completed form definitions and deletion, referenced form relationships | No mail replay; submission attachments and arbitrary extensions excluded |
+| **Flamingo** | Received inquiries, fields/channels, later edits, spam/ham, Trash/restore and permanent deletion | No address-book or attachment recovery; request-end capture; deleting a form does not delete its inquiries |
+| **WP-Members** | Core subscriber accounts, configured fields, approval, core settings and post/page restrictions; saved password hashes enable login | No privileged/custom roles, paid extensions, CAPTCHA secrets, sessions or profile-file uploads. Unrelated destination account collisions are rejected; administrators preserved |
+| **TablePress** | Core tables, IDs, cells, options/visibility, display settings, add/update/delete and ID changes; article shortcodes | No premium modules, arbitrary external imports, personal editor preferences or same-table concurrency guarantee; restored custom CSS uses inline mode |
 
-1. Install and activate Ozeki Markdown Documents and this plugin on WordPress (PHP 8.1+, InnoDB posts/postmeta/options).
-2. Supply AWS credentials using the AWS SDK default provider on the server (for example an instance role or environment). Never put secrets into the document or S3 metadata.
-3. Open **Tools → Resilience**. Set bucket, region, a dedicated prefix ending with `/`, optionally expected account owner and Object Lock retention days. Enable versioning in the bucket. An existing Object Lock bucket is required when specifying retention. This plugin does not change bucket policies, lifecycle or retention of existing versions.
-4. Allow prefix-scoped ListBucket, GetObject/GetObjectVersion and PutObject. Object Lock writes additionally need PutObjectRetention. Saving and recovery do not need deletion rights. Optional cleanup needs separately reviewed version-deletion and lock-inspection rights (docs/checkpoints.md); never grant retention bypass. Use exactly one writing WordPress per prefix. A recovery installation can use a read-only role.
-5. Enable protection. Use **Markdown Documents → Add New / Edit**, the usual Markdown field and WordPress Publish/Update buttons.
+Tested optional versions include CF7 **6.2.3**, Flamingo **2.6.4**, WP-Members **3.5.8.1** and TablePress **3.4.1**. They are separately installed, not bundled in the Resilience ZIP. Capture a new trusted baseline after changing recorded runtime software; version compatibility is not inferred from a successful earlier test.
 
-For a supported save, complete `.md` and metadata are uploaded first. WordPress applies and verifies the source and attributes in an InnoDB transaction. Successful operation history is then written to S3 in confirmation order. Neither Markdown nor Mermaid, formula or code syntax is translated into another storage format. Each version is complete; there are no content deltas and no whole-site manifest on each save.
+The **initial snapshot** also captures supported uploads (including the tested PDF), theme/parent theme, menus, templates, navigation, global styles and selected settings. This does **not** mean later changes to those resources are automatically tracked. Theme/menu/template/taxonomy changes and unsupported plugin settings need a new trusted baseline. Not every installed plugin is covered.
 
-```
-<prefix>/originals/<document-uuid>/<operation-uuid>/source.md
-<prefix>/originals/<document-uuid>/<operation-uuid>/metadata.json
-<prefix>/history/00000000000000000001.json
-```
+## Prepare and use
 
-Download `source.md` at its recorded VersionId with ordinary S3 tools. It is readable without this plugin. History pins raw and metadata versions and SHA-256 values. Failed attempts can leave unadopted originals; those are not formal recovery candidates. Optional dependency-aware cleanup is described in docs/checkpoints.md; it is disabled by default.
+1. Install the dedicated product ZIP in WordPress. The plugin declares WordPress 6.4+ and PHP 8.1+; this is not a test claim for every combination. The tested CF7 6.2.3 requires PHP 8.3+. Use InnoDB for managed content tables, ZipArchive and writable resource directories. Install the plugins required for the content you use.
+2. Configure normal AWS SDK credentials on the server, preferably an EC2 instance role where available. No SSH credential helper, Python worker, shared bridge, Docker or custom editor is required by the product. Docker was used only as a test environment.
+3. In **Tools → Resilience**, set bucket, region, dedicated prefix ending in `/` and optionally expected account owner/retention days. Enable S3 versioning. Specifying Object Lock retention requires a suitably configured existing bucket; the plugin does not configure IAM or bucket policies.
+4. Grant prefix-scoped listing, fixed-version reads and writes (`ListBucket`, `GetObject`, `GetObjectVersion`, `PutObject`); Object Lock writes additionally require `PutObjectRetention`. Normal saving/recovery needs no delete or retention-bypass permission. Use one writing WordPress per prefix; the destination can use read-only S3 access.
+5. Resolve pending history, pause source editing and create a trusted **complete site initial snapshot**. Enable protection for subsequent supported operations. Continue using normal WordPress/plugin interfaces.
+6. Use the **site-wide** controls to create a manual complete Checkpoint. The older supplementary asset Checkpoint is not a complete site snapshot. Scheduled execution remains deferred.
+7. Prepare a designated destination with a different URL, compatible WordPress release line, required plugins and S3 access; disable its write protection. Under **Site-wide recovery — primary workflow**, select a complete snapshot/Checkpoint and use **Restore complete site**. This replaces destination content and presentation state; do not run it on an unrelated active site.
+8. Inspect the recorded result and verify content and required behavior. The administrator decides network exposure separately.
 
-## Failures and recovery
+**Individual recovery is supplementary:** select one formal version per asset under **Confirmed formal history / Individual recovery**. It restores text/attributes and matching identities while leaving unrelated content intact. It does not restore media files, themes, menus, comments or plugin-adapter state; use site-wide recovery for those.
 
-- S3-original failure: the protected WordPress write does not start. Return to the editor and retry.
-- WordPress apply/verification failure: roll back the transaction; no successful history is added.
-- WordPress commit succeeds but formal history write fails: show **history pending**. **Resume history** verifies the applied document and retries the same immutable history key. A lost PUT response is reconciled by reading the existing object. Further protected editing waits for this repair; excluded draft/scheduling operations remain available.
-- If the source is lost before formal history is independently persisted, omit that operation by design. For a new article there is nothing to restore; for an update restore the previous confirmed version. Do not adopt prepared originals. Cross-system atomic commit is not claimed or required.
-- For site recovery, prepare the destination and use **Restore complete site** as described above and in the site-snapshot guide. For text/attribute-only recovery, select one formal version per asset and **Restore selected assets (text and attributes)**. The result lists identity, selected order, new post ID, hash and status. Repeating individual recovery updates that identity rather than duplicating it.
-- Published documents are restored as `publish`. Publication on the internet, server/network access and DNS are the system administrator's responsibility.
+## Failures, retention and limits
 
-Raw Markdown is preserved exactly as received from the normal editor. Normal browser textarea line-ending conversion is not a Resilience conversion. Recorded canonical document URLs are mapped to their new URLs in rendered links, without rewriting raw Markdown. Select the referenced documents as well. Arbitrary old URLs, external resources, embedded shortcodes, relative URL conventions and arbitrary plugin-specific relations are not a general migration engine.
+- Protected article original-storage failure prevents confirmed WordPress application; application/verification failure rolls back managed transactional data. Native editing keeps WordPress's standard editing controls; the additional stale-form token applies to the Markdown full editor.
+- For post-success adapters, the source change can already be visible when S3 fails. **Resume history** retries frozen pending data; article confirmation checks the applied state. Do not claim all adapters intercept before the source write.
+- A surviving source can resume pending history. Source loss with pending history does not make the final unconfirmed change recoverable. Cross-system atomic commit is not claimed.
+- Keep the complete selected Checkpoint and every resource/history record needed after it. Older ancestors are unnecessary only once an independent complete recovery point and its tail are safely retained. Do not prune required versions with an unrelated lifecycle rule.
+- Cleanup is optional and disabled by default. The existing supplementary asset-path cleanup has contract tests, not real-S3 deletion acceptance or a general complete-site cleanup guarantee. Do not infer scheduled complete-site operation from an asset-path timer. See the separate [asset Checkpoint/cleanup scope](docs/checkpoints.md).
+- Source text is limited to 5 MiB valid UTF-8 without NUL. History listing scans the dedicated prefix and targets small deployments. Multiple writing installations and arbitrary concurrent changes to the same asset are unsupported.
+- No universal plugin compatibility, server provisioning, network cutover, complete scheduling-state recovery or automatic replica synchronization. Source AWS/SMTP configuration, administrator credentials and sessions are not imported. WP-Members subscriber password hashes are an explicit supported exception to exclusion of account credentials.
+- Recovery verifies resources before replacement and rolls back handled write failures. Process-kill recovery and automatic rollback after abrupt termination are not accepted guarantees. Arbitrary external side effects during save and untested object-cache combinations are not covered.
 
-## Retention and limits
+## Evidence and issue classification
 
-An original, its metadata and formal history use the same optional retention cutoff for that operation. Referenced files must remain available for recovery; do not configure lifecycle expiration that removes needed versions. Retention extension remains out of scope. Optional cleanup preserves the latest complete baseline and every retained recovery chain; see docs/checkpoints.md. Independent snapshots and Checkpoints are described in docs/checkpoints.md; their acceptance status is separate from original M1 acceptance. The history listing currently scans the dedicated prefix and is intended for small deployments. Maximum source size is 5 MiB, valid UTF-8 without NUL. Stale normal editor forms are rejected before S3 writes. Concurrent writers from separate WordPress installations to one prefix are unsupported.
+[Combined final-ZIP acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/combined-final-m1-031.md): fresh install and update preserved settings/history; both installations reconstructed one real-S3 Checkpoint through 21 plus confirmed history through 29. Posts/Pages, images, comments, forms/receipts, member login/restrictions and tables matched. ZIP installation tests used extraction/activation and overwrite update, not browser Plugin_Upgrader. PHP 8.1/8.3 contract CI passed for the PR #26 code.
 
-Normal authenticated Markdown editing and standard WordPress page/post saves now share S3-first complete-original storage and formal history. Native block HTML remains a complete `source.html`; Markdown remains `source.md`. Trash and untrash state changes are recorded for protected assets (or previously published assets). Whole-site Checkpoint recovery replays these records, including trash, without republishing removed articles. This is not continuous destination synchronization: recovery is explicitly invoked.
+[TablePress browser acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/tablepress-browser-acceptance.md) additionally covers standard-editor add/update/delete and recovered search/sort/pagination. It does not establish browser acceptance for every adapter. [Native editor acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/native-m1-031.md) covers standard editing and images in Chrome; the in-app browser's blank editor iframe is a separate unresolved browser issue.
 
-The integration covers body, title, slug, publication state, dates, excerpt, parent/order and discussion settings. Image upload/sideload originals are saved to S3 before WordPress registration. Publishing a native post/page binds referenced local images (original and generated sizes, attachment data and alt text) to that successful version; whole-site replay restores these files from S3 and rebases internal URLs. Replacing an image means selecting another image file, not overwriting an existing binary through a third-party plugin. Unused media-library entries, external/CDN images, featured-image changes, taxonomy changes, plugin-specific metadata and arbitrary dynamic block dependencies are not covered by this extension. Existing baseline resources remain available. Article permanent deletion/empty-trash propagation, full recovery of unpublished drafts, scheduling state and automatic protection when a scheduled post publishes remain outside this acceptance. Stale-form rejection is currently provided for the Markdown full editor; native editing retains WordPress's standard controls rather than an additional Resilience version token.
+**Product correction:** CF7's exact known deny-all `uploads/wpcf7_uploads/.htaccess` is preserved. Other control/executable files remain rejected. **Environment/test infrastructure:** dm memory limits, proxy/fixture URL configuration, a reused test DB prefix and standalone test paths are recorded separately; they are not new product dependencies. Mail sending, scheduled execution, real-S3 cleanup and formal release remain deferred.
 
-Other exclusions: full standard posts/pages support, general attachments/media-library reconstruction beyond the image path above, business CSV/Excel data, arbitrary third-party plugins, automatic site provisioning, network cutover, legacy migration, advanced monitoring and a standing recovery server. Hooks that commit transactions or perform external side effects during saves are not covered by database rollback. WordPress object-cache compatibility beyond the tested stack needs separate validation.
+## Detailed documentation and history
 
-## Packaging and evidence
+[Complete site recovery](docs/site-snapshot.md) · [Comments](docs/comments.md) · [Forms](docs/forms.md) · [Membership](docs/members.md) · [TablePress](docs/tablepress.md) · [Combined scope](docs/combined.md)
 
-The release ZIP contains this plugin and its existing AWS SDK for PHP dependency; acceptance helpers are excluded. Ozeki Markdown Documents remains a separate dependency. See `docs/contract.md` and the acceptance report for measured results and outstanding conditions. No test outcome is implied by this specification.
-
-## Checkpoints
-
-See [Independent snapshots](docs/checkpoints.md) for complete raw files, attributes and inventories and Checkpoint-plus-history recovery. This addition is under integration validation; do not infer live acceptance from this description.
-
-## Comments (current working addition)
-
-Core comments on published/protected posts, pages and Markdown documents now
-have complete JSON originals and confirmation-ordered S3 history. Creation,
-editing, moderation, trash/untrash and permanent deletion are replayed by
-**Restore complete site**, including reply relationships and approved counts.
-The adapter freezes the successful operation payload; it does not re-fetch a
-comment by ID to create the original. WordPress storage, S3 storage and formal
-history must all succeed for recovery confirmation. Core insert/status hooks
-supply persisted-result snapshots, not a pre-write input interception. Failed
-S3 writes remain pending for **Resume history**, using the same frozen data. If the
-source is lost before confirmation, restore the previous confirmed state.
-Individual text recovery does not restore comments. See [scope and evidence](docs/comments.md).
-
-## Contact Form 7 and Flamingo
-
-Completed form definitions and received inquiries now use complete JSON originals,
-shared formal history and complete-site recovery. Install the recorded versions of
-both optional plugins at the destination. Failed storage can resume from its frozen
-payload; recovery never resubmits mail. Received-message edits, spam/ham, trash/
-restore and permanent deletion, plus CF7 form deletion, are also recorded. Receipt
-changes are frozen at request completion, after Flamingo writes its metadata.
-Attachments and address-book entries remain excluded. See [contract and limits](docs/forms.md).
-
-### Validated environment and separate product correction
-
-This form adapter was verified with Contact Form 7 6.2.3 and Flamingo 2.6.4 on
-PHP 8.3.36. The plugins are installed separately and are not bundled in this ZIP.
-The tested Contact Form 7 version requires PHP 8.3 or later.
-
-The dm test container's 192 MiB memory cap caused OOM termination during recovery.
-The existing container was adjusted to 320 MiB (memory plus swap limit 640 MiB),
-after which recovery completed without further OOM kills. This is a measured lab
-configuration, not a universal minimum or a resource change made by the plugin.
-Separately, the product now restores an unmapped author as ID 0 instead of using
-the recovery operator's ID, so that result does not depend on who runs recovery.
-Flamingo's own maintenance event is separate from deferred Resilience scheduling.
-
-Lifecycle scope: multiple writes to one inquiry in one request are coalesced into
-its final state. Process loss before request-end capture and simultaneous changes
-to the same asset are not guaranteed. Only confirmed history is recoverable.
-Deleting a form does not delete its inquiries or rewrite pages using its shortcode.
-WordPress deletion does not erase retained S3 originals.
-
-Lifecycle validation used normal plugin PHP APIs and request shutdown, not browser
-clicks. Metadata double-serialization in a comparison and a missing shell argument
-were test-harness corrections, not product fixes. The existing dm OOM counter did
-not increase. See the forms contract for measured acceptance and remaining limits.
-
-## WP-Members
-
-The membership adapter connects WP-Members core subscriber accounts, configured
-profile fields, approval state, core settings and per-post/page restrictions to
-S3 originals and formal history. Complete-site recovery restores login using the
-saved WordPress password hash; it preserves destination administrators and rejects
-unrelated login/email collisions. No mail or sessions are replayed. Create a new
-trusted baseline with WP-Members active, and install its recorded version at the
-destination. Changes are captured at request completion; only confirmed history
-is recoverable. Paid membership extensions, privileged/custom roles, CAPTCHA
-secrets and profile-file uploads are not covered. See [membership contract](docs/members.md).
-This TablePress candidate also includes the WP-Members adapter. Use the candidate identified by its filename and SHA-256; the version number alone does not distinguish successive 0.3.1 candidates. This is not a formal release.
-
-## TablePress
-
-TablePress free/core tables now have complete JSON originals and shared S3 formal
-history for successful additions, updates, deletion and table-ID changes. An
-initial snapshot with TablePress active includes the ID registry, table options,
-row/column visibility, global display settings and plugin software. Complete-site
-recovery preserves IDs used in article shortcodes. Generated CSS-file caching is
-replaced by TablePress's inline-CSS mode at the destination; the CSS text is kept.
-
-Operations are captured immediately after TablePress's successful callbacks.
-Only S3-confirmed history is recoverable. If S3 fails, the source change can already
-be visible; Resume history retries the frozen payload without adding a duplicate.
-Source loss before confirmation can lose that last change. This is not an S3-first
-interception of TablePress's editor. Do not confuse it with protected article saving.
-
-Validated with TablePress 3.4.1, real S3 and the existing community/dm trial namespaces:
-Checkpoint through 8 plus history 9, exact cells/options/visibility, renamed IDs,
-deleted-table absence, settings and embedded article rendering. Browser inspection
-on wp-backup.ceri.link used an isolated, token-gated trial view of the recovered DB;
-the existing site's articles were not replaced. Table operations used normal PHP
-plugin APIs, not browser editing. At that earlier API-only stage, sorting/search/pagination JS were not tested. Premium modules,
-external data imports, user editor preferences and concurrent same-table writes
-are not acceptance claims. Take a new trusted baseline after changing TablePress's
-version; a later history version inconsistent with the bundled runtime is rejected.
-No scheduler, mail replay or permanent recovery service was introduced. Use `ozeki-wordpress-resilience-0.3.1-tablepress-final.zip`; earlier
-0.3.1 ZIPs do not include this adapter. TablePress itself is installed separately,
-not bundled into the Resilience ZIP. See [TablePress contract](docs/tablepress.md).
-
-## Combined integration and final ZIP
-
-Posts/Pages, images, comments, CF7/Flamingo, WP-Members and TablePress were recovered together from one real-S3 Checkpoint (21) and later history (through 29). Article relationships, image bytes, moderation, form/receipt fields, member login/restriction and table data matched. The combined trial exposed a snapshot rejection of CF7's standard deny-all upload guard; the final ZIP preserves only its exact known path/content while rejecting arbitrary control/executable files. Use `ozeki-wordpress-resilience-0.3.1-combined-final.zip`; the earlier TablePress ZIP does not contain this fix. Mail, scheduled execution and formal release remain deferred. See the repository's docs/releases/combined-site-acceptance.md for measured scope and separate harness issues.
-
-Subsequent standard-browser acceptance covered TablePress add/update/delete and recovered search, sorting and pagination. This does not extend support to premium modules or arbitrary imports. See [combined acceptance and limits](docs/combined.md).
+[Preserved historical README and research instructions](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/archive/readme-before-product-consolidation-20261024/package-en.md). Old 0.2.0 workers, private previews, draft-only targets and signing experiments are not current product requirements. Historical evidence remains available without defining the current product's completion conditions.
