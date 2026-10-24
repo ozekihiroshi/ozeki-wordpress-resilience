@@ -47,6 +47,8 @@ final class SiteSnapshot
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
+        // Include supported form runtimes in a new trusted baseline; no external worker.
+        foreach(FormHistory::DEPENDENCIES as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=[];
         $theme=get_stylesheet();$parent=get_template();
         foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
@@ -98,6 +100,11 @@ final class SiteSnapshot
         $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_form'){
+                $this->store->get($r['original']['metadata']);
+                FormHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
+                $m['required_form_plugins']=$r['attributes']['dependencies'];continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_comment'){
                 $this->store->get($r['original']['metadata']);
                 CommentHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
@@ -140,6 +147,10 @@ final class SiteSnapshot
         if(!empty((new Plugin())->config()['protect'])||get_option('owr_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
         [$m,$files]=$this->load($ref);[$m,$files]=$this->replay($m,$files);$to=home_url();$from=$m['source_url'];
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
+        foreach($m['required_form_plugins']??[] as $plugin=>$version){
+            FormHistory::checkDependency($plugin,$version);
+            if(!in_array($plugin,$m['plugins'],true))$m['plugins'][]=$plugin;
+        }
         $runtime=$GLOBALS['wp_version'];
         if(implode('.',array_slice(explode('.',$m['wordpress']),0,2))!==implode('.',array_slice(explode('.',$runtime),0,2))||version_compare($runtime,$m['wordpress'],'<'))throw new \RuntimeException('Use the recorded WordPress release line with the same or a newer maintenance patch.');
         if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
@@ -163,7 +174,7 @@ final class SiteSnapshot
             $wpdb->query('START TRANSACTION');
             foreach(array_reverse(self::TABLES) as $t)if($wpdb->query('DELETE FROM `'.$wpdb->$t.'`')===false)throw new \RuntimeException('Cannot replace destination content.');
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
-                if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??get_current_user_id();
+                if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??0;
                 if($t==='comments')$row['user_id']=$authors[(string)$row['user_id']]??0;
                 foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
