@@ -39,7 +39,7 @@ final class Plugin
             if(!is_file($file['tmp_name']) || filesize($file['tmp_name'])>32*1024*1024)throw new \RuntimeException('Image exceeds 32 MiB.');
             if(!in_array($mime,['image/jpeg','image/png','image/gif','image/webp','image/avif'],true))throw new \RuntimeException('Unsupported image original.');
             $this->store()->put('image-ingress/'.wp_generate_uuid4().'/'.sanitize_file_name($file['name']),file_get_contents($file['tmp_name']),$mime);
-        }catch(\Throwable $e){$file['error']='Resilience: image not registered: '.$e->getMessage();}
+        }catch(\Throwable $e){$file['error']='Resilience: image not registered: '.$e->getMessage();update_option('owr_m1_notice',$file['error'],false);}
         return $file;
     }
     /** Freeze the images used by this exact body, not the entire media library. */
@@ -184,6 +184,7 @@ final class Plugin
     }
     private function stop(\Throwable $e): never {
         $this->release();
+        update_option('owr_m1_notice','Last article save failed; inspect pending history before retrying the editor. Reason: '.$e->getMessage(),false);
         wp_die(esc_html($e->getMessage()).'<p>WordPress was not confirmed. Return to the editor and retry; check Resilience for pending history.</p>','Resilience',['response'=>409,'back_link'=>true]);
         exit;
     }
@@ -233,8 +234,8 @@ final class Plugin
             $record=['schema'=>'owr-md-history-1','sequence'=>$a['sequence'],'original'=>$a['original'],'attributes'=>$attrs,'confirmed_at'=>gmdate('c')];
             if (!update_option(self::PENDING,['id'=>$id,'fingerprint'=>$this->fingerprint($id),'record'=>$record],false)) throw new \RuntimeException('Cannot persist pending confirmation.');
             $this->commitDb();$this->active=null;
-            try {$this->store()->commit($record);delete_option(self::PENDING);}
-            catch (\Throwable $e) {update_option('owr_m1_notice','WordPress saved; formal S3 history is pending. Use Resume history. No successful history has been assumed.',false);}
+            try {$this->store()->commit($record);delete_option(self::PENDING);delete_option('owr_m1_notice');}
+            catch (\Throwable $e) {update_option('owr_m1_notice','WordPress saved; formal S3 history is pending. Use Resume history. No successful history has been assumed. Reason: '.$e->getMessage(),false);}
             $this->release();
         } catch (\Throwable $e) {$this->active=null;$this->stop($e);}
     }
@@ -404,10 +405,37 @@ final class Plugin
     private function form(string $operation): void {
         echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
     }
+    /** Read-only summary: local pending data is never treated as S3 confirmation. */
+    public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect): void {
+        echo '<h2>Save protection status</h2><p>Protection setting: '.($protect?'Enabled':'Disabled').'. This setting alone does not prove that all site changes are protected.</p>';
+        if($history===null)echo '<p role="alert">S3 formal history could not be read. Last confirmation is unknown: '.esc_html($readError).'</p>';
+        elseif(!$history)echo '<p>No confirmed formal history in this prefix. This does not mean no snapshot exists.</p>';
+        else {
+            $last=$history[count($history)-1];
+            echo '<table class="widefat striped"><tbody>';
+            foreach(['Last confirmed sequence'=>$last['sequence']??'Unknown','Confirmed at (UTC)'=>$last['confirmed_at']??'Not recorded','Asset'=>$last['original']['asset']??'Not recorded','Title'=>$last['attributes']['title']??'Not recorded','Recorded state'=>$last['attributes']['status']??'Not recorded'] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
+            echo '</tbody></table>';
+        }
+        $count=($pending?1:0)+count($queue);
+        echo '<p>Locally pending operations: '.(int)$count.'</p>';
+        if($count){
+            echo '<p role="alert"><strong>Resume history required.</strong> These operations are not confirmed for recovery. Resume uses the existing saved payload and article-state checks; do not create a replacement operation to bypass a failure.</p><table class="widefat striped"><tr><th>Operation / asset</th><th>Type</th><th>Title / state</th></tr>';
+            $entries=$queue;if($pending)$entries=['article'=>$pending['record']??[]]+$entries;
+            foreach($entries as $key=>$entry){$a=$entry['attributes']??[];$o=$entry['original']??[];echo '<tr><td>'.esc_html((string)($entry['operation']??$o['operation']??$key)).' / '.esc_html((string)($entry['asset']??$o['asset']??'Not recorded')).'</td><td>'.esc_html((string)($a['post_type']??'Not recorded')).'</td><td>'.esc_html((string)($a['title']??'Not recorded')).' / '.esc_html((string)($a['status']??'Not recorded')).'</td></tr>';}
+            echo '</table>';
+        }else echo '<p>No locally pending operations. This is not a guarantee of unsupported changes or operations lost before local capture.</p>';
+        foreach(['Last recorded article/image save notice'=>$notice,'Shared adapter queue: last recorded error'=>$queueError] as $label=>$value)if($value!=='')echo '<p role="alert">'.esc_html($label).': '.esc_html($value).'</p>';
+        if($count && $notice==='' && $queueError==='')echo '<p>No failure reason was recorded; pending state still requires inspection and resume.</p>';
+        echo '<p>Recovery adopts only confirmed S3 history. If the source is lost before confirmation, omit that operation. An old error alone does not establish a current pending operation. Checkpoint, recovery and other administration errors are shown separately below.</p>';
+    }
     public function page(): void {
         if (!current_user_can('manage_options')) return;
         echo '<div class="wrap"><h1>Resilience — Site recovery</h1><p>Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.</p>';
         echo '<h2>Recovery boundary</h2><p>Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.</p><p>Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.</p>';
+        $history=null;$historyReadError='';
+        try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
+        self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('owr_m1_comment_pending',[]),(string)get_option('owr_m1_notice',''),(string)get_option('owr_m1_comment_error',''),!empty($this->config()['protect']));
+        if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button('Resume history');echo '</form>';}
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>WordPress applied; S3 formal history pending.</strong> This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.</p>';
         if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';
         echo '<h2>Site-wide recovery — primary workflow</h2><p>Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.</p><p>Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.</p>';
@@ -448,7 +476,7 @@ final class Plugin
         echo '<h2>Contact Form 7 and Flamingo</h2><p>Completed form definitions and received Flamingo messages use independent JSON originals and the shared pending-history queue. Use complete site recovery with the recorded versions of both plugins installed. Message storage and mail delivery are separate; recovery imports records without sending mail. Received-message edits, spam/ham, trash/restore and permanent deletion, and form deletion are recorded. Received-message changes are captured at request completion. Attachments and address-book entries are outside this adapter.</p>';
         echo '<h2>Confirmed formal history / Individual recovery</h2><p>This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.</p>';
         try {
-            $history=$this->store()->history();$this->form('restore');echo '<table class="widefat"><tr><th>Select</th><th>Order</th><th>Document</th><th>Status</th><th>Raw S3 original</th></tr>';
+            if($history===null)throw new \RuntimeException($historyReadError);$this->form('restore');echo '<table class="widefat"><tr><th>Select</th><th>Order</th><th>Document</th><th>Status</th><th>Raw S3 original</th></tr>';
             foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html($row['attributes']['title']).'</td><td>'.esc_html($row['attributes']['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
             echo '</table>';submit_button('Restore selected assets (text and attributes)');echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
