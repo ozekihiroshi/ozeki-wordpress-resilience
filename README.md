@@ -1,5 +1,26 @@
 # Ozeki WordPress Resilience
 
+## Current product path: 0.3.1 independent originals and recovery
+
+The completion-charter v2 product is developed independently under
+[`packages/markdown-m1`](packages/markdown-m1/README.md). It connects normal
+Ozeki Markdown Documents editing to complete `.md` originals and successful
+asset-level history in S3, then reconstructs documents in a new WordPress.
+It does not require the research worker, bridge, Docker runtime or custom editor.
+The M1 package and its dedicated ZIP are the product entry point; the root
+0.2.0 plugin and the material below remain preserved research implementations,
+not dependencies or constraints of the M1 product. M1 does not yet cover the
+entire completion charter. See its scope, failure handling and acceptance report.
+
+The current package also protects ordinary Pages/Posts and referenced local
+images through standard WordPress editing. Complete site baseline plus S3
+history recovery, fresh installation and update acceptance are documented in
+[the 0.3.1 review and validation record](docs/releases/native-m1-031.md).
+Use the dedicated 0.3.1 ZIP, not the root research plugin. Browser-environment
+limitations, unsupported changes and deferred scheduling are listed separately.
+
+## Preserved pre-M1 research documentation
+
 ## Native editing integration (current working change)
 
 The standard WordPress block editor is now connected to the existing S3-first

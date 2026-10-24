@@ -27,6 +27,12 @@ jobs:
           composer install --no-interaction --prefer-dist --no-progress
           python3 -m venv /tmp/owr-ci-venv
           /tmp/owr-ci-venv/bin/pip install -r requirements-dev.txt
+      - name: Independent M1 package contracts
+        run: |
+          find packages/markdown-m1/src -name '*.php' -exec php -l {} \;
+          php -l packages/markdown-m1/ozeki-wordpress-resilience.php
+          php packages/markdown-m1/tests/checkpoint.php packages/markdown-m1
+          php packages/markdown-m1/tests/cleanup.php packages/markdown-m1
       - name: Verify contracts without private fixtures or cloud access
         run: |
           test ! -e .local
