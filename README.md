@@ -10,7 +10,7 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-native-details-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-save-status-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -83,7 +83,14 @@ The **initial snapshot** also captures supported uploads (including the tested P
 
 ## Native article details
 
-Permanent article deletion, featured-image selection/replacement/removal and category/tag assignment/removal now join confirmed S3 history and site-wide replay. The extension captures successful final operation state; it does not change article-body S3-first saving. Required thumbnail files and new category ancestors are preserved. Included in this native-details-final candidate. Global taxonomy administration, menu/front-page/sticky cleanup and arbitrary metadata remain excluded. See [scope and measured acceptance](packages/markdown-m1/docs/native-details.md).
+Permanent article deletion, featured-image selection/replacement/removal and category/tag assignment/removal now join confirmed S3 history and site-wide replay. The extension captures successful final operation state; it does not change article-body S3-first saving. Required thumbnail files and new category ancestors are preserved. Included in this candidate. Global taxonomy administration, menu/front-page/sticky cleanup and arbitrary metadata remain excluded. See [scope and measured acceptance](packages/markdown-m1/docs/native-details.md).
 ## Recovery result display
 
 The site-wide result shows success, failure or completion unconfirmed; the exact Checkpoint key and S3 Version ID; the Checkpoint history boundary and subsequent applied history range/count; restored post records and files written/replaced. Detailed JSON retains the latest attempt and last successful result. Post counts include all post types, not only public articles; unchanged files may be reused, so zero writes does not mean no recovered files. Failure/unfinished attempts do not reuse prior success counts and do not prove zero changes or completed rollback. A missing Checkpoint listing is reported as unavailable, not inferred. This local administrative result is not S3 formal history and is not a complete audit log.
+
+
+## Save status
+
+The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
+
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-save-status/ozeki-wordpress-resilience-0.3.1-save-status-final.zip)
