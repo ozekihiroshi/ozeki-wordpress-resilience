@@ -1,0 +1,98 @@
+{
+  "checkpoint_through": 33,
+  "phases": [
+    45,
+    49,
+    56
+  ],
+  "native_records": [
+    {
+      "sequence": 43,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 0,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 45,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 0,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 47,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 20,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 49,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 20,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 51,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 28,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 53,
+      "id": 21,
+      "deleted": false,
+      "thumbnail": 28,
+      "assigned": [
+        "4",
+        "8"
+      ]
+    },
+    {
+      "sequence": 55,
+      "id": 10,
+      "deleted": false,
+      "thumbnail": 0,
+      "assigned": [
+        "1"
+      ]
+    },
+    {
+      "sequence": 56,
+      "id": 10,
+      "deleted": true,
+      "thumbnail": 0,
+      "assigned": []
+    }
+  ],
+  "source_body_unchanged": true,
+  "confirmed_history": 56,
+  "pending": false,
+  "destination_image_and_taxonomy_and_deletion_match": true,
+  "browser_actions": "Chrome standard editor and Posts/Trash",
+  "recovery": "existing product SiteSnapshot::restore in isolated dm namespace",
+  "destination_standard_admin_login": "PASS after targeted trial-administrator activation; initial blocked result preserved in report",
+  "mail_sending": false,
+  "scheduled_execution": false,
+  "formal_release": false,
+  "product_changed": false,
+  "administrator_followup": "docs/releases/administrator-activation-acceptance.md"
+}
