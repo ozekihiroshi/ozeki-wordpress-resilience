@@ -94,3 +94,5 @@
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
 [Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-save-status/ozeki-wordpress-resilience-0.3.1-save-status-final.zip)
+
+[履歴再開の運用手順](docs/save-resume.md)と[検証結果](../../docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。この文書更新で検証済みZIPは変更しません。
