@@ -10,17 +10,13 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** under `packages/markdown-m1`. The directory name is historical: coverage now extends beyond Markdown. The latest reviewed candidate is [combined-final ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261024-combined/ozeki-wordpress-resilience-0.3.1-combined-final.zip), with [manifest and validation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261024-combined/validation.json). It includes all adapters listed below and the CF7 upload-guard correction.
-
-SHA-256: `afbdf0844940569a494e7cd965734d75f6f0f04c810950024d610934787468f2`
-
-This candidate was merged in PR #26; formal release is deferred. Several older candidates also use version 0.3.1, so identify the package by filename and hash. This README consolidation changes documentation only: the tested ZIP still contains its original, pre-consolidation documentation. Do not install the root 0.2.0 research plugin or external research runtime kit as the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-native-details-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
 1. **Establish a trusted starting point.** The administrator judges the existing site suitable, pauses editing and creates a complete initial snapshot. It contains supported content, files, presentation state and selected runtime software.
 2. **Save complete asset versions during normal use.** Markdown stays readable `.md`; native post/page bodies are complete HTML; supported adapter records use JSON; media remains files. Each update saves a complete version of the affected asset, not a content delta or a new whole-site inventory.
-3. **Confirm successful operations in S3.** Protected article saves store the original before WordPress application. Comments and the supported third-party adapters capture completed operation data instead. In both cases, WordPress persistence, S3 storage and formal-history confirmation must succeed before an operation is recoverable.
+3. **Confirm successful operations in S3.** Protected article saves store the original before WordPress application. Native article detail/deletion operations, comments and the supported third-party adapters capture completed operation data instead. In both cases, WordPress persistence, S3 storage and formal-history confirmation must succeed before an operation is recoverable.
 4. **Create independent Checkpoints.** The complete-site Checkpoint uses the prior S3 baseline and confirmed history, not a fresh read of the live site. It contains its own required resources, rather than only an inventory referencing old ancestors.
 5. **Reconstruct when requested.** Download and verify the selected complete baseline and its subsequent history, then replace supported content on a prepared destination. The old server, old DB and local pending queue are not recovery inputs.
 
@@ -34,7 +30,7 @@ Saved publication state, including `publish`, is reproduced. Internet exposure, 
 
 | Source | Recorded and recovered scope | Important limits |
 |---|---|---|
-| WordPress Posts and Pages | Standard create/publish/update, body, title, slug, recorded attributes, parent/order, discussion settings, Trash/untrash | No complete draft/scheduled-publication guarantee; permanent article deletion, later taxonomy/arbitrary metadata and featured-image changes are outside incremental acceptance |
+| WordPress Posts and Pages | Standard create/publish/update, body, title, slug, recorded attributes, parent/order, discussion settings, Trash/untrash, permanent deletion, featured-image set/replace/remove and category/tag assignments | No complete draft/scheduled-publication guarantee; global term administration, arbitrary metadata and menu/front-page/sticky deletion side effects excluded |
 | Local images | Supported upload originals before registration; referenced originals/generated sizes, attachment information and alt text bound to an article version | JPEG/PNG/GIF/WebP/AVIF; 32 MiB per file. Unused media, external/CDN assets and arbitrary binary overwrite tools are not tracked |
 | Core comments | Addition, edits, moderation, Trash/untrash, permanent deletion, replies and approved counts | Completed-operation capture; restore through site-wide recovery, not individual text recovery |
 | **Ozeki Markdown Documents** | Normal editor; complete Markdown source, title, state and supported document links; Mermaid, math and code syntax preserved | Separate plugin required for Markdown and the current supplementary text-recovery path. Rendering needs compatible plugin/runtime; arbitrary external links and plugin relations are not a general migration guarantee |
@@ -45,7 +41,7 @@ Saved publication state, including `publish`, is reproduced. Internet exposure, 
 
 Tested optional versions include CF7 **6.2.3**, Flamingo **2.6.4**, WP-Members **3.5.8.1** and TablePress **3.4.1**. They are separately installed, not bundled in the Resilience ZIP. Capture a new trusted baseline after changing recorded runtime software; version compatibility is not inferred from a successful earlier test.
 
-The **initial snapshot** also captures supported uploads (including the tested PDF), theme/parent theme, menus, templates, navigation, global styles and selected settings. This does **not** mean later changes to those resources are automatically tracked. Theme/menu/template/taxonomy changes and unsupported plugin settings need a new trusted baseline. Not every installed plugin is covered.
+The **initial snapshot** also captures supported uploads (including the tested PDF), theme/parent theme, menus, templates, navigation, global styles and selected settings. This does **not** mean later changes to those resources are automatically tracked. Theme/menu/template/global taxonomy administration changes and unsupported plugin settings need a new trusted baseline. Not every installed plugin is covered.
 
 ## Prepare and use
 
@@ -84,3 +80,7 @@ The **initial snapshot** also captures supported uploads (including the tested P
 [Complete site recovery](docs/site-snapshot.md) · [Comments](docs/comments.md) · [Forms](docs/forms.md) · [Membership](docs/members.md) · [TablePress](docs/tablepress.md) · [Combined scope](docs/combined.md)
 
 [Preserved historical README and research instructions](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/archive/readme-before-product-consolidation-20261024/package-en.md). Old 0.2.0 workers, private previews, draft-only targets and signing experiments are not current product requirements. Historical evidence remains available without defining the current product's completion conditions.
+
+## Native article details
+
+Permanent article deletion, featured-image selection/replacement/removal and category/tag assignment/removal now join confirmed S3 history and site-wide replay. The extension captures successful final operation state; it does not change article-body S3-first saving. Required thumbnail files and new category ancestors are preserved. Included in this native-details-final candidate. Global taxonomy administration, menu/front-page/sticky cleanup and arbitrary metadata remain excluded. See [scope and measured acceptance](docs/native-details.md).

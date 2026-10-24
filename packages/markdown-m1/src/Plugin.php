@@ -43,7 +43,7 @@ final class Plugin
         return $file;
     }
     /** Freeze the images used by this exact body, not the entire media library. */
-    private function mediaForBody(string $body,Store $store,string $base): array {
+    public function mediaForBody(string $body,Store $store,string $base,?array &$resources=null): array {
         global $wpdb;
         $ids=[];$upload=wp_upload_dir();
         preg_match_all('/(?:wp-image-|"id"\s*:\s*)([0-9]+)/',$body,$matches);
@@ -64,7 +64,8 @@ final class Plugin
             $refs=[];foreach(array_unique($paths) as $path){SiteSnapshot::safePath($path);$full=realpath($upload['basedir'].'/'.$path);
                 if(!$full||!str_starts_with($full,$root.DIRECTORY_SEPARATOR)||!is_file($full)||filesize($full)>32*1024*1024)throw new \RuntimeException('Invalid image resource.');
                 $mime=wp_get_image_mime($full);if(!in_array($mime,['image/jpeg','image/png','image/gif','image/webp','image/avif'],true))throw new \RuntimeException('Invalid image bytes.');
-                $refs['uploads/'.$path]=$store->put($base.'media/'.$path,file_get_contents($full),$mime);
+                if($resources===null)$refs['uploads/'.$path]=$store->put($base.'media/'.$path,file_get_contents($full),$mime);
+                else {$resources['uploads/'.$path]=['body'=>base64_encode(file_get_contents($full)),'type'=>$mime];$refs['uploads/'.$path]=null;}
             }
             $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE ID=%d",$id),ARRAY_A);
             $out[]=['post'=>$row,'meta'=>['_wp_attached_file'=>get_post_meta($id,'_wp_attached_file',true),'_wp_attachment_metadata'=>$meta,'_wp_attachment_image_alt'=>get_post_meta($id,'_wp_attachment_image_alt',true)],'files'=>$refs];
@@ -251,7 +252,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables and article relationships.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables and article relationships.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->get($row['original']['source']);
@@ -265,7 +266,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table history.');
             $source=$store->get($row['original']['source']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];

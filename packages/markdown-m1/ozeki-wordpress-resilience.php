@@ -32,3 +32,6 @@ add_action('plugins_loaded',static function () { (new \Owr\M1\MemberHistory())->
 
 require_once __DIR__.'/src/TableHistory.php';
 add_action('plugins_loaded',static function () { (new \Owr\M1\TableHistory())->boot(); });
+
+require_once __DIR__.'/src/NativeHistory.php';
+add_action('plugins_loaded',static function () { (new \Owr\M1\NativeHistory())->boot(); });

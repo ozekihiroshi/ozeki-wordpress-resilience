@@ -109,6 +109,11 @@ final class SiteSnapshot
         $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_native'){
+                $this->store->get($r['original']['metadata']);
+                self::applyMedia($d,$files,$r['attributes']['media']??[],$this->store);
+                NativeHistory::replay($d,$files,$this->store->get($r['original']['source']),$r['attributes']);continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_table'){
                 $this->store->get($r['original']['metadata']);
                 TableHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
@@ -130,19 +135,7 @@ final class SiteSnapshot
             $a=$r['attributes'];$id=(string)$a['origin_id'];$type=$a['post_type']??'ozmd_document';$found=false;
             if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
             $raw=$this->store->get($r['original']['source']);$this->store->get($r['original']['metadata']);
-            foreach($a['media']??[] as $media){
-                $attachment=$media['post'];$aid=(string)$attachment['ID'];
-                if($attachment['post_type']!=='attachment'||!str_starts_with($attachment['post_mime_type'],'image/'))throw new \RuntimeException('Invalid image record.');
-                foreach($media['files'] as $path=>$ref){self::safePath($path);if(!str_starts_with($path,'uploads/')||!preg_match('/\.(jpe?g|png|gif|webp|avif)$/i',$path))throw new \RuntimeException('Invalid image path.');$files[$path]=$this->store->get($ref);}
-                $exists=false;foreach($d['tables']['posts'] as &$ap)if((string)$ap['ID']===$aid){if($ap['post_type']!=='attachment')throw new \RuntimeException('Image identity conflict.');$ap=$attachment;$exists=true;}unset($ap);
-                if(!$exists)$d['tables']['posts'][]=$attachment;
-                foreach($media['meta'] as $key=>$value){
-                    if(!in_array($key,['_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt'],true))throw new \RuntimeException('Unexpected image metadata.');
-                    $value=is_array($value)?serialize($value):$value;$exists=false;
-                    foreach($d['tables']['postmeta'] as &$am)if((string)$am['post_id']===$aid&&$am['meta_key']===$key){$am['meta_value']=$value;$exists=true;}unset($am);
-                    if(!$exists){$next=max(array_merge([0],array_map('intval',array_column($d['tables']['postmeta'],'meta_id'))))+1;$d['tables']['postmeta'][]=['meta_id'=>(string)$next,'post_id'=>$aid,'meta_key'=>$key,'meta_value'=>$value];}
-                }
-            }
+            self::applyMedia($d,$files,$a['media']??[],$this->store);
             $values=['post_title'=>$a['title'],'post_name'=>$a['slug'],'post_status'=>$a['status'],'post_date'=>$a['date'],'post_date_gmt'=>$a['date_gmt']];
             if($type!=='ozmd_document')$values['post_content']=$raw;
             foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)if(isset($a[$key]))$values[$key]=$a[$key];
@@ -158,6 +151,21 @@ final class SiteSnapshot
             }else $files['posts/'.$id.'.html']=$raw;
         }
         $files['content.json']=Store::json($d);$m['through']=$through;$m['origin']='confirmed_s3';return [$m,$files];
+    }
+    public static function applyMedia(array &$d,array &$files,array $mediaRecords,Store $store): void {
+            foreach($mediaRecords as $media){
+                $attachment=$media['post'];$aid=(string)$attachment['ID'];
+                if($attachment['post_type']!=='attachment'||!str_starts_with($attachment['post_mime_type'],'image/'))throw new \RuntimeException('Invalid image record.');
+                foreach($media['files'] as $path=>$ref){self::safePath($path);if(!str_starts_with($path,'uploads/')||!preg_match('/\.(jpe?g|png|gif|webp|avif)$/i',$path))throw new \RuntimeException('Invalid image path.');$files[$path]=$store->get($ref);}
+                $exists=false;foreach($d['tables']['posts'] as &$ap)if((string)$ap['ID']===$aid){if($ap['post_type']!=='attachment')throw new \RuntimeException('Image identity conflict.');$ap=$attachment;$exists=true;}unset($ap);
+                if(!$exists)$d['tables']['posts'][]=$attachment;
+                foreach($media['meta'] as $key=>$value){
+                    if(!in_array($key,['_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt'],true))throw new \RuntimeException('Unexpected image metadata.');
+                    $value=is_array($value)?serialize($value):$value;$exists=false;
+                    foreach($d['tables']['postmeta'] as &$am)if((string)$am['post_id']===$aid&&$am['meta_key']===$key){$am['meta_value']=$value;$exists=true;}unset($am);
+                    if(!$exists){$next=max(array_merge([0],array_map('intval',array_column($d['tables']['postmeta'],'meta_id'))))+1;$d['tables']['postmeta'][]=['meta_id'=>(string)$next,'post_id'=>$aid,'meta_key'=>$key,'meta_value'=>$value];}
+                }
+            }
     }
     public function restore(array $ref,bool $replace,string $work): array {
         global $wpdb;
