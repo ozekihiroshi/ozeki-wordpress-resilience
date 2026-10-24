@@ -32,6 +32,7 @@ final class SiteSnapshot
         foreach(self::OPTIONS as $k)$data['options'][$k]=get_option($k);
         foreach($wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'widget_%' OR option_name LIKE 'theme_mods_%'") as $k)$data['options'][$k]=get_option($k);
         foreach(array_unique(array_column($data['tables']['posts'],'post_author')) as $id){$u=get_userdata((int)$id);if($u)$data['authors'][(string)$id]=['display_name'=>$u->display_name,'user_nicename'=>$u->user_nicename];}
+        if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         return $data;
     }
     private function files(string $root,string $prefix,array &$out): void {
@@ -48,7 +49,7 @@ final class SiteSnapshot
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         // Include supported form runtimes in a new trusted baseline; no external worker.
-        foreach(FormHistory::DEPENDENCIES as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
+        foreach(array_merge(FormHistory::DEPENDENCIES,[MemberHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=[];
         $theme=get_stylesheet();$parent=get_template();
         foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
@@ -71,7 +72,7 @@ final class SiteSnapshot
         $manifest=['schema'=>'owr-site-snapshot-1','origin'=>'administrator_initial','source_url'=>home_url(),
             'wordpress'=>$GLOBALS['wp_version'],'php'=>PHP_VERSION,'through'=>$state['through'],'plugins'=>$plugins,
             'software_hashes'=>$hashes,'excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
-            'excluded'=>'Credentials, users/passwords, cron queues, mail transport and admin-only plugin settings; source author display names are preserved.'];
+            'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
         return $this->save($files,$manifest);
     }
     public function save(array $files,array $manifest): array {
@@ -100,6 +101,10 @@ final class SiteSnapshot
         $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_member'){
+                $this->store->get($r['original']['metadata']);
+                MemberHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_form'){
                 $this->store->get($r['original']['metadata']);
                 FormHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
@@ -155,6 +160,7 @@ final class SiteSnapshot
         if(implode('.',array_slice(explode('.',$m['wordpress']),0,2))!==implode('.',array_slice(explode('.',$runtime),0,2))||version_compare($runtime,$m['wordpress'],'<'))throw new \RuntimeException('Use the recorded WordPress release line with the same or a newer maintenance patch.');
         if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         foreach(self::TABLES as $t){if(!isset($d['tables'][$t]))throw new \RuntimeException('Missing table '.$t);$engine=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$wpdb->$t));if(strtolower($engine->Engine??'')!=='innodb')throw new \RuntimeException('Transactional tables required.');}
         file_put_contents($work.'/software.zip',$files['software.zip']);$zip=new \ZipArchive();if($zip->open($work.'/software.zip')!==true)throw new \RuntimeException('Invalid software bundle.');$program=[];
         for($i=0;$i<$zip->numFiles;$i++){$p=$zip->getNameIndex($i);self::safePath($p);if(!isset($m['software_hashes'][$p])||!preg_match('~^(themes|plugins)/~',$p))throw new \RuntimeException('Unexpected program path.');$body=$zip->getFromIndex($i);if(!hash_equals($m['software_hashes'][$p],hash('sha256',$body)))throw new \RuntimeException('Software mismatch.');$program[$p]=$body;}$zip->close();
@@ -172,6 +178,7 @@ final class SiteSnapshot
             // Imported authors have no login identity from the lost system and no capabilities.
             $authors=[];foreach($d['authors'] as $id=>$a){$login='owr-author-'.substr(hash('sha256',$from.'|'.$id),0,20);$u=get_user_by('login',$login);$uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$a['display_name'],'user_nicename'=>$a['user_nicename'],'role'=>'']);if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());$authors[(string)$id]=$uid;}
             $wpdb->query('START TRANSACTION');
+            if(isset($d['membership']))$authors=MemberHistory::install($d['membership'],$memberPlan,$from,$to)+$authors;
             foreach(array_reverse(self::TABLES) as $t)if($wpdb->query('DELETE FROM `'.$wpdb->$t.'`')===false)throw new \RuntimeException('Cannot replace destination content.');
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
                 if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??0;

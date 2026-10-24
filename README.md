@@ -38,6 +38,20 @@ confirmed deletion during whole-site recovery. Use the [lifecycle candidate and
 validation record](docs/releases/form-lifecycle-m1-031.md); PR #22's earlier ZIP
 does not include these operations. Scope and exclusions are in the package READMEs.
 
+
+## WP-Members
+
+The membership adapter connects WP-Members core subscriber accounts, configured
+profile fields, approval state, core settings and per-post/page restrictions to
+S3 originals and formal history. Complete-site recovery restores login using the
+saved WordPress password hash; it preserves destination administrators and rejects
+unrelated login/email collisions. No mail or sessions are replayed. Create a new
+trusted baseline with WP-Members active, and install its recorded version at the
+destination. Changes are captured at request completion; only confirmed history
+is recoverable. Paid membership extensions, privileged/custom roles, CAPTCHA
+secrets and profile-file uploads are not covered. See [membership contract](packages/markdown-m1/docs/members.md).
+Use the WP-Members final candidate ZIP; earlier 0.3.1 ZIPs do not contain this adapter. This candidate is not a formal release.
+
 ## Preserved pre-M1 research documentation
 
 ## Native editing integration (current working change)

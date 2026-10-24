@@ -122,3 +122,16 @@ Lifecycle validation used normal plugin PHP APIs and request shutdown, not brows
 clicks. Metadata double-serialization in a comparison and a missing shell argument
 were test-harness corrections, not product fixes. The existing dm OOM counter did
 not increase. See the forms contract for measured acceptance and remaining limits.
+
+## WP-Members
+
+The membership adapter connects WP-Members core subscriber accounts, configured
+profile fields, approval state, core settings and per-post/page restrictions to
+S3 originals and formal history. Complete-site recovery restores login using the
+saved WordPress password hash; it preserves destination administrators and rejects
+unrelated login/email collisions. No mail or sessions are replayed. Create a new
+trusted baseline with WP-Members active, and install its recorded version at the
+destination. Changes are captured at request completion; only confirmed history
+is recoverable. Paid membership extensions, privileged/custom roles, CAPTCHA
+secrets and profile-file uploads are not covered. See [membership contract](docs/members.md).
+Use the WP-Members final candidate ZIP; earlier 0.3.1 ZIPs do not contain this adapter. This candidate is not a formal release.
