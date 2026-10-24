@@ -1,0 +1,36 @@
+{
+  "methods": "ZIP extraction, WordPress activation/boot and overwrite update; browser Plugin_Upgrader not exercised",
+  "version": "0.3.1",
+  "upgrade_from": "PR25 TablePress final 0.3.1",
+  "vendor_unchanged": true,
+  "date": "2026-10-24",
+  "authentication": "AWS SDK default EC2 role",
+  "recovery": "Same real-S3 Checkpoint21 plus tail through29, both installations",
+  "live_site_unchanged": true,
+  "zip": "ozeki-wordpress-resilience-0.3.1-combined-final.zip",
+  "scheduled_execution": false,
+  "restore_mail_attempts": 0,
+  "history_sha256": "5461dbc673603a739ba116eb8c0bee8357b5786079a236583322974e3f1be200",
+  "mail_sent": 0,
+  "fresh_and_upgrade_passed": true,
+  "sha256": "afbdf0844940569a494e7cd965734d75f6f0f04c810950024d610934787468f2",
+  "history_count": 29,
+  "files": 3810,
+  "bytes": 7371893,
+  "limits": [
+    "Only S3-confirmed history recoverable",
+    "No arbitrary plugins, premium modules or same-asset concurrency guarantee",
+    "Optional plugins installed separately",
+    "No mail or scheduler acceptance"
+  ],
+  "report": "docs/releases/combined-final-m1-031.md",
+  "s3_writes": 0,
+  "formal_release": false,
+  "installed_zip_bytes_match_before_and_after_restore": true,
+  "test_infrastructure": [
+    "Reused DB prefix rejected before installation; old tables preserved and unused prefix checked",
+    "Regression script paths adapted to installed ZIP",
+    "Existing duplicate DISABLE_WP_CRON probe warning"
+  ],
+  "product_fix": "Exact CF7 deny-all upload guard path/content accepted; arbitrary directives and executables rejected"
+}

@@ -156,10 +156,16 @@ Checkpoint through 8 plus history 9, exact cells/options/visibility, renamed IDs
 deleted-table absence, settings and embedded article rendering. Browser inspection
 on wp-backup.ceri.link used an isolated, token-gated trial view of the recovered DB;
 the existing site's articles were not replaced. Table operations used normal PHP
-plugin APIs, not browser editing. Sorting/search/pagination JS, premium modules,
+plugin APIs, not browser editing. At that earlier API-only stage, sorting/search/pagination JS were not tested. Premium modules,
 external data imports, user editor preferences and concurrent same-table writes
 are not acceptance claims. Take a new trusted baseline after changing TablePress's
 version; a later history version inconsistent with the bundled runtime is rejected.
 No scheduler, mail replay or permanent recovery service was introduced. Use `ozeki-wordpress-resilience-0.3.1-tablepress-final.zip`; earlier
 0.3.1 ZIPs do not include this adapter. TablePress itself is installed separately,
 not bundled into the Resilience ZIP. See [TablePress contract](docs/tablepress.md).
+
+## Combined integration and final ZIP
+
+Posts/Pages, images, comments, CF7/Flamingo, WP-Members and TablePress were recovered together from one real-S3 Checkpoint (21) and later history (through 29). Article relationships, image bytes, moderation, form/receipt fields, member login/restriction and table data matched. The combined trial exposed a snapshot rejection of CF7's standard deny-all upload guard; the final ZIP preserves only its exact known path/content while rejecting arbitrary control/executable files. Use `ozeki-wordpress-resilience-0.3.1-combined-final.zip`; the earlier TablePress ZIP does not contain this fix. Mail, scheduled execution and formal release remain deferred. See the repository's docs/releases/combined-site-acceptance.md for measured scope and separate harness issues.
+
+Subsequent standard-browser acceptance covered TablePress add/update/delete and recovered search, sorting and pagination. This does not extend support to premium modules or arbitrary imports. See [combined acceptance and limits](docs/combined.md).
