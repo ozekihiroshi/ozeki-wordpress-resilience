@@ -23,3 +23,7 @@ Subsequent adapter and combined acceptance is recorded in [combined scope](combi
 ## Reading the recovery result
 
 The last site-wide result shows success, failure or an unfinished attempt, the exact snapshot key and S3 Version ID, the Checkpoint history boundary, subsequent applied history range and record count, and restored post-record / written-file counts. Post records include all post types, not just public articles; unchanged files may be reused. Failure or an unfinished attempt does not imply zero changes or completed rollback. Detailed JSON retains the latest attempt and previous successful result. The display is local administrative feedback, not a replacement for S3 formal history. If the selected Checkpoint cannot be found in the current listing, its boundary is shown as unavailable rather than inferred.
+
+## Confirm source history before recovery
+
+Use the [save-history resume procedure](save-resume.md) when the surviving source reports pending operations. Confirm the intended operations in S3 before relying on them in a later site recovery. Source loss before confirmation does not promote prepared originals into recovery history. 履歴未確定の場合は同手順で再開し、対象操作のS3正式履歴確定を確認します。未確定操作を復旧対象へ推測で追加しません。
