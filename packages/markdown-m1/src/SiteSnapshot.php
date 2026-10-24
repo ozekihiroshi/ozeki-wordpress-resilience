@@ -46,6 +46,13 @@ final class SiteSnapshot
             $out[$rel]=file_get_contents($f->getPathname());
         }
     }
+    /** Preserve only CF7's exact deny-all guard; never accept arbitrary upload directives. */
+    public static function validateUpload(string $path,string $body): void {
+        if(!preg_match('~\.(php[0-9]?|phtml|phar|htaccess)$~i',$path))return;
+        $deny="# Apache 2.4+\n<IfModule authz_core_module>\n    Require all denied\n</IfModule>\n\n# Apache 2.2\n<IfModule !authz_core_module>\n    Deny from all\n</IfModule>\n";
+        if($path==='uploads/wpcf7_uploads/.htaccess'&&str_replace("\r\n","\n",$body)===$deny)return;
+        throw new \RuntimeException('Executable upload is outside portable media scope.');
+    }
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
@@ -61,7 +68,7 @@ final class SiteSnapshot
             $this->files(WP_PLUGIN_DIR.'/'.$dir,'plugins/'.$dir,$software);
         }
         $upload=wp_upload_dir();$this->files($upload['basedir'],'uploads',$files);
-        foreach($files as $path=>$body)if(preg_match('~\.(php[0-9]?|phtml|phar|htaccess)$~i',$path))throw new \RuntimeException('Executable upload is outside portable media scope.');
+        foreach($files as $path=>$body)self::validateUpload($path,$body);
         foreach($data['tables']['postmeta'] as $r)if($r['meta_key']==='_ozmd_source')$files['markdown/'.$r['post_id'].'.md']=$r['meta_value'];
         // Bundling program files avoids thousands of requests; content remains independent files.
         $tmp=tempnam(sys_get_temp_dir(),'owr-site-');$zip=new \ZipArchive();$zip->open($tmp,\ZipArchive::OVERWRITE);$hashes=[];
