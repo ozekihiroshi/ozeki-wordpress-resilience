@@ -27,3 +27,22 @@ The last site-wide result shows success, failure or an unfinished attempt, the e
 ## Confirm source history before recovery
 
 Use the [save-history resume procedure](save-resume.md) when the surviving source reports pending operations. Confirm the intended operations in S3 before relying on them in a later site recovery. Source loss before confirmation does not promote prepared originals into recovery history. 履歴未確定の場合は同手順で再開し、対象操作のS3正式履歴確定を確認します。未確定操作を復旧対象へ推測で追加しません。
+
+## Bidirectional preflight before complete replacement
+
+1. Pin the intended Checkpoint Version ID and confirmed-history boundary. Assemble expected content from S3 without restoring it. If either input cannot be read, report unknown and do not treat it as an empty source.
+2. Enumerate **all** destination post records, including draft, auto-draft, private, trash, revisions and other post types. Do not use a published-post-only query.
+3. After URL relocation, compare matching native IDs and list changed content/attributes. Separately list source-only IDs (additions) and destination-only IDs (removals). An ID match does not prove the two records have the same origin: inspect content/type differences, especially on a previously unrelated destination.
+4. Review destination-only records before replacement. Preserve needed content separately or choose an appropriate destination. An empty auto-draft is still reported; the tool must not silently decide it is disposable. Do not automatically reinsert arbitrary records after recovery: IDs and related metadata may conflict.
+5. Recheck if the selected history or destination changes. The comparison does not lock writers. Keep editing paused during the final check and replacement.
+6. Verify the recovered target against the selected S3 data and check the agreed preservation scope. A failed preservation check remains recorded even if a corrective action later succeeds.
+
+The repository's `tools/testing/site-recovery-post-diff.php` is a pure test helper; callers supply assembled expected records with destination URLs and all destination records. It lists source-only, destination-only and changed rows, and marks destination-only rows for review. It performs no restore or automatic approval. The corresponding test covers published records, drafts, auto-drafts, additions, changed bodies, an empty source and duplicate IDs. It is not bundled into the validated ZIP. The temporary lab runner uses internal replay through reflection; it is test infrastructure, not a supported public API or product dependency. This is a post-record comparison, not a full member/metadata/file preservation guarantee.
+
+### 履歴68の結果と事前確認手順
+
+既存Checkpoint33＋後続正式履歴34～68から、復旧先の試験記事37を再構築しました。本文SHA-256はS3原本と一致し、タイトル・スラッグ・公開状態も一致しました。S3履歴、会員、コメント等の前後照合も確認しました。メール送信・定期実行・正式公開は行っていません。
+
+当初の試験前確認は復旧元の行だけを走査していたため、復旧先にのみ存在した空の自動下書き30を見落としました。サイト全体の置換によるその除外は製品の既定動作であり、差分検出漏れは試験基盤の不足です。退避した完全な元行を別途戻し、最終的な既存投稿の照合は一致しました。最初の失敗結果も保存しています。製品が復旧先独自の下書きを自動保持するように変更したわけではありません。
+
+実行前は、固定したCheckpointと履歴境界から期待状態を組み立て、復旧先の全種別・全状態の投稿と双方向に比較してください。「追加」「同一IDの変更」「復旧先限定で除外されるもの」を分け、除外対象があれば必要な保全を済ませるまで実行しません。空の自動下書きも一覧から除外しません。同じIDでも由来が異なる場合があるため内容も確認します。読取り失敗を空と扱わず、編集や履歴が変わったら再確認します。製品UIの自動停止機能ではなく、現段階の運用・試験手順です。メタ情報・会員・ファイルの保持は別途照合が必要です。
