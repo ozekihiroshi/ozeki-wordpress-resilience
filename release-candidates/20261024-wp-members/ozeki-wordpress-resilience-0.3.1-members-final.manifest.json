@@ -1,0 +1,29 @@
+{
+  "zip": "ozeki-wordpress-resilience-0.3.1-members-final.zip",
+  "sha256": "b517af7965ef68579a93a838d1f5decb639d68c628f379268257bc14f6d62fa0",
+  "bytes": 7362115,
+  "product_files": {
+    "ozeki-wordpress-resilience.php": "75d710c6df01cc4b2c6d3d7db88aa613fe1d4e5409865f741985ac0637838d03",
+    "README.md": "68da263d92bbb466089469c3e117295fea0996824ad4f43ba839fb43ef05513a",
+    "RAADME-jp.md": "93cfd7ae783173e351e6e7f8844145be714b8d012b039751afcfa46e7657e35a",
+    "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+    "composer.json": "b38ef96b502c326cb632332b28c9a2249d19e3412ba13d8dc4c3ac80cf375f4a",
+    "composer.lock": "b126922427a70411d72f019816b3e2582dc544bfae9084a96d89760f10f6f7a3",
+    "src/CommentHistory.php": "4a85076fdba4768a11e90255a914e68c493a771e6fd0a060dd6d08989e5e533d",
+    "src/FormHistory.php": "ede5a4f9da983ea872f6d83aa4ab5d7e0c6436577448786bbe5d89750d1e5353",
+    "src/MemberHistory.php": "f5f4aa59acb0fb05ecd1e4ff54615824f232cfe49d56c11c6dd39a49e4f6d351",
+    "src/Plugin.php": "8b69145716cf6a8748c00797159764bb9f0ea2f31ad4ebadb6515e87efe87deb",
+    "src/SiteSnapshot.php": "e38c660b719c8cf2e7627dcc422e1876097e849ad188be47e6c4ce6837d63505",
+    "src/Store.php": "a4b81de981a227217fa8313ae56d9cd236a71486a9f535b0e7071892650ab0e2",
+    "docs/acceptance-ja.md": "abab2b482bb1a215dba66845cfcf6f79ea50867f1c3afb17400478a3dee01f8b",
+    "docs/acceptance.md": "2603981b3d188f3b4cffdd072eceb2caa901cb5d157b446001d0390cd77486f1",
+    "docs/checkpoints-ja.md": "f8602dc2c096c1275911de99d8f7a45fee5c6c8cba92a6fb83b5397c0ed50eaa",
+    "docs/checkpoints.md": "2a15cf44ad0eb987b0e97294f2ffb92c88832088f2ce0b0112c54e430a74502f",
+    "docs/comments.md": "7dca715144c1266a50676a23b4eb4ef6f38d588afea06d40b346be5a0c35121d",
+    "docs/contract.md": "2b5b6e4d009a2f7919c1840ff7390730e58dcc9a8c10fd81d9edd4fccf85ed08",
+    "docs/forms.md": "2106f9846d41999d2da5197d3b386ecbc6fdd4444677bb2c59bc939b930eac31",
+    "docs/members.md": "4cc833855391b6c6568aea8ee81703dae680ecc1c00490eeac3fd3d26ab7dbeb",
+    "docs/site-snapshot-ja.md": "d36dd918a97c0e1ed13aa9cdcade4ab4136fdf7f3b480ccafecca60ff6969f37",
+    "docs/site-snapshot.md": "3b3a793a5d4454cffe3c606dbc63e82ceb1616ca07474b1a9b84ae96d96ac5df"
+  }
+}

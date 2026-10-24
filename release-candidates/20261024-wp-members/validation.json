@@ -1,0 +1,63 @@
+{
+  "zip": "ozeki-wordpress-resilience-0.3.1-members-final.zip",
+  "sha256": "b517af7965ef68579a93a838d1f5decb639d68c628f379268257bc14f6d62fa0",
+  "bytes": 7362115,
+  "files": 3807,
+  "changed": [
+    "ozeki-wordpress-resilience/ozeki-wordpress-resilience.php",
+    "ozeki-wordpress-resilience/README.md",
+    "ozeki-wordpress-resilience/RAADME-jp.md",
+    "ozeki-wordpress-resilience/src/CommentHistory.php",
+    "ozeki-wordpress-resilience/src/MemberHistory.php",
+    "ozeki-wordpress-resilience/src/Plugin.php",
+    "ozeki-wordpress-resilience/src/SiteSnapshot.php",
+    "ozeki-wordpress-resilience/src/Store.php",
+    "ozeki-wordpress-resilience/docs/members.md"
+  ],
+  "vendor_unchanged": true,
+  "all_product_files_match": true,
+  "fresh_install": "PASS",
+  "upgrade_from": "PR23 0.3.1 forms-lifecycle final ZIP",
+  "upgrade": "PASS",
+  "preserved": [
+    "storage configuration",
+    "member password hash and profile metadata",
+    "WP-Members settings and activation",
+    "trial content and identities",
+    "comments and form records",
+    "frozen pending queue",
+    "restore result",
+    "existing cron configuration",
+    "11 S3 formal-history records with unchanged hash"
+  ],
+  "history_sha256": "2956b99a9cc754e40c09bace293c799118a92f67d13fb230545f0c34921ba912",
+  "final_zip_recovery": {
+    "fresh": "PASS",
+    "upgrade": "PASS",
+    "through": 11,
+    "password_authentication": true,
+    "guest_restricted": true,
+    "member_allowed": true,
+    "mail_calls": 0,
+    "s3_write_calls": 0
+  },
+  "installed_bytes_match_files": 3807,
+  "live_site_audit": {
+    "posts_and_other_tables_unchanged": true,
+    "settings_cron_and_48_record_history_unchanged": true,
+    "postmeta_change": "Two regenerated Markdown rendering cache records only (_ozmd_rendered_html/_ozmd_render_hash); removing those two in the read-only comparison exactly reproduces the pre-test hash. No records were deleted or reverted."
+  },
+  "test_harness": [
+    "Raw byte comparison detected two runtime cache rows; read-only key/hash audit resolved it, not a product fix.",
+    "Existing live probe redundantly defines DISABLE_WP_CRON; warning only.",
+    "Prior CLI REMOTE_ADDR and reapproval-password assumptions documented separately."
+  ],
+  "product_fixes_during_packaging": [],
+  "deferred": [
+    "browser registration acceptance",
+    "paid memberships and custom roles",
+    "formal publication",
+    "scheduled execution"
+  ],
+  "existing_members_content_changed": false
+}

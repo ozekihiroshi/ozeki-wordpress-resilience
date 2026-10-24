@@ -26,3 +26,6 @@ add_action('plugins_loaded',static function () { (new \Owr\M1\Plugin())->boot();
 
 require_once __DIR__.'/src/FormHistory.php';
 add_action('plugins_loaded',static function () { (new \Owr\M1\FormHistory())->boot(); });
+
+require_once __DIR__.'/src/MemberHistory.php';
+add_action('plugins_loaded',static function () { (new \Owr\M1\MemberHistory())->boot(); });
