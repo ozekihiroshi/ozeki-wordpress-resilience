@@ -10,7 +10,7 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-save-status-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-editor-save-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -93,6 +93,12 @@ The site-wide result shows success, failure or completion unconfirmed; the exact
 
 The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-save-status/ozeki-wordpress-resilience-0.3.1-save-status-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-editor-save/ozeki-wordpress-resilience-0.3.1-editor-save-final.zip)
 
-See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. This documentation follow-up does not modify the validated ZIP.
+See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. The earlier documentation-only follow-up did not modify its ZIP; this candidate includes the subsequent editor fixes below.
+
+## Standard editor save corrections
+
+The editor-save-final candidate displays a structured save-failure reason in the standard editor. A Save may send both a REST body request and a legacy meta-box request; the latter omits a body already matching confirmed S3 content and attributes. Identical native detail state, including media bytes, is also omitted. Changed or unconfirmed state remains protected; unavailable equality reads preserve the pending operation. This is not general request deduplication or concurrent-writer support.
+
+Browser acceptance on the existing trial article confirmed an original-PUT rejection retained the old body, displayed the reason and left history at 67; retry after removing the test interruption confirmed one changed body as 68, matching S3, with no pending history. This was not a real AWS outage. Flamingo independently refreshes contact dates on profile updates; WordPress editor preferences use that user-update path. This third-party behavior was not changed, and the earlier individual request cannot be retrospectively proven. Existing contacts/members/content stayed unchanged during the article-only follow-up.

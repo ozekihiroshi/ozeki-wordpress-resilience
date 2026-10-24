@@ -2,6 +2,16 @@
 
 English | 日本語 below
 
+## Standard editor diagnostics (editor-save-final candidate)
+
+The current source uses a structured `owr_save_failed` error so the block editor shows the save failure reason, rather than only “Updating failed.” A standard Save can submit both a REST article request and a legacy meta-box request. The latter skips an article original only when its complete body and recorded attributes match confirmed S3 history. Native details also omit identical confirmed state (including referenced media bytes); changed state is still recorded. An unavailable equality lookup never discards a completed native operation: it remains queued for confirmation. This is not general cross-request idempotency or multi-writer support.
+
+Editor preferences are separate user-profile operations. WordPress persists them through `/wp/v2/users/me`; Flamingo hooks `profile_update` and refreshes contact dates. Do not interpret those contact-date changes as a Resilience article-save mutation. Do not disable member approval or third-party hooks to hide them. The measured article-only follow-up did not modify existing contacts. Historical request-level attribution remains unavailable for the earlier preference change.
+
+日本語：現行ソースでは標準エディターへ具体的な失敗理由を返します。標準保存はREST本文要求と追加設定欄の別要求を送る場合があり、後者の本文がS3確定版と一致するときだけ重複保存を省きます。付随情報も画像の内容を含む確定状態が同じなら省き、変更や未確認の操作は捨てません。読取り失敗時は保留データを保持します。汎用の重複排除や複数書込み元の保証ではありません。
+
+エディター設定の保存はユーザープロフィール更新経路を通り、Flamingoの標準フックが連絡先日時を更新します。これは本文保存とは区別します。会員承認や連携フックを無効化して隠しません。今回の本文だけの追試では既存連絡先は変化していません。前回の設定変更要求そのもののログは残っておらず、個別の因果関係は断定していません。この修正はeditor-save-final候補に収録しています。
+
 Use **Tools → Resilience → Save protection status** on the surviving source WordPress. This is a save-side operation, not destination recovery or replication.
 
 1. Read the latest confirmed S3 sequence/time/asset, local pending count and recorded failure reason. A failed history read means **unknown**, not an empty history. An old error without pending work is not a reason to recreate an operation.

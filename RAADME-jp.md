@@ -10,7 +10,7 @@
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-save-status-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-editor-save-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -93,6 +93,12 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-save-status/ozeki-wordpress-resilience-0.3.1-save-status-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-editor-save/ozeki-wordpress-resilience-0.3.1-editor-save-final.zip)
 
-[履歴再開の運用手順](packages/markdown-m1/docs/save-resume.md)と[検証結果](docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。この文書更新で検証済みZIPは変更しません。
+[履歴再開の運用手順](packages/markdown-m1/docs/save-resume.md)と[検証結果](docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
+
+## 標準編集画面の保存修正
+
+editor-save-final候補では、標準編集画面に具体的な保存失敗理由を表示します。1回の保存からREST本文要求と追加設定欄の要求が送られる場合、後者の本文・属性がS3確定版と同じなら重複保存を省きます。付随情報も画像の内容を含む確定状態が同じなら省きます。変更や未確定状態は保護を継続し、同一性の読取りに失敗しても保留操作を保持します。汎用の重複排除や複数書込み元の保証ではありません。
+
+既存試験記事で原本PUTを試験的に拒否し、旧本文保持・理由表示・履歴67の保持を確認しました。解除後の再保存は変更本文1件の履歴68となり、S3原本と一致、保留0でした。実AWS障害ではありません。Flamingoはプロフィール更新に応じて連絡先日時を更新し、WordPressのエディター設定もユーザー更新経路を通ります。この標準動作は変更しておらず、前回の個別要求の因果関係は遡って証明できません。本文だけの追試では既存連絡先・会員・コンテンツは保持されました。
