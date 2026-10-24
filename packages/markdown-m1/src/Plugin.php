@@ -203,6 +203,7 @@ final class Plugin
             if ($this->active) throw new \RuntimeException('Nested protected saves are unsupported.');
             $this->lock();
             if (get_option(self::PENDING)) throw new \RuntimeException('A previous WordPress save is awaiting formal S3 history. Resume it in Tools → Resilience first.');
+            if (get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending comment history in Tools → Resilience first.');
             clean_post_cache($id);
             $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
             if ($wasProtected && $editor && (!isset($_POST['owr_m1_base']) || !hash_equals($this->fingerprint($id),(string)$_POST['owr_m1_base']))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
@@ -250,6 +251,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
+            if(($row['attributes']['post_type']??'')==='owr_comment')throw new \RuntimeException('Use complete site recovery for comments and article relationships.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->get($row['original']['source']);
@@ -263,6 +265,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
+            if(($row['attributes']['post_type']??'')==='owr_comment')throw new \RuntimeException('Use complete site recovery for comment history.');
             $source=$store->get($row['original']['source']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -311,7 +314,7 @@ final class Plugin
     }
     public function notice(): void {
         if (!current_user_can('manage_options')) return;
-        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>Resilience: WordPress saved, S3 formal history pending. <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">Resume history</a>.</p></div>';
+        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">Resume history</a>.</p></div>';
     }
     public function action(): void {
         if (!current_user_can('manage_options')) wp_die('Forbidden',403);
@@ -319,7 +322,7 @@ final class Plugin
         try {
             $action=(string)($_POST['operation']??'');
             if ($action==='configure') {
-                if (get_option(self::PENDING)) throw new \RuntimeException('Resume pending history before changing storage.');
+                if (get_option(self::PENDING) || get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
                 $c=[];foreach (['bucket','region','prefix','owner'] as $key) $c[$key]=sanitize_text_field(wp_unslash($_POST[$key]??''));
                 if (!preg_match('/^[a-z0-9.-]{3,63}$/D',$c['bucket']) || !preg_match('/^[a-z0-9-]+$/D',$c['region']) || !preg_match('~^[a-zA-Z0-9/_-]+/$~D',$c['prefix']) || ($c['owner']!=='' && !preg_match('/^[0-9]{12}$/D',$c['owner']))) throw new \RuntimeException('Invalid S3 configuration. Prefix must end with /.');
                 $c['protect']=isset($_POST['protect']);$c['retention_days']=max(0,min(3650,(int)($_POST['retention_days']??0)));
@@ -330,7 +333,7 @@ final class Plugin
                 update_option(self::CONFIG,$c,false);
                 delete_option('owr_m1_cleanup_preview');
                 $this->scheduleCheckpoints();
-            } elseif ($action==='resume') $this->resume();
+            } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') $this->restore(array_map('strval',(array)($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
             elseif ($action==='initial_snapshot') $this->initialSnapshot(isset($_POST['trust_initial']));
@@ -363,15 +366,18 @@ final class Plugin
     }
     public function page(): void {
         if (!current_user_can('manage_options')) return;
-        echo '<div class="wrap"><h1>Resilience — Markdown originals</h1><p>Normal Markdown editing → complete S3 originals → successful history → WordPress reconstruction.</p>';
+        echo '<div class="wrap"><h1>Resilience — Site recovery</h1><p>Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.</p>';
+        echo '<h2>Recovery boundary</h2><p>Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.</p><p>Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.</p>';
+        if (get_option(self::PENDING)) echo '<p role="alert"><strong>WordPress applied; S3 formal history pending.</strong> This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.</p>';
         if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';
-        echo '<h2>Complete site baseline / Checkpoint</h2><p>Pages, posts, metadata, media, theme, templates, menus and Markdown dependency. Replaces destination content; preserves destination credentials and infrastructure. Initial capture requires trusted source and paused editing. Later Checkpoints copy this S3 baseline and confirmed Markdown changes; other changes require a new trusted baseline. Mail transport and administrative plugin settings are not copied.</p>';
+        echo '<h2>Site-wide recovery — primary workflow</h2><p>Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination credentials and infrastructure. Initial capture requires a trusted source and paused editing.</p><p>Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.</p>';
         $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>';
         try{$siteSnapshots=$this->store()->siteSnapshots();foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){$this->form($op);echo '<select name="site_ref">';foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';echo '</select>';if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>Replace all destination content with this site (a private local rollback copy is retained).</label>';submit_button($label);echo '</form>';}}catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        echo '<pre>'.esc_html(Store::json((array)get_option('owr_site_restore_result',get_option('owr_site_snapshot_result',[])))).'</pre>';
+        echo '<h3>Last site-wide recovery / snapshot result</h3><pre>'.esc_html(Store::json((array)get_option('owr_site_restore_result',get_option('owr_site_snapshot_result',[])))).'</pre>';
+        echo '<h2>Storage and optional scheduling settings</h2>';
         $c=$this->config();$this->form('configure');
         foreach (['bucket','region','prefix','owner','retention_days'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
-        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect normal Markdown publication and updates (one writer per prefix)</label></p><p><label>Checkpoint interval in days (0 = manual) <input type="number" min="0" max="3650" name="checkpoint_interval_days" value="'.(int)($c['checkpoint_interval_days']??0).'"></label></p><p>Scheduling uses WP-Cron and requires traffic or an existing cron runner. Credentials: AWS SDK default provider; no credentials stored in WordPress. Enable S3 versioning. Retention prevents early deletion; it does not automatically delete objects.</p>';
+        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported Markdown, Page and Post saves and referenced images (one writer per prefix)</label></p><p><label>Checkpoint interval in days (0 = manual) <input type="number" min="0" max="3650" name="checkpoint_interval_days" value="'.(int)($c['checkpoint_interval_days']??0).'"></label></p><p>Scheduling uses WP-Cron and requires traffic or an existing cron runner. Credentials: AWS SDK default provider; no credentials stored in WordPress. Enable S3 versioning. Retention prevents early deletion; it does not automatically delete objects.</p>';
         echo '<p><label>Recovery-point retention days (0 = keep latest baseline and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
         echo '<h2>Expired versions / cleanup</h2><p>The newest complete Checkpoint and every retained recovery chain remain. Object Lock is never bypassed. Cleanup permanently deletes exact S3 versions; unrelated or ambiguous objects are not removed. Preview again after failures or storage changes.</p>';
         $this->form('cleanup_preview');submit_button('Preview expired versions');echo '</form>';
@@ -381,7 +387,7 @@ final class Plugin
             $this->form('cleanup_execute');echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($preview['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">Permanently delete only the previewed eligible versions</label>';submit_button('Delete previewed versions');echo '</form>';
         }
         echo '<pre>'.esc_html(Store::json((array)get_option('owr_m1_cleanup_status',[]))).'</pre>';
-        echo '<h2>Independent snapshots / Restore protected state</h2><p>Each completed snapshot contains complete Markdown files, attributes and an inventory. Coverage is protected Markdown documents, not themes, plugins or other site data. Restore uses this snapshot and later successful history; unrelated target content is not deleted.</p>';
+        echo '<details><summary>Supplementary asset snapshots and recovery — not site-wide recovery</summary><p>This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.</p>';
         $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.</label></p>';submit_button('Create initial snapshot');echo '</form>';
         $next=wp_next_scheduled('owr_m1_checkpoint');
         echo '<p>Next scheduled check (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
@@ -390,15 +396,19 @@ final class Plugin
             $keys=$this->store()->checkpoints();$this->form('restore_site');
             echo '<select name="checkpoint"><option value="">All formal history (no Checkpoint)</option>';
             foreach (array_reverse($keys) as $i=>$key) echo '<option value="'.esc_attr($key).'" '.selected($i,0,false).'>'.esc_html($key).'</option>';
-            echo '</select>';submit_button('Restore Checkpoint + later history');echo '</form>';
+            echo '</select>';submit_button('Restore assets from Checkpoint + later history');echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        if (get_option(self::PENDING)) {$this->form('resume');submit_button('Resume history');echo '</form>';}
-        echo '<h2>Formal history / Restore</h2><p>Select one version per document. Restores recorded WordPress status, including publish. Server/network exposure remains the administrator’s responsibility.</p>';
+        echo '</details>';
+        if (get_option(self::PENDING)||get_option('owr_m1_comment_pending')) {$this->form('resume');submit_button('Resume history');echo '</form>';}
+        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">WordPress comment changes applied; S3 history pending. These operations are excluded from recovery until confirmed.</p>';
+        if($error=get_option('owr_m1_comment_error'))echo '<p role="alert">'.esc_html($error).'</p>';
+        echo '<p>Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.</p>';
+        echo '<h2>Confirmed formal history / Individual recovery</h2><p>This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.</p>';
         try {
             $history=$this->store()->history();$this->form('restore');echo '<table class="widefat"><tr><th>Select</th><th>Order</th><th>Document</th><th>Status</th><th>Raw S3 original</th></tr>';
             foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html($row['attributes']['title']).'</td><td>'.esc_html($row['attributes']['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
-            echo '</table>';submit_button('Restore selected versions');echo '</form>';
+            echo '</table>';submit_button('Restore selected assets (text and attributes)');echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        echo '<h2>Last restore result</h2><pre>'.esc_html(Store::json((array)get_option('owr_m1_restore_result',[]))).'</pre></div>';
+        echo '<h2>Last asset recovery result</h2><pre>'.esc_html(Store::json((array)get_option('owr_m1_restore_result',[]))).'</pre></div>';
     }
 }

@@ -5,6 +5,8 @@ namespace Owr\M1;
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
 {
+    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
+    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
     private function args(string $key = ''): array {
         $a = ['Bucket'=>$this->config['bucket']];
@@ -154,7 +156,7 @@ final class Store
                 $row['attributes']['media'][$index]['files'][$path]=$this->put($where.'media/'.$path,$this->get($ref),'application/octet-stream',$plan['retain_until']);
             }
             $row['original']=['schema'=>'owr-md-original-1','asset'=>$asset,'operation'=>basename(rtrim($base,'/')),'retain_until'=>$plan['retain_until'],
-                'source'=>$this->put($where.(($row['attributes']['content_format']??'markdown')==='markdown'?'source.md':'source.html'),$item['source'],(($row['attributes']['content_format']??'markdown')==='markdown'?'text/markdown':'text/html').'; charset=utf-8',$plan['retain_until']),
+                'source'=>$this->put($where.self::sourceName($row['attributes']),$item['source'],self::sourceType($row['attributes']).'; charset=utf-8',$plan['retain_until']),
                 'metadata'=>$this->put($where.'metadata.json',self::json($row['attributes']),'application/json',$plan['retain_until'])];
             // Read back exact newly saved versions before adopting the snapshot.
             $this->get($row['original']['source']);$this->get($row['original']['metadata']);$assets[$asset]=$row;
@@ -296,7 +298,7 @@ final class Store
         $until=!empty($this->config['retention_days'])?gmdate('c',time()+86400*(int)$this->config['retention_days']):null;
         return ['schema'=>'owr-md-original-1','asset'=>$asset,'operation'=>$operation,
             'retain_until'=>$until,
-            'source'=>$this->put($base.(($attributes['content_format']??'markdown')==='markdown'?'source.md':'source.html'),$source,(($attributes['content_format']??'markdown')==='markdown'?'text/markdown':'text/html').'; charset=utf-8',$until),
+            'source'=>$this->put($base.self::sourceName($attributes),$source,self::sourceType($attributes).'; charset=utf-8',$until),
             'metadata'=>$this->put($base.'metadata.json',self::json($attributes),'application/json',$until)];
     }
     public function commit(array $record): void {

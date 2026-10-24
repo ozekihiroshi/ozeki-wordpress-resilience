@@ -20,4 +20,6 @@ if (!function_exists('JmesPath\\search')) {
 require_once __DIR__.'/src/Store.php';
 require_once __DIR__.'/src/SiteSnapshot.php';
 require_once __DIR__.'/src/Plugin.php';
+require_once __DIR__.'/src/CommentHistory.php';
+add_action('plugins_loaded',static function () { (new \Owr\M1\CommentHistory())->boot(); });
 add_action('plugins_loaded',static function () { (new \Owr\M1\Plugin())->boot(); });

@@ -46,7 +46,7 @@ final class SiteSnapshot
     }
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
-        if(get_option('owr_m1_pending'))throw new \RuntimeException('Resume pending history first.');
+        if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         $data=$this->data();$files=[];$software=[];
         $theme=get_stylesheet();$parent=get_template();
         foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
@@ -98,6 +98,10 @@ final class SiteSnapshot
         $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_comment'){
+                $this->store->get($r['original']['metadata']);
+                CommentHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
+            }
             $a=$r['attributes'];$id=(string)$a['origin_id'];$type=$a['post_type']??'ozmd_document';$found=false;
             if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
             $raw=$this->store->get($r['original']['source']);$this->store->get($r['original']['metadata']);
