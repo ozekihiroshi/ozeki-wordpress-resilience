@@ -19,6 +19,13 @@ history recovery, fresh installation and update acceptance are documented in
 Use the dedicated 0.3.1 ZIP, not the root research plugin. Browser-environment
 limitations, unsupported changes and deferred scheduling are listed separately.
 
+The comment extension records core comment creation, edits, moderation
+and deletion in S3 formal history and replays them through complete site recovery.
+Comments use a frozen successful-operation payload. WordPress storage, S3 storage
+and formal history jointly establish a recovery operation; pending ones are not
+confirmed. See [comment coverage and recovery](packages/markdown-m1/docs/comments.md)
+for pending-history behavior and the measured live acceptance. Use the [reviewed comment candidate and validation record](docs/releases/comments-m1-031.md); older 0.3.1 ZIPs do not contain this extension.
+
 ## Preserved pre-M1 research documentation
 
 ## Native editing integration (current working change)
