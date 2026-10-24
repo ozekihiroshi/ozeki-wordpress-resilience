@@ -1,0 +1,32 @@
+{
+  "sha256": "602cefdd40e2def981a9b550bc3a6aa5d264c01d6b9bec96e1e6e1d19d2329dc",
+  "bytes": 7374821,
+  "files": 3812,
+  "changed": [
+    "ozeki-wordpress-resilience/ozeki-wordpress-resilience.php",
+    "ozeki-wordpress-resilience/README.md",
+    "ozeki-wordpress-resilience/RAADME-jp.md",
+    "ozeki-wordpress-resilience/src/CommentHistory.php",
+    "ozeki-wordpress-resilience/src/NativeHistory.php",
+    "ozeki-wordpress-resilience/src/Plugin.php",
+    "ozeki-wordpress-resilience/src/SiteSnapshot.php",
+    "ozeki-wordpress-resilience/src/Store.php",
+    "ozeki-wordpress-resilience/docs/checkpoints.md",
+    "ozeki-wordpress-resilience/docs/native-details.md",
+    "ozeki-wordpress-resilience/docs/site-snapshot.md"
+  ],
+  "vendor_unchanged": true,
+  "all_product_files_match": true,
+  "version": "0.3.1",
+  "fresh_install": "PASS",
+  "upgrade_from": "combined-final 0.3.1 afbdf0844940569a494e7cd965734d75f6f0f04c810950024d610934787468f2",
+  "preservation": "PASS",
+  "checkpoint_through": 33,
+  "history_through": 37,
+  "restore_fresh_and_upgrade": "PASS",
+  "mail_calls": 0,
+  "s3_writes": 0,
+  "live_probe_unchanged": true,
+  "scheduled_execution": "deferred",
+  "formal_release": false
+}

@@ -20,7 +20,7 @@ final class CommentHistory
             unset($this->statusOperations[$id]);$this->capture((array)$comment);
         },PHP_INT_MIN,3);
         add_action('deleted_comment',fn($id,$old)=>$this->capture((array)$old,true),PHP_INT_MIN,2);
-        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form/member/table changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
+        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form/member/table/article-detail changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
     }
     private function lock(): string {
         global $wpdb;$name='owr-m1-'.$wpdb->prefix;
@@ -40,12 +40,14 @@ final class CommentHistory
         $this->enqueue('comment-'.$id,$source,$attrs);
     }
     /** Shared durable queue for successful comment and form operations. */
-    public function enqueue(string $asset,string $source,array $attrs): void {
+    public function enqueue(string $asset,string $source,array $attrs,array $resources=[]): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
+        if($resources && ($attrs['post_type']??'')!=='owr_native')throw new \RuntimeException('Unexpected operation resources.');
+        if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
         $name=$this->lock();$operation=wp_generate_uuid4();
         try {
             $queue=(array)get_option(self::PENDING,[]);
-            $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs];
+            $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs,'resources'=>$resources];
             if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment history pending state.');
             try{$this->flushLocked();}catch(\Throwable $e){update_option('owr_m1_comment_error',$e->getMessage(),false);}
         } finally {$this->unlock($name);}
@@ -57,6 +59,11 @@ final class CommentHistory
         $store=(new Plugin())->store();
         foreach($queue as $key=>$entry){
             if(!isset($entry['record'])){
+                foreach($entry['resources']??[] as $path=>$resource){
+                    SiteSnapshot::safePath($path);$body=base64_decode($resource['body'],true);if($body===false||strlen($body)>32*1024*1024)throw new \RuntimeException('Invalid frozen image.');
+                    $ref=$store->put('originals/'.$entry['asset'].'/'.$entry['operation'].'/media/'.hash('sha256',$path),$body,$resource['type']);
+                    foreach($entry['attributes']['media'] as &$media)if(array_key_exists($path,$media['files']))$media['files'][$path]=$ref;unset($media);
+                }
                 $original=$store->prepare($entry['asset'],$entry['operation'],$entry['source'],$entry['attributes']);
                 $entry['record']=['schema'=>'owr-md-history-1','sequence'=>$store->latestState()['through']+1,'original'=>$original,'attributes'=>$entry['attributes'],'confirmed_at'=>gmdate('c')];
                 $queue[$key]=$entry;if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment confirmation.');
