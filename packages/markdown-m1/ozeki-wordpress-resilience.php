@@ -29,3 +29,6 @@ add_action('plugins_loaded',static function () { (new \Owr\M1\FormHistory())->bo
 
 require_once __DIR__.'/src/MemberHistory.php';
 add_action('plugins_loaded',static function () { (new \Owr\M1\MemberHistory())->boot(); });
+
+require_once __DIR__.'/src/TableHistory.php';
+add_action('plugins_loaded',static function () { (new \Owr\M1\TableHistory())->boot(); });

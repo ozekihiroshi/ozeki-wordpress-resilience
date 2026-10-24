@@ -1,5 +1,7 @@
 # Ozeki WordPress Resilience
 
+TablePressの表原本・ID・表示設定・確定済み操作を、TablePress候補版のサイト全体復旧へ接続しました。[対応範囲と検証結果](packages/markdown-m1/docs/tablepress.md)を参照してください。TablePress対応最終候補ZIPを使用してください。以前のZIPには含まれません。
+
 今回の追加対応は、標準コメントの追加・編集・承認状態変更・削除をS3正式履歴へ記録し、サイト全体の復旧で再現するものです。コメントは**成功操作の確定データをコピーして独立保存**し、WordPress保存・S3保存・正式履歴の確定が揃って復旧可能な操作として成立します。Resilienceが後でDBを読み直して原本を作る方式ではありません。ただし新規・状態変更はWordPress本体が渡す保存結果を使用し、本文のS3先行保存と同じ入口ではありません。[対応範囲と検証結果](packages/markdown-m1/docs/comments.md)を参照してください。[レビュー済みコメント対応ZIPと検証記録](docs/releases/comments-m1-031.md)を使用してください。以前の0.3.1 ZIPには今回の追加分は含まれません。
 
 ## WP-Members（今回の実装）

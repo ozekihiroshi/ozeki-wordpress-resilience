@@ -34,6 +34,8 @@ jobs:
           php packages/markdown-m1/tests/checkpoint.php packages/markdown-m1
           php packages/markdown-m1/tests/comments.php packages/markdown-m1
           php packages/markdown-m1/tests/forms.php packages/markdown-m1
+          php packages/markdown-m1/tests/tablepress.php
+          php packages/markdown-m1/tests/tablepress-capture.php
           php packages/markdown-m1/tests/members.php
           php packages/markdown-m1/tests/cleanup.php packages/markdown-m1
       - name: Verify contracts without private fixtures or cloud access
