@@ -38,6 +38,34 @@ are sensitive S3 recovery data. Existing S3 access and retention controls apply.
 Sessions, reset keys, application passwords and privileged capabilities are not
 copied. Users log in again after recovery.
 
+## Administrator access during setup and recovery
+
+WP-Members moderated registration checks administrator activation at the standard
+WordPress login screen too. Preserving an administrator account and password does
+not, by itself, guarantee a fresh login.
+
+1. At source setup, verify the designated administrator is activated when moderation
+   is enabled. An existing browser session can conceal missing activation.
+2. Before recovery, prepare the destination administrator independently of recovered
+   subscribers. If the saved settings enable moderation, verify this administrator
+   has WP-Members `active=1`. Resolve missing activation for this explicitly authorized
+   account before replacing content; retain administrative server access in case
+   web login is unavailable.
+3. After recovery, authenticate again through standard `wp-login.php` and confirm
+   `wp-admin/` access. A preserved session does not satisfy this check.
+4. Keep moderation and other members' approval states unchanged. Do not bulk-activate
+   members, bypass authentication, or reset passwords to solve missing activation.
+   Check notification behavior before using activation tools; mail-disabled trials
+   must retain their notification guard.
+
+In the isolated 2026-10-24 trial, the combined-test fixture enabled moderation but
+left its administrators unactivated. Recovery reproduced this setting; it did not
+remove administrator activation metadata. Activating only the designated trial
+administrator on each site allowed fresh browser login. Other members, content,
+moderation settings and administrator credential rows passed before/after checks.
+This corrected trial preparation, not product code or the verified ZIP. Automatic
+administrator activation is not implemented; this remains an operator prerequisite.
+
 ## Limits
 
 Administrator/editor/custom roles, multisite accounts, paid membership extensions,
