@@ -32,6 +32,12 @@ mail. Read [form scope and limits](packages/markdown-m1/docs/forms.md) and the
 [reviewed form candidate and validation record](docs/releases/forms-m1-031.md).
 Use this candidate for forms; older 0.3.1 ZIPs do not contain the adapter.
 
+The lifecycle extension additionally records Flamingo edits, spam/ham, trash/restore
+and deletion, plus CF7 form deletion. It captures final request state and preserves
+confirmed deletion during whole-site recovery. Use the [lifecycle candidate and
+validation record](docs/releases/form-lifecycle-m1-031.md); PR #22's earlier ZIP
+does not include these operations. Scope and exclusions are in the package READMEs.
+
 ## Preserved pre-M1 research documentation
 
 ## Native editing integration (current working change)

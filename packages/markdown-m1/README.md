@@ -93,8 +93,10 @@ Individual text recovery does not restore comments. See [scope and evidence](doc
 Completed form definitions and received inquiries now use complete JSON originals,
 shared formal history and complete-site recovery. Install the recorded versions of
 both optional plugins at the destination. Failed storage can resume from its frozen
-payload; recovery never resubmits mail. This initial adapter excludes attachments,
-address-book entries and later inquiry moderation/deletion. See [contract and limits](docs/forms.md).
+payload; recovery never resubmits mail. Received-message edits, spam/ham, trash/
+restore and permanent deletion, plus CF7 form deletion, are also recorded. Receipt
+changes are frozen at request completion, after Flamingo writes its metadata.
+Attachments and address-book entries remain excluded. See [contract and limits](docs/forms.md).
 
 ### Validated environment and separate product correction
 
@@ -109,3 +111,14 @@ configuration, not a universal minimum or a resource change made by the plugin.
 Separately, the product now restores an unmapped author as ID 0 instead of using
 the recovery operator's ID, so that result does not depend on who runs recovery.
 Flamingo's own maintenance event is separate from deferred Resilience scheduling.
+
+Lifecycle scope: multiple writes to one inquiry in one request are coalesced into
+its final state. Process loss before request-end capture and simultaneous changes
+to the same asset are not guaranteed. Only confirmed history is recoverable.
+Deleting a form does not delete its inquiries or rewrite pages using its shortcode.
+WordPress deletion does not erase retained S3 originals.
+
+Lifecycle validation used normal plugin PHP APIs and request shutdown, not browser
+clicks. Metadata double-serialization in a comparison and a missing shell argument
+were test-harness corrections, not product fixes. The existing dm OOM counter did
+not increase. See the forms contract for measured acceptance and remaining limits.

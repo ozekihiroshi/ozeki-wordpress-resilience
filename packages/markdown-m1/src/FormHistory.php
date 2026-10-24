@@ -6,7 +6,21 @@ namespace Owr\M1;
 final class FormHistory
 {
     public const DEPENDENCIES=['contact-form-7/wp-contact-form-7.php','flamingo/flamingo.php'];
+    private array $dirty=[];
     public function boot(): void {
+        // Flamingo writes metadata after wp_insert_post; freeze only the completed
+        // request state, not the intermediate core save. One final state per ID.
+        add_action('wp_after_insert_post',fn($id,$post)=>$this->mark((int)$id),PHP_INT_MAX,2);
+        foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)
+            add_action($hook,fn($meta,$id)=>$this->mark((int)$id),PHP_INT_MAX,2);
+        add_action('deleted_post',function($id,$post){
+            unset($this->dirty[(int)$id]);
+            if(!in_array($post->post_type,['wpcf7_contact_form','flamingo_inbound'],true)||empty((new Plugin())->config()['protect']))return;
+            $item=['post'=>(array)$post,'meta'=>[],'channels'=>[],'deleted'=>true];
+            $this->enqueue([$item]);
+        },PHP_INT_MIN,2);
+        add_action('shutdown',[$this,'flush'],PHP_INT_MAX);
+
         add_action('wpcf7_after_save',fn($form)=>$this->capture([$form->id()]),PHP_INT_MIN,1);
         add_action('wpcf7_after_flamingo',function($result){
             $id=(int)($result['flamingo_inbound_id']??0);if(!$id)return;
@@ -14,6 +28,15 @@ final class FormHistory
             if(!$form)throw new \RuntimeException('Missing received form identity.');
             $this->capture([$form->id(),$id]);
         },PHP_INT_MIN,1);
+    }
+    private function mark(int $id): void {
+        if(get_post_type($id)==='flamingo_inbound'&&!empty((new Plugin())->config()['protect']))$this->dirty[$id]=true;
+    }
+    public function flush(): void {
+        foreach(array_keys($this->dirty) as $id){
+            if(get_post_type($id)==='flamingo_inbound')$this->capture([$id]);
+            else unset($this->dirty[$id]);
+        }
     }
     public static function checkDependency(string $plugin,string $version): void {
         if(!in_array($plugin,self::DEPENDENCIES,true))throw new \RuntimeException('Unsupported form dependency.');
@@ -23,12 +46,7 @@ final class FormHistory
     }
     public function capture(array $ids): void {
         if(empty((new Plugin())->config()['protect']))return;
-        global $wpdb;$items=[];$dependencies=[];
-        foreach(self::DEPENDENCIES as $plugin){
-            $path=WP_PLUGIN_DIR.'/'.$plugin;
-            if(!is_file($path))throw new \RuntimeException('Install Contact Form 7 and Flamingo for form protection.');
-            $dependencies[$plugin]=get_file_data($path,['Version'=>'Version'])['Version'];
-        }
+        global $wpdb;$items=[];
         foreach($ids as $id){
             $post=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.$wpdb->posts.' WHERE ID=%d',$id),ARRAY_A);
             if(!$post||!in_array($post['post_type'],['wpcf7_contact_form','flamingo_inbound'],true))throw new \RuntimeException('Invalid completed form asset.');
@@ -38,8 +56,18 @@ final class FormHistory
             if($wpdb->last_error)throw new \RuntimeException('Cannot capture completed form.');
             $items[]=['post'=>$post,'meta'=>$meta,'channels'=>$terms];
         }
+        $this->enqueue($items);
+        foreach($ids as $id)unset($this->dirty[(int)$id]);
+    }
+    private function enqueue(array $items): void {
+        $dependencies=[];
+        foreach(self::DEPENDENCIES as $plugin){
+            $path=WP_PLUGIN_DIR.'/'.$plugin;
+            if(!is_file($path))throw new \RuntimeException('Install Contact Form 7 and Flamingo for form protection.');
+            $dependencies[$plugin]=get_file_data($path,['Version'=>'Version'])['Version'];
+        }
         $last=end($items);$id=(int)$last['post']['ID'];
-        $attrs=['post_type'=>'owr_form','content_format'=>'form-json','origin_id'=>$id,'title'=>$last['post']['post_title'],'status'=>$last['post']['post_status'],'dependencies'=>$dependencies];
+        $attrs=['post_type'=>'owr_form','content_format'=>'form-json','origin_id'=>$id,'title'=>$last['post']['post_title'],'status'=>!empty($last['deleted'])?'deleted':$last['post']['post_status'],'dependencies'=>$dependencies];
         (new CommentHistory())->enqueue('form-'.$id,Store::json(['schema'=>'owr-form-1','items'=>$items]),$attrs);
     }
     public static function replay(array &$data,string $source,array $attributes): void {
@@ -50,6 +78,13 @@ final class FormHistory
             $post=$item['post'];$id=(string)$post['ID'];
             if((int)$id<=0||!in_array($post['post_type'],['wpcf7_contact_form','flamingo_inbound'],true)||!is_array($item['meta'])||!is_array($item['channels']))throw new \RuntimeException('Invalid form record.');
             foreach($data['tables']['posts'] as $p)if((string)$p['ID']===$id&&$p['post_type']!==$post['post_type'])throw new \RuntimeException('Form identity conflicts with baseline.');
+            if(isset($item['deleted'])&&!is_bool($item['deleted']))throw new \RuntimeException('Invalid deletion marker.');
+            if(!empty($item['deleted'])){
+                $data['tables']['posts']=array_values(array_filter($data['tables']['posts'],fn($p)=>(string)$p['ID']!==$id));
+                $data['tables']['postmeta']=array_values(array_filter($data['tables']['postmeta'],fn($m)=>(string)$m['post_id']!==$id));
+                $data['tables']['term_relationships']=array_values(array_filter($data['tables']['term_relationships'],fn($r)=>(string)$r['object_id']!==$id));
+                continue;
+            }
             $data['tables']['posts']=array_values(array_filter($data['tables']['posts'],fn($p)=>(string)$p['ID']!==$id));$data['tables']['posts'][]=$post;
             $data['tables']['postmeta']=array_values(array_filter($data['tables']['postmeta'],fn($m)=>(string)$m['post_id']!==$id));
             $next=max(array_merge([0],array_map('intval',array_column($data['tables']['postmeta'],'meta_id'))))+1;

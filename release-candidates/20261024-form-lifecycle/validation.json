@@ -1,0 +1,121 @@
+{
+  "artifact": "ozeki-wordpress-resilience-0.3.1-forms-lifecycle-final.zip",
+  "build": {
+    "sha256": "1eba8cbabfcc18adceedb1d002b9f39da5e43fd220739689f67bd725c77d25ac",
+    "bytes": 7355612,
+    "files": 3805,
+    "changed": [
+      "ozeki-wordpress-resilience/README.md",
+      "ozeki-wordpress-resilience/RAADME-jp.md",
+      "ozeki-wordpress-resilience/src/FormHistory.php",
+      "ozeki-wordpress-resilience/src/Plugin.php",
+      "ozeki-wordpress-resilience/docs/forms.md"
+    ],
+    "vendor_unchanged": true,
+    "all_product_files_match": true
+  },
+  "install_update": [
+    {
+      "installed": "fresh",
+      "history_count": 48,
+      "prefix": "owrflzip_20261024_fresh_"
+    },
+    {
+      "installed": "upgrade",
+      "history_count": 48,
+      "prefix": "owrflzip_20261024_upgrade_"
+    },
+    {
+      "forms_receipts_fields_channels_preserved": "fresh",
+      "frozen_form_pending_preserved": true
+    },
+    {
+      "ui_labels_checked": "fresh",
+      "rendered_without_restore_or_save": true
+    },
+    {
+      "verified": "fresh",
+      "settings_content_identity_results_preserved": true,
+      "history_count": 48,
+      "history_sha256": "3a79397ec8fb84eef5cfbbfd1d241210b0fc44056a2be085b7acaebd0d04d8f8",
+      "aws_auth": "SDK default EC2 role",
+      "s3_writes": 0
+    },
+    {
+      "comments_and_frozen_queue_preserved": true,
+      "existing_cron_preserved": true,
+      "wp_first_boot_maintenance_only": true,
+      "new_comment_implementation_loaded": true
+    },
+    {
+      "forms_receipts_fields_channels_preserved": "upgrade",
+      "frozen_form_pending_preserved": true
+    },
+    {
+      "ui_labels_checked": "upgrade",
+      "rendered_without_restore_or_save": true
+    },
+    {
+      "verified": "upgrade",
+      "settings_content_identity_results_preserved": true,
+      "history_count": 48,
+      "history_sha256": "3a79397ec8fb84eef5cfbbfd1d241210b0fc44056a2be085b7acaebd0d04d8f8",
+      "aws_auth": "SDK default EC2 role",
+      "s3_writes": 0
+    },
+    {
+      "comments_and_frozen_queue_preserved": true,
+      "existing_cron_preserved": true,
+      "wp_first_boot_maintenance_only": true,
+      "new_comment_implementation_loaded": true
+    }
+  ],
+  "running_site_probe_unchanged": true,
+  "live_deployment": false,
+  "periodic_acceptance": false,
+  "formal_release": false,
+  "live_stages": {
+    "edit": {
+      "sequence": 42,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "spam": {
+      "sequence": 43,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "ham": {
+      "sequence": 44,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "trash": {
+      "sequence": 45,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "untrash": {
+      "sequence": 46,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "delete": {
+      "sequence": 47,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    },
+    "form-delete": {
+      "sequence": 48,
+      "matched": true,
+      "existing_content_preserved": true,
+      "mail_calls": 0
+    }
+  }
+}
