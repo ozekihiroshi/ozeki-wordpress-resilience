@@ -347,9 +347,19 @@ final class Plugin
                 update_option('owr_site_snapshot_result',(new SiteSnapshot($this->store()))->checkpoint($ref),false);
             }
             elseif ($action==='whole_restore') {
-                $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
-                $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
-                (new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work);
+                $attempt=['status'=>'running','at'=>gmdate('c')];
+                update_option('owr_site_restore_attempt',$attempt,false);
+                try {
+                    $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
+                    if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
+                    $attempt['manifest']=$ref;update_option('owr_site_restore_attempt',$attempt,false);
+                    $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
+                    $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work);
+                    update_option('owr_site_restore_attempt',['status'=>'success']+$result,false);
+                } catch (\Throwable $e) {
+                    update_option('owr_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()]),false);
+                    throw $e;
+                }
             }
             elseif ($action==='cleanup_preview') $this->previewCleanup();
             elseif ($action==='cleanup_execute') {
@@ -361,6 +371,35 @@ final class Plugin
             delete_option('owr_m1_error');
         } catch (\Throwable $e) {update_option('owr_m1_error',$e->getMessage(),false);}
         wp_safe_redirect(admin_url('tools.php?page=owr-m1'));exit;
+    }
+    /** Render only recorded facts; a failed/latest attempt never inherits old success counts. */
+    public static function renderSiteResult(array $attempt,array $success,array $snapshot,array $snapshots=[]): void {
+        echo '<h3>Last site-wide recovery result</h3>';
+        $r=$attempt?:$success;
+        if(!$r){echo '<p>No site-wide recovery recorded.</p>';}
+        else {
+            $status=$attempt?($attempt['status']??'unknown'):(isset($success['at'],$success['posts'])?'success':'unknown');
+            $labels=['success'=>'Success','failed'=>'Failed','running'=>'Started — completion not confirmed','unknown'=>'Status unknown'];
+            echo '<p role="status"><strong>'.esc_html($labels[$status]??$labels['unknown']).'</strong></p>';
+            $rows=['Recorded at (UTC)'=>$r['at']??'Not recorded','Checkpoint / snapshot key'=>$r['manifest']['key']??'Not recorded','S3 Version ID'=>$r['manifest']['version']??'Not recorded'];
+            $base=null;
+            foreach($snapshots as $item)if(($item['ref']??null)===($r['manifest']??null)){$base=(int)$item['through'];$rows['Recovery point type']=$item['origin'];break;}
+            $rows['Checkpoint includes history through']=$base===null?'Not available':(string)$base;
+            if($status==='success'){
+                $end=isset($r['through'])?(int)$r['through']:null;
+                $rows['Applied formal history through']=$end===null?'Not recorded':(string)$end;
+                $rows['Subsequent history records']=$base===null||$end===null||$end<$base?'Not available':($end===$base?'None':($base+1).'–'.$end.' ('.($end-$base).' records)');
+                $rows['Restored post records (all post types)']=isset($r['posts'])?(string)$r['posts']:'Not recorded';
+                $rows['Files written / replaced']=isset($r['files'])?(string)$r['files']:'Not recorded';
+            }else{
+                $rows['Applied history / recovery counts']='Not confirmed; do not infer zero changes or completed rollback.';
+                if(isset($r['error']))$rows['Failure reason']=$r['error'];
+            }
+            echo '<table class="widefat striped"><tbody>';
+            foreach($rows as $label=>$value)echo '<tr><th scope="row">'.esc_html($label).'</th><td style="overflow-wrap:anywhere">'.esc_html($value).'</td></tr>';
+            echo '</tbody></table><p>Post records include pages, attachments, revisions and plugin post types; this is not a count of public articles. Matching existing files are reused, so zero files written does not mean no files were recovered. History records are not unique user edits.</p>';
+        }
+        echo '<details><summary>Detailed JSON — latest attempt, last successful recovery and snapshot</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto">'.esc_html(Store::json(['latest_attempt'=>$attempt,'last_successful_recovery'=>$success,'last_snapshot'=>$snapshot])).'</pre></details>';
     }
     private function form(string $operation): void {
         echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
@@ -376,7 +415,7 @@ final class Plugin
         echo '<p>WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.</p>';
         $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>';
         try{$siteSnapshots=$this->store()->siteSnapshots();foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){$this->form($op);echo '<select name="site_ref">';foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';echo '</select>';if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>Replace all destination content with this site (a private local rollback copy is retained).</label>';submit_button($label);echo '</form>';}}catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        echo '<h3>Last site-wide recovery / snapshot result</h3><pre>'.esc_html(Store::json((array)get_option('owr_site_restore_result',get_option('owr_site_snapshot_result',[])))).'</pre>';
+        self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
         echo '<h2>Storage and optional scheduling settings</h2>';
         $c=$this->config();$this->form('configure');
         foreach (['bucket','region','prefix','owner','retention_days'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
