@@ -185,7 +185,9 @@ final class Plugin
     private function stop(\Throwable $e): never {
         $this->release();
         update_option('owr_m1_notice','Last article save failed; inspect pending history before retrying the editor. Reason: '.$e->getMessage(),false);
-        wp_die(esc_html($e->getMessage()).'<p>WordPress was not confirmed. Return to the editor and retry; check Resilience for pending history.</p>','Resilience',['response'=>409,'back_link'=>true]);
+        // api-fetch needs a nonempty error code to retain the reason in the block editor.
+        $message='Resilience: '.wp_strip_all_tags($e->getMessage()).' WordPress was not confirmed. Check Resilience for pending history before retrying.';
+        wp_die(new \WP_Error('owr_save_failed',$message),'Resilience',['response'=>409,'code'=>'owr_save_failed','back_link'=>true]);
         exit;
     }
     public function before(array $data,array $postarr,array $unsanitized,bool $update): array {
@@ -212,17 +214,28 @@ final class Plugin
             $source=$markdown?($editor?(string)wp_unslash($_POST['ozmd_source']):(string)get_post_meta($id,self::SOURCE,true)):(string)wp_unslash($data['post_content']);
             if (strlen($source)>5*1024*1024 || str_contains($source,"\0") || !preg_match('//u',$source)) throw new \RuntimeException('Markdown must be UTF-8 without NUL, at most 5 MiB.');
             $asset=$wasProtected?(string)$wasProtected:wp_generate_uuid4();$operation=wp_generate_uuid4();
-            $store=$this->store();$sequence=$store->latestState()['through']+1;
+            $store=$this->store();$state=$store->latestState();$sequence=$state['through']+1;
             $attributes=['title'=>wp_unslash($data['post_title']),'slug'=>wp_unslash($data['post_name']),'status'=>$data['post_status'],'date'=>$data['post_date'],'date_gmt'=>$data['post_date_gmt'],'origin_id'=>$id,'origin_url'=>get_permalink($id)];
             $attributes['post_type']=$data['post_type'];
             $attributes['content_format']=$markdown?'markdown':'wordpress-block-html';
-            $attributes['media']=$this->mediaForBody($source,$store,'originals/'.$asset.'/'.$operation.'/');
             foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)$attributes[$key]=wp_unslash($data[$key]);
+            // Gutenberg separately posts legacy meta boxes after REST body saving.
+            // Skip only a matching, already-confirmed body; metadata hooks still run.
+            if(!$markdown && isset($_GET['meta-box-loader']) && ($_POST['action']??'')==='editpost'
+                && self::sameConfirmedArticle($state['assets'][$asset]??null,$source,$attributes)){
+                $this->release();return $data;
+            }
+            $attributes['media']=$this->mediaForBody($source,$store,'originals/'.$asset.'/'.$operation.'/');
             $original=$store->prepare($asset,$operation,$source,$attributes);
             $this->active=['id'=>$id,'original'=>$original,'sequence'=>$sequence,'attributes'=>$attributes];
             $this->begin();
         } catch (\Throwable $e) { $this->stop($e); }
         return $data;
+    }
+    public static function sameConfirmedArticle(?array $row,string $source,array $attributes): bool {
+        if(!$row || ($row['original']['source']['sha256']??'')!==hash('sha256',$source))return false;
+        foreach($attributes as $key=>$value)if(!array_key_exists($key,$row['attributes']??[]) || (string)$row['attributes'][$key] !== (string)$value)return false;
+        return true;
     }
     public function after(int $id,\WP_Post $post,bool $update,?\WP_Post $before): void {
         if (!$this->active || ($this->active['id']!==0 && $id!==$this->active['id']) || $post->post_type!==$this->active['attributes']['post_type']) return;

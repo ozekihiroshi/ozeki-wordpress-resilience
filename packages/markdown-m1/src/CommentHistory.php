@@ -47,10 +47,33 @@ final class CommentHistory
         $name=$this->lock();$operation=wp_generate_uuid4();
         try {
             $queue=(array)get_option(self::PENDING,[]);
+            // Native state can be emitted by both REST and legacy meta-box requests.
+            // Compare against S3 authority under the writer lock, never a local cache.
+            if(!$queue && !get_option('owr_m1_pending') && ($attrs['post_type']??'')==='owr_native'){
+                try {
+                    $state=(new Plugin())->store()->latestState();
+                    if(self::sameNativeState($state['assets'][$asset]??null,$source,$attrs,$resources))return;
+                } catch (\Throwable $e) {
+                    // Equality is unknown: persist the completed operation below.
+                    // A failed optimization must never lose the pending payload.
+                }
+            }
             $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs,'resources'=>$resources];
             if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment history pending state.');
             try{$this->flushLocked();}catch(\Throwable $e){update_option('owr_m1_comment_error',$e->getMessage(),false);}
         } finally {$this->unlock($name);}
+    }
+    public static function sameNativeState(?array $row,string $source,array $attrs,array $resources): bool {
+        if(!$row || ($row['original']['source']['sha256']??'')!==hash('sha256',$source))return false;
+        $old=$row['attributes']??[];$wanted=$attrs;
+        foreach($wanted['media']??[] as $i=>$media)foreach($media['files']??[] as $path=>$ref){
+            if(isset($resources[$path])){
+                $bytes=base64_decode($resources[$path]['body'],true);if($bytes===false)return false;
+                $wanted['media'][$i]['files'][$path]=hash('sha256',$bytes);
+            }else $wanted['media'][$i]['files'][$path]=$ref['sha256']??null;
+        }
+        foreach($old['media']??[] as $i=>$media)foreach($media['files']??[] as $path=>$ref)$old['media'][$i]['files'][$path]=$ref['sha256']??null;
+        return Store::json($old)===Store::json($wanted);
     }
     public function resume(): void {$name=$this->lock();try{$this->flushLocked();}finally{$this->unlock($name);}}
     private function flushLocked(): void {
