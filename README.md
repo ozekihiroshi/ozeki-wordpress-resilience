@@ -1,5 +1,7 @@
 # Ozeki WordPress Resilience
 
+TablePress core table originals, IDs, display settings and confirmed operations are now connected to whole-site recovery in the TablePress candidate. See [scope and measured acceptance](packages/markdown-m1/docs/tablepress.md). Use the TablePress final candidate; earlier ZIPs predate this addition.
+
 ## Current product path: 0.3.1 independent originals and recovery
 
 The completion-charter v2 product is developed independently under

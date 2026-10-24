@@ -32,6 +32,7 @@ final class SiteSnapshot
         foreach(self::OPTIONS as $k)$data['options'][$k]=get_option($k);
         foreach($wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'widget_%' OR option_name LIKE 'theme_mods_%'") as $k)$data['options'][$k]=get_option($k);
         foreach(array_unique(array_column($data['tables']['posts'],'post_author')) as $id){$u=get_userdata((int)$id);if($u)$data['authors'][(string)$id]=['display_name'=>$u->display_name,'user_nicename'=>$u->user_nicename];}
+        if(TableHistory::enabled())TableHistory::baseline($data);
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         return $data;
     }
@@ -49,7 +50,7 @@ final class SiteSnapshot
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         // Include supported form runtimes in a new trusted baseline; no external worker.
-        foreach(array_merge(FormHistory::DEPENDENCIES,[MemberHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
+        foreach(array_merge(FormHistory::DEPENDENCIES,[MemberHistory::PLUGIN,TableHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=[];
         $theme=get_stylesheet();$parent=get_template();
         foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
@@ -101,6 +102,11 @@ final class SiteSnapshot
         $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_table'){
+                $this->store->get($r['original']['metadata']);
+                TableHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
+                $m['required_tablepress_version']=$r['attributes']['tablepress_version'];continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_member'){
                 $this->store->get($r['original']['metadata']);
                 MemberHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
@@ -164,6 +170,10 @@ final class SiteSnapshot
         foreach(self::TABLES as $t){if(!isset($d['tables'][$t]))throw new \RuntimeException('Missing table '.$t);$engine=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$wpdb->$t));if(strtolower($engine->Engine??'')!=='innodb')throw new \RuntimeException('Transactional tables required.');}
         file_put_contents($work.'/software.zip',$files['software.zip']);$zip=new \ZipArchive();if($zip->open($work.'/software.zip')!==true)throw new \RuntimeException('Invalid software bundle.');$program=[];
         for($i=0;$i<$zip->numFiles;$i++){$p=$zip->getNameIndex($i);self::safePath($p);if(!isset($m['software_hashes'][$p])||!preg_match('~^(themes|plugins)/~',$p))throw new \RuntimeException('Unexpected program path.');$body=$zip->getFromIndex($i);if(!hash_equals($m['software_hashes'][$p],hash('sha256',$body)))throw new \RuntimeException('Software mismatch.');$program[$p]=$body;}$zip->close();
+        if(isset($m['required_tablepress_version'])){
+            $code=$program['plugins/'.TableHistory::PLUGIN]??'';
+            if(!preg_match('/Version:\s*([^\s]+)/',$code,$version)||$version[1]!==$m['required_tablepress_version'])throw new \RuntimeException('Create a new trusted baseline after changing TablePress version.');
+        }
         if(count($program)!==count($m['software_hashes']))throw new \RuntimeException('Incomplete software bundle.');
         $install=$program;foreach($files as $p=>$body)if(str_starts_with($p,'uploads/'))$install[$p]=$body;
         file_put_contents($work.'/before-content.json',Store::json($this->data()));chmod($work.'/before-content.json',0600);
@@ -186,7 +196,7 @@ final class SiteSnapshot
                 foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
-            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');update_option($k,self::relocate($v,$from,$to));}
+            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}update_option($k,self::relocate($v,$from,$to));}
             $active=array_values(array_unique(array_merge(['ozeki-wordpress-resilience/ozeki-wordpress-resilience.php'],$m['plugins'])));update_option('active_plugins',$active);
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){

@@ -134,4 +134,32 @@ trusted baseline with WP-Members active, and install its recorded version at the
 destination. Changes are captured at request completion; only confirmed history
 is recoverable. Paid membership extensions, privileged/custom roles, CAPTCHA
 secrets and profile-file uploads are not covered. See [membership contract](docs/members.md).
-Use the WP-Members final candidate ZIP; earlier 0.3.1 ZIPs do not contain this adapter. This candidate is not a formal release.
+This TablePress candidate also includes the WP-Members adapter. Use the candidate identified by its filename and SHA-256; the version number alone does not distinguish successive 0.3.1 candidates. This is not a formal release.
+
+## TablePress
+
+TablePress free/core tables now have complete JSON originals and shared S3 formal
+history for successful additions, updates, deletion and table-ID changes. An
+initial snapshot with TablePress active includes the ID registry, table options,
+row/column visibility, global display settings and plugin software. Complete-site
+recovery preserves IDs used in article shortcodes. Generated CSS-file caching is
+replaced by TablePress's inline-CSS mode at the destination; the CSS text is kept.
+
+Operations are captured immediately after TablePress's successful callbacks.
+Only S3-confirmed history is recoverable. If S3 fails, the source change can already
+be visible; Resume history retries the frozen payload without adding a duplicate.
+Source loss before confirmation can lose that last change. This is not an S3-first
+interception of TablePress's editor. Do not confuse it with protected article saving.
+
+Validated with TablePress 3.4.1, real S3 and the existing community/dm trial namespaces:
+Checkpoint through 8 plus history 9, exact cells/options/visibility, renamed IDs,
+deleted-table absence, settings and embedded article rendering. Browser inspection
+on wp-backup.ceri.link used an isolated, token-gated trial view of the recovered DB;
+the existing site's articles were not replaced. Table operations used normal PHP
+plugin APIs, not browser editing. Sorting/search/pagination JS, premium modules,
+external data imports, user editor preferences and concurrent same-table writes
+are not acceptance claims. Take a new trusted baseline after changing TablePress's
+version; a later history version inconsistent with the bundled runtime is rejected.
+No scheduler, mail replay or permanent recovery service was introduced. Use `ozeki-wordpress-resilience-0.3.1-tablepress-final.zip`; earlier
+0.3.1 ZIPs do not include this adapter. TablePress itself is installed separately,
+not bundled into the Resilience ZIP. See [TablePress contract](docs/tablepress.md).
