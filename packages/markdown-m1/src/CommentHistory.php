@@ -20,7 +20,7 @@ final class CommentHistory
             unset($this->statusOperations[$id]);$this->capture((array)$comment);
         },PHP_INT_MIN,3);
         add_action('deleted_comment',fn($id,$old)=>$this->capture((array)$old,true),PHP_INT_MIN,2);
-        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
+        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
     }
     private function lock(): string {
         global $wpdb;$name='owr-m1-'.$wpdb->prefix;
@@ -35,13 +35,15 @@ final class CommentHistory
         $data=[];foreach(['comment_ID','comment_post_ID','comment_author','comment_author_email','comment_author_url','comment_author_IP','comment_date','comment_date_gmt','comment_content','comment_karma','comment_approved','comment_agent','comment_type','comment_parent','user_id'] as $k)$data[$k]=(string)$operation[$k];
         $post=get_post((int)$data['comment_post_ID']);
         if(!$post||!in_array($post->post_type,['post','page','ozmd_document'],true)||($post->post_status!=='publish'&&!get_post_meta($post->ID,'_owr_m1_asset',true)))return;
-        $name=$this->lock();
+        $source=Store::json(['schema'=>'owr-comment-1','deleted'=>$deleted,'comment'=>$data]);
+        $attrs=['post_type'=>'owr_comment','content_format'=>'comment-json','origin_id'=>$id,'origin_url'=>get_permalink($post),'title'=>'Comment #'.$id.' — '.$post->post_title,'status'=>$deleted?'deleted':$data['comment_approved'],'post_id'=>(int)$post->ID];
+        $this->enqueue('comment-'.$id,$source,$attrs);
+    }
+    /** Shared durable queue for successful comment and form operations. */
+    public function enqueue(string $asset,string $source,array $attrs): void {
+        if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
+        $name=$this->lock();$operation=wp_generate_uuid4();
         try {
-            // Store only core fields, not arbitrary plugin comment metadata.
-            $source=Store::json(['schema'=>'owr-comment-1','deleted'=>$deleted,'comment'=>$data]);
-            if(strlen($source)>5*1024*1024)throw new \RuntimeException('Comment record exceeds 5 MiB; not confirmed.');
-            $asset='comment-'.$id;$operation=wp_generate_uuid4();
-            $attrs=['post_type'=>'owr_comment','content_format'=>'comment-json','origin_id'=>$id,'origin_url'=>get_permalink($post),'title'=>'Comment #'.$id.' — '.$post->post_title,'status'=>$deleted?'deleted':$data['comment_approved'],'post_id'=>(int)$post->ID];
             $queue=(array)get_option(self::PENDING,[]);
             $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs];
             if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment history pending state.');

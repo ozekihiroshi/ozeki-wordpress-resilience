@@ -251,7 +251,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(($row['attributes']['post_type']??'')==='owr_comment')throw new \RuntimeException('Use complete site recovery for comments and article relationships.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form'],true))throw new \RuntimeException('Use complete site recovery for comments, forms and article relationships.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->get($row['original']['source']);
@@ -265,7 +265,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(($row['attributes']['post_type']??'')==='owr_comment')throw new \RuntimeException('Use complete site recovery for comment history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form'],true))throw new \RuntimeException('Use complete site recovery for comment/form history.');
             $source=$store->get($row['original']['source']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -400,9 +400,10 @@ final class Plugin
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
         if (get_option(self::PENDING)||get_option('owr_m1_comment_pending')) {$this->form('resume');submit_button('Resume history');echo '</form>';}
-        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">WordPress comment changes applied; S3 history pending. These operations are excluded from recovery until confirmed.</p>';
+        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.</p>';
         if($error=get_option('owr_m1_comment_error'))echo '<p role="alert">'.esc_html($error).'</p>';
         echo '<p>Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.</p>';
+        echo '<h2>Contact Form 7 and Flamingo</h2><p>Completed form definitions and received Flamingo messages use independent JSON originals and the shared pending-history queue. Use complete site recovery with the recorded versions of both plugins installed. Message storage and mail delivery are separate; recovery imports records without sending mail. Attachments, address-book entries and later message moderation/deletion are outside this adapter.</p>';
         echo '<h2>Confirmed formal history / Individual recovery</h2><p>This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.</p>';
         try {
             $history=$this->store()->history();$this->form('restore');echo '<table class="widefat"><tr><th>Select</th><th>Order</th><th>Document</th><th>Status</th><th>Raw S3 original</th></tr>';

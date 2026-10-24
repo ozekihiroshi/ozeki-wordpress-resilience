@@ -87,3 +87,25 @@ supply persisted-result snapshots, not a pre-write input interception. Failed
 S3 writes remain pending for **Resume history**, using the same frozen data. If the
 source is lost before confirmation, restore the previous confirmed state.
 Individual text recovery does not restore comments. See [scope and evidence](docs/comments.md).
+
+## Contact Form 7 and Flamingo
+
+Completed form definitions and received inquiries now use complete JSON originals,
+shared formal history and complete-site recovery. Install the recorded versions of
+both optional plugins at the destination. Failed storage can resume from its frozen
+payload; recovery never resubmits mail. This initial adapter excludes attachments,
+address-book entries and later inquiry moderation/deletion. See [contract and limits](docs/forms.md).
+
+### Validated environment and separate product correction
+
+This form adapter was verified with Contact Form 7 6.2.3 and Flamingo 2.6.4 on
+PHP 8.3.36. The plugins are installed separately and are not bundled in this ZIP.
+The tested Contact Form 7 version requires PHP 8.3 or later.
+
+The dm test container's 192 MiB memory cap caused OOM termination during recovery.
+The existing container was adjusted to 320 MiB (memory plus swap limit 640 MiB),
+after which recovery completed without further OOM kills. This is a measured lab
+configuration, not a universal minimum or a resource change made by the plugin.
+Separately, the product now restores an unmapped author as ID 0 instead of using
+the recovery operator's ID, so that result does not depend on who runs recovery.
+Flamingo's own maintenance event is separate from deferred Resilience scheduling.

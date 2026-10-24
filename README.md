@@ -26,6 +26,12 @@ and formal history jointly establish a recovery operation; pending ones are not
 confirmed. See [comment coverage and recovery](packages/markdown-m1/docs/comments.md)
 for pending-history behavior and the measured live acceptance. Use the [reviewed comment candidate and validation record](docs/releases/comments-m1-031.md); older 0.3.1 ZIPs do not contain this extension.
 
+The form extension adds completed Contact Form 7 definitions and new Flamingo
+inquiries to complete JSON originals and whole-site recovery, without replaying
+mail. Read [form scope and limits](packages/markdown-m1/docs/forms.md) and the
+[reviewed form candidate and validation record](docs/releases/forms-m1-031.md).
+Use this candidate for forms; older 0.3.1 ZIPs do not contain the adapter.
+
 ## Preserved pre-M1 research documentation
 
 ## Native editing integration (current working change)
