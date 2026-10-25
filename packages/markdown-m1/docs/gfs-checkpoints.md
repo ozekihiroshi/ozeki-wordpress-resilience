@@ -21,6 +21,15 @@ WP-Cron provides execution opportunities, not exact wall-clock guarantees. The n
 
 [日本語](gfs-checkpoints-ja.md)
 
+## Configured-time operation and verified boundary
+
+1. In Tools → Resilience, check the displayed WordPress timezone and select the required weekly/monthly/yearly dates, times and retention counts. Stagger sites on a shared server. Save and check the next reservation.
+2. Ensure WordPress has an execution opportunity. WP-Cron does not itself guarantee exact-time execution; use the site's existing approved trigger arrangements. A reservation alone is not proof of successful capture.
+3. After execution, check the success/failure record, confirmed point and next reservation. A successful point requires fixed-version verification of the complete saved set before manifest confirmation. On failure, investigate the recorded cause; do not treat a scheduled or partially written point as confirmed.
+4. For isolated tests sharing core files, account for unrelated Cron events, automatic core/plugin/theme updates and mail before triggering the standard entry. Scope temporary guards to the check and remove them afterwards. This is test-environment preparation, not an added product dependency.
+
+On 2026-10-25 one real-time weekly slot passed via the standard wp-cron.php entry invoked from the existing server: 20:44 JST scheduled, 20:44:02 dispatched, 20:44:04 confirmed. Three unchanged resources were copied to independent keys and verified before the manifest; the next November 1 reservation was registered. This does not verify HTTP page-triggered loopback, later weekly/monthly/yearly occurrences, browser GFS setup or actual deletion. The test environment's unrelated core-update processing and later guarded UI check are recorded separately in [the timed-execution report](../../../docs/releases/gfs-timed-acceptance.md). The ZIP installation/update evidence below is a different test; no ZIP was rebuilt for this documentation update.
+
 ## Additional real-S3 differential verification, 2026-10-25
 
 Existing community isolated WordPress and the standard EC2-role SDK provider wrote only a fresh dedicated `gfs-verify-20261025-c62a17/` prefix. A small complete test set (Markdown, image, metadata) was used. Three coincident rules produced one Checkpoint; repeating the same slot returned the same manifest VersionId without any additional PUT. Exact-version readback confirmed all three labels and calendar expiries calculated from actual confirmation time. The coincident date was a deliberately selected test slot (Sunday January 1), not an assertion that a historical snapshot was taken.
