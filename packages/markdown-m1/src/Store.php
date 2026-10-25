@@ -19,6 +19,16 @@ final class Store
     public static function json(array $value): string {
         return json_encode($value, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
     }
+    /** Only an absent lock configuration is optional; the fixed object version must exist. */
+    private function readOptionalObjectLock(string $operation,array $args): mixed {
+        try { return $this->s3->$operation($args); }
+        catch (\Aws\Exception\AwsException $e) {
+            if ($e->getAwsErrorCode()!=='NoSuchObjectLockConfiguration' || $e->getStatusCode()!==404) throw $e;
+            // Do not confuse an absent/deleted version or failed access with an unset lock.
+            $this->s3->headObject($args);
+            return [];
+        }
+    }
     /** Disabled retention remains explicit; never silently claim deletion protection. */
     public function requiredRetentionUntil(): ?string {
         $days=(int)($this->config['retention_days']??0);
@@ -359,8 +369,8 @@ final class Store
             try {
                 if(!$inventoryComplete)throw new \RuntimeException('s3:ListBucketVersions unavailable; all versions not inspected');
                 if($lockEnabled===null)throw new \RuntimeException('Cannot inspect bucket Object Lock configuration');
-                $r=$lockEnabled?$this->s3->getObjectRetention($this->args($key)+['VersionId'=>$v['version']]):[];
-                $h=$lockEnabled?$this->s3->getObjectLegalHold($this->args($key)+['VersionId'=>$v['version']]):[];
+                $r=$lockEnabled?$this->readOptionalObjectLock('getObjectRetention',$this->args($key)+['VersionId'=>$v['version']]):[];
+                $h=$lockEnabled?$this->readOptionalObjectLock('getObjectLegalHold',$this->args($key)+['VersionId'=>$v['version']]):[];
                 $until=$r['Retention']['RetainUntilDate']??null;
                 $until=$until instanceof \DateTimeInterface?$until->getTimestamp():($until===null?0:strtotime((string)$until));
                 if($until===false)throw new \RuntimeException('Invalid retention time');
@@ -466,8 +476,8 @@ final class Store
             $head=$this->s3->headObject($this->args($key)+['VersionId'=>$v['version']]);
             // HEAD can omit lock headers when the caller lacks read-lock rights.
             // Explicit reads must succeed instead of treating hidden state as OFF.
-            $retention=$lockEnabled?$this->s3->getObjectRetention($this->args($key)+['VersionId'=>$v['version']]):[];
-            $hold=$lockEnabled?$this->s3->getObjectLegalHold($this->args($key)+['VersionId'=>$v['version']]):[];
+            $retention=$lockEnabled?$this->readOptionalObjectLock('getObjectRetention',$this->args($key)+['VersionId'=>$v['version']]):[];
+            $hold=$lockEnabled?$this->readOptionalObjectLock('getObjectLegalHold',$this->args($key)+['VersionId'=>$v['version']]):[];
             $until=$retention['Retention']['RetainUntilDate']??null;
             $until=$until instanceof \DateTimeInterface?$until->getTimestamp():($until===null?0:strtotime((string)$until));
             if ($until===false) throw new \RuntimeException('Invalid retention timestamp.');

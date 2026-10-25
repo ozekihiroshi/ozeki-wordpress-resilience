@@ -28,7 +28,7 @@ WP-Cron provides execution opportunities, not exact wall-clock guarantees. The n
 3. After execution, check the success/failure record, confirmed point and next reservation. A successful point requires fixed-version verification of the complete saved set before manifest confirmation. On failure, investigate the recorded cause; do not treat a scheduled or partially written point as confirmed.
 4. For isolated tests sharing core files, account for unrelated Cron events, automatic core/plugin/theme updates and mail before triggering the standard entry. Scope temporary guards to the check and remove them afterwards. This is test-environment preparation, not an added product dependency.
 
-On 2026-10-25 one real-time weekly slot passed via the standard wp-cron.php entry invoked from the existing server: 20:44 JST scheduled, 20:44:02 dispatched, 20:44:04 confirmed. Three unchanged resources were copied to independent keys and verified before the manifest; the next November 1 reservation was registered. This does not verify HTTP page-triggered loopback, later weekly/monthly/yearly occurrences, browser GFS setup or actual deletion. The test environment's unrelated core-update processing and later guarded UI check are recorded separately in [the timed-execution report](../../../docs/releases/gfs-timed-acceptance.md). The ZIP installation/update evidence below is a different test; no ZIP was rebuilt for this documentation update.
+On 2026-10-25 one real-time weekly slot passed via the standard wp-cron.php entry invoked from the existing server: 20:44 JST scheduled, 20:44:02 dispatched, 20:44:04 confirmed. Three unchanged resources were copied to independent keys and verified before the manifest; the next November 1 reservation was registered. This does not verify HTTP page-triggered loopback, later weekly/monthly/yearly occurrences, browser GFS setup or actual deletion. The test environment's unrelated core-update processing and later guarded UI check are recorded separately in [the timed-execution report](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/gfs-timed-acceptance.md). The ZIP installation/update evidence below is a different test; no ZIP was rebuilt for this documentation update.
 
 ## Additional real-S3 differential verification, 2026-10-25
 
@@ -41,3 +41,17 @@ A separate newly written immutable fixture with expired weekly/monthly dates and
 ## ZIP installation/update / ZIP導入・更新
 
 New distribution ZIP verification reused the existing dm WordPress core and DB service with isolated tables/content. Fresh activation and replacement of published v0.3.1-pre.1 preserved GFS/S3 settings, the registered (not executed) slot, two synthetic pending records, diagnostics, recovery results and test content. Existing formal history and its original were read from real S3 using standard authentication. Installed files matched the ZIP byte-for-byte. This was PHP-driven extraction/activation/reload, not browser upload, queue resumption, new S3 writes, real deletion or elapsed-time scheduling. A duplicate DISABLE_WP_CRON warning came from the test bootstrap/shared configuration; assertions passed and it is not evidence of a product defect.
+
+## Unset Object Lock correction / ロック設定なしの修正（2026-10-26）
+
+The new unpublished `ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` adds one narrow correction: only HTTP 404 with AWS code `NoSuchObjectLockConfiguration` is treated as absent retention/Legal Hold configuration, and only after HEAD of the same Key/VersionId succeeds. AccessDenied, transport failures, missing versions and unrelated 404s remain blocked. Both complete-site and legacy asset-level preview use the common reader. No lock bypass or deletion permission is added.
+
+新しい未公開候補は、AWSコードNoSuchObjectLockConfigurationかつHTTP404だけを、同じKey/VersionIdのHEAD成功後に設定なしと扱います。権限拒否・通信失敗・版の不在・その他404は保留のままです。サイト全体と既存資産単位のプレビューで共通処理を使用し、ロック回避・削除権限は追加しません。
+
+The earlier version-list permission gap was resolved by the administrator for the dedicated GFS trial prefix only. Existing real S3 assets were read without mutation: 16 versions, 3 retained points/12 resources, 4 obsolete candidates, no blocked rows, identical before/after inventory. This is a preview with a test cutoff of the current time, not an applied retention-setting change or deletion authorization. IAM's explicit deletion deny remains. The existing admin renderer produced the preview HTML in isolation; no live browser administration test or deployment is claimed. Denial/network/missing-version cases were injected into memory S3 tests, not caused on AWS.
+
+以前の一覧権限不足は管理者が専用試験prefixに限り解消しました。既存実S3資産の読取りでは16版、保持3点・12資源、候補4件、保留0件、前後一覧一致。現在時刻を試験用基準にしたプレビューであり、保持設定変更や削除許可ではありません。IAMの明示的削除拒否は維持しています。既存管理画面の表示処理を隔離してHTML出力した確認で、稼働サイトへの配備・ブラウザ操作は含みません。権限拒否・通信障害・版の不在等はメモリS3への失敗注入であり、実AWS障害ではありません。
+
+Installation/update verification is separate from this real-S3 preview. The distribution must preserve settings, formal-history references, synthetic pending records and diagnostic/recovery results; synthetic queues must not be resumed. See the candidate's release validation record for the exact ZIP hash and completed checks. Published ZIPs remain unchanged.
+
+導入更新の検証は実S3プレビューと別です。設定・正式履歴の参照・合成未確定操作・診断／復旧結果を保持することを確認し、合成キューは再開しません。正確なZIPハッシュと完了した検証は配布候補の検証記録を参照してください。公開済みZIPは変更しません。

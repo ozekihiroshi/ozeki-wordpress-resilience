@@ -7,7 +7,7 @@
 3. 実行後に成功・失敗記録、確定した復旧点、次回予約を確認する。保存した全資源を固定版から取得・照合して初めてマニフェストが確定する。失敗は原因を確認し、予定や書込み途中の資源を確定済みと扱わない。
 4. 本体を共有する隔離試験では、標準入口を起動する前に対象外Cron、本体・プラグイン・テーマの自動更新、メールの条件を把握する。一時ガードは確認中だけ使い撤去する。製品の新たな依存条件ではなく、試験環境の準備である。
 
-2026-10-25の実時間の週次予定一回は、既存サーバから起動した標準wp-cron.php入口で確認済み。20:44 JST予定、20:44:02起動、20:44:04確定。更新していない3資源を別キーへ保存・照合し、次回11月1日の予約まで確認した。HTTPページアクセス起動、後日の週次・月次・年次実行、GFS画面設定、実削除は未確認。対象外の本体更新処理と後続のガード付き画面確認は、[設定時刻の検証記録](../../../docs/releases/gfs-timed-acceptance.md)で試験環境の事象として分離した。後述のZIP導入更新は別試験であり、今回の文書更新でZIPは作り直していない。
+2026-10-25の実時間の週次予定一回は、既存サーバから起動した標準wp-cron.php入口で確認済み。20:44 JST予定、20:44:02起動、20:44:04確定。更新していない3資源を別キーへ保存・照合し、次回11月1日の予約まで確認した。HTTPページアクセス起動、後日の週次・月次・年次実行、GFS画面設定、実削除は未確認。対象外の本体更新処理と後続のガード付き画面確認は、[設定時刻の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/gfs-timed-acceptance.md)で試験環境の事象として分離した。後述のZIP導入更新は別試験であり、今回の文書更新でZIPは作り直していない。
 
 「ツール → Resilience」で週次・月次・年次を同時に設定できる。週次は曜日と時刻、月次は日付（0は月末）と時刻、年次は月日と時刻を指定し、それぞれ何週間・何か月・何年間残すかを設定する。画面に表示するWordPressのタイムゾーンを使用する。存在しない日は月末に寄せ、次回は元の指定日に戻る。旧周期設定は設定保存まで継続し、GFS設定保存時に置き換える。既存Checkpointに記録済みの期限は設定変更で変更しない。
 
@@ -41,3 +41,16 @@ WP-Cronは実行機会を提供するもので、正確な時刻の実行保証�
 ## ZIP installation/update / ZIP導入・更新
 
 既存dmのWordPress本体・DBサービスを再利用し、テーブルとコンテンツを隔離して新規導入と公開済みv0.3.1-pre.1からの更新を確認しました。GFS・S3設定、予約情報（実行なし）、合成した未確定操作2件、診断・復旧結果、試験記事を保持しました。標準認証で既存S3正式履歴と原本を読み取り、配置ファイルはZIPと全件一致しました。PHPによる展開・有効化・再起動の確認であり、ブラウザアップロード、履歴再開、新規S3書込み、実削除、実時間の定期実行は含みません。DISABLE_WP_CRONの重複定義警告は試験用起動処理と共有設定の組合せによるもので、検証は合格しており製品不具合の証拠ではありません。
+## Unset Object Lock correction / ロック設定なしの修正（2026-10-26）
+
+The new unpublished `ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` adds one narrow correction: only HTTP 404 with AWS code `NoSuchObjectLockConfiguration` is treated as absent retention/Legal Hold configuration, and only after HEAD of the same Key/VersionId succeeds. AccessDenied, transport failures, missing versions and unrelated 404s remain blocked. Both complete-site and legacy asset-level preview use the common reader. No lock bypass or deletion permission is added.
+
+新しい未公開候補は、AWSコードNoSuchObjectLockConfigurationかつHTTP404だけを、同じKey/VersionIdのHEAD成功後に設定なしと扱います。権限拒否・通信失敗・版の不在・その他404は保留のままです。サイト全体と既存資産単位のプレビューで共通処理を使用し、ロック回避・削除権限は追加しません。
+
+The earlier version-list permission gap was resolved by the administrator for the dedicated GFS trial prefix only. Existing real S3 assets were read without mutation: 16 versions, 3 retained points/12 resources, 4 obsolete candidates, no blocked rows, identical before/after inventory. This is a preview with a test cutoff of the current time, not an applied retention-setting change or deletion authorization. IAM's explicit deletion deny remains. The existing admin renderer produced the preview HTML in isolation; no live browser administration test or deployment is claimed. Denial/network/missing-version cases were injected into memory S3 tests, not caused on AWS.
+
+以前の一覧権限不足は管理者が専用試験prefixに限り解消しました。既存実S3資産の読取りでは16版、保持3点・12資源、候補4件、保留0件、前後一覧一致。現在時刻を試験用基準にしたプレビューであり、保持設定変更や削除許可ではありません。IAMの明示的削除拒否は維持しています。既存管理画面の表示処理を隔離してHTML出力した確認で、稼働サイトへの配備・ブラウザ操作は含みません。権限拒否・通信障害・版の不在等はメモリS3への失敗注入であり、実AWS障害ではありません。
+
+Installation/update verification is separate from this real-S3 preview. The distribution must preserve settings, formal-history references, synthetic pending records and diagnostic/recovery results; synthetic queues must not be resumed. See the candidate's release validation record for the exact ZIP hash and completed checks. Published ZIPs remain unchanged.
+
+導入更新の検証は実S3プレビューと別です。設定・正式履歴の参照・合成未確定操作・診断／復旧結果を保持することを確認し、合成キューは再開しません。正確なZIPハッシュと完了した検証は配布候補の検証記録を参照してください。公開済みZIPは変更しません。
