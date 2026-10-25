@@ -1,19 +1,14 @@
-# はじめに：配布物・保護範囲・復旧までの手順
+# 導入案内：配布物・保護範囲・復旧
 
 [English](start-here.md) | 日本語
 
-状態：公開準備文書。正式公開の告知ではありません。この案内は文書修正後の準備ZIPに含まれます。製品コードは検証済みsave-verification-final候補と同一です。「失えば取り戻せない復旧資源の完全性を最優先し、再実行できる復旧処理の失敗対策を過度に複雑化させない」を判断基準とします。
+状態：未公開のcheckpoint-verification候補です。公開済みv0.3.1-pre.1は変更していません。
 
 ## 1. 導入する配布物
 
-準備した配布物は **0.3.1 prerelease-prepared** です。GitHub Pre-release用の試験版です。
+`ozeki-wordpress-resilience-0.3.1-checkpoint-verification.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
 
-- ファイル名：`ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip`
-- [配布物](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip)・[SHA-256と確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md)
-
-save-verification-finalからの変更は文書だけです。製品コード・依存ライブラリを含む他の全収録ファイルはバイト単位で一致します。導入・更新の実動作検証は元候補の記録を引き継ぎ、今回確認したのはZIP内容とリンクです。表示バージョンだけでなく完全なファイル名と外部のSHA-256で識別してください。旧候補は証拠として残します。GitHubのソースアーカイブや旧0.2.0研究版を導入しないでください。
-
-GitHub Pre-release `v0.3.1-pre.1`用の試験版です。WordPress.orgへの申請や安定版の公開ではありません。コードを変えないためプラグインの表示バージョンは0.3.1です。隔離WordPressの通常保存APIから標準EC2ロールで実S3原本PUT・固定版GET・正式履歴PUTを確認し、新規保存3資源すべての照合が履歴確定に先行しました。ブラウザや全アダプターの追加試験ではなく、以前の異常注入試験とも区別します。
+[検証範囲と制限](site-checkpoint-verification.md)で実S3成功・試験用失敗注入・ZIP導入更新を区別しています。既存資産と公開済み配布物は変更していません。GitHubのソースアーカイブや旧研究版を導入しないでください。
 
 ## 2. 保護するもの
 

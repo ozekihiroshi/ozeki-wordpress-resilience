@@ -97,6 +97,11 @@ final class SiteSnapshot
         $base='site-snapshots/'.hash('sha256',Store::json([$manifest,$identity])).'/';$refs=[];
         $until=gmdate('c',time()+86400*max(1,(int)((new Plugin())->config()['retention_days']??36)));
         foreach($files as $p=>$body){$type=str_ends_with($p,'.md')?'text/markdown':(str_ends_with($p,'.json')?'application/json':'application/octet-stream');$refs[$p]=$this->store->put($base.'resources/'.$p,$body,$type,$until);}
+        // Verify this attempt's fixed versions before making its manifest discoverable.
+        foreach($refs as $p=>$resource){
+            try{$this->store->get($resource);}
+            catch(\Throwable $e){throw new \RuntimeException('Site snapshot resource verification failed: '.$p.' — '.$e->getMessage(),0,$e);}
+        }
         $manifest['resources']=$refs;
         $ref=$this->store->put($base.'manifest.json',Store::json($manifest),'application/json',$until);
         return ['manifest'=>$ref,'files'=>count($files),'through'=>$manifest['through']];
