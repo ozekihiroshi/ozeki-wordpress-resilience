@@ -64,3 +64,5 @@ Installation/update verification is separate from this real-S3 preview. The dist
 既存community/dmの専用使い捨て範囲で33固定版を保存し、旧Baseline一式と履歴1・その原本の計16版を候補確認後に削除した。残した17版は再取得SHA-256が全件一致。履歴1までの独立Checkpointと履歴2だけから、試験ページの本文・タイトル・publish状態・画像・復旧先へ置換したリンクをdmで再現した。旧Baselineと元DBは使っていない。現在時刻を削除基準にした差分試験で、自然な期限経過は待っていない。対象に保持期限・Legal Hold設定はなく、既存範囲の削除拒否は維持した。
 
 **確認済み:** 既存製品メソッド経由の実S3保存・削除・復旧。**今回の未確認範囲:** 管理画面の削除操作、定期自動削除、ロック中の削除、実期間経過、削除途中の失敗。先行するプレビュー・時刻による取得・ZIP導入更新は別の検証である。製品コードやZIPは変更していない。最初のPutObject拒否は実行ロールの実効権限の問題で、管理者による修正後、製品修正なしで成功した。[英日検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/deletion-recovery-acceptance.md)を参照。
+
+後続の専用範囲では、標準管理画面から17版、定期自動処理で14版の削除に成功し、有効な週次基点の保持とdm復旧を確認した。[後続検証の範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/cleanup-browser-scheduled-acceptance.md)を参照。上記の先行記録は当時の範囲を維持する。

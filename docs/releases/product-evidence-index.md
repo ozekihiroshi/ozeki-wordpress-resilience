@@ -14,6 +14,8 @@ The latest representative protected page/image test used real original PUTs, fix
 
 ## Verification map / 検証の索引
 
+[Browser and scheduled cleanup / 管理画面・定期自動削除](cleanup-browser-scheduled-acceptance.md): follow-up verifies these previously untested routes and retained-point recovery; earlier records below keep their historical scope. 先行記録の未確認経路を後続試験で確認。過去の記録は当時の範囲を維持。
+
 [Actual deletion and retained Checkpoint + history recovery / 実削除と保持Checkpoint・後続履歴からの復旧](deletion-recovery-acceptance.md): 33 saved, 16 deleted, 17 retained and verified; dm restoration passed. Direct product calls, not browser cleanup or scheduled automatic deletion. 33版保存・16版削除・17版保持照合とdm復旧。管理画面操作・定期自動削除は未検証。
 
 [Latest unpublished candidate: unset Object Lock / 最新未公開候補・ロック設定なし](unset-lock-final-m1-031.md). Real S3 preview, injected faults and ZIP installation/update are separate evidence scopes. 実S3プレビュー・模擬障害・ZIP導入更新を区別します。
@@ -32,7 +34,7 @@ The latest representative protected page/image test used real original PUTs, fix
 | Native editing / 通常編集 | [Editor/images](native-m1-031.md), [Article details](native-details-browser-acceptance.md), [ZIP](native-details-final-m1-031.md) | Chrome evidence does not resolve the in-app browser issue / Chrome確認とアプリ内ブラウザ問題は別 |
 | Adapter acceptance / 連携 | [Comments](comments-m1-031.md), [Forms](forms-m1-031.md), [Form lifecycle](form-lifecycle-m1-031.md), [Members](members-m1-031.md), [Tables](tablepress-m1-031.md), [Table browser](tablepress-browser-acceptance.md) | Consult current application rules before interpreting older presentation tests / 過去の表示試験は現行適用規則と合わせて読む |
 | Install/update / 導入更新 | [Browser ZIP](browser-zip-update-m1-031.md), [Nonempty queue](pending-zip-update-m1-031.md), [Latest baseline candidate](save-verification-final-m1-031.md) | Different candidate hashes and queue fixtures; not every migration / 候補ハッシュ・試験キューを区別 |
-| Retention / 保持 | [Site preview](site-retention-final-m1-031.md), [Legacy asset-only path](../../packages/markdown-m1/docs/checkpoints.md) | Earlier preview is separate from [later real deletion/recovery](deletion-recovery-acceptance.md); browser and scheduled cleanup remain unverified / 先行プレビューと後続実削除・復旧を区別。画面操作・定期自動削除は未検証 |
+| Retention / 保持 | [Site preview](site-retention-final-m1-031.md), [Legacy asset-only path](../../packages/markdown-m1/docs/checkpoints.md) | Earlier preview is separate from [later real deletion/recovery](deletion-recovery-acceptance.md); see the later browser/scheduled record above / 画面操作・定期自動削除は上記の後続記録を参照 |
 | Environment preparation / 環境準備 | [Administrator activation](administrator-activation-acceptance.md), [History 68 preflight](history68-recovery-preflight.md) | Destination-only test data and account setup are environment concerns, not new preservation requirements / 復旧先だけの作業データやアカウント設定を製品要件にしない |
 
 ## Historical explanations / 過去の説明の保全
