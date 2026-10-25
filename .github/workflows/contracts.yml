@@ -33,6 +33,7 @@ jobs:
           php -l packages/markdown-m1/ozeki-wordpress-resilience.php
           php packages/markdown-m1/tests/checkpoint.php packages/markdown-m1
           php packages/markdown-m1/tests/recovery-result.php packages/markdown-m1
+          php packages/markdown-m1/tests/site-point-time.php packages/markdown-m1
           php packages/markdown-m1/tests/save-status.php packages/markdown-m1
           php packages/markdown-m1/tests/editor-save.php packages/markdown-m1
           php tools/testing/site-recovery-post-diff-test.php

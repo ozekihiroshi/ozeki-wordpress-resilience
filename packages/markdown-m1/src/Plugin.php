@@ -394,11 +394,14 @@ final class Plugin
                 $attempt=['status'=>'running','at'=>gmdate('c')];
                 update_option('owr_site_restore_attempt',$attempt,false);
                 try {
+                    $end=wp_unslash($_POST['site_through']??'');
+                    if(!is_string($end)||!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
+                    $target=(int)$end;$attempt['requested_through']=$target;
                     $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
                     $attempt['manifest']=$ref;update_option('owr_site_restore_attempt',$attempt,false);
                     $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
-                    $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work);
+                    $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work,$target);
                     update_option('owr_site_restore_attempt',['status'=>'success']+$result,false);
                 } catch (\Throwable $e) {
                     update_option('owr_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()]),false);
@@ -426,9 +429,10 @@ final class Plugin
             $labels=['success'=>'Success','failed'=>'Failed','running'=>'Started — completion not confirmed','unknown'=>'Status unknown'];
             echo '<p role="status"><strong>'.esc_html($labels[$status]??$labels['unknown']).'</strong></p>';
             $rows=['Recorded at (UTC)'=>$r['at']??'Not recorded','Checkpoint / snapshot key'=>$r['manifest']['key']??'Not recorded','S3 Version ID'=>$r['manifest']['version']??'Not recorded'];
-            $base=null;
+            $base=isset($r['checkpoint_through'])?(int)$r['checkpoint_through']:null;
             foreach($snapshots as $item)if(($item['ref']??null)===($r['manifest']??null)){$base=(int)$item['through'];$rows['Recovery point type']=$item['origin'];break;}
             $rows['Checkpoint includes history through']=$base===null?'Not available':(string)$base;
+            $rows['Requested formal history end']=isset($r['requested_through'])?(string)$r['requested_through']:'Not recorded (older result)';
             if($status==='success'){
                 $end=isset($r['through'])?(int)$r['through']:null;
                 $rows['Applied formal history through']=$end===null?'Not recorded':(string)$end;
@@ -485,7 +489,23 @@ final class Plugin
         echo '<p>TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.</p>';
         echo '<p>WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.</p>';
         $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>';
-        try{$siteSnapshots=$this->store()->siteSnapshots();foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){$this->form($op);echo '<select name="site_ref">';foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';echo '</select>';if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>Replace all destination content with this site (a private local rollback copy is retained).</label>';submit_button($label);echo '</form>';}}catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
+        try{
+            $siteSnapshots=$this->store()->siteSnapshots();
+            $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]='Checkpoint boundary';
+            if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.($row['attributes']['title']??$row['original']['asset']??'').' / '.($row['attributes']['status']??'');
+            ksort($ends);
+            foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){
+                $this->form($op);echo '<label>Checkpoint <select name="site_ref" required>';
+                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';
+                echo '</select></label>';
+                if($op==='whole_restore'){
+                    echo '<label>Formal history end <select name="site_through" required>';
+                    foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===array_key_last($ends)?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
+                    echo '</select></label><p>Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.</p><label><input type="checkbox" name="replace_site" required>Replace all destination content with this site (a private local rollback copy is retained).</label>';
+                }
+                submit_button($label);echo '</form>';
+            }
+        }catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
         self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
         echo '<h2>Storage and optional scheduling settings</h2>';
         $c=$this->config();$this->form('configure');

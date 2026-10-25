@@ -11,4 +11,5 @@ $h=render(['status'=>'running','at'=>'now'],$s);ok(str_contains($h,'completion n
 $h=render([],[]);ok(str_contains($h,'No site-wide recovery recorded'),'Empty');
 $h=render([],$s);ok(str_contains($h,'Not available'),'Missing checkpoint does not invent range');
 $s['through']=33;$h=render(['status'=>'success']+$s,$s,$list);ok(str_contains($h,'>None<'),'No tail');
+$s['checkpoint_through']=33;$s['requested_through']=68;$s['through']=68;$h=render(['status'=>'success']+$s,$s);ok(str_contains($h,'Requested formal history end')&&str_contains($h,'34–68 (35 records)'),'Explicit boundary retained without live snapshot listing');
 echo "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n";

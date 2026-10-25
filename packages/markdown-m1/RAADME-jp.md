@@ -10,7 +10,7 @@
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-site-retention-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-point-time-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -95,7 +95,7 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-site-retention/ozeki-wordpress-resilience-0.3.1-site-retention-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-point-time/ozeki-wordpress-resilience-0.3.1-point-time-final.zip)
 
 [履歴再開の運用手順](docs/save-resume.md)と[検証結果](../../docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
 
@@ -116,3 +116,7 @@ editor-save-final候補では、標準編集画面に具体的な保存失敗理
 管理画面で、保持するCheckpointと資産、削除候補、削除できると判断できない理由を表示します。設定された復旧地点の保持日数と、S3固定版の`LastModified`（UTC）を基準とし、正式履歴境界が最大のCheckpointと必要な後続履歴は常に保持します。画像等の入れ子の参照も集計します。本文用・共有用の未確定操作がある場合は計算を停止します。読取り専用表示であり、削除実行や削除権限の確認ではありません。
 
 `s3:ListBucketVersions`が不足する場合、現在の固定版と必要資産は表示しますが、隠れた過去版は未評価とし、削除可能な候補は認定しません。用途不明資産は残し、旧個別資産Checkpointとの混在・版の曖昧さ・参照欠落・履歴欠落は確認が必要です。Object Lock／Legal Holdの状態を読めない場合も削除可能とはしません。サイト全体Checkpointが存在する範囲では旧削除経路を停止します。定期実行・実削除は追加していません。S3を同期読取りするため、大量の資産ではホスティング側のリクエスト上限に達する可能性があります。
+
+## 復旧時点の指定 — point-time-final候補
+
+サイト全体の復旧画面でCheckpointと正式履歴の終了番号を選択できます。その範囲だけを適用し、必要な履歴・資産の欠落は置換前に拒否します。結果には指定番号と実際の反映番号を表示します。同じ番号ならCheckpointのみの復旧です。日時は選択の補助であり、1履歴が編集操作全体とは限りません。履歴に記録しないテーマ・メニュー等の変更には新しい信頼済み基準状態が必要です。point-time-final候補に収録しています。標準ブラウザでCheckpoint 33と終了67・68を指定し、結果の境界番号と対応する本文を確認しました。完了後の選択欄は初期値に戻るため、適用時点は復旧結果で確認してください。今回のZIPの新規導入・同一版の展開更新確認は、このブラウザ操作の検証とは別です。

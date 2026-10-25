@@ -1,5 +1,13 @@
 # Complete site baseline and reconstruction
 
+## Recovery through a selected formal history number (working tree)
+
+In Tools → Resilience, choose a complete Checkpoint and **Formal history end**, then confirm destination replacement. The end is an inclusive confirmed sequence, at or after the Checkpoint boundary; choosing the same number restores the Checkpoint alone. The selector shows confirmed timestamps and operation labels where recorded. One user edit can produce multiple formal records, so a record boundary is not necessarily a complete editing session.
+
+Only records through the selected number and their fixed-version originals are applied. Missing history, a missing end, invalid Checkpoint/end combinations or missing/corrupt required resources stop recovery before content replacement; later records are excluded. The submitted end remains fixed even if newer history arrives. Results retain the Checkpoint boundary, requested end, actual applied end and detailed JSON. Existing three-argument PHP callers still recover through the history tail observed by that invocation.
+
+Use a prepared, dedicated recovery WordPress. Reusing an existing test container and DB service with separate content/table namespaces is sufficient; destination-only scratch data preservation is not a product requirement. Theme/menu/configuration changes without supported formal history still require a new trusted baseline. No schedule, deletion or publication mechanism is added. This change is not included in the frozen `site-retention-final` ZIP.
+
 The goal is the same site's content, appearance, navigation and supported behavior on a new WordPress, not merely a readable Markdown document. `SiteSnapshot` supplements the Markdown original/history path.
 
 An administrator-trusted initial capture stores native posts (including pages, revisions, templates, navigation and global styles), metadata, taxonomies, comments, presentation options, raw Markdown, upload files, the active theme/parent and explicitly selected runtime plugin code. Content records are portable JSON, Markdown remains raw `.md`, media remains individual files, and software is a ZIP with per-file hashes. This is not an SQL/database-image restore. Source administrator credentials, sessions, WordPress/AWS configuration, cron queues and SMTP credentials are not imported. WP-Members core subscriber password hashes and configured fields are included when its adapter is active; see [membership scope](members.md).
@@ -28,7 +36,9 @@ The last site-wide result shows success, failure or an unfinished attempt, the e
 
 Use the [save-history resume procedure](save-resume.md) when the surviving source reports pending operations. Confirm the intended operations in S3 before relying on them in a later site recovery. Source loss before confirmation does not promote prepared originals into recovery history. 履歴未確定の場合は同手順で再開し、対象操作のS3正式履歴確定を確認します。未確定操作を復旧対象へ推測で追加しません。
 
-## Bidirectional preflight before complete replacement
+## Optional inventory for a reused test destination
+
+The intended product destination is a newly prepared, dedicated WordPress, not a running unrelated site. The following inventory describes the historical reused-lab procedure; it is not a product prerequisite or a requirement to preserve destination-only drafts. Prefer a simple separate content/table namespace when reuse makes the starting state costly to understand. Preserve unrelated test data through environment preparation, not by changing reconstruction semantics.
 
 1. Pin the intended Checkpoint Version ID and confirmed-history boundary. Assemble expected content from S3 without restoring it. If either input cannot be read, report unknown and do not treat it as an empty source.
 2. Enumerate **all** destination post records, including draft, auto-draft, private, trash, revisions and other post types. Do not use a published-post-only query.
@@ -45,4 +55,4 @@ The repository's `tools/testing/site-recovery-post-diff.php` is a pure test help
 
 当初の試験前確認は復旧元の行だけを走査していたため、復旧先にのみ存在した空の自動下書き30を見落としました。サイト全体の置換によるその除外は製品の既定動作であり、差分検出漏れは試験基盤の不足です。退避した完全な元行を別途戻し、最終的な既存投稿の照合は一致しました。最初の失敗結果も保存しています。製品が復旧先独自の下書きを自動保持するように変更したわけではありません。
 
-実行前は、固定したCheckpointと履歴境界から期待状態を組み立て、復旧先の全種別・全状態の投稿と双方向に比較してください。「追加」「同一IDの変更」「復旧先限定で除外されるもの」を分け、除外対象があれば必要な保全を済ませるまで実行しません。空の自動下書きも一覧から除外しません。同じIDでも由来が異なる場合があるため内容も確認します。読取り失敗を空と扱わず、編集や履歴が変わったら再確認します。製品UIの自動停止機能ではなく、現段階の運用・試験手順です。メタ情報・会員・ファイルの保持は別途照合が必要です。
+この双方向比較は、再利用する試験環境に残ったデータを把握するための補助手順です。製品の想定復旧先は新しく準備した専用WordPressであり、復旧先だけの下書きの保全は完成条件ではありません。試験環境の把握が複雑なら、既存コンテナ内でDB接頭辞・ファイル領域を分ける等の簡単な準備で解決します。新しい製品保全機能や必須検査にはしません。過去の差分検出漏れと修正記録は、試験基盤の経緯として保持します。
