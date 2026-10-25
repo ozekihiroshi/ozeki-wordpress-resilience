@@ -38,7 +38,9 @@ Ozeki WordPress Resilienceが重視するのは、この依存を減らすこと
 
 ## 4. Current Pre-release — 現在の試験版で実現したこと
 
-[GitHub Pre-release v0.3.1-pre.1](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.1)は、**WordPress保守技術者向けの試験版**です。安定版やWordPress.orgへの公開申請ではありません。GitHubのソースアーカイブではなく、添付の製品ZIPを導入してください。プラグインの表示バージョンは0.3.1です。タグ・完全なファイル名・[SHA-256の記録](../../docs/releases/prerelease-package-m1-031.md)で識別します。
+[GitHub Pre-release v0.3.1-pre.1](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.1)は、**WordPress保守技術者向けの試験版**です。安定版やWordPress.orgへの公開申請ではありません。GitHubのソースアーカイブではなく、添付の製品ZIPを導入してください。プラグインの表示バージョンは0.3.1です。タグ・完全なファイル名・[SHA-256の記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/prerelease-package-m1-031.md)で識別します。
+
+**未公開の配布候補：** `ozeki-wordpress-resilience-0.3.1-checkpoint-verification.zip` は初期スナップショットとサイト全体Checkpointの原本照合を追加します。各29資源の実S3 PUT・固定版GET・照合後のマニフェスト確定を確認しました。失敗試験は実GET後のエラー／不一致注入であり、実AWS障害ではありません。管理処理と画面HTMLの確認で、ブラウザ操作試験ではありません。[対応範囲と記録](docs/site-checkpoint-verification.md)を参照してください。公開済みPre-releaseとZIPは変更していません。0.3.1という表示だけでなく、完全なファイル名と付属SHA-256で識別してください。
 
 <a id="supported-content-and-plugins"></a>
 
@@ -65,7 +67,7 @@ Ozeki WordPress Resilienceが重視するのは、この依存を減らすこと
 - **対応範囲は限定されています。** 任意のプラグイン・拡張機能、全メタデータ、下書き・予約状態の完全再現、外部・CDN資源には対応しません。追跡対象外のテーマ・メニュー・テンプレート・実行ソフトウェアの変更には、管理者が信頼する新しい基点が必要です。未知項目を残す規則も、もともと取得対象外の情報を保存可能にするものではありません。
 - **選択的な適用により、外観や動作が変わる場合があります。** 未知の取得済み項目は保存されますが、無条件には取り込みません。現行規則ではウィジェット設定、未認識のテーマ設定、TablePressの独自CSS・モジュール・コマンド等を自動適用しません。プラグインへの対応は、全拡張・全設定の認定ではありません。
 - **保持とアクセスが前提です。** S3の版管理、適切な権限、prefixごとに一つの保存元、必要な固定版の保持が必要です。外部からの任意削除やアクセス喪失後まで保証しません。本文は5 MiB、対応する画像は1ファイル32 MiBが上限です。大規模サイトでの処理性能は確立していません。
-- **確定には境界があります。** 元環境喪失後に未確定操作は復旧できません。旧履歴の遡及認定や、状態表示時の全原本監査は行いません。通常履歴への再取得照合の追加が、サイト全体の初期スナップショット／Checkpoint確定前にも同じ確認を追加したことを意味するわけではありません。DB障害・強制終了では失敗診断を残せない場合があります。
+- **確定には境界があります。** 元環境喪失後に未確定操作は復旧できません。旧履歴の遡及認定や、状態表示時の全原本監査は行いません。新しいcheckpoint-verification候補では、初期スナップショット／Checkpointの全資源も固定版から再取得・照合してからマニフェストを書きます。公開済みv0.3.1-pre.1にはこの変更を含みません。DB障害・強制終了では失敗診断を残せない場合があります。
 - **運用自動化には未確認部分があります。** 実時間での定期実行、サイト全体の実削除の受入確認は保留です。保持プレビューは削除の許可ではなく、旧資産単位の削除処理はサイト全体用ではありません。復旧の自動継続、インフラ構築、DNS切替、メール再送は保証しません。
 
 必要な依存バージョン・権限・細かな対象外事項は、導入手順と各アダプターの仕様を確認してください。ブラウザ表示やコンテナのメモリ不足等の試験環境の事象は、製品不具合と分けて記録し、製品の復旧目的を変更する理由にはしません。
@@ -78,6 +80,6 @@ Ozeki WordPress Resilienceが重視するのは、この依存を減らすこと
 | 対応するサイト状態を再構築する | [サイト全体の復旧](docs/site-snapshot-ja.md)・[履歴再開](docs/save-resume.md) |
 | 保存資源と適用規則を理解する | [原本の分離保存](docs/separated-assets.md)・[復旧時の適用規則](docs/application-rules.md)・[履歴確定前の照合](docs/commit-verification.md) |
 | 連携別の範囲を確認する | [コメント](docs/comments.md)・[フォーム](docs/forms.md)・[会員](docs/members.md)・[TablePress](docs/tablepress.md)・[通常投稿の付随情報](docs/native-details.md) |
-| 検証と経緯を調べる | [検証記録の索引](../../docs/releases/product-evidence-index.md)・[公開版の配布物記録](../../docs/releases/prerelease-package-m1-031.md) |
+| 検証と経緯を調べる | [検証記録の索引](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/product-evidence-index.md)・[公開版の配布物記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/prerelease-package-m1-031.md) |
 
-今回のREADME改訂はリポジトリの文書だけの変更です。公開済みZIP、保存形式、復旧コードは変更しません。以前の研究経路や積み重ねた試験の説明は索引から参照できますが、標準製品の構成を規定するものではありません。
+このREADMEは公開済みPre-releaseと別の未公開候補を区別します。公開済みZIPは変更せず、候補では保存形式を変えずにスナップショット確定前の照合を追加しています。以前の研究経路や積み重ねた試験の説明は索引から参照できますが、標準製品の構成を規定するものではありません。

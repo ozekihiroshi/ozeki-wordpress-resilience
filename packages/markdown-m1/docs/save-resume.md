@@ -24,7 +24,7 @@ WordPress application or S3 original storage alone does not make an operation re
 
 ## Measured boundary
 
-The [2026-10-25 acceptance](../../../docs/releases/save-resume-acceptance.md) interrupted only the formal-history PUT, after original storage, inside one test request. Browser resume confirmed the same pending operations: history 56 → 58, pending 2 → 0, and errors cleared. This was **not an actual AWS outage**. Original PUT failure, lost responses, all adapter types, concurrent edits and destination recovery were not retested in this acceptance. No fault-injection helper is part of the product.
+The [2026-10-25 acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/save-resume-acceptance.md) interrupted only the formal-history PUT, after original storage, inside one test request. Browser resume confirmed the same pending operations: history 56 → 58, pending 2 → 0, and errors cleared. This was **not an actual AWS outage**. Original PUT failure, lost responses, all adapter types, concurrent edits and destination recovery were not retested in this acceptance. No fault-injection helper is part of the product.
 
 ## 日本語：未確定履歴の再開
 

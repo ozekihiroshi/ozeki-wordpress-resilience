@@ -2,18 +2,13 @@
 
 English | [日本語](start-here-ja.md)
 
-Status: publication preparation, not a release announcement. This guide is included in the documentation-corrected preparation ZIP. Product code is identical to the validated save-verification-final candidate. Prioritize the integrity of irreplaceable recovery resources; keep failure handling for rerunnable recovery simple.
+Status: unpublished checkpoint-verification candidate; published v0.3.1-pre.1 remains unchanged.
 
 ## 1. Identify the package
 
-The prepared package is **0.3.1 prerelease-prepared**, for labelled GitHub Pre-release distribution.
+Use `ozeki-wordpress-resilience-0.3.1-checkpoint-verification.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. This is not the published Pre-release ZIP or a new public release.
 
-- Filename: `ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip`
-- [Package](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip) · [SHA-256 and verification record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md)
-
-Only documentation differs from save-verification-final. All other archive entries, including product code and dependencies, are byte-identical. New install/update runtime evidence belongs to that earlier candidate; this repackaging checks archive contents and links, not a new live installation. Identify by full filename and external SHA-256, not 0.3.1 alone. Older candidates remain evidence. Do not install GitHub source archives or the old 0.2.0 research distribution.
-
-This package is for GitHub Pre-release `v0.3.1-pre.1`, not WordPress.org submission or a stable release. Plugin version remains 0.3.1 because code is unchanged. A new isolated WordPress trial verifies actual S3 original PUTs, fixed-version GETs and formal-history PUT with standard EC2-role credentials; all three newly stored resources were read before history confirmation. This is a normal WordPress API save, not browser or all-adapter acceptance. Earlier injected-failure tests remain separate.
+[Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
 
 ## 2. What is protected
 
