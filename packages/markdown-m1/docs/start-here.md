@@ -20,6 +20,8 @@ Normal supported operations cover Posts/Pages, referenced local images, core com
 
 The administrator judges the initial site trustworthy. Later complete Checkpoints are built from S3's baseline and confirmed history; they do not import untracked live-site changes. Unconfirmed operations are excluded. Saved publish status is reproduced; server/network exposure and DNS are administrator responsibilities. This is not replication, malware certification or infrastructure provisioning.
 
+Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](site-snapshot.md#baseline-and-checkpoint-operations). The legacy Markdown asset-level path is separate.
+
 ## 3. Changes requiring administrator attention
 
 | Change | What to do |

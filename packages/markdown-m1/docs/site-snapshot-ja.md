@@ -1,5 +1,25 @@
 # サイト全体の初期スナップショットと再構築
 
+## BaselineとCheckpointの操作
+
+以下は現行実装の説明です。今回の文書変更は公開済みZIPの差替えや検証範囲の拡大ではありません。
+
+- **Create complete initial snapshot：** 編集を止め、未確定履歴を解消し、現在の元サイトを信頼できると確認します。対応する現在のDB内容とファイルを読み取ります。再度この操作を行う場合も新しいBaselineであり、通常Checkpointや過去の点の削除許可ではありません。
+- **Create complete Checkpoint：** 既存の完全復旧点を選びます。そのS3資産と後続のS3正式履歴を材料に新しい点を作ります。サイト全体の定期取得も同じ経路です。入力欠落・履歴欠番では停止し、現サイトの再取得で補いません。
+- **Restore complete site：** BaselineまたはCheckpointと、含める正式履歴の終了番号を選びます。その点の `through` と同じ番号ならその点だけを復旧します。後の番号なら必要な後続履歴と参照資源も使います。終了番号を省略するPHP呼出しは、その呼出しで観測した履歴末尾まで適用します。
+
+### 共通の保存形式と独立性
+
+両者とも `site-snapshots/<identity>/` 以下の `owr-site-snapshot-1` 形式です。マニフェストには `origin`（`administrator_initial` または `confirmed_s3`）、`through`、Key・VersionId・SHA-256を持つ資源参照を記録します。現行の分離資源には `assets/metadata.json`、`assets/data/`、取得したMarkdown・アップロードファイル・`software.zip` があり、資産の分離形式は `owr-separated-assets-1` です。
+
+共通の保存処理でその点自身の `resources/` に新しい完全一式を作り、固定版を取得・照合してから `manifest.json` を保存します。読込みではその点の資源範囲外を指す参照を拒否します。作成時は選択した祖先と後続履歴に依存しますが、完成した点の復旧はその祖先に依存しません。Baseline自体を最初の復旧点として直接利用できます。
+
+作成完了までは入力資源が必要です。独立性は削除許可ではなく、他の保持対象の点や履歴範囲が必要とする資源は残します。対応する復旧先と適用規則が必要であり、独立保存は無条件の復旧やデータの無害性を意味しません。
+
+### 旧Markdown経路との区別
+
+旧資産単位の経路は `snapshots/<sequence>/<identity>/` 以下の `owr-md-snapshot-2` を使い、専用のマニフェスト・資産と初期取得／Checkpoint操作を持ちます。`site-snapshots/` とは別です。個別本文復旧はサイト全体のメディア・ソフトウェア・関係を復旧するものではありません。上記操作には **Site-wide recovery — primary workflow** を使います。
+
 ## 正式履歴の終了番号を指定する復旧（作業中コード）
 
 「ツール → Resilience」で完全Checkpointと **Formal history end** を選び、復旧先置換を確認します。終了番号はCheckpointの確定番号以上とし、同じ番号ならCheckpointだけを復旧します。記録がある場合は確定日時と操作内容を併記します。1回の編集で複数の正式履歴ができるため、履歴番号の境界が編集操作全体の境界とは限りません。
