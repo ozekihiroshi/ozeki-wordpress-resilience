@@ -105,7 +105,7 @@ final class MemberHistory
             if($u->roles!==['subscriber']||array_diff_key($u->caps,['subscriber'=>true]))throw new \RuntimeException('Removed member has privileged destination role.');
             if($wpdb->delete($wpdb->usermeta,['user_id'=>$u->ID])===false||$wpdb->delete($wpdb->users,['ID'=>$u->ID])===false)throw new \RuntimeException('Cannot remove recovered member.');
         }
-        foreach($state['settings'] as $k=>$value)update_option($k,SiteSnapshot::relocate($value,$from,$to));
+        foreach($state['settings'] as $k=>$value)SiteSnapshot::writeOption($k,SiteSnapshot::relocate($value,$from,$to));
         return $map;
     }
 }

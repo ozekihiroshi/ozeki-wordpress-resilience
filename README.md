@@ -10,7 +10,7 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-point-time-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -95,7 +95,7 @@ The site-wide result shows success, failure or completion unconfirmed; the exact
 
 The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-point-time/ozeki-wordpress-resilience-0.3.1-point-time-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-recovery-errors/ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip)
 
 See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. The earlier documentation-only follow-up did not modify its ZIP; this candidate includes the subsequent editor fixes below.
 
@@ -120,3 +120,9 @@ If `s3:ListBucketVersions` is unavailable, current fixed versions are inspected 
 ## Selected recovery point — point-time-final candidate
 
 The site-wide recovery screen now accepts a Checkpoint and an inclusive formal-history end number. It applies only that range, rejects missing required history/resources before replacement, and displays requested and actual boundaries. Checkpoint-only recovery is supported. Timestamps help selection; a formal record is not necessarily an entire user edit. Theme/menu changes outside recorded adapter scope still require a new trusted baseline. Included in the point-time-final candidate. Standard-browser acceptance selected Checkpoint 33 with ends 67 and 68 and verified both result boundaries and the corresponding article bodies. The selectors reset after completion; use the recorded result to identify the applied point. ZIP fresh-install and same-version extraction-update checks are separate from that browser acceptance.
+
+## Recovery failure detection — recovery-errors-final candidate
+
+Complete-site recovery checks database START/COMMIT failures and verifies persisted settings, origin metadata, recovery results and attempt records. Unchanged values are accepted. A caught failure terminates with an escaped HTTP 500 response showing the cause; it does not automatically continue or retry. If recording the failure also fails, the current response shows that error and warns that stored results may belong to an earlier attempt. Durable failure recording cannot be guaranteed when the database is unavailable. A failure after COMMIT may leave content applied; failure does not imply zero changes or completed rollback. No new rollback mechanism was added.
+
+Focused acceptance used actual WordPress/database in the existing dm isolated environment, synthetic S3 assets and deliberately invalid SQL. It is not real AWS outage, connection-loss/unknown-COMMIT, browser or forced-process-stop acceptance. The final ZIP fresh/extraction-update checks preserve settings, confirmed history, synthetic pending records and results; pending records are not resumed. Previous browser recovery and ZIP-upload evidence remain separate.

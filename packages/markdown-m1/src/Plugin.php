@@ -392,20 +392,24 @@ final class Plugin
             }
             elseif ($action==='whole_restore') {
                 $attempt=['status'=>'running','at'=>gmdate('c')];
-                update_option('owr_site_restore_attempt',$attempt,false);
                 try {
+                    SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
                     $end=wp_unslash($_POST['site_through']??'');
                     if(!is_string($end)||!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
                     $target=(int)$end;$attempt['requested_through']=$target;
                     $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
-                    $attempt['manifest']=$ref;update_option('owr_site_restore_attempt',$attempt,false);
+                    $attempt['manifest']=$ref;SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
                     $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
                     $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work,$target);
-                    update_option('owr_site_restore_attempt',['status'=>'success']+$result,false);
+                    SiteSnapshot::writeOption('owr_site_restore_attempt',['status'=>'success']+$result,false);
                 } catch (\Throwable $e) {
-                    update_option('owr_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()]),false);
-                    throw $e;
+                    $message=$e->getMessage();
+                    try { SiteSnapshot::writeOption('owr_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$message]),false); }
+                    catch (\Throwable $recordError) { $message.=' | Failure record could not be saved: '.$recordError->getMessage().'. Stored results may belong to an earlier attempt.'; }
+                    // The current response remains authoritative even if the database cannot store the failure.
+                    wp_die(esc_html('Site recovery failed: '.$message),'Site recovery failed',['response'=>500,'back_link'=>true]);
+                    return;
                 }
             }
             elseif ($action==='cleanup_preview') $this->previewCleanup();
