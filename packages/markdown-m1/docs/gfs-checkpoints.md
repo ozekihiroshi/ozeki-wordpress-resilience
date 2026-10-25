@@ -55,3 +55,13 @@ The earlier version-list permission gap was resolved by the administrator for th
 Installation/update verification is separate from this real-S3 preview. The distribution must preserve settings, formal-history references, synthetic pending records and diagnostic/recovery results; synthetic queues must not be resumed. See the candidate's release validation record for the exact ZIP hash and completed checks. Published ZIPs remain unchanged.
 
 導入更新の検証は実S3プレビューと別です。設定・正式履歴の参照・合成未確定操作・診断／復旧結果を保持することを確認し、合成キューは再開しません。正確なZIPハッシュと完了した検証は配布候補の検証記録を参照してください。公開済みZIPは変更しません。
+
+## Cleanup operation and post-deletion recovery (2026-10-26)
+
+1. Select the complete-site retention preview for the intended bucket/prefix. Verify a complete version inventory, the retained recovery points and subsequent history, candidates and blocked reasons. The legacy Markdown asset-only cleanup path is different.
+2. Confirm the scope and candidate Key/VersionId pairs before executing. A preview alone is not authorization. Recalculation must still match the reviewed plan; investigate failures rather than broadening permissions or bypassing Object Lock/Legal Hold.
+3. After execution, inspect the deletion result and remaining fixed versions. Verify recovery from the retained Checkpoint and the chosen subsequent formal-history boundary into a prepared recovery environment. Do not infer restore success from successful deletion alone.
+
+A disposable-prefix test on existing community/dm infrastructure saved 33 versions, reviewed 16 candidates (old Baseline and history 1 with its originals), deleted exactly those versions, and read back all 17 retained versions with unchanged SHA-256. The independent Checkpoint through 1 plus history 2 restored the test page body/title/publish state, image bytes and relocated links on dm without the old Baseline or source DB. Current-time cutoff was deliberate; this did not wait for natural expiry. Objects had no retention/Legal Hold setting. Existing prefixes retained their deletion deny.
+
+**Verified:** real S3 operations through existing product methods. **Not verified here:** browser/admin cleanup, scheduled automatic deletion, locked-object deletion, full elapsed retention periods or interrupted deletion. Earlier preview, timed capture and ZIP installation/update records remain separate. No product code or ZIP was changed. The initial PutObject denial was an effective-role permission issue, resolved by the administrator before the successful run; it required no product fix. See [the bilingual acceptance record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/deletion-recovery-acceptance.md).
