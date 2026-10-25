@@ -2,19 +2,18 @@
 
 [English](start-here.md) | 日本語
 
-状態：公開準備文書。正式公開の告知ではありません。製品コード・検証済みZIPは変更しません。この新しい案内はリポジトリ上の文書であり、固定済みZIPには含まれません。「失えば取り戻せない復旧資源の完全性を最優先し、再実行できる復旧処理の失敗対策を過度に複雑化させない」を判断基準とします。
+状態：公開準備文書。正式公開の告知ではありません。この案内は文書修正後の準備ZIPに含まれます。製品コードは検証済みsave-verification-final候補と同一です。「失えば取り戻せない復旧資源の完全性を最優先し、再実行できる復旧処理の失敗対策を過度に複雑化させない」を判断基準とします。
 
 ## 1. 導入する配布物
 
-現在の検証済み候補は **0.3.1 recovery-errors-final** です。
+準備した配布物は **0.3.1 prerelease-prepared** です。GitHub Pre-release用の試験版です。
 
-- ファイル名：`ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip`
-- SHA-256：`8aa35ca377346125c1b5019a014ada528d54157063a64f7ec80555c54fc5d3a9`
-- [配布物の場所](../../../release-candidates/20261025-recovery-errors/ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip)・[検証記録](../../../docs/releases/recovery-errors-final-m1-031.md)
+- ファイル名：`ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip`
+- [配布物](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip)・[SHA-256と確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md)
 
-過去にも表示バージョン0.3.1の候補があります。バージョンだけでなくファイル名とハッシュで識別します。過去ZIPは検証証拠として保持し、推奨ダウンロードを複数にしません。旧0.2.0研究版やGitHubのソースアーカイブを、製品用ZIPとして導入しないでください。
+save-verification-finalからの変更は文書だけです。製品コード・依存ライブラリを含む他の全収録ファイルはバイト単位で一致します。導入・更新の実動作検証は元候補の記録を引き継ぎ、今回確認したのはZIP内容とリンクです。表示バージョンだけでなく完全なファイル名と外部のSHA-256で識別してください。旧候補は証拠として残します。GitHubのソースアーカイブや旧0.2.0研究版を導入しないでください。
 
-正式配布は「一つの固有バージョンに、一つの変更しない配布物」とします。**次の公開版番号は0.3.2を提案**しますが、まだ作成・検証した版ではありません。公開用パッケージ作成時にプラグイン等のバージョン宣言、ファイル名、タグ、README、検証マニフェストをそろえ、その配布物を確認してから公開します。既存ZIPの名前だけを変えて0.3.2とはしません。今回は版変更・タグ・Release・ZIP作成を行いません。
+GitHub Pre-release `v0.3.1-pre.1`用の試験版です。WordPress.orgへの申請や安定版の公開ではありません。コードを変えないためプラグインの表示バージョンは0.3.1です。隔離WordPressの通常保存APIから標準EC2ロールで実S3原本PUT・固定版GET・正式履歴PUTを確認し、新規保存3資源すべての照合が履歴確定に先行しました。ブラウザや全アダプターの追加試験ではなく、以前の異常注入試験とも区別します。
 
 ## 2. 保護するもの
 
@@ -59,6 +58,6 @@
 5. 完全Checkpointと正式履歴の終了番号を選択し、復旧先の置換を確認して実行。1履歴が編集操作全体とは限らない点に注意します。
 6. 結果と復旧内容・必要な動作を確認。失敗なら停止し、原因を調べた後、再実行を別に判断します。自動続行しません。外部公開は管理者の別判断です。
 
-[サイト復旧の詳細](site-snapshot-ja.md)・[保存履歴の再開](save-resume.md)・[現行候補の検証記録](../../../docs/releases/recovery-errors-final-m1-031.md)
+[サイト復旧の詳細](site-snapshot-ja.md)・[保存履歴の再開](save-resume.md)・[現行候補の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/recovery-errors-final-m1-031.md)
 
-ブラウザ復旧、過去のブラウザZIP更新、今回の展開更新は別の検証です。この文書整理では内容・リンク確認だけを行い、新しい復旧・版移行試験は行いません。[旧研究資料](../../../docs/archive/readme-before-product-consolidation-20261024/root-en.md)は参照用であり、導入の前提ではありません。
+ブラウザ復旧、過去のブラウザZIP更新、今回の展開更新は別の検証です。この文書整理では内容・リンク確認だけを行い、新しい復旧・版移行試験は行いません。[旧研究資料](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md)は参照用であり、導入の前提ではありません。

@@ -12,7 +12,7 @@
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-save-verification-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -71,11 +71,11 @@
 
 ## 検証と問題の区別
 
-[導入・ZIP更新手順](docs/install-update.md)と[追加の標準管理画面更新試験](../../docs/releases/browser-zip-update-m1-031.md)を参照してください。検証済み0.3.1 ZIPを、同じ表示バージョンの旧試験配置へ標準アップロード・置換操作で適用し、設定・履歴68・空の未確定キュー・復旧結果を保持しました。追加の[非空キュー更新試験](../../docs/releases/pending-zip-update-m1-031.md)では、本文と付随情報の同じ2操作を保持し、再開後に履歴69～70・未確定0件となりました。この2操作の確認であり、任意の連携キューや版移行全般の保証ではありません。最初の採取が早すぎた問題は試験手順側で修正し、製品修正は不要でした。アップロード上限・ファイル変更禁止・所有権混在は環境設定の問題で、製品コードの修正ではありません。以前の展開／上書き試験とは区別します。この文書更新では検証済みZIPを再生成しません。
+[導入・ZIP更新手順](docs/install-update.md)と[追加の標準管理画面更新試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/browser-zip-update-m1-031.md)を参照してください。検証済み0.3.1 ZIPを、同じ表示バージョンの旧試験配置へ標準アップロード・置換操作で適用し、設定・履歴68・空の未確定キュー・復旧結果を保持しました。追加の[非空キュー更新試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/pending-zip-update-m1-031.md)では、本文と付随情報の同じ2操作を保持し、再開後に履歴69～70・未確定0件となりました。この2操作の確認であり、任意の連携キューや版移行全般の保証ではありません。最初の採取が早すぎた問題は試験手順側で修正し、製品修正は不要でした。アップロード上限・ファイル変更禁止・所有権混在は環境設定の問題で、製品コードの修正ではありません。以前の展開／上書き試験とは区別します。この文書更新では検証済みZIPを再生成しません。
 
-[最終ZIP同居試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/combined-final-m1-031.md)では新規導入・更新で設定／履歴を保持し、両環境で実S3のCheckpoint21と後続履歴29までを復旧しました。投稿・固定ページ・画像・コメント・フォーム／受信・会員ログイン／閲覧制限・表を照合済みです。導入試験はZIP展開・有効化と上書き更新で、ブラウザのPlugin_Upgrader試験ではありません。PR #26のPHP 8.1／8.3契約CIも成功しています。
+[最終ZIP同居試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/combined-final-m1-031.md)では新規導入・更新で設定／履歴を保持し、両環境で実S3のCheckpoint21と後続履歴29までを復旧しました。投稿・固定ページ・画像・コメント・フォーム／受信・会員ログイン／閲覧制限・表を照合済みです。導入試験はZIP展開・有効化と上書き更新で、ブラウザのPlugin_Upgrader試験ではありません。PR #26のPHP 8.1／8.3契約CIも成功しています。
 
-[TablePressブラウザ試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/tablepress-browser-acceptance.md)は標準画面の追加・更新・削除と復旧後の検索・並べ替え・ページ送りを確認しました。全連携のブラウザ試験を意味しません。[標準編集試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/native-m1-031.md)はChromeで画像操作まで確認し、アプリ内ブラウザの本文iframe空白は原因未確定のブラウザ問題として分離しています。
+[TablePressブラウザ試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/tablepress-browser-acceptance.md)は標準画面の追加・更新・削除と復旧後の検索・並べ替え・ページ送りを確認しました。全連携のブラウザ試験を意味しません。[標準編集試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/native-m1-031.md)はChromeで画像操作まで確認し、アプリ内ブラウザの本文iframe空白は原因未確定のブラウザ問題として分離しています。
 
 **製品修正：** CF7の既知のアクセス拒否用`uploads/wpcf7_uploads/.htaccess`だけを完全一致で保持します。他の制御／実行ファイルは引き続き拒否します。**環境・試験基盤：** dmメモリ制限、プロキシ／試験URL、試験DB接頭辞の重複、試験スクリプトの相対パスを区別して記録しており、製品の新しい依存ではありません。メール送信・定期実行・実S3削除・正式公開は後回しです。
 
@@ -83,7 +83,7 @@
 
 [サイト全体復旧](docs/site-snapshot.md) · [コメント](docs/comments.md) · [フォーム](docs/forms.md) · [会員](docs/members.md) · [TablePress](docs/tablepress.md) · [同居試験](docs/combined.md)
 
-[保存した旧README・研究手順](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/archive/readme-before-product-consolidation-20261024/package-ja.md)。旧0.2.0のワーカー・専用プレビュー・一律下書き・署名実験は、現行製品の必須条件ではありません。研究コードと証拠は保存し、現行製品の完成条件とは分離します。
+[保存した旧README・研究手順](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/package-ja.md)。旧0.2.0のワーカー・専用プレビュー・一律下書き・署名実験は、現行製品の必須条件ではありません。研究コードと証拠は保存し、現行製品の完成条件とは分離します。
 
 ## 通常投稿の付随情報
 
@@ -97,9 +97,9 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-save-verification-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip)
 
-[履歴再開の運用手順](docs/save-resume.md)と[検証結果](../../docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
+[履歴再開の運用手順](docs/save-resume.md)と[検証結果](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
 
 ## 標準編集画面の保存修正
 
@@ -144,3 +144,6 @@ editor-save-final候補では、標準編集画面に具体的な保存失敗理
 ## 正式履歴確定前の原本照合
 
 今回の候補は、操作の原本・付随情報・分離データ・参照画像を、保存時のS3クライアントと固定版で再取得し、一致後だけ正式履歴を確定します。不一致・取得失敗は既存の未確定／再開経路で扱います。本文・付随情報の未確定表示と、キュー登録前の失敗通知も含みます。状態画面で原本一式を毎回再検査する機能ではなく、旧履歴を遡って認定しません。[対応範囲と検証](docs/commit-verification.md)を参照してください。自動再開・ワーカー追加・正式公開は行いません。
+
+
+[Pre-release用配布物の識別情報と文書差分の確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md)。試験版と明示してGitHub Pre-releaseに配布します。隔離WordPressで、標準EC2ロールによる実S3原本PUT・固定版GET・正式履歴PUTまで追加確認済みです。
