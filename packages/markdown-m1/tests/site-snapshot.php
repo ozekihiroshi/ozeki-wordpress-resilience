@@ -7,9 +7,11 @@ function must($v,$m){if(!$v)throw new RuntimeException($m);}
 function no($f){try{$f();}catch(Throwable $e){return;}throw new RuntimeException('Expected rejection');}
 foreach(['../a','a/../b','/root','C:/x','a\\b'] as $p)no(fn()=>SiteSnapshot::safePath($p));
 must(SiteSnapshot::relocate(['x'=>'https://source.invalid/a','other'=>'https://source.invalid.evil/a'],'https://source.invalid','https://target.invalid')===['x'=>'https://target.invalid/a','other'=>'https://source.invalid.evil/a'],'URL boundary');
+require_once __DIR__.'/retention-memory.php';
 class SiteMemoryS3 {
+ use RetentionMemory;
  public array $objects=[];public int $n=0;public bool $fail=false;
- function putObject($a){if($this->fail&&str_ends_with($a['Key'],'manifest.json'))throw new RuntimeException('manifest failure');if(isset($this->objects[$a['Key']]))throw new RuntimeException('exists');return $this->objects[$a['Key']]=['Body'=>$a['Body'],'VersionId'=>'v'.++$this->n];}
+ function putObject($a){if($this->fail&&str_ends_with($a['Key'],'manifest.json'))throw new RuntimeException('manifest failure');if(isset($this->objects[$a['Key']]))throw new RuntimeException('exists');$this->rememberRetention($a);return $this->objects[$a['Key']]=['Body'=>$a['Body'],'VersionId'=>'v'.++$this->n];}
  function getObject($a){$r=$this->objects[$a['Key']]??throw new RuntimeException('missing',404);if(isset($a['VersionId'])&&$a['VersionId']!==$r['VersionId'])throw new RuntimeException('wrong version');return $r;}
  function listObjectsV2($a){$out=[];foreach($this->objects as $k=>$v)if(str_starts_with($k,$a['Prefix'])&&(!isset($a['StartAfter'])||strcmp($k,$a['StartAfter'])>0))$out[]=['Key'=>$k];return ['Contents'=>$out];}
 }

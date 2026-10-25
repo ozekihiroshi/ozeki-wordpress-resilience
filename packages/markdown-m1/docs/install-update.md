@@ -27,3 +27,9 @@ For first-time source/destination setup: [English](start-here.md) · [日本語]
 **未確定操作：** 更新を簡単にするためにキューを消さないでください。可能なら既存の履歴再開手順で確定させ、未確定のまま更新する場合は操作全体を保全し、更新後に照合してから再開します。付随情報はshutdown時にキューへ入る場合があるため、保存要求が終了してから基準を採取してください。[非空キュー更新試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/pending-zip-update-m1-031.md)では本文1件・付随情報1件のID・内容・エラーを保持し、画面からの再開で同じ操作が69～70に確定、未確定・エラー表示が解消しました。他の組合せは未検証です。以前の合成キュー上書き試験とは別の証拠です。
 
 **検証範囲：** [0.3.1標準画面更新](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md)では、同じ表示バージョンの旧試験配置を検証済みZIPへ置換し、設定・履歴・復旧結果を保持しました。以前の新規導入／展開試験とは別の証拠です。全版移行・全ホスティング設定・任意の非空キューの組合せは保証しません。後続試験で追加した確認範囲は上記の本文・付随情報2件です。管理画面操作でCron予約が登録される場合がありますが、予約登録と定期処理実行は別です。定期実行は引き続き後回しです。
+
+## GFS candidate differential check / GFS候補の差分確認
+
+New distribution ZIP verification reused the existing dm WordPress core and DB service with isolated tables/content. Fresh activation and replacement of published v0.3.1-pre.1 preserved GFS/S3 settings, the registered (not executed) slot, two synthetic pending records, diagnostics, recovery results and test content. Existing formal history and its original were read from real S3 using standard authentication. Installed files matched the ZIP byte-for-byte. This was PHP-driven extraction/activation/reload, not browser upload, queue resumption, new S3 writes, real deletion or elapsed-time scheduling. A duplicate DISABLE_WP_CRON warning came from the test bootstrap/shared configuration; assertions passed and it is not evidence of a product defect.
+
+既存dmのWordPress本体・DBサービスを再利用し、テーブルとコンテンツを隔離して新規導入と公開済みv0.3.1-pre.1からの更新を確認しました。GFS・S3設定、予約情報（実行なし）、合成した未確定操作2件、診断・復旧結果、試験記事を保持しました。標準認証で既存S3正式履歴と原本を読み取り、配置ファイルはZIPと全件一致しました。PHPによる展開・有効化・再起動の確認であり、ブラウザアップロード、履歴再開、新規S3書込み、実削除、実時間の定期実行は含みません。DISABLE_WP_CRONの重複定義警告は試験用起動処理と共有設定の組合せによるもので、検証は合格しており製品不具合の証拠ではありません。
