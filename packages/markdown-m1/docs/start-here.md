@@ -2,19 +2,18 @@
 
 English | [日本語](start-here-ja.md)
 
-Status: publication preparation, not a release announcement. This documentation does not change product code or the validated ZIP. These new guides are repository documentation and are not included in the frozen ZIP. Prioritize the integrity of irreplaceable recovery resources; keep failure handling for rerunnable recovery simple.
+Status: publication preparation, not a release announcement. This guide is included in the documentation-corrected preparation ZIP. Product code is identical to the validated save-verification-final candidate. Prioritize the integrity of irreplaceable recovery resources; keep failure handling for rerunnable recovery simple.
 
 ## 1. Identify the package
 
-The current validated candidate is **0.3.1 recovery-errors-final**:
+The prepared package is **0.3.1 prerelease-prepared**, for labelled GitHub Pre-release distribution.
 
-- Filename: `ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip`
-- SHA-256: `8aa35ca377346125c1b5019a014ada528d54157063a64f7ec80555c54fc5d3a9`
-- [Download location](../../../release-candidates/20261025-recovery-errors/ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip) · [acceptance record](../../../docs/releases/recovery-errors-final-m1-031.md)
+- Filename: `ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip`
+- [Package](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip) · [SHA-256 and verification record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md)
 
-Several historical candidates display 0.3.1. Identify this candidate by filename and hash, not version alone. Historical ZIPs remain evidence, not alternative recommended downloads. Do not install the repository's old 0.2.0 research distribution or assume GitHub's source archive is the installable product ZIP.
+Only documentation differs from save-verification-final. All other archive entries, including product code and dependencies, are byte-identical. New install/update runtime evidence belongs to that earlier candidate; this repackaging checks archive contents and links, not a new live installation. Identify by full filename and external SHA-256, not 0.3.1 alone. Older candidates remain evidence. Do not install GitHub source archives or the old 0.2.0 research distribution.
 
-For formal distribution, use one distinct version for one immutable package. **0.3.2 is the proposed next public version**, not an existing built or tested artifact. At packaging time align plugin/composer version declarations where applicable, filename, release tag, README and acceptance manifest; validate that exact package before publishing. Do not rename the existing 0.3.1 binary and call it 0.3.2. No new version, tag, release or ZIP is created by this document.
+This package is for GitHub Pre-release `v0.3.1-pre.1`, not WordPress.org submission or a stable release. Plugin version remains 0.3.1 because code is unchanged. A new isolated WordPress trial verifies actual S3 original PUTs, fixed-version GETs and formal-history PUT with standard EC2-role credentials; all three newly stored resources were read before history confirmation. This is a normal WordPress API save, not browser or all-adapter acceptance. Earlier injected-failure tests remain separate.
 
 ## 2. What is protected
 
@@ -59,6 +58,6 @@ No permanent second EC2, Python worker, SSH credential helper, shared bridge or 
 5. Select the complete Checkpoint and inclusive confirmed-history end in Tools → Resilience. Confirm destination replacement. One formal record need not represent an entire user edit.
 6. Inspect the result and restored behavior. On failure stop, investigate the reported cause and decide separately whether to retry. There is no automatic continuation. Internet exposure is a separate administrator decision.
 
-[Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current package acceptance](../../../docs/releases/recovery-errors-final-m1-031.md)
+[Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current package acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/recovery-errors-final-m1-031.md)
 
-Existing browser recovery, earlier browser ZIP upload and current ZIP extraction-update are separate evidence. The new documentation itself has link/content review only; no repeat recovery or new version-migration acceptance is implied. Historical research documents are reference material, not installation prerequisites: [archive](../../../docs/archive/readme-before-product-consolidation-20261024/root-en.md).
+Existing browser recovery, earlier browser ZIP upload and current ZIP extraction-update are separate evidence. The new documentation itself has link/content review only; no repeat recovery or new version-migration acceptance is implied. Historical research documents are reference material, not installation prerequisites: [archive](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md).

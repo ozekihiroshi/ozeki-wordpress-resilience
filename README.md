@@ -12,7 +12,7 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-save-verification-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -97,7 +97,7 @@ The site-wide result shows success, failure or completion unconfirmed; the exact
 
 The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
 
-[Validated ZIP / 検証済みZIP](release-candidates/20261025-save-verification/ozeki-wordpress-resilience-0.3.1-save-verification-final.zip)
+[Validated ZIP / 検証済みZIP](release-candidates/20261025-prerelease/ozeki-wordpress-resilience-0.3.1-prerelease-prepared.zip)
 
 See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. The earlier documentation-only follow-up did not modify its ZIP; this candidate includes the subsequent editor fixes below.
 
@@ -150,3 +150,6 @@ This candidate includes the application rules. Existing real-S3 acceptance resto
 This candidate re-reads the operation originals, metadata, split parts and referenced media using fixed versions and the existing S3 client before confirming formal history. A read/hash failure leaves the operation unconfirmed for the existing resume path. It also distinguishes body/detail pending state and records capture failures before queue registration. The status page reads history; it does not recheck all resources when displayed. Earlier histories are not retroactively verified. See [scope and verification](packages/markdown-m1/docs/commit-verification.md). No automatic retry, new worker or release.
 
 [Save-verification final candidate and evidence](docs/releases/save-verification-final-m1-031.md): completed with separate fixture, real-S3-read/isolated-WordPress and ZIP installation/update scopes. Formal publication remains deferred.
+
+
+[Pre-release package identity and documentation-only verification](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/prerelease-package-m1-031.md). Prepared for the labelled GitHub Pre-release. A separate isolated WordPress trial now verifies actual S3 original PUTs, fixed-version GETs and formal-history PUT with standard EC2-role credentials.
