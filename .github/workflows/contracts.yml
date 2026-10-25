@@ -56,6 +56,7 @@ jobs:
           php packages/markdown-m1/tests/native-details.php packages/markdown-m1
           php packages/markdown-m1/tests/native-queue.php packages/markdown-m1
           php packages/markdown-m1/tests/members.php
+          php -d auto_prepend_file=vendor/autoload.php packages/markdown-m1/tests/unset-object-lock.php packages/markdown-m1
           php packages/markdown-m1/tests/cleanup.php packages/markdown-m1
             php packages/markdown-m1/tests/site-retention.php packages/markdown-m1
             php packages/markdown-m1/tests/site-retention-fallback.php packages/markdown-m1

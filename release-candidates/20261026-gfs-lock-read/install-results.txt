@@ -1,0 +1,5 @@
+{"verified":"fresh","config_history_nonempty_pending_errors_results_content_preserved":true,"separated_s3_original_read":true,"pending_resume_tested":false,"mail":0,"s3_writes":0}
+{"verified":"upgrade","config_history_nonempty_pending_errors_results_content_preserved":true,"separated_s3_original_read":true,"pending_resume_tested":false,"mail":0,"s3_writes":0}
+{"installed_zip_bytes_match":"fresh","files":3829}
+{"installed_zip_bytes_match":"upgrade","files":3829}
+PASS existing site probe unchanged

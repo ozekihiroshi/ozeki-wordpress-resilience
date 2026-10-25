@@ -1,0 +1,20 @@
+[
+  {
+    "test": "unset-object-lock",
+    "exit": 0,
+    "stdout": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS unset-lock: retention/hold unset only; denial/network/missing/other404/head failure blocked; preview read-only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-retention",
+    "exit": 0,
+    "stdout": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\n",
+    "stderr": ""
+  },
+  {
+    "test": "checkpoint-lifecycle",
+    "exit": 0,
+    "stdout": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\n",
+    "stderr": ""
+  }
+]

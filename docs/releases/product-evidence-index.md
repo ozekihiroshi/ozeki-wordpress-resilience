@@ -14,6 +14,8 @@ The latest representative protected page/image test used real original PUTs, fix
 
 ## Verification map / 検証の索引
 
+[Latest unpublished candidate: unset Object Lock / 最新未公開候補・ロック設定なし](unset-lock-final-m1-031.md). Real S3 preview, injected faults and ZIP installation/update are separate evidence scopes. 実S3プレビュー・模擬障害・ZIP導入更新を区別します。
+
 [Unpublished GFS candidate: implementation, real-S3 and ZIP evidence / 未公開GFS候補の実装・実S3・ZIP検証](gfs-final-m1-031.md). This is separate from the published Pre-release; no actual deletion acceptance is claimed. 公開済み版とは別の候補であり、実削除の受入は主張しません。
 
 | Topic / 項目 | Records / 記録 | Boundary / 読取り上の注意 |

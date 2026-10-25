@@ -6,7 +6,7 @@ Status: unpublished gfs candidate; published v0.3.1-pre.1 remains unchanged.
 
 ## 1. Identify the package
 
-Use `ozeki-wordpress-resilience-0.3.1-gfs.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. This is not the published Pre-release ZIP or a new public release.
+Use `ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. This is not the published Pre-release ZIP or a new public release.
 
 [Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
 
