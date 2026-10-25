@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 /** TablePress completed operations, complete table originals, shared S3 history. */
 final class TableHistory
@@ -33,6 +34,9 @@ final class TableHistory
         $data['tables']['postmeta']=array_values(array_filter($data['tables']['postmeta'],fn($m)=>!str_starts_with($m['meta_key'],'_tablepress_cache')));
     }
     public function capture(string $kind,string $id='',string $old='',mixed $settings=null): void {
+        SaveFailure::run('Table capture',fn()=>$this->captureOperation($kind,$id,$old,$settings));
+    }
+    private function captureOperation(string $kind,string $id='',string $old='',mixed $settings=null): void {
         if(!self::enabled()||empty((new Plugin())->config()['protect']))return;
         global $wpdb;
         $v=['schema'=>'owr-table-1','kind'=>$kind,'id'=>$id,'old_id'=>$old,'version'=>\TablePress::version];

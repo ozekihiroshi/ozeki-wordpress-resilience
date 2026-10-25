@@ -39,3 +39,7 @@ The [2026-10-25 acceptance](../../../docs/releases/save-resume-acceptance.md) in
 WordPress反映やS3原本保存だけでは復旧対象に確定しません。正式履歴確定前に元サーバを失った場合、未確定の新規記事は存在しないものとして扱い、未確定の更新は前の確定版まで復旧します。未確定0件でも未対応操作の保護は保証しません。この表示は永続的な監査ログではありません。
 
 今回の検証は原本保存後、試験要求内で正式履歴PUTだけを遮断したものです。**実AWS障害ではありません。** ブラウザで同じ操作を再開し、履歴56→58、未確定2→0、エラー表示解消を確認しました。原本PUT失敗、応答喪失、全連携、同時編集、復旧先の再実行は今回再検証していません。遮断処理は製品の依存関係ではありません。
+
+## Capture failures before queue registration (save-verification-final candidate)
+
+See [save confirmation and capture failures](save-confirmation.md). A capture diagnostic is not a resumable operation. Inspect existing history and queued payloads before choosing Resume history or re-saving the affected data. 本文と付随情報の確定を区別し、キュー登録前の診断を未確定データそのものと扱わないでください。

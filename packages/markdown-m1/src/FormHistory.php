@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 /** CF7 definition and Flamingo receipt snapshots at their completed-save boundaries. */
 final class FormHistory
@@ -31,7 +32,7 @@ final class FormHistory
         add_action('wpcf7_after_flamingo',function($result){
             $id=(int)($result['flamingo_inbound_id']??0);if(!$id)return;
             $form=\WPCF7_ContactForm::get_current();
-            if(!$form)throw new \RuntimeException('Missing received form identity.');
+            if(!$form)SaveFailure::run('Receipt identity',static function(){throw new \RuntimeException('Missing received form identity.');});
             $this->capture([$form->id(),$id]);
         },PHP_INT_MIN,1);
     }
@@ -51,6 +52,9 @@ final class FormHistory
         if(($data['Version']??'')!==$version)throw new \RuntimeException('Install recorded form dependency before recovery: '.$plugin.' '.$version);
     }
     public function capture(array $ids): void {
+        SaveFailure::run('Form / receipt capture',fn()=>$this->captureOperation($ids));
+    }
+    private function captureOperation(array $ids): void {
         if(empty((new Plugin())->config()['protect']))return;
         global $wpdb;$items=[];
         foreach($ids as $id){
@@ -66,6 +70,9 @@ final class FormHistory
         foreach($ids as $id)unset($this->dirty[(int)$id]);
     }
     private function enqueue(array $items): void {
+        SaveFailure::run('Form queue preparation',fn()=>$this->enqueueOperation($items));
+    }
+    private function enqueueOperation(array $items): void {
         $dependencies=[];
         foreach(self::DEPENDENCIES as $plugin){
             $path=WP_PLUGIN_DIR.'/'.$plugin;

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 final class Plugin
 {
@@ -256,7 +257,7 @@ final class Plugin
             }
             $attributes['media']=$this->mediaForBody($source,$store,'originals/'.$asset.'/'.$operation.'/');
             $original=$store->prepare($asset,$operation,$source,$attributes);
-            $this->active=['id'=>$id,'original'=>$original,'sequence'=>$sequence,'attributes'=>$attributes];
+            $this->active=['id'=>$id,'original'=>$original,'sequence'=>$sequence,'attributes'=>$attributes,'store'=>$store];
             $this->begin();
         } catch (\Throwable $e) { $this->stop($e); }
         return $data;
@@ -276,7 +277,7 @@ final class Plugin
             $record=['schema'=>'owr-md-history-1','sequence'=>$a['sequence'],'original'=>$a['original'],'attributes'=>$attrs,'confirmed_at'=>gmdate('c')];
             if (!update_option(self::PENDING,['id'=>$id,'fingerprint'=>$this->fingerprint($id),'record'=>$record],false)) throw new \RuntimeException('Cannot persist pending confirmation.');
             $this->commitDb();$this->active=null;
-            try {$this->store()->commit($record);delete_option(self::PENDING);delete_option('owr_m1_notice');}
+            try {$a['store']->commit($record);delete_option(self::PENDING);delete_option('owr_m1_notice');}
             catch (\Throwable $e) {update_option('owr_m1_notice','WordPress saved; formal S3 history is pending. Use Resume history. No successful history has been assumed. Reason: '.$e->getMessage(),false);}
             $this->release();
         } catch (\Throwable $e) {$this->active=null;$this->stop($e);}
@@ -356,8 +357,13 @@ final class Plugin
         }
         return $html;
     }
+    public static function renderCaptureFailure(array $error): void {
+        if(!$error)return;
+        echo '<div class="notice notice-error"><p><strong>Last recorded capture / queue-registration failure</strong> — '.esc_html((string)($error['at']??'')).' / '.esc_html((string)($error['context']??'')).': '.esc_html((string)($error['reason']??'')).'</p><p>This is a diagnostic, not a saved recovery payload or proof of a currently pending operation. Queue count zero does not resolve it. Inspect the affected operation and S3 history. Resume history applies only to existing queued payloads; otherwise correct the cause and save the affected data again. Later unrelated saves do not clear this historical notice. If the database cannot record the error, this notice may be unavailable.</p></div>';
+    }
     public function notice(): void {
         if (!current_user_can('manage_options')) return;
+        self::renderCaptureFailure((array)get_option(SaveFailure::OPTION,[]));
         if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">Resume history</a>.</p></div>';
     }
     public function action(): void {
@@ -463,7 +469,7 @@ final class Plugin
         echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
     }
     /** Read-only summary: local pending data is never treated as S3 confirmation. */
-    public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect): void {
+    public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect, array $captureError=[]): void {
         echo '<h2>Save protection status</h2><p>Protection setting: '.($protect?'Enabled':'Disabled').'. This setting alone does not prove that all site changes are protected.</p>';
         if($history===null)echo '<p role="alert">S3 formal history could not be read. Last confirmation is unknown: '.esc_html($readError).'</p>';
         elseif(!$history)echo '<p>No confirmed formal history in this prefix. This does not mean no snapshot exists.</p>';
@@ -473,6 +479,10 @@ final class Plugin
             foreach(['Last confirmed sequence'=>$last['sequence']??'Unknown','Confirmed at (UTC)'=>$last['confirmed_at']??'Not recorded','Asset'=>$last['original']['asset']??'Not recorded','Title'=>$last['attributes']['title']??'Not recorded','Recorded state'=>$last['attributes']['status']??'Not recorded'] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
             echo '</tbody></table>';
         }
+        echo '<p>Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.</p>';
+        $details=0;foreach($queue as $entry)if(($entry['attributes']['post_type']??$entry['record']['attributes']['post_type']??'')==='owr_native')$details++;
+        echo '<p>Pending article body: '.($pending?1:0).'; pending article details (images/categories/tags/deletion): '.$details.'; other shared operations: '.(count($queue)-$details).'. Body confirmation does not confirm the entire editing session or its related operations.</p>';
+        self::renderCaptureFailure($captureError);
         $count=($pending?1:0)+count($queue);
         echo '<p>Locally pending operations: '.(int)$count.'</p>';
         if($count){
@@ -491,7 +501,7 @@ final class Plugin
         echo '<h2>Recovery boundary</h2><p>Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.</p><p>Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.</p>';
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
-        self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('owr_m1_comment_pending',[]),(string)get_option('owr_m1_notice',''),(string)get_option('owr_m1_comment_error',''),!empty($this->config()['protect']));
+        self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('owr_m1_comment_pending',[]),(string)get_option('owr_m1_notice',''),(string)get_option('owr_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
         if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button('Resume history');echo '</form>';}
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>WordPress applied; S3 formal history pending.</strong> This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.</p>';
         if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';

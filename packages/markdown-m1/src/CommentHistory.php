@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 /** Core successful-comment callbacks, immutable complete records, shared history order. */
 final class CommentHistory
@@ -29,6 +30,9 @@ final class CommentHistory
     }
     private function unlock(string $name): void {global $wpdb;$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$name));}
     public function capture(array $operation,bool $deleted=false): void {
+        SaveFailure::run('Comment capture',fn()=>$this->captureOperation($operation,$deleted));
+    }
+    private function captureOperation(array $operation,bool $deleted=false): void {
         $plugin=new Plugin();if(empty($plugin->config()['protect']))return;
         $id=(int)$operation['comment_ID'];
         // Strings make an immutable value copy before invoking storage or other hooks.
@@ -41,6 +45,9 @@ final class CommentHistory
     }
     /** Shared durable queue for successful comment and form operations. */
     public function enqueue(string $asset,string $source,array $attrs,array $resources=[]): void {
+        SaveFailure::run('Shared queue registration',fn()=>$this->enqueueOperation($asset,$source,$attrs,$resources));
+    }
+    private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[]): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
         if($resources && ($attrs['post_type']??'')!=='owr_native')throw new \RuntimeException('Unexpected operation resources.');
         if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
