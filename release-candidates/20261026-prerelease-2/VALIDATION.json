@@ -1,0 +1,25 @@
+{
+  "zip": "ozeki-wordpress-resilience-0.3.1-pre.2.zip",
+  "sha256": "109f0db79f1e5b0886b11d6ebcb2df0f4728912baa1217f977de91760b0b3d0a",
+  "bytes": 7455881,
+  "files": 3831,
+  "base_sha256": "8b14e94666e733cdc5018dbb4bdb4e7877ca9d91e3360f837d20877cece0a168",
+  "changed_document_entries": [
+    "ozeki-wordpress-resilience/README.md",
+    "ozeki-wordpress-resilience/RAADME-jp.md",
+    "ozeki-wordpress-resilience/docs/gfs-checkpoints-ja.md",
+    "ozeki-wordpress-resilience/docs/gfs-checkpoints.md",
+    "ozeki-wordpress-resilience/docs/site-snapshot-ja.md",
+    "ozeki-wordpress-resilience/docs/site-snapshot.md",
+    "ozeki-wordpress-resilience/docs/start-here-ja.md",
+    "ozeki-wordpress-resilience/docs/start-here.md",
+    "ozeki-wordpress-resilience/docs/prerelease-2-ja.md",
+    "ozeki-wordpress-resilience/docs/prerelease-2.md"
+  ],
+  "unchanged_entries": 3821,
+  "executable_and_vendor_identical": true,
+  "crc_pass": true,
+  "links_checked": 101,
+  "installation_repeated": false,
+  "publication": false
+}

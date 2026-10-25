@@ -6,6 +6,8 @@ READMEは目的と構成を説明し、詳細な実証はこの索引から参�
 
 ## Current package / 現在の配布物
 
+[Next prepared distribution / 次の未公開配布候補](prerelease-2-package.md): pre.2 packages the tested executable files with current documentation through PR52. No release published; the existing pre.1 below remains unchanged. 検証済みコードと最新文書を収録し、公開済みpre.1は不変です。
+
 [GitHub v0.3.1-pre.1](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.1) · [Package identity, checksum and actual S3 write acceptance / 配布物・実S3書込み](prerelease-package-m1-031.md)
 
 The latest representative protected page/image test used real original PUTs, fixed-version GETs and a real history PUT. The preceding [save-verification candidate](save-verification-final-m1-031.md) used real GETs but an intercepted history PUT; those are separate tests. Its installation/update tests were programmatic extraction/replacement, not browser upload. The release changes four documentation files from that tested candidate; all executable entries match. This README-only reorganization does not replace any released ZIP.
