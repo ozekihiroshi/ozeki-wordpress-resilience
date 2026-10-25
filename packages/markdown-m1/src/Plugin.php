@@ -451,6 +451,12 @@ final class Plugin
             foreach($rows as $label=>$value)echo '<tr><th scope="row">'.esc_html($label).'</th><td style="overflow-wrap:anywhere">'.esc_html($value).'</td></tr>';
             echo '</tbody></table><p>Post records include pages, attachments, revisions and plugin post types; this is not a count of public articles. Matching existing files are reused, so zero files written does not mean no files were recovered. History records are not unique user edits.</p>';
         }
+        if(($attempt['status']??(isset($success['at'])?'success':''))==='success' && isset($r['application_report'])){
+            $report=$r['application_report'];
+            echo '<h4>Preserved in S3 — not automatically applied</h4><p>'.esc_html((string)$report['count']).' item(s). Rules: '.esc_html($report['rules']).'. Original resources remain unchanged; omission is not data deletion.</p><ul>';
+            foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html($item['reason']).'</li>';
+            echo '</ul>';
+        }
         echo '<details><summary>Detailed JSON — latest attempt, last successful recovery and snapshot</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto">'.esc_html(Store::json(['latest_attempt'=>$attempt,'last_successful_recovery'=>$success,'last_snapshot'=>$snapshot])).'</pre></details>';
     }
     private function form(string $operation): void {
