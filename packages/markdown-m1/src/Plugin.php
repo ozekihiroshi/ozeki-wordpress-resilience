@@ -298,7 +298,7 @@ final class Plugin
             if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables and article relationships.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
-            $source=$store->get($row['original']['source']);
+            $source=$store->originalSource($row['original']);
             $store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -310,7 +310,7 @@ final class Plugin
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
             if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table history.');
-            $source=$store->get($row['original']['source']);$store->get($row['original']['metadata']);
+            $source=$store->originalSource($row['original']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
         }

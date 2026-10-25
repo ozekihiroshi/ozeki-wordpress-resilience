@@ -12,7 +12,7 @@
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -97,7 +97,7 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-recovery-errors/ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip)
 
 [履歴再開の運用手順](packages/markdown-m1/docs/save-resume.md)と[検証結果](docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
 
@@ -128,3 +128,11 @@ editor-save-final候補では、標準編集画面に具体的な保存失敗理
 サイト全体復旧でDB開始・COMMITの失敗を検出し、設定・元URLのメタ情報・復旧結果・試行記録の保存値を確認します。変更不要は正常扱いです。検出した失敗は原因を示すエスケープ済みHTTP 500応答で終了し、自動続行・再試行しません。失敗記録も保存できなければ、その場の応答に記録失敗と、保存済み結果が以前のものかもしれない旨を表示します。DBが利用できない場合の永続記録は保証しません。COMMIT後の失敗は内容反映済みの可能性があり、失敗表示は未変更・巻戻し完了を意味しません。巻戻し機能は追加していません。
 
 既存dmの隔離領域で実WordPress・DB、合成S3資産と意図的なSQLエラーを使って確認しました。実AWS障害・接続断時のCOMMIT結果不明・ブラウザ・強制停止の検証ではありません。最終ZIPの新規導入・展開更新では設定・正式履歴・合成未確定操作・復旧結果の保持を確認し、未確定操作は再開しません。以前のブラウザ復旧・ZIPアップロード検証とは区別します。
+
+## 原本と付随情報の分離 — separated-assets-final候補
+
+通常保存・初期スナップショット・Checkpointで共通の分離処理を使います。Markdown・HTML・画像に加え、表のセルや問い合わせの入力値等の既知の内容を独立ファイルへ分け、未知の取得済み項目も保持します。今回の候補に収録しました。新形式の読取りには本候補が必要で、以前のrecovery-errors-final ZIPは新形式を読めません。既存の旧形式はS3を書き換えず読み取れます。認定範囲・有効化規則は変更していません。[形式と検証範囲](packages/markdown-m1/docs/separated-assets.md)を参照してください。
+
+実S3では既存community/dmと標準EC2ロール認証で、通常保存・初期取得・Checkpointの原本単独取得、Checkpointの固定版24件から元環境なしの復旧を確認しました。ZIP導入検証は別範囲として、新規有効化・旧ZIPからの置換と、設定・非空の未確定記録・読取り専用S3履歴の保持を確認します。ブラウザ・全連携の表示・未確定操作の再開試験を今回新たに保証するものではありません。未知情報を保持しますが新しく認定するものではなく、自動移行・削除・正式公開は行いません。
+
+[分離形式の最終ZIP検証](docs/releases/separated-assets-final-m1-031.md)：新規導入・置換更新に合格しました。S3読取りと合成未確定記録の保持を確認し、以前のブラウザ・再構築試験とは区別しています。

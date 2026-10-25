@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/AssetFormat.php';
 
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
@@ -115,8 +116,7 @@ final class Store
             || !hash_equals((string)($cp['inventory_sha256']??''),hash('sha256',self::json($cp['assets'])))) throw new \RuntimeException('Invalid independent snapshot inventory.');
         foreach ($cp['assets'] as $asset=>$row) {
             if (($row['original']['asset']??null)!==$asset || !is_int($row['sequence']??null) || $row['sequence']<0 || $row['sequence']>$cp['through']) throw new \RuntimeException('Invalid snapshot asset.');
-            foreach (['source','metadata'] as $type) {
-                $ref=$row['original'][$type]??[];
+            foreach (array_merge([$row['original']['source']??[],$row['original']['metadata']??[]],array_values($row['original']['parts']??[])) as $ref) {
                 if (!str_starts_with((string)($ref['key']??''),$m[1].'assets/')) throw new \RuntimeException('Snapshot depends on an earlier resource.');
             }
         }
@@ -156,11 +156,9 @@ final class Store
                 SiteSnapshot::safePath($path);
                 $row['attributes']['media'][$index]['files'][$path]=$this->put($where.'media/'.$path,$this->get($ref),'application/octet-stream',$plan['retain_until']);
             }
-            $row['original']=['schema'=>'owr-md-original-1','asset'=>$asset,'operation'=>basename(rtrim($base,'/')),'retain_until'=>$plan['retain_until'],
-                'source'=>$this->put($where.self::sourceName($row['attributes']),$item['source'],self::sourceType($row['attributes']).'; charset=utf-8',$plan['retain_until']),
-                'metadata'=>$this->put($where.'metadata.json',self::json($row['attributes']),'application/json',$plan['retain_until'])];
+            $row['original']=$this->saveOriginal($where,$asset,basename(rtrim($base,'/')),$item['source'],$row['attributes'],$plan['retain_until']);
             // Read back exact newly saved versions before adopting the snapshot.
-            $this->get($row['original']['source']);$this->get($row['original']['metadata']);$assets[$asset]=$row;
+            $this->originalSource($row['original']);$this->get($row['original']['metadata']);$assets[$asset]=$row;
         }
         $body=['schema'=>'owr-md-snapshot-2','through'=>$through,'origin'=>$origin,'created_at'=>$plan['created_at'],'retain_until'=>$plan['retain_until'],
             'assets'=>$assets,'inventory_sha256'=>hash('sha256',self::json($assets))];
@@ -175,7 +173,7 @@ final class Store
             if (count($keys)!==1) throw new \RuntimeException('Initial state already exists.');
             $cp=$this->snapshot($keys[0]);
             if ($cp['through']!==0 || $cp['origin']!=='administrator_initial' || count($cp['assets'])!==count($materials)) throw new \RuntimeException('Initial state already exists.');
-            foreach ($materials as $id=>$item) if (!isset($cp['assets'][$id]) || $cp['assets'][$id]['attributes']!==$item['row']['attributes'] || $this->get($cp['assets'][$id]['original']['source'])!==$item['source']) throw new \RuntimeException('Initial state changed; refusing reset.');
+            foreach ($materials as $id=>$item) if (!isset($cp['assets'][$id]) || $cp['assets'][$id]['attributes']!==$item['row']['attributes'] || $this->originalSource($cp['assets'][$id]['original'])!==$item['source']) throw new \RuntimeException('Initial state changed; refusing reset.');
             return ['key'=>$keys[0],'through'=>0,'assets'=>count($materials),'unchanged'=>true];
         }
         return $this->saveSnapshot($materials,0,'administrator_initial');
@@ -187,7 +185,7 @@ final class Store
         if ($base!==null && $this->snapshot($base)['through']===$state['through']) return ['key'=>$base,'through'=>$state['through'],'assets'=>count($state['assets']),'unchanged'=>true];
         foreach ($state['assets'] as $asset=>$row) {
             $this->get($row['original']['metadata']);
-            $materials[$asset]=['row'=>$row,'source'=>$this->get($row['original']['source'])];
+            $materials[$asset]=['row'=>$row,'source'=>$this->originalSource($row['original'])];
         }
         return $this->saveSnapshot($materials,$state['through'],'confirmed_s3');
     }
@@ -407,10 +405,37 @@ final class Store
     public function prepare(string $asset, string $operation, string $source, array $attributes): array {
         $base='originals/'.$asset.'/'.$operation.'/';
         $until=!empty($this->config['retention_days'])?gmdate('c',time()+86400*(int)$this->config['retention_days']):null;
-        return ['schema'=>'owr-md-original-1','asset'=>$asset,'operation'=>$operation,
-            'retain_until'=>$until,
-            'source'=>$this->put($base.self::sourceName($attributes),$source,self::sourceType($attributes).'; charset=utf-8',$until),
-            'metadata'=>$this->put($base.'metadata.json',self::json($attributes),'application/json',$until)];
+        return $this->saveOriginal($base,$asset,$operation,$source,$attributes,$until);
+    }
+    private function saveOriginal(string $base,string $asset,string $operation,string $source,array $attributes,?string $until): array {
+        $meta=['schema'=>AssetFormat::SCHEMA,'attributes'=>$attributes];$parts=[];$body=$source;
+        if(self::sourceName($attributes)==='source.json'){
+            $layout=AssetFormat::split(json_decode($source,true,512,JSON_THROW_ON_ERROR));
+            foreach($layout['files'] as $path=>$bytes)$parts[$path]=$this->put($base.$path,$bytes,'text/plain; charset=utf-8',$until);
+            unset($layout['files']);$meta['structure']=$layout;
+            $body=self::json(['schema'=>AssetFormat::SCHEMA,'data'=>$parts]);
+        }
+        return ['schema'=>'owr-md-original-2','asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
+            'source_sha256'=>hash('sha256',$source),'parts'=>$parts,
+            'source'=>$this->put($base.self::sourceName($attributes),$body,self::sourceType($attributes).'; charset=utf-8',$until),
+            'metadata'=>$this->put($base.'metadata.json',self::json($meta),'application/json',$until)];
+    }
+    /** Decode only for existing typed replay; S3 stores readable independent originals. */
+    public function originalSource(array $original): string {
+        if(($original['schema']??'owr-md-original-1')==='owr-md-original-1')return $this->get($original['source']);
+        if(($original['schema']??'')!=='owr-md-original-2')throw new \RuntimeException('Unsupported original format.');
+        $meta=json_decode($this->get($original['metadata']),true,512,JSON_THROW_ON_ERROR);
+        if(($meta['schema']??'')!==AssetFormat::SCHEMA)throw new \RuntimeException('Invalid original metadata.');
+        $raw=$this->get($original['source']);
+        if(isset($meta['structure'])){
+            $index=json_decode($raw,true,512,JSON_THROW_ON_ERROR);
+            if(($index['schema']??'')!==AssetFormat::SCHEMA||($index['data']??null)!==($original['parts']??null))throw new \RuntimeException('Original index mismatch.');
+            $files=[];$base=dirname($original['source']['key']).'/';
+            foreach($original['parts'] as $path=>$ref){if(($ref['key']??'')!==$base.$path)throw new \RuntimeException('Original depends on another resource scope.');$files[$path]=$this->get($ref);}
+            $raw=self::json(AssetFormat::join($meta['structure'],$files));
+        }
+        if(!hash_equals($original['source_sha256'],hash('sha256',$raw)))throw new \RuntimeException('Reassembled original mismatch.');
+        return $raw;
     }
     public function commit(array $record): void {
         $this->put(sprintf('history/%020d.json',$record['sequence']),self::json($record),'application/json',$record['original']['retain_until']);

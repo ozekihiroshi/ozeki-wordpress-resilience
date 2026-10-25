@@ -19,7 +19,7 @@ foreach(['0','1','spam','trash','1'] as $i=>$status){
  $raw=Owr\M1\Store::json(['schema'=>'owr-comment-1','deleted'=>false,'comment'=>$c]);
  $o=$store->prepare('comment-30','op-'.$i,$raw,$a);ok(str_ends_with($o['source']['key'],'.json'),'complete JSON source');
  $store->commit(['schema'=>'owr-md-history-1','sequence'=>$i+1,'original'=>$o,'attributes'=>$a]);
- Owr\M1\CommentHistory::replay($data,$store->get($o['source']),$a);
+ Owr\M1\CommentHistory::replay($data,$store->originalSource($o),$a);
  ok(count($data['tables']['comments'])===1&&$data['tables']['comments'][0]===$c,'edit/moderation replay');
  ok($data['tables']['posts'][0]['comment_count']===($status==='1'?'1':'0'),'comment count');
 }
@@ -31,7 +31,7 @@ Owr\M1\CommentHistory::replay($data,$raw,$a);
 ok(count($data['tables']['comments'])===1&&$data['tables']['comments'][0]['comment_parent']==='0'&&!$data['tables']['commentmeta'],'delete tombstone/reparent');
 $s3->fail=true;try{$store->prepare('comment-30','failed',$raw,$a);throw new LogicException('should fail');}catch(RuntimeException $e){}
 ok(count($store->history())===6,'failure not formal');
-$s3->fail=false;$cp=$store->createCheckpoint();$state=$store->recoveryState($cp['key']);ok($state['through']===6&&$store->get($state['assets']['comment-30']['original']['source'])===$raw,'independent asset checkpoint JSON');
+$s3->fail=false;$cp=$store->createCheckpoint();$state=$store->recoveryState($cp['key']);ok($state['through']===6&&$store->originalSource($state['assets']['comment-30']['original'])===$raw,'independent asset checkpoint JSON');
 echo "PASS comment addition/edit/moderation/delete/reparent/count, complete JSON, failed original exclusion, independent checkpoint.\n";
 
 // Pending data must retain its destination when configuration is submitted.
