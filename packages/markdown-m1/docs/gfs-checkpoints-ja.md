@@ -54,3 +54,13 @@ The earlier version-list permission gap was resolved by the administrator for th
 Installation/update verification is separate from this real-S3 preview. The distribution must preserve settings, formal-history references, synthetic pending records and diagnostic/recovery results; synthetic queues must not be resumed. See the candidate's release validation record for the exact ZIP hash and completed checks. Published ZIPs remain unchanged.
 
 導入更新の検証は実S3プレビューと別です。設定・正式履歴の参照・合成未確定操作・診断／復旧結果を保持することを確認し、合成キューは再開しません。正確なZIPハッシュと完了した検証は配布候補の検証記録を参照してください。公開済みZIPは変更しません。
+
+## 削除操作と削除後の復旧確認（2026-10-26）
+
+1. 対象バケット・prefixのサイト全体保持プレビューで、全版一覧が完全であること、残す復旧点と後続履歴、削除候補と保留理由を確認する。旧Markdown資産単位の削除経路とは区別する。
+2. 実行前に対象範囲と候補のKey/VersionIdを確認する。プレビューだけを削除許可としない。実行時の再計算が確認済み計画と一致する必要がある。失敗時は原因を確認し、安易な権限拡大やObject Lock・Legal Holdの回避はしない。
+3. 削除結果と残存固定版を確認し、準備した復旧環境で、残したCheckpointと指定する正式履歴の終了番号から復旧を確認する。削除成功だけで復旧成功とはしない。
+
+既存community/dmの専用使い捨て範囲で33固定版を保存し、旧Baseline一式と履歴1・その原本の計16版を候補確認後に削除した。残した17版は再取得SHA-256が全件一致。履歴1までの独立Checkpointと履歴2だけから、試験ページの本文・タイトル・publish状態・画像・復旧先へ置換したリンクをdmで再現した。旧Baselineと元DBは使っていない。現在時刻を削除基準にした差分試験で、自然な期限経過は待っていない。対象に保持期限・Legal Hold設定はなく、既存範囲の削除拒否は維持した。
+
+**確認済み:** 既存製品メソッド経由の実S3保存・削除・復旧。**今回の未確認範囲:** 管理画面の削除操作、定期自動削除、ロック中の削除、実期間経過、削除途中の失敗。先行するプレビュー・時刻による取得・ZIP導入更新は別の検証である。製品コードやZIPは変更していない。最初のPutObject拒否は実行ロールの実効権限の問題で、管理者による修正後、製品修正なしで成功した。[英日検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/deletion-recovery-acceptance.md)を参照。
