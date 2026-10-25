@@ -89,6 +89,35 @@ final class Plugin
             try {$this->runCleanup(true);} catch (\Throwable $e) {update_option('owr_m1_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);}
         }
     }
+    public function previewSiteCleanup(): array {
+        try {
+            $this->lock();
+            if(get_option(self::PENDING) || get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume article and shared pending operations before calculating candidates.');
+            $days=max(0,min(3650,(int)($this->config()['cleanup_keep_days']??90)));
+            $plan=$this->store()->siteCleanupPreview(max(0,time()-$days*DAY_IN_SECONDS));
+        } catch(\Throwable $e) {
+            $plan=['read_only'=>true,'at'=>gmdate('c'),'error'=>$e->getMessage()];
+        } finally {$this->release();}
+        update_option('owr_site_cleanup_preview',$plan,false);
+        return $plan;
+    }
+    public static function renderSiteCleanup(array $plan): void {
+        echo '<h2>Complete-site retention preview — read only</h2><p>Uses the recovery-point retention days below and S3 fixed-version LastModified (UTC). Always retains the newest history boundary and the required subsequent history. Article and shared pending operations must be resolved first. No deletion is available from this preview.</p>';
+        if(!$plan)return;
+        if(isset($plan['error']))echo '<p><strong>Candidates not calculated:</strong> '.esc_html($plan['error']).'</p>';
+        else {
+            echo '<p>'.esc_html('History '.$plan['from'].' → '.$plan['through'].'; subsequent records: '.$plan['tail_count'].'; cutoff: '.$plan['cutoff']).'</p>';
+            echo '<p>'.esc_html($plan['limitation']).'</p>';
+            echo '<p>'.esc_html($plan['inventory_note']).'</p>';
+            echo '<details><summary>Retained Checkpoints ('.count($plan['keep']).')</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan['keep'])).'</pre></details>';
+            foreach(['retained'=>'Assets to retain','candidates'=>'Deletion candidates (not executed)','blocked'=>'Deletion not established / retained'] as $key=>$label){
+                echo '<details><summary>'.esc_html($label).' ('.count($plan[$key]).')</summary><table class="widefat" style="table-layout:fixed;overflow-wrap:anywhere"><thead><tr><th>S3 key / version</th><th>Reason</th></tr></thead><tbody>';
+                foreach($plan[$key] as $v)echo '<tr><td>'.esc_html($v['key']).'<br>'.esc_html($v['version']).'</td><td>'.esc_html($v['reason']).'</td></tr>';
+                echo '</tbody></table></details>';
+            }
+        }
+        echo '<details><summary>Detailed retention preview JSON</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan)).'</pre></details>';
+    }
     public function previewCleanup(): array {
         try {
             $this->lock();
@@ -351,6 +380,7 @@ final class Plugin
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') $this->restore(array_map('strval',(array)($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
+            elseif ($action==='site_cleanup_preview') $this->previewSiteCleanup();
             elseif ($action==='initial_snapshot') $this->initialSnapshot(isset($_POST['trust_initial']));
             elseif ($action==='whole_initial') {
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),['ozeki-markdown-documents/ozeki-markdown-documents.php']);
@@ -462,7 +492,9 @@ final class Plugin
         foreach (['bucket','region','prefix','owner','retention_days'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
         echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported article, image, comment, form, TablePress and WP-Members operations (one writer per prefix)</label></p><p><label>Checkpoint interval in days (0 = manual) <input type="number" min="0" max="3650" name="checkpoint_interval_days" value="'.(int)($c['checkpoint_interval_days']??0).'"></label></p><p>Scheduling uses WP-Cron and requires traffic or an existing cron runner. Credentials: AWS SDK default provider; no credentials stored in WordPress. Enable S3 versioning. Retention prevents early deletion; it does not automatically delete objects.</p>';
         echo '<p><label>Recovery-point retention days (0 = keep latest baseline and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
-        echo '<h2>Expired versions / cleanup</h2><p>The newest complete Checkpoint and every retained recovery chain remain. Object Lock is never bypassed. Cleanup permanently deletes exact S3 versions; unrelated or ambiguous objects are not removed. Preview again after failures or storage changes.</p>';
+        self::renderSiteCleanup((array)get_option('owr_site_cleanup_preview',[]));
+        $this->form('site_cleanup_preview');submit_button('Preview complete-site retention');echo '</form>';
+        echo '<h2>Legacy asset-only cleanup — not complete-site cleanup</h2><p>This separate earlier path uses asset snapshots. It does not implement complete-site retention. Do not use it to clean a complete-site stream.</p>';
         $this->form('cleanup_preview');submit_button('Preview expired versions');echo '</form>';
         $preview=(array)get_option('owr_m1_cleanup_preview',[]);
         if ($preview) {
