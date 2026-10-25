@@ -104,9 +104,13 @@ final class SiteSnapshot
     public function checkpoint(array $ref): array {
         [$m,$files]=$this->load($ref);[$m,$files]=$this->replay($m,$files);return $this->save($files,$m);
     }
-    private function replay(array $m,array $files): array {
+    private function replay(array $m,array $files,?int $target=null): array {
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
-        $rows=$this->store->history((int)$m['through']);$through=(int)$m['through'];
+        $through=(int)$m['through'];
+        if($target!==null && $target<$through)throw new \RuntimeException('Recovery end must not precede the selected Checkpoint.');
+        $rows=$this->store->history($through,$target);
+        // Freeze the observed boundary once, before fetching or installing resources.
+        $target??=$rows?(int)$rows[count($rows)-1]['sequence']:$through;
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
             if(($r['attributes']['post_type']??'')==='owr_native'){
@@ -150,6 +154,7 @@ final class SiteSnapshot
                 foreach($d['tables']['postmeta'] as &$meta)if((string)$meta['post_id']===$id && $meta['meta_key']==='_ozmd_source')$meta['meta_value']=$raw;unset($meta);
             }else $files['posts/'.$id.'.html']=$raw;
         }
+        if($through!==$target)throw new \RuntimeException('Requested formal history is missing; refusing partial recovery.');
         $files['content.json']=Store::json($d);$m['through']=$through;$m['origin']='confirmed_s3';return [$m,$files];
     }
     public static function applyMedia(array &$d,array &$files,array $mediaRecords,Store $store): void {
@@ -167,11 +172,11 @@ final class SiteSnapshot
                 }
             }
     }
-    public function restore(array $ref,bool $replace,string $work): array {
+    public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
         if(!empty((new Plugin())->config()['protect'])||get_option('owr_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
-        [$m,$files]=$this->load($ref);[$m,$files]=$this->replay($m,$files);$to=home_url();$from=$m['source_url'];
+        [$m,$files]=$this->load($ref);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
         foreach($m['required_form_plugins']??[] as $plugin=>$version){
             FormHistory::checkDependency($plugin,$version);
@@ -222,7 +227,7 @@ final class SiteSnapshot
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
         update_option('owr_site_origin_url',$from,false);
-        update_option('owr_site_restore_result',['manifest'=>$ref,'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from],false);
+        update_option('owr_site_restore_result',['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from],false);
         return (array)get_option('owr_site_restore_result');
     }
 }

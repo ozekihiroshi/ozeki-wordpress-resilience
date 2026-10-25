@@ -42,7 +42,7 @@ final class Store
         if (!hash_equals($ref['sha256'],hash('sha256',$body))) throw new \RuntimeException('S3 content mismatch.');
         return $body;
     }
-    public function history(int $after=0): array {
+    public function history(int $after=0,?int $through=null): array {
         $rows=[];$token=null;
         do {
             $a=$this->args()+['Prefix'=>$this->config['prefix'].'history/'];
@@ -52,6 +52,7 @@ final class Store
             foreach ($list['Contents']??[] as $entry) {
                 $key=substr($entry['Key'],strlen($this->config['prefix']));
                 if (!preg_match('~^history/[0-9]{20}\.json$~D',$key)) continue;
+                if ($through!==null && (int)basename($key,'.json')>$through) continue;
                 $r=$this->s3->getObject($this->args($key));
                 $row=json_decode((string)$r['Body'],true,512,JSON_THROW_ON_ERROR);
                 if (($row['schema']??'')!=='owr-md-history-1' || $key!==sprintf('history/%020d.json',$row['sequence'])) throw new \RuntimeException('Invalid formal history.');
