@@ -172,6 +172,23 @@ final class SiteSnapshot
                 }
             }
     }
+    /** Verify persisted values directly: update_option false can also mean unchanged. */
+    public static function writeOption(string $key,mixed $value,?bool $autoload=null): void {
+        global $wpdb;
+        $wpdb->last_error='';update_option($key,$value,$autoload);$error=$wpdb->last_error;
+        $row=$wpdb->get_row($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$key),ARRAY_A);
+        if($error!==''||$wpdb->last_error!==''||!is_array($row)||$row['option_value']!==(string)maybe_serialize($value))throw new \RuntimeException('Cannot persist recovery option: '.$key.($error!==''?' — '.$error:''));
+    }
+    private static function writeMeta(int $id,string $key,string $value): void {
+        global $wpdb;
+        $wpdb->last_error='';update_post_meta($id,$key,$value);$error=$wpdb->last_error;
+        $rows=$wpdb->get_col($wpdb->prepare("SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id=%d AND meta_key=%s",$id,$key));
+        if($error!==''||$wpdb->last_error!==''||!$rows||array_filter($rows,fn($v)=>$v!==$value))throw new \RuntimeException('Cannot persist recovery metadata: '.$id.' / '.$key);
+    }
+    private static function transaction(string $sql): void {
+        global $wpdb;
+        if($wpdb->query($sql)===false)throw new \RuntimeException('Recovery database '.$sql.' failed: '.$wpdb->last_error);
+    }
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
@@ -207,7 +224,7 @@ final class SiteSnapshot
             foreach($install as $p=>$body){$target=WP_CONTENT_DIR.'/'.$p;if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');$touched[]=$target;}
             // Imported authors have no login identity from the lost system and no capabilities.
             $authors=[];foreach($d['authors'] as $id=>$a){$login='owr-author-'.substr(hash('sha256',$from.'|'.$id),0,20);$u=get_user_by('login',$login);$uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$a['display_name'],'user_nicename'=>$a['user_nicename'],'role'=>'']);if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());$authors[(string)$id]=$uid;}
-            $wpdb->query('START TRANSACTION');
+            self::transaction('START TRANSACTION');
             if(isset($d['membership']))$authors=MemberHistory::install($d['membership'],$memberPlan,$from,$to)+$authors;
             foreach(array_reverse(self::TABLES) as $t)if($wpdb->query('DELETE FROM `'.$wpdb->$t.'`')===false)throw new \RuntimeException('Cannot replace destination content.');
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
@@ -216,18 +233,19 @@ final class SiteSnapshot
                 foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
-            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}update_option($k,self::relocate($v,$from,$to));}
-            $active=array_values(array_unique(array_merge(['ozeki-wordpress-resilience/ozeki-wordpress-resilience.php'],$m['plugins'])));update_option('active_plugins',$active);
+            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}self::writeOption($k,self::relocate($v,$from,$to));}
+            $active=array_values(array_unique(array_merge(['ozeki-wordpress-resilience/ozeki-wordpress-resilience.php'],$m['plugins'])));self::writeOption('active_plugins',$active);
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
                 (new \OzekiMarkdownDocuments\Content\MarkdownSource())->store((int)$match[1],$raw);
-                update_post_meta((int)$match[1],'_owr_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
+                self::writeMeta((int)$match[1],'_owr_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
             }
-            $wpdb->query('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
+            self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
-        update_option('owr_site_origin_url',$from,false);
-        update_option('owr_site_restore_result',['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from],false);
-        return (array)get_option('owr_site_restore_result');
+        self::writeOption('owr_site_origin_url',$from,false);
+        $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from];
+        self::writeOption('owr_site_restore_result',$result,false);
+        return $result;
     }
 }
