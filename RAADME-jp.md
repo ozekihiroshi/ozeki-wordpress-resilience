@@ -12,7 +12,7 @@
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-application-rules-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-save-verification-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -97,7 +97,7 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-application-rules-final.zip)
+[Validated ZIP / 検証済みZIP](release-candidates/20261025-save-verification/ozeki-wordpress-resilience-0.3.1-save-verification-final.zip)
 
 [履歴再開の運用手順](packages/markdown-m1/docs/save-resume.md)と[検証結果](docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
 
@@ -144,3 +144,9 @@ editor-save-final候補では、標準編集画面に具体的な保存失敗理
 今回の候補ZIPに適用規則を収録します。実S3では固定版24件から履歴1までの7投稿を復旧し、原本不変と21件の未適用項目・理由を確認しました。ZIP導入更新とは別の検証です。未知・独自設定は保存されても適用されない場合があり、外観や動作に差が生じます。全連携の実動作やブラウザ操作を新たに検証したものではありません。
 
 [適用規則の最終ZIP検証](docs/releases/application-rules-final-m1-031.md)：新規有効化・置換更新で設定・履歴・合成した非空の未確定記録・復旧結果を保持しました。既存の実S3復旧やブラウザ検証とは区別します。
+
+## 正式履歴確定前の原本照合
+
+今回の候補は、操作の原本・付随情報・分離データ・参照画像を、保存時のS3クライアントと固定版で再取得し、一致後だけ正式履歴を確定します。不一致・取得失敗は既存の未確定／再開経路で扱います。本文・付随情報の未確定表示と、キュー登録前の失敗通知も含みます。状態画面で原本一式を毎回再検査する機能ではなく、旧履歴を遡って認定しません。[対応範囲と検証](packages/markdown-m1/docs/commit-verification.md)を参照してください。自動再開・ワーカー追加・正式公開は行いません。
+
+[保存時照合の最終候補と検証結果](docs/releases/save-verification-final-m1-031.md)：代替S3・実S3読取りと隔離WordPress・ZIP導入更新を区別して確認し、今回の対応は完了です。正式公開は行っていません。

@@ -438,6 +438,22 @@ final class Store
         return $raw;
     }
     public function commit(array $record): void {
+        // Use this operation's fixed references and the existing client, never a site scan.
+        // originalSource checks metadata, split parts, their hashes and reassembly.
+        $this->originalSource($record['original']);
+        if(($record['original']['schema']??'owr-md-original-1')==='owr-md-original-1')
+            $this->get($record['original']['metadata']);
+        $seen=[];
+        $verify=function(array $value) use (&$verify,&$seen): void {
+            if(isset($value['key'],$value['version'],$value['sha256'])){
+                $id=self::json([$value['key'],$value['version'],$value['sha256']]);
+                if(!isset($seen[$id])){$this->get($value);$seen[$id]=true;}
+                return;
+            }
+            foreach($value as $child)if(is_array($child))$verify($child);
+        };
+        $verify($record['attributes']['media']??[]);
+        // Any read/hash failure above leaves the operation unconfirmed for existing resume.
         $this->put(sprintf('history/%020d.json',$record['sequence']),self::json($record),'application/json',$record['original']['retain_until']);
     }
 }

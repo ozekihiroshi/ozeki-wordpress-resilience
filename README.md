@@ -12,7 +12,7 @@ This is on-demand reconstruction, not continuous replication or an infrastructur
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-application-rules-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-save-verification-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -97,7 +97,7 @@ The site-wide result shows success, failure or completion unconfirmed; the exact
 
 The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-application-rules-final.zip)
+[Validated ZIP / 検証済みZIP](release-candidates/20261025-save-verification/ozeki-wordpress-resilience-0.3.1-save-verification-final.zip)
 
 See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. The earlier documentation-only follow-up did not modify its ZIP; this candidate includes the subsequent editor fixes below.
 
@@ -144,3 +144,9 @@ After PR #41, complete-site recovery now projects recognized attributes/settings
 This candidate includes the application rules. Existing real-S3 acceptance restored seven records through history 1 from 24 fixed Checkpoint reads; originals were unchanged and 21 omitted paths/reasons were reported. This is separate from ZIP installation/update checks. Unknown/custom settings remain stored but may not be applied, changing appearance or behaviour. No new all-plugin runtime or browser acceptance is claimed.
 
 [Application-rules final ZIP validation](docs/releases/application-rules-final-m1-031.md): fresh activation and replacement preserve settings, history, synthetic nonempty pending state and results. This is distinct from earlier real-S3 restoration and browser evidence.
+
+## Original verification before history confirmation
+
+This candidate re-reads the operation originals, metadata, split parts and referenced media using fixed versions and the existing S3 client before confirming formal history. A read/hash failure leaves the operation unconfirmed for the existing resume path. It also distinguishes body/detail pending state and records capture failures before queue registration. The status page reads history; it does not recheck all resources when displayed. Earlier histories are not retroactively verified. See [scope and verification](packages/markdown-m1/docs/commit-verification.md). No automatic retry, new worker or release.
+
+[Save-verification final candidate and evidence](docs/releases/save-verification-final-m1-031.md): completed with separate fixture, real-S3-read/isolated-WordPress and ZIP installation/update scopes. Formal publication remains deferred.

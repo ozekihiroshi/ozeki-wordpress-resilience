@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 /** WP-Members free/core membership. Accounts are distinct from inert content authors. */
 final class MemberHistory
@@ -48,6 +49,9 @@ final class MemberHistory
         return ['version'=>get_file_data(WP_PLUGIN_DIR.'/'.self::PLUGIN,['Version'=>'Version'])['Version'],'settings'=>self::settings(),'users'=>$users];
     }
     public function flush(): void {
+        SaveFailure::run('Member capture',fn()=>$this->flushOperation());
+    }
+    private function flushOperation(): void {
         foreach($this->dirty as $key=>[$kind,$id]){
             $value=match($kind){'user'=>self::user($id),'settings'=>self::settings(),'restriction'=>get_post_meta($id,'_wpmem_block',true)};
             $version=get_file_data(WP_PLUGIN_DIR.'/'.self::PLUGIN,['Version'=>'Version'])['Version'];

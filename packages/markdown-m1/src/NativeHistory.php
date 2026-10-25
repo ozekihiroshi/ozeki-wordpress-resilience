@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/SaveFailure.php';
 
 /** Completed native article deletion and final thumbnail/category/tag state. */
 final class NativeHistory {
@@ -25,6 +26,9 @@ final class NativeHistory {
         add_action('shutdown',[$this,'flush'],PHP_INT_MAX);
     }
     public function flush(): void {
+        SaveFailure::run('Article details capture',fn()=>$this->flushOperation());
+    }
+    private function flushOperation(): void {
         foreach(array_keys($this->dirty) as $id){
             if(!$this->eligible($id)){unset($this->dirty[$id]);continue;}
             global $wpdb;
@@ -40,6 +44,9 @@ final class NativeHistory {
         }
     }
     private function record(int $id,string $type,bool $deleted,array $terms,int $thumbnail,array $media,array $resources,array $assigned=[],int $parent=0): void {
+        SaveFailure::run('Article details / deletion capture',fn()=>$this->recordOperation($id,$type,$deleted,$terms,$thumbnail,$media,$resources,$assigned,$parent));
+    }
+    private function recordOperation(int $id,string $type,bool $deleted,array $terms,int $thumbnail,array $media,array $resources,array $assigned=[],int $parent=0): void {
         $v=['schema'=>'owr-native-state-1','id'=>$id,'type'=>$type,'deleted'=>$deleted,'thumbnail'=>$thumbnail,'terms'=>$terms,'assigned'=>$assigned,'parent'=>$parent];
         (new CommentHistory())->enqueue('native-state-'.$id,Store::json($v),['post_type'=>'owr_native','content_format'=>'native-state-json','origin_id'=>$id,'title'=>'Article details #'.$id,'status'=>$deleted?'deleted':'saved','media'=>$media],$resources);
     }
