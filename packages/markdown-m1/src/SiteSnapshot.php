@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Owr\M1;
 require_once __DIR__.'/AssetFormat.php';
+require_once __DIR__.'/RecoveryRules.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -222,6 +223,7 @@ final class SiteSnapshot
         if(implode('.',array_slice(explode('.',$m['wordpress']),0,2))!==implode('.',array_slice(explode('.',$runtime),0,2))||version_compare($runtime,$m['wordpress'],'<'))throw new \RuntimeException('Use the recorded WordPress release line with the same or a newer maintenance patch.');
         if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         foreach(self::TABLES as $t){if(!isset($d['tables'][$t]))throw new \RuntimeException('Missing table '.$t);$engine=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$wpdb->$t));if(strtolower($engine->Engine??'')!=='innodb')throw new \RuntimeException('Transactional tables required.');}
         file_put_contents($work.'/software.zip',$files['software.zip']);$zip=new \ZipArchive();if($zip->open($work.'/software.zip')!==true)throw new \RuntimeException('Invalid software bundle.');$program=[];
@@ -263,7 +265,7 @@ final class SiteSnapshot
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
         self::writeOption('owr_site_origin_url',$from,false);
-        $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from];
+        $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from,'application_report'=>$application['report']];
         self::writeOption('owr_site_restore_result',$result,false);
         return $result;
     }

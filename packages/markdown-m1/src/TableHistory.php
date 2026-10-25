@@ -5,6 +5,13 @@ namespace Owr\M1;
 /** TablePress completed operations, complete table originals, shared S3 history. */
 final class TableHistory
 {
+    public static function recoveryMeta(): array {
+        return ['_tablepress_table_options'=>['last_editor'=>'number','table_head'=>'number','table_foot'=>'number','alternating_row_colors'=>'bool','row_hover'=>'bool','print_name'=>'bool','print_name_position'=>'text','print_description'=>'bool','print_description_position'=>'text','extra_css_classes'=>'text','use_datatables'=>'bool','datatables_sort'=>'bool','datatables_filter'=>'bool','datatables_paginate'=>'bool','datatables_lengthchange'=>'bool','datatables_paginate_entries'=>'number','datatables_info'=>'bool','datatables_scrollx'=>'bool'], '_tablepress_table_visibility'=>['rows'=>'number-map','columns'=>'number-map']];
+    }
+    public static function recoveryOptions(): array {
+        return ['tablepress_tables'=>['table_post'=>'number-map','last_id'=>'number'], 'tablepress_plugin_options'=>['plugin_options_db_version'=>'number','table_scheme_db_version'=>'number','prev_tablepress_version'=>'text','tablepress_version'=>'text','first_activation'=>'number']];
+    }
+
     public const PLUGIN='tablepress/tablepress.php';
     public const OPTIONS=['tablepress_tables','tablepress_plugin_options'];
     public static function enabled(): bool {return class_exists('TablePress')&&in_array(self::PLUGIN,(array)get_option('active_plugins'),true);}

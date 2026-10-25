@@ -5,6 +5,11 @@ namespace Owr\M1;
 /** WP-Members free/core membership. Accounts are distinct from inert content authors. */
 final class MemberHistory
 {
+    public static function recoverySettings(): array {
+        $pair=['post'=>'number','page'=>'number'];
+        return ['wpmembers_settings'=>['version'=>'text','db_version'=>'number','block'=>$pair,'show_excerpt'=>$pair,'show_reg'=>$pair,'show_login'=>$pair,'autoex'=>['post'=>['enabled'=>'number','length'=>'number-or-empty'],'page'=>['enabled'=>'number','length'=>'number-or-empty']],'mod_reg'=>'number','notify'=>'number','warnings'=>'number','attrib'=>'number','user_pages'=>['profile'=>'text','register'=>'text','login'=>'text'],'shortcodes'=>['enable_field'=>'number']], 'wpmembers_fields'=>'member-fields', 'wpmembers_dialogs'=>['restricted_msg'=>'text','user'=>'text','email'=>'text','success'=>'text','editsuccess'=>'text','pwdchangerr'=>'text','pwdchangesuccess'=>'text','pwdreseterr'=>'text','pwdresetsuccess'=>'text'], 'wpmembers_tos'=>'text'];
+    }
+
     public const PLUGIN='wp-members/wp-members.php';
     public const OPTIONS=['wpmembers_settings','wpmembers_fields','wpmembers_dialogs','wpmembers_tos'];
     private array $dirty=[];

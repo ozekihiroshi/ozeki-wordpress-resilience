@@ -5,6 +5,12 @@ namespace Owr\M1;
 /** CF7 definition and Flamingo receipt snapshots at their completed-save boundaries. */
 final class FormHistory
 {
+    /** Recovery keys, not a filter on preserved S3 originals. */
+    public static function recoveryMeta(string $type): array {
+        if($type==='wpcf7_contact_form')return ['_form'=>'text','_mail'=>['active'=>'bool','subject'=>'text','sender'=>'text','recipient'=>'text','body'=>'text','additional_headers'=>'text','attachments'=>'text','use_html'=>'bool','exclude_blank'=>'bool'], '_mail_2'=>['active'=>'bool','subject'=>'text','sender'=>'text','recipient'=>'text','body'=>'text','additional_headers'=>'text','attachments'=>'text','use_html'=>'bool','exclude_blank'=>'bool'],'_messages'=>'text-map','_additional_settings'=>'cf7-lines','_locale'=>'text','_hash'=>'text'];
+        return ['_fields'=>'plain','_subject'=>'text','_from'=>'text','_from_name'=>'text','_from_email'=>'text','_submission_status'=>'text','_spam_meta_time'=>'number','_hash'=>'text','_consent'=>'plain'];
+    }
+
     public const DEPENDENCIES=['contact-form-7/wp-contact-form-7.php','flamingo/flamingo.php'];
     private array $dirty=[];
     public function boot(): void {

@@ -8,11 +8,11 @@ Resilience is for WordPress maintainers who need independently stored content an
 
 This is on-demand reconstruction, not continuous replication or an infrastructure backup. It neither provisions servers nor switches DNS. A permanently running second EC2 instance is not required; an administrator prepares a suitable recovery WordPress when needed. Ozeki Database Backup for S3 is a separate product, not a dependency.
 
-**Start here:** [package identity, protection scope, untracked changes and minimum source/destination setup](packages/markdown-m1/docs/start-here.md). Publication preparation only; product code and the validated ZIP are unchanged.
+**Start here:** [package identity, protection scope, untracked changes and minimum source/destination setup](packages/markdown-m1/docs/start-here.md). Formal release remains deferred; use the candidate identified below.
 
 ## Current package
 
-The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
+The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-application-rules-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.
 
 ## Design and recovery boundary
 
@@ -97,7 +97,7 @@ The site-wide result shows success, failure or completion unconfirmed; the exact
 
 The admin screen reads confirmed S3 history once and shows the latest sequence, time and asset separately from local pending operations and recorded errors. Resume history reuses the existing recovery queue; a read failure is unknown, not empty history. No pending queue does not prove protection of unsupported operations. Included in the save-status-final candidate. Recorded errors may be old or absent; the display is local administrative feedback, not a durable audit log. Unconfirmed operations remain excluded from recovery.
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-application-rules-final.zip)
 
 See the [save-history resume procedure](packages/markdown-m1/docs/save-resume.md) and [measured acceptance](docs/releases/save-resume-acceptance.md): after original storage, a test-only formal-history PUT interruption left history at 56 and two pending records. Browser resume confirmed the same operations as 57–58, cleared pending work and recovered the display. This was not an actual AWS outage or a test of every failure mode. The earlier documentation-only follow-up did not modify its ZIP; this candidate includes the subsequent editor fixes below.
 
@@ -136,3 +136,11 @@ New code uses a shared content/metadata partition for normal saves, initial snap
 Real-S3 acceptance used existing community/dm hosts and standard EC2-role authentication: standalone originals from normal save, initial snapshot and Checkpoint; reconstruction from 24 fixed Checkpoint versions without the old environment. Package acceptance is separate: fresh activation and replacement of the previous ZIP, preserving settings, non-empty pending records and read-only S3 history. No new browser/all-plugin rendering or failed-operation resume trial is claimed. Unknown captured information is preserved, not newly certified. No automatic migration, deletion or release.
 
 [Separated-format final ZIP acceptance](docs/releases/separated-assets-final-m1-031.md): fresh installation and replacement passed; read-only S3 checks and synthetic pending-state preservation are distinct from earlier browser and reconstruction tests.
+
+## Recovery application rules — application-rules-final candidate
+
+After PR #41, complete-site recovery now projects recognized attributes/settings after baseline-plus-history replay and before destination mutation. Unknown captured values remain in S3; the result lists items not automatically applied and their reasons without exposing values. Known invalid types stop recovery. Custom/extension settings, widgets and unrecognized theme settings can be withheld, so visual equivalence is not claimed for those configurations. Software activation policy is unchanged. See [rules and focused verification](packages/markdown-m1/docs/application-rules.md).
+
+This candidate includes the application rules. Existing real-S3 acceptance restored seven records through history 1 from 24 fixed Checkpoint reads; originals were unchanged and 21 omitted paths/reasons were reported. This is separate from ZIP installation/update checks. Unknown/custom settings remain stored but may not be applied, changing appearance or behaviour. No new all-plugin runtime or browser acceptance is claimed.
+
+[Application-rules final ZIP validation](docs/releases/application-rules-final-m1-031.md): fresh activation and replacement preserve settings, history, synthetic nonempty pending state and results. This is distinct from earlier real-S3 restoration and browser evidence.

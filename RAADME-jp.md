@@ -8,11 +8,11 @@
 
 常時レプリケーションやサーバ全体のバックアップではありません。サーバ構築・DNS切替は行いません。常設の別EC2は必須ではなく、管理者が必要時に復旧先を準備します。Ozeki Database Backup for S3は別製品で、依存関係はありません。
 
-**導入の入口：** [配布物の識別・保護範囲・未追跡変更への対応・保存側と復旧側の最小構成](packages/markdown-m1/docs/start-here-ja.md)。正式公開前の整理であり、製品コードと検証済みZIPは変更していません。
+**導入の入口：** [配布物の識別・保護範囲・未追跡変更への対応・保存側と復旧側の最小構成](packages/markdown-m1/docs/start-here-ja.md)。正式公開は後回しです。配布候補は以下のファイル名で識別してください。
 
 ## 現在の製品
 
-製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
+製品は **0.3.1**（`packages/markdown-m1`）です。今回の候補は `ozeki-wordpress-resilience-0.3.1-application-rules-final.zip` です。整理済み英日README、通常投稿の完全削除・アイキャッチ・カテゴリー／タグ対応を含みます。候補に添付した検証記録とSHA-256で識別してください。正式公開は後回しです。旧0.2.0研究経路は現行製品ではありません。
 
 ## 設計と復旧の成立条件
 
@@ -97,7 +97,7 @@
 
 管理画面ではS3正式履歴を一度読み取り、最後の確定順序・時刻・対象をローカル未確定操作と記録済みエラーから分けて表示します。Resume historyは既存キューを再利用します。読取り失敗は履歴なしではなく未確認です。未確定キューが空でも未対応操作の保護は保証しません。今回のsave-status-final候補に収録しています。記録されたエラーは古い場合や理由が未記録の場合もあり、この表示は永続的な監査ログではありません。未確定操作は復旧対象に含めません。
 
-[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-separated-assets-final.zip)
+[Validated ZIP / 検証済みZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/release-candidates/20261025-separated-assets/ozeki-wordpress-resilience-0.3.1-application-rules-final.zip)
 
 [履歴再開の運用手順](packages/markdown-m1/docs/save-resume.md)と[検証結果](docs/releases/save-resume-acceptance.md)を参照してください。原本保存後、試験的な正式履歴PUT遮断で履歴56・未確定2件となり、ブラウザから同じ操作を再開すると履歴57～58に確定、未確定0件・表示回復を確認しました。実AWS障害や全障害条件の試験ではありません。当時の文書更新ではZIPを変更していません。今回の候補には以下の編集画面の修正を収録しています。
 
@@ -136,3 +136,11 @@ editor-save-final候補では、標準編集画面に具体的な保存失敗理
 実S3では既存community/dmと標準EC2ロール認証で、通常保存・初期取得・Checkpointの原本単独取得、Checkpointの固定版24件から元環境なしの復旧を確認しました。ZIP導入検証は別範囲として、新規有効化・旧ZIPからの置換と、設定・非空の未確定記録・読取り専用S3履歴の保持を確認します。ブラウザ・全連携の表示・未確定操作の再開試験を今回新たに保証するものではありません。未知情報を保持しますが新しく認定するものではなく、自動移行・削除・正式公開は行いません。
 
 [分離形式の最終ZIP検証](docs/releases/separated-assets-final-m1-031.md)：新規導入・置換更新に合格しました。S3読取りと合成未確定記録の保持を確認し、以前のブラウザ・再構築試験とは区別しています。
+
+## 復旧時適用規則 — application-rules-final候補
+
+今回の候補ZIPでは、初期取得と後続履歴を合成後、復旧先への反映前に属性・設定の共通規則を適用します。未知情報はS3に残し、未適用項目と理由を値を含めず結果に表示します。既知項目の型が不正なら停止します。独自拡張・ウィジェット・未認定のテーマ設定等は自動適用を保留するため、その構成の外観完全一致は保証しません。ソフトウェアの有効化方針は変更していません。[規則と差分検証](packages/markdown-m1/docs/application-rules.md)を参照してください。
+
+今回の候補ZIPに適用規則を収録します。実S3では固定版24件から履歴1までの7投稿を復旧し、原本不変と21件の未適用項目・理由を確認しました。ZIP導入更新とは別の検証です。未知・独自設定は保存されても適用されない場合があり、外観や動作に差が生じます。全連携の実動作やブラウザ操作を新たに検証したものではありません。
+
+[適用規則の最終ZIP検証](docs/releases/application-rules-final-m1-031.md)：新規有効化・置換更新で設定・履歴・合成した非空の未確定記録・復旧結果を保持しました。既存の実S3復旧やブラウザ検証とは区別します。
