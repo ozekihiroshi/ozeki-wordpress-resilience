@@ -64,7 +64,7 @@ final class CommentHistory
         } finally {$this->unlock($name);}
     }
     public static function sameNativeState(?array $row,string $source,array $attrs,array $resources): bool {
-        if(!$row || ($row['original']['source']['sha256']??'')!==hash('sha256',$source))return false;
+        if(!$row || ($row['original']['source_sha256']??$row['original']['source']['sha256']??'')!==hash('sha256',$source))return false;
         $old=$row['attributes']??[];$wanted=$attrs;
         foreach($wanted['media']??[] as $i=>$media)foreach($media['files']??[] as $path=>$ref){
             if(isset($resources[$path])){

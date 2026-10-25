@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/AssetFormat.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -84,6 +85,12 @@ final class SiteSnapshot
         return $this->save($files,$manifest);
     }
     public function save(array $files,array $manifest): array {
+        // The same lossless partition is used for normal structured originals and full baselines.
+        $layout=AssetFormat::split(json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR));
+        foreach($layout['files'] as $path=>$body)$files['assets/'.$path]=$body;
+        unset($layout['files'],$files['content.json']);
+        $files['assets/metadata.json']=Store::json($layout);
+        $manifest['asset_format']=AssetFormat::SCHEMA;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at']);
         $base='site-snapshots/'.hash('sha256',Store::json([$manifest,$identity])).'/';$refs=[];
@@ -98,6 +105,13 @@ final class SiteSnapshot
         if(($m['schema']??'')!=='owr-site-snapshot-1'||!is_array($m['resources']??null))throw new \RuntimeException('Invalid site manifest.');
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');$files[$p]=$this->store->get($r);}
+        if(isset($m['asset_format'])){
+            if($m['asset_format']!==AssetFormat::SCHEMA||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
+            foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
+            $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
+        }
+        ksort($files);
         return [$m,$files];
     }
     /** Checkpoint copies the trusted complete baseline and overlays confirmed content history. */
@@ -116,29 +130,29 @@ final class SiteSnapshot
             if(($r['attributes']['post_type']??'')==='owr_native'){
                 $this->store->get($r['original']['metadata']);
                 self::applyMedia($d,$files,$r['attributes']['media']??[],$this->store);
-                NativeHistory::replay($d,$files,$this->store->get($r['original']['source']),$r['attributes']);continue;
+                NativeHistory::replay($d,$files,$this->store->originalSource($r['original']),$r['attributes']);continue;
             }
             if(($r['attributes']['post_type']??'')==='owr_table'){
                 $this->store->get($r['original']['metadata']);
-                TableHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
+                TableHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);
                 $m['required_tablepress_version']=$r['attributes']['tablepress_version'];continue;
             }
             if(($r['attributes']['post_type']??'')==='owr_member'){
                 $this->store->get($r['original']['metadata']);
-                MemberHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
+                MemberHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
             }
             if(($r['attributes']['post_type']??'')==='owr_form'){
                 $this->store->get($r['original']['metadata']);
-                FormHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);
+                FormHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);
                 $m['required_form_plugins']=$r['attributes']['dependencies'];continue;
             }
             if(($r['attributes']['post_type']??'')==='owr_comment'){
                 $this->store->get($r['original']['metadata']);
-                CommentHistory::replay($d,$this->store->get($r['original']['source']),$r['attributes']);continue;
+                CommentHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
             }
             $a=$r['attributes'];$id=(string)$a['origin_id'];$type=$a['post_type']??'ozmd_document';$found=false;
             if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
-            $raw=$this->store->get($r['original']['source']);$this->store->get($r['original']['metadata']);
+            $raw=$this->store->originalSource($r['original']);$this->store->get($r['original']['metadata']);
             self::applyMedia($d,$files,$a['media']??[],$this->store);
             $values=['post_title'=>$a['title'],'post_name'=>$a['slug'],'post_status'=>$a['status'],'post_date'=>$a['date'],'post_date_gmt'=>$a['date_gmt']];
             if($type!=='ozmd_document')$values['post_content']=$raw;
@@ -177,6 +191,11 @@ final class SiteSnapshot
         global $wpdb;
         $wpdb->last_error='';update_option($key,$value,$autoload);$error=$wpdb->last_error;
         $row=$wpdb->get_row($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$key),ARRAY_A);
+        // update_option can short-circuit when an absent option has the same default (false).
+        if($error===''&&$wpdb->last_error===''&&$row===null){
+            add_option($key,$value,'',$autoload);$error=$wpdb->last_error;
+            $row=$wpdb->get_row($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$key),ARRAY_A);
+        }
         if($error!==''||$wpdb->last_error!==''||!is_array($row)||$row['option_value']!==(string)maybe_serialize($value))throw new \RuntimeException('Cannot persist recovery option: '.$key.($error!==''?' — '.$error:''));
     }
     private static function writeMeta(int $id,string $key,string $value): void {
