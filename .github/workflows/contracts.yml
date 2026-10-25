@@ -45,6 +45,8 @@ jobs:
           php packages/markdown-m1/tests/native-queue.php packages/markdown-m1
           php packages/markdown-m1/tests/members.php
           php packages/markdown-m1/tests/cleanup.php packages/markdown-m1
+            php packages/markdown-m1/tests/site-retention.php packages/markdown-m1
+            php packages/markdown-m1/tests/site-retention-fallback.php packages/markdown-m1
       - name: Verify contracts without private fixtures or cloud access
         run: |
           test ! -e .local

@@ -193,9 +193,119 @@ final class Store
     public function latestState(): array {
         $keys=$this->checkpoints();return $this->recoveryState($keys?end($keys):null);
     }
+    /** Complete-site audit only. This result is deliberately incompatible with cleanup(). */
+    public function siteCleanupPreview(int $cutoff): array {
+        if ($cutoff<0 || $cutoff>time()) throw new \RuntimeException('Invalid retention cutoff.');
+        $versions=[];$km=null;$vm=null;$inventoryComplete=true;
+        try {
+        do {
+            $a=$this->args()+['Prefix'=>$this->config['prefix']];
+            if($km!==null)$a['KeyMarker']=$km;
+            if($vm!==null)$a['VersionIdMarker']=$vm;
+            $list=$this->s3->listObjectVersions($a);
+            if(!empty($list['DeleteMarkers']))throw new \RuntimeException('Delete markers require separate review; no candidates calculated.');
+            foreach($list['Versions']??[] as $v){
+                if(!str_starts_with($v['Key'],$this->config['prefix']))throw new \RuntimeException('Version outside configured prefix.');
+                $key=substr($v['Key'],strlen($this->config['prefix']));
+                if(isset($versions[$key]) || empty($v['VersionId']) || $v['VersionId']==='null')throw new \RuntimeException('Multiple or unversioned objects require separate review; no candidates calculated.');
+                $date=$v['LastModified'] instanceof \DateTimeInterface?$v['LastModified']->getTimestamp():strtotime((string)$v['LastModified']);
+                if($date===false)throw new \RuntimeException('Missing fixed-version modification time.');
+                $versions[$key]=['key'=>$key,'version'=>(string)$v['VersionId'],'modified'=>$date];
+            }
+            $km=$list['NextKeyMarker']??null;$vm=$list['NextVersionIdMarker']??null;
+        }while(!empty($list['IsTruncated']));
+        }catch(\Aws\Exception\AwsException $e){
+            if($e->getAwsErrorCode()!=='AccessDenied')throw $e;
+            // Read-only fallback can explain required assets, but cannot authorize candidates.
+            $inventoryComplete=false;$versions=[];$token=null;
+            do {
+                $a=$this->args()+['Prefix'=>$this->config['prefix']];if($token)$a['ContinuationToken']=$token;
+                $list=$this->s3->listObjectsV2($a);
+                foreach($list['Contents']??[] as $item){
+                    if(!str_starts_with($item['Key'],$this->config['prefix']))throw new \RuntimeException('Object outside configured prefix.');
+                    $key=substr($item['Key'],strlen($this->config['prefix']));$h=$this->s3->headObject($this->args($key));
+                    $date=$h['LastModified'] instanceof \DateTimeInterface?$h['LastModified']->getTimestamp():strtotime((string)$h['LastModified']);
+                    if(empty($h['VersionId'])||$h['VersionId']==='null'||$date===false)throw new \RuntimeException('Fixed-version metadata unavailable.');
+                    $versions[$key]=['key'=>$key,'version'=>(string)$h['VersionId'],'modified'=>$date];
+                }
+                $token=$list['NextContinuationToken']??null;
+            }while($token);
+        }
+        // Mixing an older recovery model requires its own dependency calculation.
+        foreach($versions as $key=>$v)if(str_starts_with($key,'snapshots/'))throw new \RuntimeException('Legacy asset snapshots coexist: retained without deletion candidates; separate review required.');
+        $snapshots=$this->siteSnapshots();
+        if(!$snapshots)throw new \RuntimeException('No complete-site Checkpoint; no candidates calculated.');
+        $protect=[];$eligible=[];$seen=[];
+        $read=function(array $ref) use (&$versions): string {
+            if(!isset($versions[$ref['key']]) || $versions[$ref['key']]['version']!==$ref['version'])throw new \RuntimeException('Missing or changed referenced version; no candidates calculated.');
+            return $this->get($ref);
+        };
+        // Traverse nested media references, including references in adapter JSON sources.
+        $walk=function(array $value,bool $keep) use (&$walk,&$protect,&$eligible,&$seen,$read): void {
+            if(isset($value['key'],$value['version'],$value['sha256'])){
+                $key=$value['key'];if($keep)$protect[$key]='Required by retained Checkpoint or history';else $eligible[$key]=true;
+                $visit=$key.($keep?' keep':' retire');if(isset($seen[$visit]))return;$seen[$visit]=true;
+                $body=$read($value);
+                if(str_ends_with($key,'.json')){ $decoded=json_decode($body,true);if(is_array($decoded))$walk($decoded,$keep); }
+                return;
+            }
+            foreach($value as $part)if(is_array($part))$walk($part,$keep);
+        };
+        foreach($snapshots as &$s){
+            $m=json_decode($read($s['ref']),true,512,JSON_THROW_ON_ERROR);
+            if(!is_int($m['through']??null)||$m['through']<0||!is_array($m['resources']??null))throw new \RuntimeException('Invalid complete-site manifest.');
+            $base=dirname($s['ref']['key']).'/resources/';
+            foreach($m['resources'] as $path=>$ref){SiteSnapshot::safePath($path);if(($ref['key']??'')!==$base.$path)throw new \RuntimeException('Checkpoint depends on external resources.');}
+            $s['manifest']=$m;$s['created']=$versions[$s['ref']['key']]['modified'];
+        }unset($s);
+        usort($snapshots,fn($a,$b)=>[$a['through'],$a['created'],$a['ref']['key']]<=>[$b['through'],$b['created'],$b['ref']['key']]);
+        $latest=end($snapshots)['ref']['key'];$floor=PHP_INT_MAX;$keep=[];
+        foreach($snapshots as $s){
+            $retain=$s['ref']['key']===$latest || $s['created']>$cutoff;
+            if($retain){$floor=min($floor,$s['through']);$keep[]=['key'=>$s['ref']['key'],'through'=>$s['through'],'created_at'=>gmdate('c',$s['created'])];}
+            $walk($s['ref'],$retain);
+        }
+        $through=$floor;$tail=0;
+        foreach($this->history() as $row){
+            $key=sprintf('history/%020d.json',$row['sequence']);
+            if(!isset($versions[$key]))throw new \RuntimeException('History inventory changed.');
+            $retain=$row['sequence']>$floor || $versions[$key]['modified']>$cutoff;
+            if($row['sequence']>$floor){if($row['sequence']!==$through+1)throw new \RuntimeException('Formal history gap; no candidates calculated.');$through=$row['sequence'];$tail++;}
+            if($retain)$protect[$key]='Required or within retention window';else $eligible[$key]=true;
+            $walk($row,$retain);
+        }
+        if($through<max(array_column($snapshots,'through')))throw new \RuntimeException('History does not reach retained Checkpoint boundary.');
+        $lockEnabled=null;
+        try{$lock=$this->s3->getObjectLockConfiguration($this->args());$lockEnabled=($lock['ObjectLockConfiguration']['ObjectLockEnabled']??'')==='Enabled';}
+        catch(\Throwable $e){if($e instanceof \Aws\Exception\AwsException && $e->getAwsErrorCode()==='ObjectLockConfigurationNotFoundError')$lockEnabled=false;}
+        $retained=[];$candidates=[];$blocked=[];
+        foreach($versions as $key=>$v){
+            if(isset($protect[$key])){$retained[]=$v+['reason'=>$protect[$key]];continue;}
+            if($v['modified']>$cutoff){$retained[]=$v+['reason'=>'Within retention window'];continue;}
+            if(!isset($eligible[$key])){$blocked[]=$v+['reason'=>'Unreferenced or unsupported asset; retained for separate review'];continue;}
+            try {
+                if(!$inventoryComplete)throw new \RuntimeException('s3:ListBucketVersions unavailable; all versions not inspected');
+                if($lockEnabled===null)throw new \RuntimeException('Cannot inspect bucket Object Lock configuration');
+                $r=$lockEnabled?$this->s3->getObjectRetention($this->args($key)+['VersionId'=>$v['version']]):[];
+                $h=$lockEnabled?$this->s3->getObjectLegalHold($this->args($key)+['VersionId'=>$v['version']]):[];
+                $until=$r['Retention']['RetainUntilDate']??null;
+                $until=$until instanceof \DateTimeInterface?$until->getTimestamp():($until===null?0:strtotime((string)$until));
+                if($until===false)throw new \RuntimeException('Invalid retention time');
+                if(($h['LegalHold']['Status']??'OFF')!=='OFF' || $until>time())throw new \RuntimeException('Object Lock or Legal Hold still active');
+                $candidates[]=$v+['reason'=>'Covered by retained recovery chain and outside retention window'];
+            }catch(\Throwable $e){$blocked[]=$v+['reason'=>'Deletion not established: '.$e->getMessage()];}
+        }
+        return ['schema'=>'owr-site-retention-preview-1','read_only'=>true,'inventory_complete'=>$inventoryComplete,
+            'inventory_note'=>$inventoryComplete?'All listed versions inspected':'s3:ListBucketVersions unavailable: current fixed versions only; hidden older versions are unassessed and no deletion candidates are authorized',
+            'at'=>gmdate('c'),'cutoff'=>gmdate('c',$cutoff),
+            'time_basis'=>'S3 fixed-version LastModified; latest baseline selected by confirmed history boundary',
+            'keep'=>$keep,'from'=>$floor,'through'=>$through,'tail_count'=>$tail,'retained'=>$retained,'candidates'=>$candidates,'blocked'=>$blocked,
+            'limitation'=>'Preview only; not a deletion authorization or guarantee of IAM DeleteObjectVersion permission. Unknown assets are retained.'];
+    }
     /** Read-only cleanup preview. A timestamp fixes the policy across preview/execute. */
     public function cleanupPlan(int $cutoff): array {
         if ($cutoff<0 || $cutoff>time()) throw new \RuntimeException('Invalid cleanup cutoff.');
+        if($this->siteSnapshots())throw new \RuntimeException('Complete-site assets present: use the read-only complete-site preview. Legacy deletion is disabled for this stream.');
         $keys=$this->checkpoints();
         if (!$keys) throw new \RuntimeException('A complete Checkpoint is required before cleanup.');
         $latest=end($keys);$keep=[];$protected=[];$floor=PHP_INT_MAX;
