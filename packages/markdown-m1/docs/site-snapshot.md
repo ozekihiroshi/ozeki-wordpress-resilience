@@ -1,5 +1,25 @@
 # Complete site baseline and reconstruction
 
+## Baseline and Checkpoint operations
+
+This describes the current implementation; this documentation update does not replace published ZIPs or expand their verification scope.
+
+- **Create complete initial snapshot:** pause editing, resolve pending history and acknowledge that the current source is trusted. This reads the supported live DB content and files. Repeating it creates a new Baseline, not a normal Checkpoint or permission to delete earlier points.
+- **Create complete Checkpoint:** select an existing complete point. Its S3 assets and subsequent confirmed S3 history supply the new point. Scheduled complete-site creation uses the same path. Missing inputs or history gaps stop creation; they do not trigger live recapture.
+- **Restore complete site:** select a Baseline or Checkpoint and an inclusive formal-history end. Choosing its `through` restores that point alone. A later end requires every necessary subsequent record and referenced resource. PHP callers omitting the end use the history tail observed for that invocation.
+
+### Common storage and independence
+
+Both use `owr-site-snapshot-1` under `site-snapshots/<identity>/`. The manifest records `origin` (`administrator_initial` or `confirmed_s3`), `through` and resource references containing Key, VersionId and SHA-256. Current separated resources include `assets/metadata.json`, `assets/data/`, captured Markdown, uploads and `software.zip`; the asset layout is `owr-separated-assets-1`.
+
+The common saver creates a fresh complete set in that point's own `resources/`, retrieves and checks its fixed versions, then writes `manifest.json`. Loading rejects resource references outside that point's resource prefix. Creating a point depends on its selected ancestor and subsequent history; recovering the completed point does not depend on that ancestor. The Baseline itself is directly usable as the first recovery point.
+
+Input assets must remain available until creation completes. Independence is not deletion authorization: other retained points or history ranges may still need those assets. A compatible destination and supported recovery rules are required; independent storage does not imply unconditional restoration or harmless data.
+
+### Separate legacy Markdown path
+
+The older asset-level path uses `owr-md-snapshot-2` under `snapshots/<sequence>/<identity>/`, with its own manifest/assets and initial-capture/Checkpoint controls. It is distinct from `site-snapshots/`. Individual text recovery does not restore complete-site media, software and relationships. Use **Site-wide recovery — primary workflow** for the operations above.
+
 ## Recovery through a selected formal history number (working tree)
 
 In Tools → Resilience, choose a complete Checkpoint and **Formal history end**, then confirm destination replacement. The end is an inclusive confirmed sequence, at or after the Checkpoint boundary; choosing the same number restores the Checkpoint alone. The selector shows confirmed timestamps and operation labels where recorded. One user edit can produce multiple formal records, so a record boundary is not necessarily a complete editing session.

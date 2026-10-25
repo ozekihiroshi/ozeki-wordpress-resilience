@@ -30,6 +30,16 @@ Reconstruction should use known asset types and explicit rules. Captured informa
 4. **Build independent Checkpoints.** A complete-site Checkpoint copies the required resources from the trusted S3 baseline and confirmed history. It is more than an inventory pointing to older ancestors. Keep the selected Checkpoint and all resources needed by its subsequent history.
 5. **Reconstruct selectively on a prepared WordPress.** Choose a Checkpoint and an inclusive history end number. Reconstruct the supported state and apply recognized attributes/settings through adapters. Captured unknown information remains in S3; omitted items and reasons are reported. The old server, old database and local pending queue are not required recovery inputs.
 
+### Baseline and Checkpoint: three principles
+
+1. **The Baseline is the first independent recovery point.** Administrator-trusted initial capture reads the supported current WordPress state. Once saved, it is usable for recovery just like a complete Checkpoint.
+2. **Normal Checkpoints use only preserved S3 assets and confirmed history.** They do not scan the live WordPress database or files for unrecorded changes. Local settings and pending-operation checks control execution; they do not supply additional recovery content.
+3. **Recapturing current WordPress state creates a new Baseline.** Use the separate trusted initial-capture operation, not normal Checkpoint creation. Untracked changes are not silently incorporated.
+
+Each complete point owns its resource set, not just links to older points. Creating the next point requires the selected S3 point plus subsequent history and referenced resources. Once confirmed, recovery at that new point requires only its own manifest and resources. Later recovery also requires the subsequent formal history and referenced assets through the selected end number; choosing the point's own `through` applies no subsequent history. Compatible destination software and supported application rules remain necessary.
+
+The legacy Markdown asset-level snapshot and individual-text recovery path is separate; its snapshots are not whole-site recovery points.
+
 Protected article bodies are saved to S3 before WordPress application. Comments, article detail/deletion operations and supported third-party adapters capture completed operation data instead. Their source change may already be visible while history is pending. Body and related operations can confirm separately; the product does not provide an atomic transaction across WordPress and S3.
 
 If the source is lost before confirmation, that operation is excluded: an unconfirmed new article is absent; an unconfirmed update leaves its previous confirmed version. Site-wide reconstruction replaces supported destination state, so use a designated recovery environment. Individual text recovery is supplementary, not a substitute for site-wide reconstruction.
