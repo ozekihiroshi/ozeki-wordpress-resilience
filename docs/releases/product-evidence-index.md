@@ -18,6 +18,7 @@ The latest representative protected page/image test used real original PUTs, fix
 
 | Topic / 項目 | Records / 記録 | Boundary / 読取り上の注意 |
 |---|---|---|
+| GFS configured-time execution / GFS設定時刻の取得 | [Timed execution and environment incident](gfs-timed-acceptance.md) | One real weekly slot via standard server-invoked wp-cron.php; not HTTP loopback, long-term recurrence or actual deletion / 標準入口の一回、HTTP起動・長期反復・実削除は未確認。本体更新処理は試験環境の事象 |
 | Originals and separation / 独立原本・分離 | [Format](../../packages/markdown-m1/docs/separated-assets.md), [ZIP](separated-assets-final-m1-031.md) | Original extraction, baseline and Checkpoint reconstruction; not universal format/plugin support / 原本取出し・基点・Checkpointの確認で、全形式の保証ではない |
 | Save confirmation / 履歴確定 | [Read-back contract](../../packages/markdown-m1/docs/commit-verification.md), [Failure visibility](../../packages/markdown-m1/docs/save-confirmation.md), [Resume](save-resume-acceptance.md), [Editor failure](editor-save-final-m1-031.md) | Injected failures are not actual AWS outages / 異常注入と実AWS障害は別 |
 | Combined reconstruction / 同居再構築 | [Acceptance](combined-site-acceptance.md), [ZIP](combined-final-m1-031.md) | Recorded supported combinations, not arbitrary installed plugins / 記録した組合せの範囲 |
