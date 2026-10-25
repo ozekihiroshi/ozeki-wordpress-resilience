@@ -8,6 +8,8 @@ Resilience is for WordPress maintainers who need independently stored content an
 
 This is on-demand reconstruction, not continuous replication or an infrastructure backup. It neither provisions servers nor switches DNS. A permanently running second EC2 instance is not required; an administrator prepares a suitable recovery WordPress when needed. Ozeki Database Backup for S3 is a separate product, not a dependency.
 
+**Start here:** [package identity, protection scope, untracked changes and minimum source/destination setup](packages/markdown-m1/docs/start-here.md). Publication preparation only; product code and the validated ZIP are unchanged.
+
 ## Current package
 
 The product is **0.3.1** (`packages/markdown-m1`). This candidate is `ozeki-wordpress-resilience-0.3.1-recovery-errors-final.zip`, including the consolidated bilingual documentation and native article deletion, featured-image and category/tag support. Identify it by filename and the SHA-256 in its accompanying validation record. Formal release is deferred. The root 0.2.0 research plugin is not the current product.

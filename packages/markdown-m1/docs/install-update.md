@@ -1,5 +1,7 @@
 # Installation and ZIP update / 導入・ZIP更新手順
 
+For first-time source/destination setup: [English](start-here.md) · [日本語](start-here-ja.md).
+
 ## English
 
 1. Prepare a supported WordPress/PHP environment and the required plugins described in the [README](../README.md). Use the exact validated ZIP linked there and verify its SHA-256 against the acceptance record; the display version alone does not identify the candidate. For a new installation, configure the dedicated S3 scope and standard AWS authentication after activation.
