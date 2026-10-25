@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Owr\M1;
 require_once __DIR__.'/SaveFailure.php';
+require_once __DIR__.'/CheckpointSchedule.php';
+require_once __DIR__.'/GfsPolicy.php';
 
 final class Plugin
 {
@@ -26,10 +28,27 @@ final class Plugin
         add_filter('the_content',static function($html){$from=get_option('owr_site_origin_url');return $from?SiteSnapshot::relocate($html,$from,home_url()):$html;},101);
         add_action('init',[$this,'scheduleCheckpoints']);
         add_action('owr_m1_checkpoint',[$this,'checkpointTick']);
-        add_filter('cron_schedules',function($s){$days=(int)($this->config()['checkpoint_interval_days']??0);if($days>0)$s['owr_checkpoint_interval']=['interval'=>$days*DAY_IN_SECONDS,'display'=>'Resilience configured Checkpoint interval'];return $s;});
         register_shutdown_function([$this,'release']);
     }
     public function config(): array { return (array)get_option(self::CONFIG,[]); }
+    public static function renderGfsSettings(array $c): void {
+        echo '<h3>Weekly / monthly / yearly Checkpoints</h3><p>Timezone: '.esc_html(wp_timezone()->getName()).'. Select each schedule independently. Coincident times create one complete Checkpoint with all matching retention labels. Unchanged content is still copied independently.</p>';
+        if(!array_key_exists('gfs',$c)&&!empty($c['checkpoint_interval_days']))echo '<p>Legacy interval remains active until these settings are saved. Select GFS schedules before saving to replace it.</p>';
+        foreach(['weekly'=>'Weekly','monthly'=>'Monthly','yearly'=>'Yearly'] as $kind=>$label){
+            $r=$c['gfs'][$kind]??[];$name='gfs['.$kind.']';
+            echo '<fieldset><legend>'.esc_html($label).'</legend><label><input type="checkbox" name="'.$name.'[enabled]" '.checked(!empty($r['enabled']),true,false).'>Enabled</label> ';
+            if($kind==='weekly'){
+                echo '<label>Weekday <select name="'.$name.'[weekday]">';
+                foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $i=>$day)echo '<option value="'.$i.'" '.selected($r['weekday']??0,$i,false).'>'.$day.'</option>';
+                echo '</select></label> ';
+            }else{
+                if($kind==='yearly')echo '<label>Month <input type="number" min="1" max="12" name="'.$name.'[month]" value="'.(int)($r['month']??1).'"></label> ';
+                echo '<label>Day'.($kind==='monthly'?' (0 = month end)':'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.$name.'[day]" value="'.(int)($r['day']??1).'"></label> ';
+            }
+            echo '<label>Start time <input type="time" name="'.$name.'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>Keep for <input type="number" min="1" max="100" name="'.$name.'[keep]" value="'.(int)($r['keep']??1).'"> '.['weekly'=>'weeks','monthly'=>'calendar months','yearly'=>'calendar years'][$kind].'</label></fieldset>';
+        }
+        echo '<p>Missing calendar dates use month end. Retention starts at actual confirmation; an older point keeps its recorded labels when settings change. WP-Cron needs traffic or an existing server cron runner. Late runs show their planned time separately and do not invent missed historical snapshots. Optional S3 deletion protection is separate.</p>';
+    }
     /** The temporary original is durable before WordPress moves/registers an image. */
     public function protectUpload(array $file): array {
         if(empty($this->config()['protect']) || !empty($file['error']))return $file;
@@ -75,20 +94,84 @@ final class Plugin
     }
     public function scheduleCheckpoints(): void {
         wp_clear_scheduled_hook('owr_m1_checkpoint_daily');
-        $days=(int)($this->config()['checkpoint_interval_days']??0);
+        $c=$this->config();$days=(int)($c['checkpoint_interval_days']??0);
         $event=wp_get_scheduled_event('owr_m1_checkpoint');
-        if ($event && ($days===0 || $event->interval!==$days*DAY_IN_SECONDS)) {wp_clear_scheduled_hook('owr_m1_checkpoint');$event=false;}
-        if ($days>0 && !$event) wp_schedule_event(time()+$days*DAY_IN_SECONDS,'owr_checkpoint_interval','owr_m1_checkpoint');
+        if(array_key_exists('gfs',$c)){
+            if($event && !empty($event->schedule)){wp_clear_scheduled_hook('owr_m1_checkpoint');$event=false;}
+            if(!$c['gfs']){wp_clear_scheduled_hook('owr_m1_checkpoint');delete_option('owr_gfs_due');return;}
+            if(!$event){
+                $slot=GfsPolicy::next($c['gfs'],time(),wp_timezone());
+                update_option('owr_gfs_due',$slot,false);
+                $r=wp_schedule_single_event($slot['at'],'owr_m1_checkpoint',[],true);
+                if(is_wp_error($r)||$r===false)update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule GFS Checkpoint'],false);
+            }
+            return;
+        }
+
+        if ($event && ($days===0 || !empty($event->schedule))) {wp_clear_scheduled_hook('owr_m1_checkpoint');$event=false;}
+        if ($days>0 && !$event) {
+            $next=CheckpointSchedule::next(time(),$days,$c['checkpoint_interval_unit']??'days',wp_timezone(),(int)($c['checkpoint_anchor_day']??0));
+            $r=wp_schedule_single_event($next,'owr_m1_checkpoint',[],true);
+            if(is_wp_error($r)||$r===false)update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule Checkpoint'],false);
+        }
     }
     public function checkpointTick(): void {
-        if (empty($this->config()['checkpoint_interval_days'])) return;
-        try { $this->checkpoint(); } catch (\Throwable $e) {
+        $c=$this->config();$slot=null;
+        if(array_key_exists('gfs',$c)){
+            if(!$c['gfs'])return;
+            $slot=get_option('owr_gfs_due');
+            if(!is_array($slot)||empty($slot['rules'])||!isset($slot['at'],$slot['timezone'])||$slot['at']>time())return;
+        }elseif(empty($c['checkpoint_interval_days']))return;
+        try { $this->wholeCheckpoint(null,$slot); } catch (\Throwable $e) {
             update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);
+            if($slot!==null)wp_clear_scheduled_hook('owr_m1_checkpoint');
+            $this->scheduleCheckpoints();
             return;
         }
         if (!empty($this->config()['cleanup_enabled'])) {
-            try {$this->runCleanup(true);} catch (\Throwable $e) {update_option('owr_m1_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);}
+            try {$this->runSiteCleanup(true);} catch (\Throwable $e) {update_option('owr_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);}
         }
+        if($slot!==null)wp_clear_scheduled_hook('owr_m1_checkpoint');
+        $this->scheduleCheckpoints();
+    }
+    public function wholeCheckpoint(?array $ref=null,?array $slot=null): array {
+        try{
+            $this->lock();
+            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before creating a Checkpoint.');
+            $store=$this->store();
+            if($slot!==null){
+                foreach($store->siteSnapshots() as $point)if(($point['scheduled_at']??null)===gmdate('c',$slot['at'])){
+                    (new SiteSnapshot($store))->load($point['ref']);
+                    $result=['manifest'=>$point['ref'],'through'=>$point['through'],'already_confirmed'=>true];
+                    update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);return $result;
+                }
+            }
+            if($ref===null){$points=$store->siteSnapshots();if(!$points)throw new \RuntimeException('Create an initial complete-site snapshot first.');$ref=end($points)['ref'];}
+            $result=(new SiteSnapshot($store))->checkpoint($ref,$slot);
+            update_option('owr_site_snapshot_result',$result,false);
+            update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
+            return $result;
+        }catch(\Throwable $e){update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
+        finally{$this->release();}
+    }
+    public function runSiteCleanup(bool $automatic=false,string $hash=''): array {
+        try{
+            $this->lock();
+            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before deletion.');
+            if($automatic){
+                if(empty($this->config()['cleanup_enabled']))throw new \RuntimeException('Automatic cleanup disabled.');
+                $cutoff=max(0,time()-max(0,(int)($this->config()['cleanup_keep_days']??90))*DAY_IN_SECONDS);
+                $plan=$this->store()->siteCleanupPreview($cutoff);$hash=$plan['hash'];
+            }else{
+                $plan=(array)get_option('owr_site_cleanup_preview',[]);
+                if(empty($plan['hash'])||!hash_equals($plan['hash'],$hash))throw new \RuntimeException('Preview complete-site deletion first.');
+                $cutoff=$plan['cutoff_timestamp'];
+            }
+            $result=$this->store()->siteCleanup($cutoff,$hash);
+            update_option('owr_site_cleanup_status',['at'=>gmdate('c')]+$result,false);
+            delete_option('owr_site_cleanup_preview');return $result;
+        }catch(\Throwable $e){update_option('owr_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
+        finally{$this->release();}
     }
     public function previewSiteCleanup(): array {
         try {
@@ -102,8 +185,19 @@ final class Plugin
         update_option('owr_site_cleanup_preview',$plan,false);
         return $plan;
     }
+    public function renewSiteRetention(): array {
+        update_option('owr_site_retention_result',['status'=>'running','at'=>gmdate('c')],false);
+        try{
+            $this->lock();
+            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending operations before renewing Checkpoint protection.');
+            $result=$this->store()->renewLatestSiteRetention();
+            update_option('owr_site_retention_result',$result,false);return $result;
+        }catch(\Throwable $e){
+            update_option('owr_site_retention_result',['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()],false);throw $e;
+        }finally{$this->release();}
+    }
     public static function renderSiteCleanup(array $plan): void {
-        echo '<h2>Complete-site retention preview — read only</h2><p>Uses the recovery-point retention days below and S3 fixed-version LastModified (UTC). Always retains the newest history boundary and the required subsequent history. Article and shared pending operations must be resolved first. No deletion is available from this preview.</p>';
+        echo '<h2>Complete-site Checkpoint retention preview</h2><p>The retention window applies to recovery points, not the age of articles or images. Keeps the latest Checkpoint, the baseline at the window boundary, and required history and resources. Unknown resources are retained. S3-locked resources wait until protection expires. Preview itself does not delete anything.</p>';
         if(!$plan)return;
         if(isset($plan['error']))echo '<p><strong>Candidates not calculated:</strong> '.esc_html($plan['error']).'</p>';
         else {
@@ -376,17 +470,26 @@ final class Plugin
                 $c=[];foreach (['bucket','region','prefix','owner'] as $key) $c[$key]=sanitize_text_field(wp_unslash($_POST[$key]??''));
                 if (!preg_match('/^[a-z0-9.-]{3,63}$/D',$c['bucket']) || !preg_match('/^[a-z0-9-]+$/D',$c['region']) || !preg_match('~^[a-zA-Z0-9/_-]+/$~D',$c['prefix']) || ($c['owner']!=='' && !preg_match('/^[0-9]{12}$/D',$c['owner']))) throw new \RuntimeException('Invalid S3 configuration. Prefix must end with /.');
                 $c['protect']=isset($_POST['protect']);$c['retention_days']=max(0,min(3650,(int)($_POST['retention_days']??0)));
-                $c['checkpoint_interval_days']=max(0,min(3650,(int)($_POST['checkpoint_interval_days']??0)));
+                $gfs=wp_unslash($_POST['gfs']??[]);
+                if(!is_array($gfs))throw new \RuntimeException('Invalid GFS settings.');
+                $c['gfs']=GfsPolicy::normalize($gfs);$c['checkpoint_interval_days']=0;
                 $c['cleanup_enabled']=isset($_POST['cleanup_enabled']);
                 $c['cleanup_keep_days']=max(0,min(3650,(int)($_POST['cleanup_keep_days']??90)));
-                if ($c['cleanup_enabled'] && !$c['checkpoint_interval_days']) throw new \RuntimeException('Set a Checkpoint interval before enabling automatic cleanup.');
+                if ($c['cleanup_enabled'] && !$c['gfs']) throw new \RuntimeException('Set a Checkpoint interval before enabling automatic cleanup.');
                 update_option(self::CONFIG,$c,false);
                 delete_option('owr_m1_cleanup_preview');
+                delete_option('owr_site_cleanup_preview');
+                wp_clear_scheduled_hook('owr_m1_checkpoint');
                 $this->scheduleCheckpoints();
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') $this->restore(array_map('strval',(array)($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
             elseif ($action==='site_cleanup_preview') $this->previewSiteCleanup();
+            elseif ($action==='site_cleanup_execute') {
+                if(!isset($_POST['confirm_cleanup']))throw new \RuntimeException('Confirm deletion of the previewed expired recovery resources.');
+                $this->runSiteCleanup(false,sanitize_text_field(wp_unslash($_POST['cleanup_hash']??'')));
+            }
+            elseif ($action==='site_retention_renew') $this->renewSiteRetention();
             elseif ($action==='initial_snapshot') $this->initialSnapshot(isset($_POST['trust_initial']));
             elseif ($action==='whole_initial') {
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),['ozeki-markdown-documents/ozeki-markdown-documents.php']);
@@ -394,7 +497,7 @@ final class Plugin
             }
             elseif ($action==='whole_checkpoint') {
                 $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
-                update_option('owr_site_snapshot_result',(new SiteSnapshot($this->store()))->checkpoint($ref),false);
+                $this->wholeCheckpoint($ref);
             }
             elseif ($action==='whole_restore') {
                 $attempt=['status'=>'running','at'=>gmdate('c')];
@@ -516,7 +619,7 @@ final class Plugin
             ksort($ends);
             foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){
                 $this->form($op);echo '<label>Checkpoint <select name="site_ref" required>';
-                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';
+                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';
                 echo '</select></label>';
                 if($op==='whole_restore'){
                     echo '<label>Formal history end <select name="site_through" required>';
@@ -529,11 +632,23 @@ final class Plugin
         self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
         echo '<h2>Storage and optional scheduling settings</h2>';
         $c=$this->config();$this->form('configure');
-        foreach (['bucket','region','prefix','owner','retention_days'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
-        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported article, image, comment, form, TablePress and WP-Members operations (one writer per prefix)</label></p><p><label>Checkpoint interval in days (0 = manual) <input type="number" min="0" max="3650" name="checkpoint_interval_days" value="'.(int)($c['checkpoint_interval_days']??0).'"></label></p><p>Scheduling uses WP-Cron and requires traffic or an existing cron runner. Credentials: AWS SDK default provider; no credentials stored in WordPress. Enable S3 versioning. Retention prevents early deletion; it does not automatically delete objects.</p>';
-        echo '<p><label>Recovery-point retention days (0 = keep latest baseline and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
+        foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
+        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported operations (one writer per prefix)</label></p>';
+        self::renderGfsSettings($c);
+        echo '<p><label>Optional S3 deletion protection in days (0 = do not request a lock) <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.</p>';
+        echo '<p><label>Detailed history recovery window in days (0 = latest Checkpoint and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
+        $next=wp_next_scheduled('owr_m1_checkpoint');
+        echo '<p>Next complete-site Checkpoint (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
         self::renderSiteCleanup((array)get_option('owr_site_cleanup_preview',[]));
         $this->form('site_cleanup_preview');submit_button('Preview complete-site retention');echo '</form>';
+        $sitePlan=(array)get_option('owr_site_cleanup_preview',[]);
+        if(!empty($sitePlan['hash'])&&!empty($sitePlan['inventory_complete'])&&!empty($sitePlan['candidates'])){
+            $this->form('site_cleanup_execute');
+            echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($sitePlan['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">Delete only the previewed expired Checkpoints and resources, preserving retained recovery points</label>';
+            submit_button('Delete expired complete-site resources');echo '</form>';
+        }
+        echo '<pre>'.esc_html(Store::json((array)get_option('owr_site_cleanup_status',[]))).'</pre>';
+
         echo '<h2>Legacy asset-only cleanup — not complete-site cleanup</h2><p>This separate earlier path uses asset snapshots. It does not implement complete-site retention. Do not use it to clean a complete-site stream.</p>';
         $this->form('cleanup_preview');submit_button('Preview expired versions');echo '</form>';
         $preview=(array)get_option('owr_m1_cleanup_preview',[]);

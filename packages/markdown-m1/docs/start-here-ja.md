@@ -2,13 +2,15 @@
 
 [English](start-here.md) | 日本語
 
-状態：未公開のcheckpoint-verification候補です。公開済みv0.3.1-pre.1は変更していません。
+状態：未公開のgfs候補です。公開済みv0.3.1-pre.1は変更していません。
 
 ## 1. 導入する配布物
 
-`ozeki-wordpress-resilience-0.3.1-checkpoint-verification.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
+`ozeki-wordpress-resilience-0.3.1-gfs.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
 
 [検証範囲と制限](site-checkpoint-verification.md)で実S3成功・試験用失敗注入・ZIP導入更新を区別しています。既存資産と公開済み配布物は変更していません。GitHubのソースアーカイブや旧研究版を導入しないでください。
+
+[GFSの取得・保存設定とZIP検証](gfs-checkpoints-ja.md)を参照してください。
 
 ## 2. 保護するもの
 

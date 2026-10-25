@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Owr\M1;
 require_once __DIR__.'/AssetFormat.php';
+require_once __DIR__.'/GfsPolicy.php';
 
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
@@ -18,6 +19,48 @@ final class Store
     public static function json(array $value): string {
         return json_encode($value, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
     }
+    /** Disabled retention remains explicit; never silently claim deletion protection. */
+    public function requiredRetentionUntil(): ?string {
+        $days=(int)($this->config['retention_days']??0);
+        if($days<=0)return null;
+        // Five minutes to finish confirmation; a longer operation must be retried.
+        return gmdate('c',time()+$days*86400+300);
+    }
+    public function assertRetentionWindow(?string $until): void {
+        if($until===null)return;
+        $days=(int)($this->config['retention_days']??0);
+        if(strtotime($until)<time()+$days*86400)throw new \RuntimeException('Retention confirmation window expired; retry the operation.');
+    }
+    /** Extend only this fixed version; never shorten, change an existing mode or bypass Governance. */
+    public function ensureRetention(array $ref,?string $until): void {
+        if($until===null)return;
+        if(empty($ref['key'])||empty($ref['version'])||$ref['version']==='null'||str_contains($ref['key'],'..')||str_starts_with($ref['key'],'/'))throw new \RuntimeException('Invalid retention reference.');
+        $target=strtotime($until);if($target===false||$target<=time())throw new \RuntimeException('Invalid required retention deadline.');
+        $args=$this->args($ref['key'])+['VersionId'=>$ref['version']];
+        $read=function()use($args): array{
+            $r=$this->s3->getObjectRetention($args);$ret=$r['Retention']??[];$mode=$ret['Mode']??null;$date=$ret['RetainUntilDate']??null;
+            if(!$ret)return [null,0];
+            $time=$date instanceof \DateTimeInterface?$date->getTimestamp():(is_string($date)?strtotime($date):false);
+            if(!in_array($mode,['GOVERNANCE','COMPLIANCE'],true)||$time===false)throw new \RuntimeException('Invalid stored retention information.');
+            return [$mode,$time];
+        };
+        try{
+            [$mode,$current]=$read();if($current>=$target)return;
+            $this->s3->putObjectRetention($args+['Retention'=>['Mode'=>$mode??'GOVERNANCE','RetainUntilDate'=>new \DateTimeImmutable($until)]]);
+            [, $actual]=$read();if($actual<$target)throw new \RuntimeException('Retention remains shorter than required after extension.');
+        }catch(\Throwable $e){throw new \RuntimeException('Retention check/extension failed: '.$ref['key'].' — '.$e->getMessage(),0,$e);}
+    }
+    /** References in original indexes and structured adapter payloads share the same policy. */
+    public function retainReferences(array $value,?string $until,array &$seen=[]): void {
+        if($until===null)return;
+        if(isset($value['key'],$value['version'],$value['sha256'])){
+            $id=self::json([$value['key'],$value['version']]);if(isset($seen[$id]))return;$seen[$id]=true;
+            $body=$this->get($value);
+            if(str_ends_with($value['key'],'.json')){$nested=json_decode($body,true);if(is_array($nested))$this->retainReferences($nested,$until,$seen);}
+            $this->ensureRetention($value,$until);return;
+        }
+        foreach($value as $child)if(is_array($child))$this->retainReferences($child,$until,$seen);
+    }
     public function put(string $key, string $body, string $type, ?string $until=null): array {
         $args=$this->args($key)+['Body'=>$body,'ContentType'=>$type,'IfNoneMatch'=>'*',
             'ServerSideEncryption'=>'AES256','ChecksumSHA256'=>base64_encode(hash('sha256',$body,true))];
@@ -25,16 +68,20 @@ final class Store
             $args['ObjectLockMode']='GOVERNANCE';
             $args['ObjectLockRetainUntilDate']=new \DateTimeImmutable($until??'+'.(int)$this->config['retention_days'].' days');
         }
+        $reused=false;
         try { $r=$this->s3->putObject($args); }
         catch (\Throwable $error) {
             // A lost response is not permission to overwrite or duplicate an operation.
             try { $r=$this->s3->getObject($this->args($key)); }
             catch (\Throwable $readError) { throw $error; }
             if ((string)$r['Body'] !== $body) throw new \RuntimeException('S3 write failed or key conflict.',0,$error);
+            $reused=true;
         }
         $version=(string)($r['VersionId']??'');
         if ($version==='' || $version==='null') throw new \RuntimeException('S3 versioning must be enabled.');
-        return ['key'=>$key,'version'=>$version,'sha256'=>hash('sha256',$body)];
+        $ref=['key'=>$key,'version'=>$version,'sha256'=>hash('sha256',$body)];
+        if($reused&&!empty($this->config['retention_days']))$this->ensureRetention($ref,$args['ObjectLockRetainUntilDate']->format('c'));
+        return $ref;
     }
     public function get(array $ref): string {
         if (!isset($ref['key'],$ref['version'],$ref['sha256']) || str_contains($ref['key'],'..') || str_starts_with($ref['key'],'/')) throw new \RuntimeException('Invalid S3 reference.');
@@ -71,9 +118,31 @@ final class Store
             foreach($list['Contents']??[] as $item){$key=substr($item['Key'],strlen($this->config['prefix']));if(!preg_match('~^site-snapshots/[a-f0-9]{64}/manifest\.json$~D',$key))continue;
                 $r=$this->s3->getObject($this->args($key));$body=(string)$r['Body'];$m=json_decode($body,true,512,JSON_THROW_ON_ERROR);
                 if(($m['schema']??'')!=='owr-site-snapshot-1'||empty($r['VersionId']))throw new \RuntimeException('Invalid site snapshot.');
-                $out[]=['ref'=>['key'=>$key,'version'=>$r['VersionId'],'sha256'=>hash('sha256',$body)],'through'=>$m['through'],'origin'=>$m['origin']];
+                $created=$r['LastModified']??($m['created_at']??'1970-01-01T00:00:00Z');
+                $created=$created instanceof \DateTimeInterface?$created->getTimestamp():strtotime((string)$created);
+                $out[]=['ref'=>['key'=>$key,'version'=>$r['VersionId'],'sha256'=>hash('sha256',$body)],'through'=>$m['through'],'origin'=>$m['origin'],'created'=>$created?:0,'gfs'=>$m['gfs']??[],'scheduled_at'=>$m['scheduled_at']??null];
             }$token=$list['NextContinuationToken']??null;
-        }while($token);return $out;
+        }while($token);usort($out,fn($a,$b)=>[$a['through'],$a['created'],$a['ref']['key']]<=>[$b['through'],$b['created'],$b['ref']['key']]);return $out;
+    }
+    /** Manual renewal, not a new recovery point: latest boundary and its confirmed tail. */
+    public function renewLatestSiteRetention(): array {
+        $until=$this->requiredRetentionUntil();if($until===null)throw new \RuntimeException('Enable a positive retention period before renewing protection.');
+        $snapshots=$this->siteSnapshots();if(!$snapshots)throw new \RuntimeException('No complete-site Checkpoint to renew.');
+        foreach($snapshots as $s)if(!is_int($s['through']??null)||$s['through']<0)throw new \RuntimeException('Invalid Checkpoint boundary.');
+        usort($snapshots,fn($a,$b)=>[$a['through'],$a['ref']['key']]<=>[$b['through'],$b['ref']['key']]);
+        $latest=end($snapshots);[$manifest]=(new SiteSnapshot($this))->load($latest['ref']);
+        $through=$manifest['through'];$refs=[$latest['ref']];$sources=[];
+        foreach($this->history($through) as $row){
+            if(($row['sequence']??null)!==$through+1)throw new \RuntimeException('Formal history gap; retention renewal stopped.');
+            $key=sprintf('history/%020d.json',$row['sequence']);$r=$this->s3->getObject($this->args($key));$body=(string)$r['Body'];
+            if(empty($r['VersionId'])||$r['VersionId']==='null'||json_decode($body,true,512,JSON_THROW_ON_ERROR)!==$row)throw new \RuntimeException('History changed while preparing retention renewal.');
+            $refs[]=['key'=>$key,'version'=>$r['VersionId'],'sha256'=>hash('sha256',$body)];$through=$row['sequence'];
+            $source=json_decode($this->originalSource($row['original']),true);if(is_array($source))$sources[]=$source;
+        }
+        $seen=[];foreach($sources as $source)$this->retainReferences($source,$until,$seen);
+        foreach($refs as $ref)$this->retainReferences($ref,$until,$seen);
+        $this->assertRetentionWindow($until);
+        return ['status'=>'success','at'=>gmdate('c'),'manifest'=>$latest['ref'],'checkpoint_through'=>$manifest['through'],'through'=>$through,'retain_until'=>$until,'versions_checked'=>count($seen)];
     }
     private function applyRows(array $assets, array $rows, int $through): array {
         foreach ($rows as $row) {
@@ -258,10 +327,15 @@ final class Store
             $s['manifest']=$m;$s['created']=$versions[$s['ref']['key']]['modified'];
         }unset($s);
         usort($snapshots,fn($a,$b)=>[$a['through'],$a['created'],$a['ref']['key']]<=>[$b['through'],$b['created'],$b['ref']['key']]);
-        $latest=end($snapshots)['ref']['key'];$floor=PHP_INT_MAX;$keep=[];
+        $latest=end($snapshots)['ref']['key'];$floor=PHP_INT_MAX;$keep=[];$anchor=null;
+        // Keep the baseline immediately before the requested recovery window too.
+        foreach($snapshots as $s)if($s['created']<=$cutoff)$anchor=$s['ref']['key'];
         foreach($snapshots as $s){
-            $retain=$s['ref']['key']===$latest || $s['created']>$cutoff;
-            if($retain){$floor=min($floor,$s['through']);$keep[]=['key'=>$s['ref']['key'],'through'=>$s['through'],'created_at'=>gmdate('c',$s['created'])];}
+            $chain=$s['ref']['key']===$latest || $s['ref']['key']===$anchor || $s['created']>$cutoff;
+            $gfs=GfsPolicy::active($s['manifest']['gfs']??[],time());$retain=$chain||$gfs;
+            // Archived GFS points are self-contained: they do not pin every intervening history.
+            if($chain)$floor=min($floor,$s['through']);
+            if($retain)$keep[]=['key'=>$s['ref']['key'],'through'=>$s['through'],'created_at'=>gmdate('c',$s['created']),'gfs'=>$s['manifest']['gfs']??[],'reason'=>$chain?'Recent recovery chain': 'GFS retention'];
             $walk($s['ref'],$retain);
         }
         $through=$floor;$tail=0;
@@ -294,12 +368,37 @@ final class Store
                 $candidates[]=$v+['reason'=>'Covered by retained recovery chain and outside retention window'];
             }catch(\Throwable $e){$blocked[]=$v+['reason'=>'Deletion not established: '.$e->getMessage()];}
         }
-        return ['schema'=>'owr-site-retention-preview-1','read_only'=>true,'inventory_complete'=>$inventoryComplete,
+        // A locked member keeps the entire retired Checkpoint discoverable and intact.
+        $blockedGroups=[];
+        foreach($blocked as $v)if(preg_match('~^(site-snapshots/[a-f0-9]{64}/)~',$v['key'],$g))$blockedGroups[$g[1]]=true;
+        $ready=[];foreach($candidates as $v){
+            if(preg_match('~^(site-snapshots/[a-f0-9]{64}/)~',$v['key'],$g)&&isset($blockedGroups[$g[1]]))$blocked[]=array_merge($v,['reason'=>'Another member of this Checkpoint cannot be deleted yet']);
+            else $ready[]=$v;
+        }$candidates=$ready;
+        $hash=hash('sha256',self::json([$this->config['bucket'],$this->config['prefix'],$cutoff,$versions,$keep,$candidates,$blocked]));
+        return ['schema'=>'owr-site-retention-preview-1','read_only'=>true,'hash'=>$hash,'cutoff_timestamp'=>$cutoff,'inventory_complete'=>$inventoryComplete,
             'inventory_note'=>$inventoryComplete?'All listed versions inspected':'s3:ListBucketVersions unavailable: current fixed versions only; hidden older versions are unassessed and no deletion candidates are authorized',
             'at'=>gmdate('c'),'cutoff'=>gmdate('c',$cutoff),
             'time_basis'=>'S3 fixed-version LastModified; latest baseline selected by confirmed history boundary',
             'keep'=>$keep,'from'=>$floor,'through'=>$through,'tail_count'=>$tail,'retained'=>$retained,'candidates'=>$candidates,'blocked'=>$blocked,
-            'limitation'=>'Preview only; not a deletion authorization or guarantee of IAM DeleteObjectVersion permission. Unknown assets are retained.'];
+            'limitation'=>'Preview only until explicitly executed; IAM DeleteObjectVersion is required. Unknown assets are retained.'];
+    }
+    /** Same policy for scheduled and administrator-requested deletion. Never bypass a lock. */
+    public function siteCleanup(int $cutoff,string $expectedHash): array {
+        $plan=$this->siteCleanupPreview($cutoff);
+        if(!$plan['inventory_complete']||!hash_equals($plan['hash'],$expectedHash))throw new \RuntimeException('Storage changed or version inventory incomplete; preview again.');
+        $delete=$plan['candidates'];
+        // Withdraw retired markers before their payloads, so no incomplete point is advertised.
+        usort($delete,static function($a,$b){
+            $rank=static fn($k)=>str_starts_with($k,'history/')?0:(str_ends_with($k,'/manifest.json')?1:2);
+            return [$rank($a['key']),$a['key']]<=>[$rank($b['key']),$b['key']];
+        });
+        $done=[];
+        foreach($delete as $v){
+            try{$this->s3->deleteObject($this->args($v['key'])+['VersionId'=>$v['version']]);$done[]=$v;}
+            catch(\Throwable $e){return ['ok'=>false,'deleted'=>$done,'uncertain'=>$v,'error'=>$e->getMessage(),'blocked'=>$plan['blocked']];}
+        }
+        return ['ok'=>true,'deleted'=>$done,'blocked'=>$plan['blocked'],'retained'=>$plan['keep']];
     }
     /** Read-only cleanup preview. A timestamp fixes the policy across preview/execute. */
     public function cleanupPlan(int $cutoff): array {
@@ -438,9 +537,10 @@ final class Store
         return $raw;
     }
     public function commit(array $record): void {
+        $until=$this->requiredRetentionUntil();
         // Use this operation's fixed references and the existing client, never a site scan.
         // originalSource checks metadata, split parts, their hashes and reassembly.
-        $this->originalSource($record['original']);
+        $source=$this->originalSource($record['original']);
         if(($record['original']['schema']??'owr-md-original-1')==='owr-md-original-1')
             $this->get($record['original']['metadata']);
         $seen=[];
@@ -453,7 +553,10 @@ final class Store
             foreach($value as $child)if(is_array($child))$verify($child);
         };
         $verify($record['attributes']['media']??[]);
+        $seen=[];$nested=json_decode($source,true);if(is_array($nested))$this->retainReferences($nested,$until,$seen);
+        $this->retainReferences($record,$until,$seen);
+        $this->assertRetentionWindow($until);
         // Any read/hash failure above leaves the operation unconfirmed for existing resume.
-        $this->put(sprintf('history/%020d.json',$record['sequence']),self::json($record),'application/json',$record['original']['retain_until']);
+        $this->put(sprintf('history/%020d.json',$record['sequence']),self::json($record),'application/json',$until);
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Owr\M1;
 require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/RecoveryRules.php';
+require_once __DIR__.'/GfsPolicy.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -85,7 +86,7 @@ final class SiteSnapshot
             'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
         return $this->save($files,$manifest);
     }
-    public function save(array $files,array $manifest): array {
+    public function save(array $files,array $manifest,?array $slot=null): array {
         // The same lossless partition is used for normal structured originals and full baselines.
         $layout=AssetFormat::split(json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR));
         foreach($layout['files'] as $path=>$body)$files['assets/'.$path]=$body;
@@ -93,16 +94,25 @@ final class SiteSnapshot
         $files['assets/metadata.json']=Store::json($layout);
         $manifest['asset_format']=AssetFormat::SCHEMA;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
-        unset($manifest['resources'],$manifest['created_at']);
+        unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
+        // A new recovery point owns a complete copy even when its content is unchanged.
+        $manifest['checkpoint_id']=bin2hex(random_bytes(16));
+        $manifest['created_at']=gmdate('c');
         $base='site-snapshots/'.hash('sha256',Store::json([$manifest,$identity])).'/';$refs=[];
-        $until=gmdate('c',time()+86400*max(1,(int)((new Plugin())->config()['retention_days']??36)));
+        $until=$this->store->requiredRetentionUntil();
         foreach($files as $p=>$body){$type=str_ends_with($p,'.md')?'text/markdown':(str_ends_with($p,'.json')?'application/json':'application/octet-stream');$refs[$p]=$this->store->put($base.'resources/'.$p,$body,$type,$until);}
         // Verify this attempt's fixed versions before making its manifest discoverable.
         foreach($refs as $p=>$resource){
-            try{$this->store->get($resource);}
+            try{$this->store->get($resource);$this->store->ensureRetention($resource,$until);}
             catch(\Throwable $e){throw new \RuntimeException('Site snapshot resource verification failed: '.$p.' — '.$e->getMessage(),0,$e);}
         }
         $manifest['resources']=$refs;
+        $this->store->assertRetentionWindow($until);
+        $manifest['created_at']=gmdate('c');
+        if($slot!==null){
+            $manifest['scheduled_at']=gmdate('c',$slot['at']);$manifest['gfs_timezone']=$slot['timezone'];
+            $manifest['gfs']=GfsPolicy::labels($slot['rules'],time(),new \DateTimeZone($slot['timezone']));
+        }
         $ref=$this->store->put($base.'manifest.json',Store::json($manifest),'application/json',$until);
         return ['manifest'=>$ref,'files'=>count($files),'through'=>$manifest['through']];
     }
@@ -121,8 +131,8 @@ final class SiteSnapshot
         return [$m,$files];
     }
     /** Checkpoint copies the trusted complete baseline and overlays confirmed content history. */
-    public function checkpoint(array $ref): array {
-        [$m,$files]=$this->load($ref);[$m,$files]=$this->replay($m,$files);return $this->save($files,$m);
+    public function checkpoint(array $ref,?array $slot=null): array {
+        [$m,$files]=$this->load($ref);[$m,$files]=$this->replay($m,$files);return $this->save($files,$m,$slot);
     }
     private function replay(array $m,array $files,?int $target=null): array {
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);

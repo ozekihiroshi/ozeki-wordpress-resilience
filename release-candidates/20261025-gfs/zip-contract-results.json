@@ -1,0 +1,38 @@
+[
+  {
+    "test": "gfs",
+    "exit": 0,
+    "stdout": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\nPASS GFS: W/M/Y schedule collision, separate times, calendar month, validation, S3 labels, all-label retention, no archive history pin, independent manual point. Memory S3 only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "gfs-admin",
+    "exit": 0,
+    "stdout": "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n",
+    "stderr": ""
+  },
+  {
+    "test": "checkpoint-lifecycle",
+    "exit": 0,
+    "stdout": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\n",
+    "stderr": ""
+  },
+  {
+    "test": "retention-extension",
+    "exit": 0,
+    "stdout": "PASS retention: new/reused/delayed confirmation, insufficient/read/extension failure, reread, same versions/modes, latest Checkpoint+tail renewal, no old content mutation or rollback; memory storage only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-checkpoint-verification",
+    "exit": 0,
+    "stdout": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS initial common save and Checkpoint: data/metadata/image/software mismatches and unavailable versions stop before manifest; same fixed versions verified on retry; normal load/tail retained; existing objects unchanged\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-point-time",
+    "exit": 0,
+    "stdout": "PASS exact boundaries, full update, deletion, Checkpoint-only, incompatible Checkpoint, missing end/gap/resource, later records excluded. Memory S3 only.\n",
+    "stderr": ""
+  }
+]

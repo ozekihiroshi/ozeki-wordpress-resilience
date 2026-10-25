@@ -18,6 +18,12 @@ function current_user_can($cap){return true;}
 function check_admin_referer($name){}
 function wp_unslash($v){return $v;}
 function admin_url($v){return $v;}
+class CheckpointAdminDb {
+ public string $prefix='fixture_',$posts='posts',$postmeta='postmeta',$options='options';
+ function prepare($sql,...$args){return $sql;}
+ function get_var($sql){return str_contains($sql,'ENGINE')?'InnoDB':1;}
+}
+$wpdb=new CheckpointAdminDb();
 class TestRedirect extends RuntimeException {}
 function wp_safe_redirect($url){throw new TestRedirect($url);}
 $fixture=new AdminCheckpointS3();$options=['owr_m1_config'=>['bucket'=>'fixture','prefix'=>'admin/','region'=>'fixture']];

@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 require_once $argv[1].'/src/Store.php';
+require_once __DIR__.'/retention-memory.php';
 class MemoryS3 {
+ use RetentionMemory;
  public array $objects=[];public int $n=0;public ?string $failOn=null;
- function putObject($a){if(($this->failOn && str_ends_with($a['Key'],$this->failOn))||isset($this->objects[$a['Key']]))throw new RuntimeException('put denied');$r=['Body'=>$a['Body'],'VersionId'=>'v'.++$this->n];$this->objects[$a['Key']]=$r;return $r;}
+ function putObject($a){if(($this->failOn && str_ends_with($a['Key'],$this->failOn))||isset($this->objects[$a['Key']]))throw new RuntimeException('put denied');$this->rememberRetention($a);$r=['Body'=>$a['Body'],'VersionId'=>'v'.++$this->n];$this->objects[$a['Key']]=$r;return $r;}
  function getObject($a){$r=$this->objects[$a['Key']]??throw new RuntimeException('missing',404);if(isset($a['VersionId'])&&$r['VersionId']!==$a['VersionId'])throw new RuntimeException('wrong version');return $r;}
  function listObjectsV2($a){$keys=array_keys($this->objects);sort($keys);$out=[];foreach($keys as $k)if(str_starts_with($k,$a['Prefix'])&&$k>($a['StartAfter']??''))$out[]=['Key'=>$k];return ['Contents'=>$out];}
 }
