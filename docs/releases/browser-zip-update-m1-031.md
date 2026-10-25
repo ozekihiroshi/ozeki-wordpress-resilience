@@ -12,6 +12,8 @@ SHA-256: `901950f74d02d40bb4c21f92cecb6f7a80d30192f211a84191857f4e2bd3e5d2`.
 
 All 3,813 installed files matched the ZIP. Installation was performed by the standard browser replacement flow, not a CLI install or file-copy substitute.
 
+A subsequent [nonempty-queue acceptance](pending-zip-update-m1-031.md) covers two pending operations and browser resume. The empty-queue results below remain the scope of this earlier test. / 後続の非空キュー試験は別記録とし、以下の当初試験の範囲は変更しません。
+
 ## Preservation and limits
 
 Before/after comparisons matched configuration, all 68 S3 formal-history records, empty article/comment pending queues, recorded errors/notices, individual/site recovery results, latest recovery attempt, member settings and active plugins. The updated admin screen showed confirmed history 68, pending 0, recovery through 68 and 23 post records.
