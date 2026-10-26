@@ -4,6 +4,8 @@
 **Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](docs/releases/optional-markdown-baseline.md).
 **First-time users:** Follow the [installation-to-recovery user guide](packages/markdown-m1/docs/user-guide.md), including the first Baseline and daily operation. [AWS setup and complete replacement IAM policies](packages/markdown-m1/docs/aws-setup.md) are provided. The current published trial is [v0.3.1-pre.2](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2). Released ZIPs are unchanged; use the online guide for current instructions.
 
+[Questions about reconstruction](packages/markdown-m1/docs/recovery-faq.md): how IDs, serialized settings, versions, runtime dependencies and incomplete saves are handled, with evidence and conditions.
+
 English | [日本語](RAADME-jp.md)
 
 **Preserve the information you cannot afford to lose, so a lost or untrusted WordPress system is not your only route back to it.**

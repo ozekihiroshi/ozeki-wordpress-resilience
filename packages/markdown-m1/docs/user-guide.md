@@ -6,6 +6,8 @@ This guide is for the published [GitHub Pre-release v0.3.1-pre.2](https://github
 
 **Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](optional-markdown-verification.md).
 
+[Questions about reconstruction](recovery-faq.md) explains the five common concerns, the design measures, existing evidence and required conditions.
+
 ## 1. Understand what you will do
 
 You first capture a trusted current site as a **Baseline**. Normal supported edits then produce independent S3 originals and confirmed history. A **Checkpoint** collects a complete supported reconstruction set from those saved resources. When needed, you prepare a separate WordPress and restore a selected point plus confirmed history. The destination does not update automatically after each source edit.
