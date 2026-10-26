@@ -103,3 +103,5 @@ Use the linked setup and adapter specifications for dependency versions, permiss
 This README describes published pre.2 and distinguishes the earlier pre.1 and candidate evidence. Published ZIPs remain unchanged; pre.2 includes snapshot verification, GFS scheduling and retention labels. The online user guide and AWS samples are later documentation, not additions to the released ZIP. Earlier research paths and accumulated test narratives remain accessible through the evidence index; they are not the standard product architecture.
 
 [Readiness candidate / 未公開配布候補](docs/releases/recovery-readiness-package.md)
+
+Sample-only source/recovery IAM policies also passed save, verification, confirmed history, retention exclusion, cleanup and separate recovery in the dedicated SSE-S3 trial; see the evidence for boundaries.

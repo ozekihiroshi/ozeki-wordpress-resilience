@@ -18,6 +18,6 @@ IAM restrictions, IMDS reachability, runtime versions, disk/memory limits and un
 
 IAM、IMDS到達性、実行環境の版、容量・メモリ、本体更新ジョブは環境準備の問題。必要資源の喪失・成功誤報なら製品課題。環境都合で確定・削除条件を弱めない。未対応情報を無条件に追加機能の約束へ変えない。
 
-Reference trigger: server invocation of standard wp-cron.php, using existing acceptance evidence. Exact IAM-template deployment and temporary-policy withdrawal remain unconfirmed; active-retention exclusion passed; see [current evidence](recovery-readiness.md).
+Reference trigger: server invocation of standard wp-cron.php, using existing acceptance evidence. The source-with-cleanup/recovery-read-only samples alone passed real S3 save, verification, commit, retention, cleanup and dm recovery; temporary roles/policies were removed. Other AWS configurations and the source-no-delete variant are outside this trial; see [current evidence](recovery-readiness.md).
 
-基準の起動方式は検証済みの標準wp-cron.phpのサーバ起動。IAM完全版の実適用と一時ポリシー撤去は未確認。実保持期限による候補除外は合格。[今回の記録](recovery-readiness-ja.md)を参照。
+基準の起動方式は検証済みの標準wp-cron.phpのサーバ起動。保存側削除対応・復旧側読取り専用サンプルだけで実S3保存・照合・確定・保持・削除・dm復旧に合格し、一時権限を撤去。別AWS構成・削除なしサンプルの単独適用は今回の試験外。[今回の記録](recovery-readiness-ja.md)を参照。
