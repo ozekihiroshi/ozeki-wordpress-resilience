@@ -59,9 +59,13 @@ final class SiteSnapshot
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
-        // Include supported form runtimes in a new trusted baseline; no external worker.
-        foreach(array_merge(FormHistory::DEPENDENCIES,[MemberHistory::PLUGIN,TableHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
+        // Include active supported runtimes; native-only sites do not require Markdown Documents.
+        foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=[];
+        $hasMarkdown=(bool)array_filter($data['tables']['posts'],fn($p)=>$p['post_type']==='ozmd_document')
+            ||(bool)array_filter($data['tables']['postmeta'],fn($m)=>$m['meta_key']==='_ozmd_source');
+        if($hasMarkdown&&!in_array('ozeki-markdown-documents/ozeki-markdown-documents.php',(array)get_option('active_plugins'),true))
+            throw new \RuntimeException('Markdown documents or originals exist. Activate Ozeki Markdown Documents before creating a Baseline.');
         $theme=get_stylesheet();$parent=get_template();
         foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
         foreach($plugins as $plugin){

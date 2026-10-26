@@ -492,7 +492,7 @@ final class Plugin
             elseif ($action==='site_retention_renew') $this->renewSiteRetention();
             elseif ($action==='initial_snapshot') $this->initialSnapshot(isset($_POST['trust_initial']));
             elseif ($action==='whole_initial') {
-                $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),['ozeki-markdown-documents/ozeki-markdown-documents.php']);
+                $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),[]);
                 update_option('owr_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {
