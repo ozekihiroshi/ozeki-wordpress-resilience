@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/SiteSnapshot.php';
 define('ARRAY_A','ARRAY_A');
 function maybe_serialize($v){return is_array($v)?serialize($v):$v;}

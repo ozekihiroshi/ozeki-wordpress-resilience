@@ -10,10 +10,12 @@ final class GfsPolicy {
             $r=$input[$kind]??[];
             if(empty($r['enabled']))continue;
             $time=$r['time']??'';$keep=filter_var($r['keep']??null,FILTER_VALIDATE_INT);
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if(!is_string($time)||!preg_match('/^([01][0-9]|2[0-3]):[0-5][0-9]$/D',$time)||$keep===false||$keep<1||$keep>100)throw new \RuntimeException('Invalid GFS time or retention: '.$kind);
             $row=['enabled'=>true,'time'=>$time,'keep'=>$keep];
             foreach(($kind==='weekly'?['weekday'=>[0,6]]:($kind==='monthly'?['day'=>[0,31]]:['month'=>[1,12],'day'=>[1,31]])) as $key=>[$min,$max]){
                 $v=filter_var($r[$key]??null,FILTER_VALIDATE_INT);
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
                 if($v===false||$v<$min||$v>$max)throw new \RuntimeException('Invalid GFS '.$key.': '.$kind);
                 $row[$key]=$v;
             }

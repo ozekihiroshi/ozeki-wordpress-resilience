@@ -1,7 +1,12 @@
 <?php
 /**
- * Plugin Name: Ozeki WordPress Resilience
- * Description: Independent Markdown originals and successful history in S3; recover into a new WordPress.
+ * Plugin Name: Ozeki Resilience
+ * Description: Preserve supported site content and confirmed history in Amazon S3; reconstruct it on a prepared WordPress.
+ * Plugin URI: https://github.com/ozekihiroshi/ozeki-wordpress-resilience
+ * Author: Hiroshi Ozeki
+ * Author URI: https://github.com/ozekihiroshi
+ * Text Domain: ozeki-resilience
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Version: 0.3.1
  * Requires PHP: 8.1
  * Requires at least: 6.4

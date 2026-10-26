@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 
 /** Completed native article deletion and final thumbnail/category/tag state. */

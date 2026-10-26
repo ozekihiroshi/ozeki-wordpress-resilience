@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
+
 require_once $argv[1].'/src/Store.php';
 require_once $argv[1].'/src/FormHistory.php';
 class CommentMemoryS3 {

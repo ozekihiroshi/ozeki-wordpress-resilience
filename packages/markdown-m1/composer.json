@@ -1,6 +1,6 @@
 {
   "name": "ozeki/wordpress-resilience",
-  "description": "Independent WordPress recovery research toolkit",
+  "description": "Preserve independent site originals and confirmed history in Amazon S3",
   "type": "project",
   "license": "GPL-2.0-or-later",
   "require": {

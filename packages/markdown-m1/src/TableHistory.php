@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 
 /** TablePress completed operations, complete table originals, shared S3 history. */
