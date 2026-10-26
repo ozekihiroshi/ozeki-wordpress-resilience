@@ -41,3 +41,9 @@ Plugin Check 2.1.0 on WordPress 7.1.3/PHP 8.3 reported 0 errors and 103 warnings
 - [日本語README](../../RAADME-jp.md)・[導入ガイド](../../packages/markdown-m1/docs/user-guide-ja.md)・[限定確認結果](wordpress-org-checks.md)
 
 今回のソース、同梱依存ライブラリ、構築スクリプトで候補を取得・検査できます。旧0.2.0外部キットの取得・導入は不要です。公開後の改善課題を申請条件には追加していません。
+
+## 公開確認とmain反映
+
+0.3.1候補リリースを公開し、匿名ダウンロードしたZIPのSHA-256とタグ上のreadmeがローカル候補に一致することを確認しました。[公開確認記録](../../evidence-public/wordpress-org-031-publication.json)。旧0.2.0リリースはSupersededと明示し、元のアーカイブは保持しています。
+
+[PR #59](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/59)はmainへ公開文書・必要修正を反映するためのdraft PRです。未マージのため、GitHubリポジトリの既定トップREADMEはまだmain側の案内です。審査資料には上記の0.3.1候補タグ・対応ソースを指定してください。申請送信は行っていません。
