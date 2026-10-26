@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once $argv[1].'/src/Store.php';require_once $argv[1].'/src/Plugin.php';
 function checkGfs($v,$m){if(!$v)throw new RuntimeException($m);}
 function get_option($k,$default=false){return $GLOBALS['options'][$k]??$default;}

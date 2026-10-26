@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture for guarded product includes.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once __DIR__.'/../src/MemberHistory.php';
 use Owr\M1\MemberHistory;
 function must($b,$m){if(!$b)throw new RuntimeException($m);}

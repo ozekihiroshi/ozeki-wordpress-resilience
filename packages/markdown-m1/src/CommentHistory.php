@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
-if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 
 /** Core successful-comment callbacks, immutable complete records, shared history order. */

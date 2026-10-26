@@ -1,7 +1,30 @@
-# Contributing
+# 開発・検証への参加
 
-The current product is in `packages/markdown-m1/`; the repository-root 0.2.0 plugin and worker tools are historical. Use the current [README](README.md) and [candidate build instructions](packages/markdown-m1/docs/wordpress-org-candidate.md).
+このプロジェクトは試作・開発段階です。通知管理画面のプラグイン、外部処理、専用の検証ツールを含みます。プラグインの導入だけでサイト保護が始まる完成品ではありません。
 
-For this submission, changes are limited to review requirements, clear product defects and packaging/documentation. Historical research plans, observation periods and old release gates are not new prerequisites. Do not add features or redesign the architecture.
+1. [機能の範囲と未達](docs/releases/plugin-candidate-scope.md)と[製品間の役割分担](docs/spec/04-product-boundaries-and-initial-release.md)を確認してください。
+2. [開発環境](docs/guides/development-setup.md)を用意し、まずオフライン試験を実行してください。実クラウド・実サイトを使うスクリプトはツール一覧と対象設定を確認してから使用します。
+3. 管理画面を試す場合は[ZIP導入・停止・再開](docs/guides/plugin-candidate-install.md)を使います。本番サイトではなく専用環境を使用してください。
+4. 修正は小さく分け、PRに問題、変更後の動作、検証対象と結果を記載してください。関係する試験を実行し、未検証事項も明記してください。
 
-Report the concrete issue, affected version and relevant existing checks. Keep credentials, private originals, database exports and signed URLs out of Git and issues. Preserve uncommitted work and frozen release artifacts. Run checks proportionate to the change; new AWS trials are not required for documentation or packaging fixes.
+## 不具合・検証結果の分類
+
+- プラグイン本体：WordPress上の設定・画面・要求処理など。
+- 外部処理・試験ツール：保存、署名、復元、配送、専用ハーネスなど。
+- 環境・試験基盤：OS、DNS、容量、権限、負荷など。原因未確定なら断定せず、その旨を記録します。
+
+環境で試験が実行できなかった場合は、製品の合格にも不合格にも読み替えません。外部CLIの試験件数をプラグインの受入件数として合算しません。
+
+## 公開してはいけないもの
+
+認証情報、秘密鍵、Pushover/SMTPキー、署名付きURL、取得したDB・サイトファイル、実行時の私有台帳をIssue・PR・Gitへ入れないでください。設定例や診断は値を除いたものを使います。公開用の検証集計はevidence-public、私有原本はGit対象外のevidenceへ分けます。
+
+例に含まれるAWSアカウント・バケット・SSH名・サイト名は開発時の実験構成です。他の環境へそのまま転用する設定ではありません。保持期間を設定する試験には保存費用と削除できない期間が伴います。
+
+## 配布候補の構築
+
+```sh
+python3 tools/build-release.py --output dist/my-candidate
+```
+
+出力先は新しいディレクトリを指定します。プラグインZIPと開発キットを分け、manifestで内容を識別します。過去の候補やタグを上書きしません。GitHub上でソースを公開したことと、完成版をリリースしたことは区別します。

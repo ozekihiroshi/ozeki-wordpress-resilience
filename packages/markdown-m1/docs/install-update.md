@@ -2,15 +2,9 @@
 
 For first-time source/destination setup: [English](start-here.md) · [日本語](start-here-ja.md).
 
-## Folder change for this submission candidate / 申請候補のフォルダー変更
-
-The install directory is now `ozeki-resilience`; the main PHP filename remains `ozeki-wordpress-resilience.php`. Existing prereleases used `ozeki-wordpress-resilience/`. WordPress treats these as separate plugin paths: deactivate the old plugin before installing/activating the new ZIP. Never run both copies. Do not uninstall or delete settings/queues; record and compare configuration, pending work and recovery results after switching. Keep the old files until the switch has been verified. The `owr_m1_*` storage keys remain unchanged.
-
-導入先は `ozeki-resilience` へ変わります。旧版とは別パスのため、旧版を停止してから新ZIPを導入・有効化し、同時に動かさないでください。設定・未確定操作・復旧結果を退避・比較し、確認まで旧ファイルを残します。アンインストールや保存データの削除は行いません。保存キー `owr_m1_*` は変更しません。
-
 ## English
 
-**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
+**Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](optional-markdown-verification.md).
 
 1. Prepare a supported WordPress/PHP environment and the required plugins described in the [README](../README.md). Use the exact validated ZIP linked there and verify its SHA-256 against the acceptance record; the display version alone does not identify the candidate. For a new installation, configure the dedicated S3 scope and standard AWS authentication after activation.
 2. Before updating, preserve the current plugin files, database and configuration using your normal maintenance procedure. Record active plugins, S3 settings, latest confirmed history, pending operations/errors and recovery results. Verify administrator login first, including WP-Members activation where applicable. Avoid concurrent editing during the update.
@@ -21,11 +15,11 @@ The install directory is now `ozeki-resilience`; the main PHP filename remains `
 
 **Pending work:** do not delete or clear pending queues to simplify an update. Where possible complete the existing history-resume workflow first; otherwise preserve the complete pending state and compare it after updating before resuming. Capture the baseline after the save request has fully ended: native-detail records can be queued at shutdown. The [nonempty-queue browser test](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/pending-zip-update-m1-031.md) preserved one article and one native-detail operation, including their IDs, payloads and recorded errors; browser Resume history confirmed those same operations as 69–70 and cleared the pending/error display. Other queue combinations remain unverified. Earlier synthetic overwrite tests are separate evidence.
 
-**Accepted scope:** the [0.3.1 browser update](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md) replaced a prior same-version trial deployment with the frozen validated ZIP and preserved settings, history and recovery results. Earlier fresh-install/extraction tests are separate evidence. This does not establish all version migrations, all hosting configurations, or arbitrary nonempty-queue combinations. The later article/native-detail test adds only the scope described above. Core may register maintenance events during administration; event registration and scheduled execution are separate. For subsequent scheduling evidence and remaining limits, see the current user guide.
+**Accepted scope:** the [0.3.1 browser update](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md) replaced a prior same-version trial deployment with the frozen validated ZIP and preserved settings, history and recovery results. Earlier fresh-install/extraction tests are separate evidence. This does not establish all version migrations, all hosting configurations, or arbitrary nonempty-queue combinations. The later article/native-detail test adds only the scope described above. Core may register maintenance events during administration; event registration and scheduled execution are separate. Periodic execution remains deferred.
 
 ## 日本語
 
-**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
+**未公開候補の条件付き依存：** `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` では、Markdown未使用の通常投稿サイトのBaseline作成・復旧にMarkdown Documentsは不要です。有効な場合は収録し、文書・原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。公開済みpre.2は不変で、管理画面のBaseline作成には従来どおり必要です。[候補の検証記録](optional-markdown-verification.md)。
 
 1. [README](../RAADME-jp.md)に従いWordPress・PHP・必要プラグインを用意します。リンク先の検証済みZIPを使い、検証記録のSHA-256と照合してください。表示バージョンだけでは候補を特定できません。新規導入では有効化後に専用S3範囲と標準AWS認証を設定します。
 2. 更新前に通常の保守手順で現行プラグイン・DB・設定を退避し、有効プラグイン、S3設定、最後の確定履歴、未確定操作／エラー、復旧結果を記録します。WP-Members利用時の有効化を含め管理者ログインを確認し、更新中の同時編集を避けます。
@@ -36,7 +30,7 @@ The install directory is now `ozeki-resilience`; the main PHP filename remains `
 
 **未確定操作：** 更新を簡単にするためにキューを消さないでください。可能なら既存の履歴再開手順で確定させ、未確定のまま更新する場合は操作全体を保全し、更新後に照合してから再開します。付随情報はshutdown時にキューへ入る場合があるため、保存要求が終了してから基準を採取してください。[非空キュー更新試験](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/pending-zip-update-m1-031.md)では本文1件・付随情報1件のID・内容・エラーを保持し、画面からの再開で同じ操作が69～70に確定、未確定・エラー表示が解消しました。他の組合せは未検証です。以前の合成キュー上書き試験とは別の証拠です。
 
-**検証範囲：** [0.3.1標準画面更新](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md)では、同じ表示バージョンの旧試験配置を検証済みZIPへ置換し、設定・履歴・復旧結果を保持しました。以前の新規導入／展開試験とは別の証拠です。全版移行・全ホスティング設定・任意の非空キューの組合せは保証しません。後続試験で追加した確認範囲は上記の本文・付随情報2件です。管理画面操作でCron予約が登録される場合がありますが、予約登録と定期処理実行は別です。後続の定期処理の確認と制限は現在の利用ガイドを参照してください。
+**検証範囲：** [0.3.1標準画面更新](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md)では、同じ表示バージョンの旧試験配置を検証済みZIPへ置換し、設定・履歴・復旧結果を保持しました。以前の新規導入／展開試験とは別の証拠です。全版移行・全ホスティング設定・任意の非空キューの組合せは保証しません。後続試験で追加した確認範囲は上記の本文・付随情報2件です。管理画面操作でCron予約が登録される場合がありますが、予約登録と定期処理実行は別です。定期実行は引き続き後回しです。
 
 ## GFS candidate differential check / GFS候補の差分確認
 

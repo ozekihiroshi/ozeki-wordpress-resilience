@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/save-status.php';
 require_once $argv[1].'/src/CommentHistory.php';
 $options=[];$failWrite=false;

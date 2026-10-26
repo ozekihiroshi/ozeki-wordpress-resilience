@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/cleanup.php';
 require_once $argv[1].'/src/SiteSnapshot.php';
 require_once $argv[1].'/src/Plugin.php';

@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/separated-assets.php';
 $s3->fail=null; // Previous contract deliberately leaves its write-failure switch enabled.
 foreach(['FormHistory','MemberHistory','TableHistory'] as $class)require_once $argv[1].'/src/'.$class.'.php';

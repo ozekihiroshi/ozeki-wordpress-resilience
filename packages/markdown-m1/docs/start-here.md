@@ -2,11 +2,11 @@
 
 English | [日本語](start-here-ja.md)
 
-Status: 0.3.1 WordPress.org submission candidate; not yet submitted or approved. Start with the [user guide](user-guide.md) and [AWS setup](aws-setup.md).
+Status: published v0.3.1-pre.2; pre.1 remains unchanged. New users should start with the [step-by-step user guide](user-guide.md) and [AWS setup](aws-setup.md).
 
 ## 1. Identify the package
 
-Use [ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1) with its SHA256SUMS and manifest. Version 0.3.1 alone does not identify the build.
+Use `ozeki-wordpress-resilience-0.3.1-pre.2.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. It is available as a GitHub Pre-release, not a stable release.
 
 [Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
 
@@ -16,7 +16,7 @@ Use [ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress
 
 The product reconstructs the **supported site state** from a trusted initial snapshot or complete Checkpoint plus confirmed S3 history. “Complete site” does not mean every WordPress extension or all subsequent settings changes.
 
-Normal supported operations cover Posts/Pages, referenced local images, core comments, Ozeki Markdown Documents, Contact Form 7, Flamingo, WP-Members core subscribers and TablePress core. Read the exact inclusions, exclusions and tested versions in the [support table](../README.md#supported-content-and-plugins). Native-only Baselines do not require Markdown Documents; activate it if Markdown documents or originals are present; see the [Baseline prerequisites](user-guide.md#3-create-the-first-baseline). Install other optional plugins only for content that needs them.
+Normal supported operations cover Posts/Pages, referenced local images, core comments, Ozeki Markdown Documents, Contact Form 7, Flamingo, WP-Members core subscribers and TablePress core. Read the exact inclusions, exclusions and tested versions in the [support table](../README.md#supported-content-and-plugins). The current admin Baseline operation requires active Ozeki Markdown Documents even for native-only sites; see the [Baseline prerequisites](user-guide.md#3-create-the-first-baseline). Install other optional plugins only for content that needs them.
 
 The administrator judges the initial site trustworthy. Later complete Checkpoints are built from S3's baseline and confirmed history; they do not import untracked live-site changes. Unconfirmed operations are excluded. Saved publish status is reproduced; server/network exposure and DNS are administrator responsibilities. This is not replication, malware certification or infrastructure provisioning.
 
@@ -57,8 +57,8 @@ No permanent second EC2, Python worker, SSH credential helper, shared bridge or 
 5. Select the complete Checkpoint and inclusive confirmed-history end in Tools → Resilience. Confirm destination replacement. One formal record need not represent an entire user edit.
 6. Inspect the result and restored behavior. On failure stop, investigate the reported cause and decide separately whether to retry. There is no automatic continuation. Internet exposure is a separate administrator decision.
 
-[Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current candidate checks](wordpress-org-candidate.md)
+[Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current package acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.2/docs/releases/prerelease-2-package.md)
 
 Existing browser recovery, earlier browser ZIP upload and current ZIP extraction-update are separate evidence. The new documentation itself has link/content review only; no repeat recovery or new version-migration acceptance is implied. Historical research documents are reference material, not installation prerequisites: [archive](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md).
 
-[Historical pre.2 evidence](prerelease-2.md).
+[Next Pre-release scope and limits](prerelease-2.md).

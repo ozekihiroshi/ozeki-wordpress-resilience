@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
-if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 require_once __DIR__.'/CheckpointSchedule.php';
 require_once __DIR__.'/GfsPolicy.php';
@@ -37,16 +36,16 @@ final class Plugin
         if(!array_key_exists('gfs',$c)&&!empty($c['checkpoint_interval_days']))echo '<p>Legacy interval remains active until these settings are saved. Select GFS schedules before saving to replace it.</p>';
         foreach(['weekly'=>'Weekly','monthly'=>'Monthly','yearly'=>'Yearly'] as $kind=>$label){
             $r=$c['gfs'][$kind]??[];$name='gfs['.$kind.']';
-            echo '<fieldset><legend>'.esc_html($label).'</legend><label><input type="checkbox" name="'.esc_attr($name).'[enabled]" '.checked(!empty($r['enabled']),true,false).'>Enabled</label> ';
+            echo '<fieldset><legend>'.esc_html($label).'</legend><label><input type="checkbox" name="'.$name.'[enabled]" '.checked(!empty($r['enabled']),true,false).'>Enabled</label> ';
             if($kind==='weekly'){
-                echo '<label>Weekday <select name="'.esc_attr($name).'[weekday]">';
-                foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $i=>$day)echo '<option value="'.(int)$i.'" '.selected($r['weekday']??0,$i,false).'>'.esc_html($day).'</option>';
+                echo '<label>Weekday <select name="'.$name.'[weekday]">';
+                foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $i=>$day)echo '<option value="'.$i.'" '.selected($r['weekday']??0,$i,false).'>'.$day.'</option>';
                 echo '</select></label> ';
             }else{
-                if($kind==='yearly')echo '<label>Month <input type="number" min="1" max="12" name="'.esc_attr($name).'[month]" value="'.(int)($r['month']??1).'"></label> ';
-                echo '<label>Day'.($kind==='monthly'?' (0 = month end)':'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.esc_attr($name).'[day]" value="'.(int)($r['day']??1).'"></label> ';
+                if($kind==='yearly')echo '<label>Month <input type="number" min="1" max="12" name="'.$name.'[month]" value="'.(int)($r['month']??1).'"></label> ';
+                echo '<label>Day'.($kind==='monthly'?' (0 = month end)':'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.$name.'[day]" value="'.(int)($r['day']??1).'"></label> ';
             }
-            echo '<label>Start time <input type="time" name="'.esc_attr($name).'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>Keep for <input type="number" min="1" max="100" name="'.esc_attr($name).'[keep]" value="'.(int)($r['keep']??1).'"> '.esc_html(['weekly'=>'weeks','monthly'=>'calendar months','yearly'=>'calendar years'][$kind]).'</label></fieldset>';
+            echo '<label>Start time <input type="time" name="'.$name.'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>Keep for <input type="number" min="1" max="100" name="'.$name.'[keep]" value="'.(int)($r['keep']??1).'"> '.['weekly'=>'weeks','monthly'=>'calendar months','yearly'=>'calendar years'][$kind].'</label></fieldset>';
         }
         echo '<p>Missing calendar dates use month end. Retention starts at actual confirmation; an older point keeps its recorded labels when settings change. WP-Cron needs traffic or an existing server cron runner. Late runs show their planned time separately and do not invent missed historical snapshots. Optional S3 deletion protection is separate.</p>';
     }
@@ -72,7 +71,6 @@ final class Plugin
         preg_match_all('~'.preg_quote($upload['baseurl'],'~').'/[^\s"<>\)]+~',$body,$urls);
         foreach($urls[0] as $url){$url=html_entity_decode($url,ENT_QUOTES,'UTF-8');if(!preg_match('/\.(jpe?g|png|gif|webp|avif)(?:[?#].*)?$/i',$url))continue;$url=preg_replace('/[?#].*$/','',$url);$id=attachment_url_to_postid($url);
             if(!$id){$full=preg_replace('/-\d+x\d+(?=\.[^.]+$)/','',$url);$id=attachment_url_to_postid($full);}
-        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if(!$id)throw new \RuntimeException('Cannot identify local media: '.$url);
             $ids[$id]=true;
         }
@@ -313,8 +311,7 @@ final class Plugin
         update_option('owr_m1_notice','Last article save failed; inspect pending history before retrying the editor. Reason: '.$e->getMessage(),false);
         // api-fetch needs a nonempty error code to retain the reason in the block editor.
         $message='Resilience: '.wp_strip_all_tags($e->getMessage()).' WordPress was not confirmed. Check Resilience for pending history before retrying.';
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP_Error is required by the REST error handler; its message is escaped at construction.
-        wp_die(new \WP_Error('owr_save_failed',esc_html($message)),'Resilience',['response'=>409,'code'=>'owr_save_failed','back_link'=>true]);
+        wp_die(new \WP_Error('owr_save_failed',$message),'Resilience',['response'=>409,'code'=>'owr_save_failed','back_link'=>true]);
         exit;
     }
     public function before(array $data,array $postarr,array $unsanitized,bool $update): array {
@@ -512,7 +509,6 @@ final class Plugin
                     $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
                     $attempt['manifest']=$ref;SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
                     $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
                     $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work,$target);
                     SiteSnapshot::writeOption('owr_site_restore_attempt',['status'=>'success']+$result,false);
@@ -588,7 +584,7 @@ final class Plugin
         }
         echo '<p>Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.</p>';
         $details=0;foreach($queue as $entry)if(($entry['attributes']['post_type']??$entry['record']['attributes']['post_type']??'')==='owr_native')$details++;
-        echo '<p>Pending article body: '.($pending?1:0).'; pending article details (images/categories/tags/deletion): '.(int)$details.'; other shared operations: '.(count($queue)-$details).'. Body confirmation does not confirm the entire editing session or its related operations.</p>';
+        echo '<p>Pending article body: '.($pending?1:0).'; pending article details (images/categories/tags/deletion): '.$details.'; other shared operations: '.(count($queue)-$details).'. Body confirmation does not confirm the entire editing session or its related operations.</p>';
         self::renderCaptureFailure($captureError);
         $count=($pending?1:0)+count($queue);
         echo '<p>Locally pending operations: '.(int)$count.'</p>';

@@ -2,9 +2,9 @@
 
 [日本語](user-guide-ja.md) · [AWS setup and complete policy files](aws-setup.md)
 
-This guide is for the [0.3.1 submission candidate](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1). A WordPress administrator performs the daily steps; an AWS/server administrator may be needed for setup. No AWS keys are entered into the plugin. This guide uses the verified EC2-role route. Shared hosting without a usable standard SDK credential provider needs separate administrator preparation.
+This guide is for the published [GitHub Pre-release v0.3.1-pre.2](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2). It is a trial for WordPress maintainers, not a managed backup service. A WordPress administrator performs the daily steps; an AWS/server administrator may be needed for the initial setup. No AWS keys are entered into the plugin. This guide uses the verified EC2-role route. Shared hosting without a usable standard SDK credential provider needs separate administrator preparation.
 
-**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
+**Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](optional-markdown-verification.md).
 
 [Questions about reconstruction](recovery-faq.md) explains the five common concerns, the design measures, existing evidence and required conditions.
 
@@ -18,11 +18,12 @@ Record the source WordPress/PHP/plugin versions and the AWS settings worksheet. 
 
 ## 2. Prepare AWS, then install
 
-Use `ozeki-resilience-0.3.1.zip` and `SHA256SUMS` from the linked candidate release. The version remains 0.3.1; identify the build by tag, filename and checksum.
+For the unreleased candidate, use the separately supplied `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` and matching `.sha256`, not the pre.2 hash/size below. Check the actual candidate size plus request overhead before upload. The PHP plugin version remains 0.3.1; identify the build by filename and checksum.
 
 1. Complete [AWS setup](aws-setup.md). Begin with the **source-no-delete** policy, a versioned dedicated prefix and automatic cleanup off. Do not share one writing prefix between sites.
-2. Download the installable ZIP and verify its SHA-256 against `SHA256SUMS` from the [candidate release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1). Do not install Source code (zip).
-3. Before uploading, check that PHP `upload_max_filesize`, `post_max_size` and the web-server request limit allow the actual ZIP size recorded in its manifest plus request overhead. If too small, ask the server administrator to adjust the limits for the destination; do not change the ZIP. See [upload requirements](install-update.md). In WordPress **Plugins → Add New Plugin → Upload Plugin**, choose the ZIP, install and activate. For replacement, follow [update precautions](install-update.md); do not uninstall the product as an update method. Keep a copy of your settings and resolve pending work first where possible.
+2. For the published release, download `ozeki-wordpress-resilience-0.3.1-pre.2.zip` and its `.sha256` from the release's Assets. Do not use Source code (zip). Expected SHA-256:
+   `109f0db79f1e5b0886b11d6ebcb2df0f4728912baa1217f977de91760b0b3d0a`
+3. Before uploading, check that PHP `upload_max_filesize`, `post_max_size` and the web-server request limit allow the 7,455,881-byte ZIP plus request overhead. If too small, ask the server administrator to adjust the limits for the destination; do not change the ZIP. See [upload requirements](install-update.md). In WordPress **Plugins → Add New Plugin → Upload Plugin**, choose the ZIP, install and activate. For replacement, follow [update precautions](install-update.md); do not uninstall the product as an update method. Keep a copy of your settings and resolve pending work first where possible.
 4. Open **Tools → Resilience**. The current controls are English; labels below match the product.
 5. In **Storage and optional scheduling settings**, fill `bucket`, `region`, `prefix` (ending `/`) and `owner` (12-digit AWS account ID). Initially leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. Set **Optional S3 deletion protection in days** to `0` only if you have chosen not to request product-level locks. Save settings.
 
@@ -30,7 +31,7 @@ Saving settings is not a connection test or proof of protection. Successful Base
 
 ## 3. Create the first Baseline
 
-1. Make sure the source is trustworthy, pause editing and resolve pending history. For this candidate, native-only sites do not need Markdown Documents. If it is active, it is included; if documents or `_ozmd_source` originals remain while inactive, activate it before capture. Do not delete originals to bypass this check. Version 0.1.1 was tested. Activate other supported plugins only as needed.
+1. Make sure the source is trustworthy, pause editing and resolve pending history. For the unreleased conditional-dependency candidate, native-only sites do not need Markdown Documents. If it is active, it is included; if documents or `_ozmd_source` originals remain while inactive, activate it before capture. Do not delete originals to bypass this check. For published pre.2, install and activate Markdown Documents even for native-only Baselines. Version 0.1.1 was tested. Activate other supported plugins only as needed.
 2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Select **Create complete initial snapshot**. This reads the supported live data/files; do not do it on a suspected compromised site merely to silence an error.
 3. Wait for the result. Success means a confirmed point is listed and the initial-snapshot result reports success, not merely that the request was submitted. The resource set is saved and fixed-version verified before manifest confirmation. A failure or missing result is not success; record its reason and stop to investigate.
 4. Enable **Protect supported operations (one writer per prefix)** and save settings. Resume normal editing.
@@ -77,4 +78,4 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 
 This is not malware certification or an unconditional recovery guarantee. An AWS AccessDenied, unavailable credentials, missing PHP extension, unwritable temporary path or incompatible runtime is an environment condition to diagnose, not permission to weaken the product's confirmation rules. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
-[Known operational limits](remaining-confirmations.md) and [candidate checks](wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
+[Remaining confirmations](remaining-confirmations.md) separates HTTP triggering/long-term operation and interrupted deletion from already verified behaviour. The [onboarding trial](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/user-guide-onboarding.md) verified browser ZIP installation, Baseline, a native post update, confirmed history and recovery onto another isolated WordPress after supplying the missing Markdown Documents prerequisite. The existing EC2 roles were reused: the complete IAM templates were not newly applied, and their exact least-privilege deployment remains unverified. The visual editor and all supported plugin combinations were not retested. The released ZIP is unchanged; use this online guide for the updated instructions.

@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once $argv[1].'/src/Store.php';require_once $argv[1].'/src/SiteSnapshot.php';
 require_once __DIR__.'/retention-memory.php';
 use Owr\M1\{Store,SiteSnapshot};

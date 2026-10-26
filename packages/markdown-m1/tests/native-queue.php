@@ -1,9 +1,6 @@
 <?php
 namespace Owr\M1 {class Plugin {public static Store $store;function store(){return self::$store;}}}
 namespace {
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
-
 require $argv[1].'/src/Store.php';require $argv[1].'/src/SiteSnapshot.php';require $argv[1].'/src/CommentHistory.php';
 class QueueS3 {public array $objects=[];public bool $fail=true;public bool $lost=false;public bool $readFail=false;public int $n=0;
 function putObject($a){if($this->fail||isset($this->objects[$a['Key']]))throw new RuntimeException('denied');$r=$this->objects[$a['Key']]=['Body'=>$a['Body'],'VersionId'=>'v'.++$this->n];if($this->lost){$this->lost=false;throw new RuntimeException('lost response');}return $r;}

@@ -1,6 +1,4 @@
 <?php
-// Standalone WordPress API fixture; product includes reject direct access.
-if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/NativeHistory.php';
 use Owr\M1\NativeHistory;
 function ok($v,$m){if(!$v)throw new RuntimeException($m);}

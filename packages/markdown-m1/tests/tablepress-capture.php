@@ -4,8 +4,6 @@ namespace Owr\M1 {
     final class CommentHistory {public static array $calls=[];function enqueue($asset,$source,$attrs){self::$calls[]=[$asset,$source,$attrs];}}
 }
 namespace {
-    // Standalone WordPress API fixture for guarded product includes.
-    if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
     require __DIR__.'/../src/Store.php';require __DIR__.'/../src/TableHistory.php';
     class TablePress {const version='3.4.1';}
     function get_option($key){return $key==='active_plugins'?['tablepress/tablepress.php']:'{"last_id":2,"table_post":{}}';}

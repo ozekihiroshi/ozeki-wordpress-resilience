@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
-if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/GfsPolicy.php';
 
@@ -59,7 +58,6 @@ final class Store
             [$mode,$current]=$read();if($current>=$target)return;
             $this->s3->putObjectRetention($args+['Retention'=>['Mode'=>$mode??'GOVERNANCE','RetainUntilDate'=>new \DateTimeImmutable($until)]]);
             [, $actual]=$read();if($actual<$target)throw new \RuntimeException('Retention remains shorter than required after extension.');
-        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         }catch(\Throwable $e){throw new \RuntimeException('Retention check/extension failed: '.$ref['key'].' — '.$e->getMessage(),0,$e);}
     }
     /** References in original indexes and structured adapter payloads share the same policy. */
@@ -86,7 +84,6 @@ final class Store
             // A lost response is not permission to overwrite or duplicate an operation.
             try { $r=$this->s3->getObject($this->args($key)); }
             catch (\Throwable $readError) { throw $error; }
-        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if ((string)$r['Body'] !== $body) throw new \RuntimeException('S3 write failed or key conflict.',0,$error);
             $reused=true;
         }
