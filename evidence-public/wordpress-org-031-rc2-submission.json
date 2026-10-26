@@ -1,0 +1,23 @@
+{
+  "submitted_on": "2026-10-26",
+  "status": "Awaiting Review",
+  "approved": false,
+  "plugin": "Ozeki Resilience",
+  "version": "0.3.1",
+  "candidate_tag": "wporg-0.3.1-rc.2",
+  "source_commit": "6a45471e8e7c903a96b6ea90f4d4e1801df4e5b2",
+  "initial_slug": "ozeki-resilience",
+  "zip": "ozeki-resilience-0.3.1.zip",
+  "sha256": "537504d9b5be632a277c084ddfacf2a4f8a220498f940b6dde32c9e7bf650dbe",
+  "bytes": 7423450,
+  "receipt_page": "https://wordpress.org/plugins/developers/add/",
+  "automated_scan": "Pass",
+  "displayed_scan_warnings": [
+    {
+      "file": "RAADME-jp.md",
+      "code": "unexpected_markdown_file"
+    }
+  ],
+  "confirmation_email": "Receipt page states sent; inbox not checked",
+  "evidence": "Observed logged-in WordPress.org receipt page after Upload. The submitted filename, version and additional information containing the rc.2 checksum/source links were displayed. Automated scan pass is not manual review approval."
+}

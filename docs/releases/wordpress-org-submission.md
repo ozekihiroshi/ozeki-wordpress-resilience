@@ -1,6 +1,16 @@
-# WordPress.org申請準備 — Ozeki Resilience 0.3.1
+# WordPress.org申請記録 — Ozeki Resilience 0.3.1
 
-**未送信・未承認。申請対象は現在mainの0.3.1系です。旧0.2.0候補は撤回された申請候補として履歴保全し、今回の対象・依存キット・検証証拠には使いません。**
+**2026年10月26日、0.3.1（rc.2）の申請が受け付けられました。現在は審査待ち（Awaiting Review）で、公開承認・WordPress.orgへの掲載はまだ行われていません。旧0.2.0候補は履歴として保全し、今回の申請対象には含めません。**
+
+## 受付結果
+
+- 受付画面： [WordPress.org申請ページ](https://wordpress.org/plugins/developers/add/)（申請アカウントでのログインが必要）
+- 状態：Awaiting Review — This plugin has not yet been reviewed.
+- 仮割当slug：`ozeki-resilience`（審査結果により変更される可能性あり）
+- 自動スキャン：Pass。表示された警告は `RAADME-jp.md` の `unexpected_markdown_file` 1件。手動審査の合格や公開承認を意味しません。
+- 受付確認メール送信済みと画面に表示。メール自体の到着確認は未実施。
+- [受付記録](../../evidence-public/wordpress-org-031-rc2-submission.json)
+
 
 ## 入力・アップロード内容
 
@@ -8,7 +18,7 @@
 |---|---|
 | WordPress.orgユーザー名 | ozekihiroshi |
 | 製品名 | Ozeki Resilience |
-| 希望slug | ozeki-resilience（割当未確定） |
+| 仮割当slug | ozeki-resilience（審査により変更の可能性あり） |
 | バージョン | 0.3.1 |
 | アップロードZIP | ozeki-resilience-0.3.1.zip |
 | 容量 | 7,423,450 bytes |
@@ -20,9 +30,9 @@
 
 短い説明：Preserve supported site content and confirmed history in Amazon S3, then reconstruct it on a prepared WordPress.
 
-上記の一部はreadme/headerから読み取る情報です。ログイン済みの申請フォームへZIPと補足説明を準備し、確認チェック・最終Uploadは行わずユーザーの最終確認を待ちます。未送信です。
+上記の一部はreadme/headerから読み取る情報です。ユーザーが確認項目へチェックし、明示的な送信承認後にUploadを実行しました。受付画面でファイル名・バージョン・補足説明内のrc.2ハッシュとソースURLを確認しています。
 
-## 審査担当者へ添える説明（英語）
+## 送信した補足説明（英語）
 
 全文は [wordpress-org-additional-information.txt](wordpress-org-additional-information.txt) に保存しています。
 
@@ -40,10 +50,10 @@ rc.2はreadmeの構成と候補リンクの説明改訂版です。仕組み・�
 
 ## 公開確認とmain反映
 
-0.3.1候補リリースを公開し、匿名ダウンロードしたZIPのSHA-256とタグ上のreadmeがローカル候補に一致することを確認しました。[公開確認記録](../../evidence-public/wordpress-org-031-publication.json)。旧0.2.0リリースはSupersededと明示し、元のアーカイブは保持しています。
+rc.1公開時の確認は[過去の公開確認記録](../../evidence-public/wordpress-org-031-publication.json)に保持しています。rc.2も公開ZIPを匿名ダウンロードし、上記SHA-256と一致することを確認しました。旧0.2.0リリースはSupersededと明示し、元のアーカイブは保持しています。
 
 mainを利用者向けの公開版の入口とし、README・導入案内を0.3.1申請候補に統一しています。研究・試作時点の資産は `archive/research-before-wordpress-org`（b2968c7）に保全しています。
 
 PR #59のマージ後に一度main側で取り消しましたが、公開版を訪れる利用者の混乱を避けるため、取り消しを打ち消して公開向けの内容を復元しました。履歴の強制書換えは行っていません。
 
-申請用ZIPに対応する固定ソースは上記の0.3.1候補タグです。mainと `release/wordpress-org` の製品ファイルはそのZIPに一致しています。旧rc.1のZIP・タグは保全し、説明改訂版を別タグrc.2として公開します。WordPress.orgへの申請送信は行っていません。
+申請したZIPに対応する固定ソースは `wporg-0.3.1-rc.2`（`6a45471e8e7c903a96b6ea90f4d4e1801df4e5b2`）です。送信後、mainと `release/wordpress-org` のREADME・申請記録に受付状態を反映しました。そのため現在のREADME表記は申請時のZIPと異なりますが、実行コードの変更はありません。申請済みZIP・rc.2タグ・旧候補は変更していません。

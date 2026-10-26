@@ -4,7 +4,7 @@ Preserve supported site content in Amazon S3 and reconstruct it on a prepared Wo
 
 English | [日本語](RAADME-jp.md)
 
-This is the **0.3.1 WordPress.org submission candidate**, based on current main. WordPress.org submission and approval are pending. It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
+Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 2026**. Status: **Awaiting Review — not yet approved or published in the WordPress.org Plugin Directory**. It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
 
 ## Download and start
 
