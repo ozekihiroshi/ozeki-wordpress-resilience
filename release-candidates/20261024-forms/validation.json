@@ -1,0 +1,85 @@
+{
+  "artifact": "ozeki-wordpress-resilience-0.3.1-forms-final.zip",
+  "sha256": "34cdefd6ff3ea4880bc1643342655caef6d2157bbb8e6a7f9f600aa94f7e0068",
+  "fresh_and_upgrade": [
+    {
+      "installed": "fresh",
+      "history_count": 41,
+      "prefix": "owrfzip_20261024_fresh_"
+    },
+    {
+      "installed": "upgrade",
+      "history_count": 41,
+      "prefix": "owrfzip_20261024_upgrade_"
+    },
+    {
+      "forms_receipts_fields_channels_preserved": "fresh",
+      "frozen_form_pending_preserved": true
+    },
+    {
+      "ui_labels_checked": "fresh",
+      "rendered_without_restore_or_save": true
+    },
+    {
+      "verified": "fresh",
+      "settings_content_identity_results_preserved": true,
+      "history_count": 41,
+      "history_sha256": "4ac7b583c8323b20859ef55754ee1599a0eed901a108c28ffbc234cf9e233c5a",
+      "aws_auth": "SDK default EC2 role",
+      "s3_writes": 0
+    },
+    {
+      "comments_and_frozen_queue_preserved": true,
+      "existing_cron_preserved": true,
+      "wp_first_boot_maintenance_only": true,
+      "new_comment_implementation_loaded": true
+    },
+    {
+      "forms_receipts_fields_channels_preserved": "upgrade",
+      "frozen_form_pending_preserved": true
+    },
+    {
+      "ui_labels_checked": "upgrade",
+      "rendered_without_restore_or_save": true
+    },
+    {
+      "verified": "upgrade",
+      "settings_content_identity_results_preserved": true,
+      "history_count": 41,
+      "history_sha256": "4ac7b583c8323b20859ef55754ee1599a0eed901a108c28ffbc234cf9e233c5a",
+      "aws_auth": "SDK default EC2 role",
+      "s3_writes": 0
+    },
+    {
+      "comments_and_frozen_queue_preserved": true,
+      "existing_cron_preserved": true,
+      "wp_first_boot_maintenance_only": true,
+      "new_comment_implementation_loaded": true
+    }
+  ],
+  "live_probe_unchanged": true,
+  "source_matches_zip": true,
+  "vendor_unchanged": true,
+  "offline_checks": [
+    "PHP lint",
+    "form JSON/replay/idempotence/channel/identity/storage failure",
+    "comment payload/pending storage configuration guard",
+    "independent Checkpoint",
+    "retention cleanup memory contract"
+  ],
+  "live_prior_acceptance": {
+    "formal_history_through": 41,
+    "source_free_restore": true,
+    "form_receipt_fields_channels_equal": true,
+    "restore_wp_mail_calls": 0,
+    "failure_injection": "test transport rejection, not AWS outage",
+    "frozen_resume": true,
+    "duplicate_resume_noop": true
+  },
+  "deferred": [
+    "periodic execution",
+    "formal release",
+    "new live baseline packaging acceptance",
+    "whole-site process-kill rollback"
+  ]
+}

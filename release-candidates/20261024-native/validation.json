@@ -1,0 +1,13 @@
+{
+  "zip": "ozeki-wordpress-resilience-0.3.1-native-final.zip",
+  "sha256": "04bf1316e9ec75bf4eaf39054797c2b32ce3ab6054836568f36a2f8ea265603b",
+  "bytes": 7335479,
+  "version": "0.3.1",
+  "fresh_install": "passed",
+  "upgrade_from": "0.3.1-checkpoint-sdk-fix",
+  "upgrade": "passed",
+  "formal_history_count": 26,
+  "s3_writes_during_zip_test": 0,
+  "periodic_acceptance": "deferred",
+  "release_published": false
+}

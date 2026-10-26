@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-if (!defined('ABSPATH')) { exit; }
 
 function owr_material_block(array $node,array $map):string {
     $html=preg_replace_callback('~(href|src)="asset:([a-z][a-z0-9_-]{0,79})"~',function($m)use($map){
@@ -38,7 +37,7 @@ function owr_material_body(array $row,array $map):string{
 }
 
 function owr_site_materials_apply(array $input,bool $incremental=false,bool $source=false):array {
-if (PHP_SAPI!=='cli' && !current_user_can('manage_options')) {throw new RuntimeException('Recovery administrator required');}
+if (getenv('OWR_RBR_DISPOSABLE')!=='1' || !defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON || !defined('WP_HTTP_BLOCK_EXTERNAL') || !WP_HTTP_BLOCK_EXTERNAL) {throw new RuntimeException('Dedicated guarded environment required');}
 if (($input['schema']??null)!=='owr-site-received-v1') { throw new RuntimeException('Verified received materials required'); }
 $site=$input['site'];$fingerprint=hash('sha256',json_encode($input,JSON_THROW_ON_ERROR));
 $previous=get_option('owr_site_projection');
@@ -89,9 +88,9 @@ foreach($site['entries'] as $row){
     $map[$id]=(int)$new;$record('applying');
 }
 foreach($site['entries'] as $row){if($row['kind']==='image'){continue;}
-    $current=get_post($map[$row['id']]);$status=$row['status']??'draft';
+    $current=get_post($map[$row['id']]);$status=$source?($row['status']??'draft'):'draft';
     if($current&&$current->post_title===$row['title']&&$current->post_name===$row['slug']&&$current->post_content===owr_material_body($row,$map)&&(int)$current->post_parent===($row['parent']===null?0:$map[$row['parent']])&&$current->post_status===$status&&$current->comment_status==='closed'&&$current->ping_status==='closed')continue;
-    $result=wp_update_post(wp_slash(['ID'=>$map[$row['id']],'post_title'=>$row['title'],'post_name'=>$row['slug'],'post_content'=>owr_material_body($row,$map),'post_parent'=>$row['parent']===null?0:$map[$row['parent']],'post_status'=>($row['status']??'draft'),'comment_status'=>'closed','ping_status'=>'closed']),true);
+    $result=wp_update_post(wp_slash(['ID'=>$map[$row['id']],'post_title'=>$row['title'],'post_name'=>$row['slug'],'post_content'=>owr_material_body($row,$map),'post_parent'=>$row['parent']===null?0:$map[$row['parent']],'post_status'=>$source?($row['status']??'draft'):'draft','comment_status'=>'closed','ping_status'=>'closed']),true);
     if(is_wp_error($result)){throw new RuntimeException('Post content failed');}
 }
 update_option('blogname',$site['title']);update_option('show_on_front','page');update_option('page_on_front',$map[$site['landing']]);
@@ -102,11 +101,11 @@ foreach($input['expected']['entries'] as $row){
     if($row['kind']==='image'){
         if(hash_file('sha256',get_attached_file($p->ID))!==$row['sha256'] || get_post_meta($p->ID,'_wp_attachment_image_alt',true)!==$row['alt']){throw new RuntimeException('Image comparison failed');}
     }else{
-        if($p->post_title!==$row['title'] || $p->post_name!==$row['slug'] || $p->post_content!==owr_material_body($row,$map) || (int)$p->post_parent!==($row['parent']===null?0:$map[$row['parent']]) || $p->post_status!==(($row['status']??'draft'))){throw new RuntimeException('Content comparison failed for '.$row['id']);}
+        if($p->post_title!==$row['title'] || $p->post_name!==$row['slug'] || $p->post_content!==owr_material_body($row,$map) || (int)$p->post_parent!==($row['parent']===null?0:$map[$row['parent']]) || $p->post_status!==($source?($row['status']??'draft'):'draft')){throw new RuntimeException('Content comparison failed for '.$row['id']);}
     }$checks[]=$row['id'];
 }
 if((int)$wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type IN ('post','page','attachment') AND post_status<>'auto-draft'")!==count($map)){throw new RuntimeException('Unexpected target objects');}
-$state=$source?'verified-source':'verified-reconstruction';$record($state);$wpdb->query('COMMIT');return ['state'=>$state,'verified_ids'=>$checks,'map'=>$map,'restored_statuses'=>array_column(array_filter($site['entries'],fn($row)=>$row['kind']!=='image'),'status','id'),'side_effect_attempts'=>(int)get_option('rbr_side_effect_attempts',0)];
+$state=$source?'verified-source':'verified-private';$record($state);$wpdb->query('COMMIT');return ['state'=>$state,'verified_ids'=>$checks,'map'=>$map,'public_activation'=>$source&&in_array('publish',array_column($site['entries'],'status'),true),'side_effect_attempts'=>(int)get_option('rbr_side_effect_attempts',0)];
 
 } catch (\Throwable $e) {$wpdb->query('ROLLBACK');wp_cache_flush();throw $e;}
 

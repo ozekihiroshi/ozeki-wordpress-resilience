@@ -4,9 +4,9 @@ import argparse,hashlib,json,re,stat,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 VERSION='0.2.0'
-PLUGIN=['assets/native-materials-upload.js','src/NativeMaterialsEditor.php','assets/native-materials-editor.js','src/SiteReconstructionAdmin.php','assets/site-reconstruction.js','src/SiteMaterialsEditor.php','src/SiteMaterialsProjection.php','assets/site-materials-editor.js','ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','setup.txt','LICENSE']
+PLUGIN=['assets/native-materials-upload.js','src/NativeMaterialsEditor.php','assets/native-materials-editor.js','src/SiteReconstructionAdmin.php','assets/site-reconstruction.js','src/SiteMaterialsEditor.php','src/SiteMaterialsProjection.php','assets/site-materials-editor.js','ozeki-wordpress-resilience.php','src/NotificationAdmin.php','src/ObserverAdmin.php','src/DailyAdmin.php','src/DailyWatchdogAdmin.php','src/PreflightAdmin.php','src/PreflightWatchdogAdmin.php','src/ObserverSettings.php','readme.txt','LICENSE']
 DIRS=['assets','src','tools','tests','schemas','examples','lab','docs','packages','evidence-public']
-TOP=['setup.txt','README.md','RAADME-jp.md','readme.txt','LICENSE','THIRD_PARTY_NOTICES.md','composer.json','composer.lock','requirements-dev.txt','ozeki-wordpress-resilience.php']
+TOP=['README.md','RAADME-jp.md','readme.txt','LICENSE','THIRD_PARTY_NOTICES.md','composer.json','composer.lock','requirements-dev.txt','ozeki-wordpress-resilience.php']
 EXT={'.php','.py','.md','.json','.sh','.ps1','.txt','.yml','.yaml','.ini','.conf','.sql','.js','.css','.html','.service','.timer','.toml','.Dockerfile','.png'}
 SECRET=re.compile(rb'-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----|\b(?:AKIA|ASIA)[A-Z0-9]{16}\b|\bgh[pousr]_[A-Za-z0-9]{30,}\b')
 def digest(raw):return hashlib.sha256(raw).hexdigest()
@@ -19,7 +19,7 @@ def build(output):
    if p.is_file() and (p.suffix in EXT or p.name in ('Dockerfile','LICENSE','images.env','Dockerfile.external')):files.add(p.relative_to(ROOT).as_posix())
  if 'Version: '+VERSION not in (ROOT/'ozeki-wordpress-resilience.php').read_text():raise ValueError('version mismatch')
  records=[]
- for name,paths,prefix in [('ozeki-resilience',PLUGIN,'ozeki-resilience'),('owr-development-kit',sorted(files),'owr-development-kit')]:
+ for name,paths,prefix in [('ozeki-wordpress-resilience',PLUGIN,'ozeki-wordpress-resilience'),('owr-development-kit',sorted(files),'owr-development-kit')]:
   target=output/(name+'-'+VERSION+'.zip');entries={}
   with zipfile.ZipFile(target,'x',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
    for rel in sorted(paths):

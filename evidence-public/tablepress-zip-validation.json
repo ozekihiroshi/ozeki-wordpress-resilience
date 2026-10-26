@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-24",
+  "version": "0.3.1",
+  "zip": "ozeki-wordpress-resilience-0.3.1-tablepress-final.zip",
+  "sha256": "ca1f2717ad3a01b55a9c18b84242a0de2adc5a7fc24f89894f441ce151ea9ebd",
+  "bytes": 7369379,
+  "files": 3809,
+  "upgrade_from": "WP-Members final 0.3.1 candidate (PR #24)",
+  "vendor_unchanged": true,
+  "source_bytes_match": true,
+  "installed_zip_files_match_before_and_after_restore": true,
+  "environment": "Existing dm rootless Docker; independent owrtzip_20261024_fresh_/upgrade_ DB tables and /tmp/owr-tablepress-final-20261024 directories",
+  "authentication": "AWS SDK default EC2 role",
+  "fresh_and_upgrade_passed": true,
+  "preserved": [
+    "S3 settings and identity",
+    "TablePress cells, ID registry and display settings",
+    "Comments, forms, receipts and WP-Members profiles/password hashes",
+    "Frozen pending queues and error/result records",
+    "9-entry S3 formal history with identical SHA-256",
+    "Existing scheduled entries; no Checkpoint execution"
+  ],
+  "s3_history_sha256": "9ccd7d7155c0c73b3bb704fdf9830cc91c77075b473aba9f1475e57fedd1afe5",
+  "recovery": "Final ZIP in both installations restored actual S3 Checkpoint through8 plus history9; cells/options/visibility/IDs/deletion/CSS and published article embedding match",
+  "s3_writes": 0,
+  "mail_sent": 0,
+  "restore_mail_attempts": 0,
+  "live_site_unchanged": true,
+  "formal_release": false,
+  "scheduled_execution": false,
+  "methods": "ZIP extraction + WordPress activation/boot; overwrite update. Browser Plugin_Upgrader not exercised. Mail transport blocked in trial bootstrap. Existing S3 assets reused read-only.",
+  "product_fixes_included": [
+    "Absent persisted TablePress defaults handled",
+    "Table-ID asset names disambiguated from global settings"
+  ],
+  "new_product_defects_found": false,
+  "test_infrastructure": [
+    "Existing probe reports DISABLE_WP_CRON double-definition warning from container wp-config; comparisons still pass. No product warning.",
+    "Test-only frozen queue fixtures must never be resumed; no new product dependency."
+  ],
+  "remaining_limits": [
+    "TablePress free 3.4.1 PHP API lifecycle; browser editor not exercised",
+    "JavaScript search/sort/pagination and premium/external integrations not verified",
+    "Post-success TablePress capture; only confirmed S3 history is recoverable",
+    "Concurrent same-table operations excluded",
+    "New trusted baseline required after TablePress version change"
+  ]
+}

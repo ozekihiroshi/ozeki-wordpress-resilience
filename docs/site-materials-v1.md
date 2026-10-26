@@ -1,7 +1,5 @@
 # Site materials reconstruction (development)
 
-> Release preparation (2026-10-26): [current distribution scope](releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
-
 > Historical v1 implementation record. Native block-editor saving and source publication semantics now supersede the redirect/draft-only restrictions below. See [current native editor scope](native-wordpress-editor.md). Recovery targets remain private drafts.
 
 Resilience is independent of Ozeki Database Backup for S3. Its source of truth is submitted content stored in S3 before WordPress projection. A database dump is not a reconstruction input. Git is an analogy, not a protocol or dependency.

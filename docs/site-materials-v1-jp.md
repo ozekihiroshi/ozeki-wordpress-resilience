@@ -1,7 +1,5 @@
 # サイト素材からの再構築（開発中）
 
-> Release preparation (2026-10-26): [current distribution scope](releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
-
 > 以下はv1実装時点の記録です。標準画面の転送・保存元への下書き限定という制約は、[今回の標準編集画面接続](native-wordpress-editor.md)で更新しました。復旧先は引き続き非公開の下書きです。
 
 ResilienceはBackup for S3を必要としません。投稿内容をWordPressへ反映する前にS3へ保存し、その原本から再構築します。DBダンプは再構築の入力にしません。Gitは例えであり、互換実装ではありません。

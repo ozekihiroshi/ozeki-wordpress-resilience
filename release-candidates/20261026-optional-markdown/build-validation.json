@@ -1,0 +1,25 @@
+{
+  "sha256": "f6ab14e882cd2b1a768b6efd7fed90cc2f4c0ad3a190af515949dc9ebb8314f2",
+  "bytes": 7487147,
+  "files": 3840,
+  "changed": [
+    "ozeki-wordpress-resilience/README.md",
+    "ozeki-wordpress-resilience/RAADME-jp.md",
+    "ozeki-wordpress-resilience/src/Plugin.php",
+    "ozeki-wordpress-resilience/src/SiteSnapshot.php",
+    "ozeki-wordpress-resilience/docs/aws-examples/recovery-read-only.json",
+    "ozeki-wordpress-resilience/docs/aws-examples/source-no-delete.json",
+    "ozeki-wordpress-resilience/docs/aws-examples/source-with-cleanup.json",
+    "ozeki-wordpress-resilience/docs/aws-setup-ja.md",
+    "ozeki-wordpress-resilience/docs/aws-setup.md",
+    "ozeki-wordpress-resilience/docs/install-update.md",
+    "ozeki-wordpress-resilience/docs/optional-markdown-verification.md",
+    "ozeki-wordpress-resilience/docs/remaining-confirmations.md",
+    "ozeki-wordpress-resilience/docs/start-here-ja.md",
+    "ozeki-wordpress-resilience/docs/start-here.md",
+    "ozeki-wordpress-resilience/docs/user-guide-ja.md",
+    "ozeki-wordpress-resilience/docs/user-guide.md"
+  ],
+  "vendor_unchanged": true,
+  "local_links": 131
+}

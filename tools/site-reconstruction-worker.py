@@ -5,35 +5,17 @@ ROOT=Path(__file__).resolve().parent
 s=importlib.util.spec_from_file_location('site_worker',ROOT/'site-editor-worker.py');w=importlib.util.module_from_spec(s);s.loader.exec_module(w);m=w.m
 
 def profile(c):
-    mode=c.get('target_mode','wordpress')
-    if mode=='wordpress':
-        keys=('target_label','wordpress_path','target_url','wordpress_user','recovery_work')
-    elif mode=='docker-lab':
-        keys=('target_label','wordpress_image','database_image','recovery_work')
-    else:raise ValueError('Unknown reconstruction target mode')
-    return m.sha(m.canon({'mode':mode,**{k:c[k] for k in keys},'php_binary':c.get('php_binary','php')}))
-
+    return m.sha(m.canon({k:c[k] for k in ('target_label','wordpress_image','database_image','recovery_work')}))
 def execute(c,bundle,target):
-    mode=c.get('target_mode','wordpress')
-    if mode=='wordpress':
-        target.mkdir(exist_ok=False)
-        command=[c.get('php_binary','php'),str(ROOT/'site-wordpress-apply.php'),
-                 '--wordpress='+c['wordpress_path'],'--input='+str(bundle/'received.json'),
-                 '--target-url='+c['target_url'],'--user='+str(c['wordpress_user']),'--allow-target']
-        with (bundle/'execution.log').open('wb') as log:
-            result=subprocess.run(command,check=True,stdout=subprocess.PIPE,stderr=log,timeout=900)
-        value=json.loads(result.stdout);m.atomic(target/'result.json',value)
-        return value
-    if mode!='docker-lab':raise ValueError('Explicit target mode required')
     with (bundle/'execution.log').open('wb') as log:
         subprocess.run(['python3',str(ROOT/'site-reconstruct-private.py'),'--bundle',str(bundle),'--output',str(target),'--wordpress-image',c['wordpress_image'],'--database-image',c['database_image'],'--allow-dedicated-target'],check=True,stdout=log,stderr=log,timeout=900)
     result=json.loads((target/'result.json').read_bytes())
-    if c.get('export_preview',False):
-        try:
-            raw=subprocess.run(['docker','exec',result['target']['web'],'php','/kit/tools/site-preview-export.php'],check=True,capture_output=True,timeout=120).stdout
-            m.require(len(raw)<=128*1024*1024,'Preview size bound')
-            m.atomic(bundle/'preview.json',json.loads(raw))
-        except Exception:result['preview_error']='target-preview-export-failed'
+    # Snapshot only the actual verified target. Export failure does not erase a successful reconstruction.
+    try:
+        raw=subprocess.run(['docker','exec',result['target']['web'],'php',str('/kit/tools/site-preview-export.php')],check=True,capture_output=True,timeout=120).stdout
+        m.require(len(raw)<=128*1024*1024,'Preview size bound')
+        preview=json.loads(raw);m.atomic(bundle/'preview.json',preview)
+    except Exception:result['preview_error']='target-preview-export-failed'
     return result
 def cycle(c,executor=execute):
     bridge=Path(c['bridge'])/'reconstruction';requests=bridge/'requests';requests.mkdir(parents=True,exist_ok=True)
@@ -89,7 +71,7 @@ def cycle(c,executor=execute):
                 m.atomic(path,job);publish()
                 bundle=work/('input-'+token);bundle.mkdir(exist_ok=False);m.atomic(bundle/'received.json',received)
                 result=executor(c,bundle,work/('target-'+token))
-                m.require(result['state']=='verified-reconstruction' and result['logical_sha256']==q['q'],'Result does not match requested Q')
+                m.require(result['state']=='verified-private' and result['logical_sha256']==q['q'] and result['side_effect_attempts']==0 and not result['public_activation'],'Result does not match requested Q')
                 job.update(state='verified',result=result)
                 if (bundle/'preview.json').exists():
                     preview=json.loads((bundle/'preview.json').read_bytes())

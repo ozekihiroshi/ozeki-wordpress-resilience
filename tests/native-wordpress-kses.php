@@ -1,5 +1,4 @@
 <?php
-define('ABSPATH', __DIR__ . '/');
 // Run against an explicitly supplied WordPress code-only fixture, without a DB.
 if(!isset($argv[1])){echo "SKIP real WordPress KSES: explicit code-only fixture required\n";exit(0);}
 if(!is_file($argv[1].'/wp-includes/kses.php'))throw new RuntimeException('Missing supplied WordPress fixture');

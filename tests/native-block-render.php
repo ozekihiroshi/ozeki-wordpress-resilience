@@ -1,5 +1,4 @@
 <?php
-define('ABSPATH', __DIR__ . '/');
 require __DIR__.'/../src/SiteMaterialsProjection.php';
 function wp_kses_post($html){return $html;}
 function esc_url($s){return htmlspecialchars($s,ENT_QUOTES);}

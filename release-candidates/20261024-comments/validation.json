@@ -1,0 +1,18 @@
+{
+  "artifact": "ozeki-wordpress-resilience-0.3.1-comments-reviewed.zip",
+  "sha256": "24b2ee1d5c9c38cd93dc94361849755451bd5741346024313f686df3ebc40e87",
+  "bytes": 7347035,
+  "files": 3803,
+  "source_matches": true,
+  "vendor_unchanged": true,
+  "fresh_install": "passed",
+  "upgrade_from": "0.3.1-ui-final",
+  "upgrade": "passed",
+  "settings_comments_pending_results_preserved": true,
+  "history_count": 36,
+  "history_sha256": "9fd617324eae6e6852bbae64179045e7a2270e93911b69ae72e4245597e40e3d",
+  "s3_writes": 0,
+  "running_site_unchanged": true,
+  "periodic_acceptance": "deferred",
+  "formal_release": false
+}

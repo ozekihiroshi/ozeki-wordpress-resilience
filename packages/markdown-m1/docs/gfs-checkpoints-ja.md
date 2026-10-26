@@ -1,0 +1,68 @@
+# GFS Checkpoint（未公開の開発変更）
+
+## 設定時刻による運用と確認範囲
+
+1. 「ツール → Resilience」でWordPressのタイムゾーンを確認し、週次・月次・年次の必要な日時と保存数を設定する。共有サーバの複数サイトでは時刻をずらし、保存後に次回予約を確認する。
+2. WordPressに実行機会があることを確認する。WP-Cronは厳密な時刻実行を保証しないため、既存の承認済み起動方法を使う。予約の存在だけで取得成功とはしない。
+3. 実行後に成功・失敗記録、確定した復旧点、次回予約を確認する。保存した全資源を固定版から取得・照合して初めてマニフェストが確定する。失敗は原因を確認し、予定や書込み途中の資源を確定済みと扱わない。
+4. 本体を共有する隔離試験では、標準入口を起動する前に対象外Cron、本体・プラグイン・テーマの自動更新、メールの条件を把握する。一時ガードは確認中だけ使い撤去する。製品の新たな依存条件ではなく、試験環境の準備である。
+
+2026-10-25の実時間の週次予定一回は、既存サーバから起動した標準wp-cron.php入口で確認済み。20:44 JST予定、20:44:02起動、20:44:04確定。更新していない3資源を別キーへ保存・照合し、次回11月1日の予約まで確認した。HTTPページアクセス起動、後日の週次・月次・年次実行、GFS画面設定、実削除は未確認。対象外の本体更新処理と後続のガード付き画面確認は、[設定時刻の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/gfs-timed-acceptance.md)で試験環境の事象として分離した。後述のZIP導入更新は別試験であり、今回の文書更新でZIPは作り直していない。
+
+「ツール → Resilience」で週次・月次・年次を同時に設定できる。週次は曜日と時刻、月次は日付（0は月末）と時刻、年次は月日と時刻を指定し、それぞれ何週間・何か月・何年間残すかを設定する。画面に表示するWordPressのタイムゾーンを使用する。存在しない日は月末に寄せ、次回は元の指定日に戻る。旧周期設定は設定保存まで継続し、GFS設定保存時に置き換える。既存Checkpointに記録済みの期限は設定変更で変更しない。
+
+同時刻の取得は一回にまとめ、該当する保存区分をすべて付ける。異なる時刻は別の取得とする。変更がなくても、新しい回は資源一式を独立してコピーする。マニフェストには実際の確定日時・予定日時・タイムゾーン・各区分の期限を記録する。同じ予定の再要求は既存の排他制御内でS3の確定済みマニフェストを確認し、二重作成しない。手動作成した次のCheckpointに以前のGFS区分を引き継がない。対象は製品対応範囲の資源一式であり、DBイメージや未対応連携までの保証ではない。
+
+保存区分が一つでも有効なら残す。別設定の「詳細履歴から復旧できる日数」では、境界以前の基点と最近のCheckpoint、必要な後続履歴・原本を残す。年次などの古い独立Checkpointのために、その間の全履歴を残し続ける必要はない。サイトに残る古い記事・画像は新しいCheckpointに含まれ、資源の古さを理由に削除しない。
+
+自動削除は定期Checkpointの成功後だけ行う。手動削除はプレビュー後、同じ判定で実行する。最新・基点・有効な保存区分・必要な履歴と資源・未知資源を残す。実行前に固定版一覧と計画を照合し、一覧不足や古い計画は拒否する。Object LockやLegal Holdは回避せず、一つの構成資源が削除不可なら、その古いCheckpoint一式を待機させる。削除失敗時は停止し、実行済みと結果不明の対象を記録する。途中失敗で参照のない残余資源が残る場合は別途確認とし、広範な一括削除機能は追加しない。今回の手動操作は保存ルール上で削除可能な期限切れ資源に限定し、保持中の任意削除・保存先全体の初期化は含まない。
+
+AWS削除保護は任意（retention_days=0なら製品からロックを要求しない）。GFS保存期間・詳細履歴日数と別設定で、既存ロック・バケット既定値は引き続き有効。実削除には一覧・ロック読取り・固定版削除権限が別途必要であり、本変更でIAMを変更しない。通常運用は保護延長を中心にせず、新しい一式の作成と古い復旧点の削除で管理する。以前の延長バックエンドは残しているが、通常画面の延長ボタンは除いた。
+
+WP-Cronは実行機会を提供するもので、正確な時刻の実行保証ではない。遅延時は予定日時と実際の確定日時を区別し、未取得の過去時点を作ったことにしない。失敗は記録して削除を中止し、次の将来の予定を登録する。同一予定の自動再試行・巻戻しは追加していない。定期呼出しには既存サーバのcronを利用でき、サイトごとに開始時刻をずらせる。
+
+## 今回の確認範囲（2026-10-25）
+
+- ローカルPHP＋メモリS3：三重複・別時刻・月末・うるう年・入力検証・区分別期限・年次保持・全期限切れ・履歴の不要な長期拘束なし・更新なしの独立作成・基点保持・ロック待機・古い計画と削除失敗。
+- WordPress API代替：実際の管理アクションで三つの設定保存・次回登録・不正入力時の設定保持。
+- 既存dm隔離WordPress：実際の設定欄描画・単発WPイベント登録・到来済み試験予定のフック実行・一回取得三区分・重複要求抑止・次回独立作成・自動／手動削除接続。S3はメモリ代替のみ。オプションとCronを復元し、既存コンテンツ・会員のハッシュ一致とメール0件を確認。
+- 既存の原本照合・失敗記録・指定時点復旧・保持試験も合格。ブラウザ操作・週／月の実経過・実AWSのGFS書込み／削除・ZIP導入更新・公開の検証ではない。公開済みZIPは変更しない。
+
+[English](gfs-checkpoints.md)
+
+## 追加の実S3差分検証（2026-10-25）
+
+既存communityの隔離WordPressと標準EC2ロール認証で、未使用の専用範囲 `gfs-verify-20261025-c62a17/` だけに保存した。小さな本文・画像・付随情報の試験一式で、三ルール同時刻の一回取得、同一予定の再要求で追加PUTなし・同一マニフェスト固定版を確認。固定版の再取得で、三区分と実確定日時から計算した保存期限の一致を確認した。重複日は日曜日の1月1日となる試験予定を明示的に渡しており、過去の実時点を取得したという意味ではない。
+
+別の新規不変試験データとして週次・月次は期限切れ、年次は有効なマニフェストを保存し、さらに新しいCheckpointが存在しても「GFS retention」を理由に一式が残ることを確認した。期限は試験データとして用意し、実際に数か月待ったものではない。通常処理で生成したCheckpointや既存資産は書き換えていない。
+
+既存ロールでは全バージョン一覧が拒否され、製品の現在固定版のみの読取りフォールバックになった。隠れた版は未評価で、削除候補の承認は行われない。単に候補0件だから合格としたのではなく、GFSの保持理由と構成資源の残存判定を確認した。実削除の適格性・実行の検証ではない。削除・保持変更・IAM変更・実時間の定期実行・ブラウザ・ZIP試験は行っていない。新規16オブジェクトはそのまま残し、既存S3一覧とWordPressコンテンツは不変、一時設定は復元、メール0件、公開済みZIPも不変。証拠は開発作業領域の `release-readiness/gfs-real-s3-20261025`。
+
+## ZIP installation/update / ZIP導入・更新
+
+既存dmのWordPress本体・DBサービスを再利用し、テーブルとコンテンツを隔離して新規導入と公開済みv0.3.1-pre.1からの更新を確認しました。GFS・S3設定、予約情報（実行なし）、合成した未確定操作2件、診断・復旧結果、試験記事を保持しました。標準認証で既存S3正式履歴と原本を読み取り、配置ファイルはZIPと全件一致しました。PHPによる展開・有効化・再起動の確認であり、ブラウザアップロード、履歴再開、新規S3書込み、実削除、実時間の定期実行は含みません。DISABLE_WP_CRONの重複定義警告は試験用起動処理と共有設定の組合せによるもので、検証は合格しており製品不具合の証拠ではありません。
+## Unset Object Lock correction / ロック設定なしの修正（2026-10-26）
+
+The new unpublished `ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` adds one narrow correction: only HTTP 404 with AWS code `NoSuchObjectLockConfiguration` is treated as absent retention/Legal Hold configuration, and only after HEAD of the same Key/VersionId succeeds. AccessDenied, transport failures, missing versions and unrelated 404s remain blocked. Both complete-site and legacy asset-level preview use the common reader. No lock bypass or deletion permission is added.
+
+新しい未公開候補は、AWSコードNoSuchObjectLockConfigurationかつHTTP404だけを、同じKey/VersionIdのHEAD成功後に設定なしと扱います。権限拒否・通信失敗・版の不在・その他404は保留のままです。サイト全体と既存資産単位のプレビューで共通処理を使用し、ロック回避・削除権限は追加しません。
+
+The earlier version-list permission gap was resolved by the administrator for the dedicated GFS trial prefix only. Existing real S3 assets were read without mutation: 16 versions, 3 retained points/12 resources, 4 obsolete candidates, no blocked rows, identical before/after inventory. This is a preview with a test cutoff of the current time, not an applied retention-setting change or deletion authorization. IAM's explicit deletion deny remains. The existing admin renderer produced the preview HTML in isolation; no live browser administration test or deployment is claimed. Denial/network/missing-version cases were injected into memory S3 tests, not caused on AWS.
+
+以前の一覧権限不足は管理者が専用試験prefixに限り解消しました。既存実S3資産の読取りでは16版、保持3点・12資源、候補4件、保留0件、前後一覧一致。現在時刻を試験用基準にしたプレビューであり、保持設定変更や削除許可ではありません。IAMの明示的削除拒否は維持しています。既存管理画面の表示処理を隔離してHTML出力した確認で、稼働サイトへの配備・ブラウザ操作は含みません。権限拒否・通信障害・版の不在等はメモリS3への失敗注入であり、実AWS障害ではありません。
+
+Installation/update verification is separate from this real-S3 preview. The distribution must preserve settings, formal-history references, synthetic pending records and diagnostic/recovery results; synthetic queues must not be resumed. See the candidate's release validation record for the exact ZIP hash and completed checks. Published ZIPs remain unchanged.
+
+導入更新の検証は実S3プレビューと別です。設定・正式履歴の参照・合成未確定操作・診断／復旧結果を保持することを確認し、合成キューは再開しません。正確なZIPハッシュと完了した検証は配布候補の検証記録を参照してください。公開済みZIPは変更しません。
+
+## 削除操作と削除後の復旧確認（2026-10-26）
+
+1. 対象バケット・prefixのサイト全体保持プレビューで、全版一覧が完全であること、残す復旧点と後続履歴、削除候補と保留理由を確認する。旧Markdown資産単位の削除経路とは区別する。
+2. 実行前に対象範囲と候補のKey/VersionIdを確認する。プレビューだけを削除許可としない。実行時の再計算が確認済み計画と一致する必要がある。失敗時は原因を確認し、安易な権限拡大やObject Lock・Legal Holdの回避はしない。
+3. 削除結果と残存固定版を確認し、準備した復旧環境で、残したCheckpointと指定する正式履歴の終了番号から復旧を確認する。削除成功だけで復旧成功とはしない。
+
+既存community/dmの専用使い捨て範囲で33固定版を保存し、旧Baseline一式と履歴1・その原本の計16版を候補確認後に削除した。残した17版は再取得SHA-256が全件一致。履歴1までの独立Checkpointと履歴2だけから、試験ページの本文・タイトル・publish状態・画像・復旧先へ置換したリンクをdmで再現した。旧Baselineと元DBは使っていない。現在時刻を削除基準にした差分試験で、自然な期限経過は待っていない。対象に保持期限・Legal Hold設定はなく、既存範囲の削除拒否は維持した。
+
+**確認済み:** 既存製品メソッド経由の実S3保存・削除・復旧。**今回の未確認範囲:** 管理画面の削除操作、定期自動削除、ロック中の削除、実期間経過、削除途中の失敗。先行するプレビュー・時刻による取得・ZIP導入更新は別の検証である。製品コードやZIPは変更していない。最初のPutObject拒否は実行ロールの実効権限の問題で、管理者による修正後、製品修正なしで成功した。[英日検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/deletion-recovery-acceptance.md)を参照。
+
+後続の専用範囲では、標準管理画面から17版、定期自動処理で14版の削除に成功し、有効な週次基点の保持とdm復旧を確認した。[後続検証の範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/cleanup-browser-scheduled-acceptance.md)を参照。上記の先行記録は当時の範囲を維持する。

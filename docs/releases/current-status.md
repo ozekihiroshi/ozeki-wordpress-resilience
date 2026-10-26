@@ -1,7 +1,5 @@
 # Current implementation and remaining work
 
-> Release preparation (2026-10-26): [current distribution scope](../releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
-
 > **Observation closed by operator decision:** 68h 28m 24s, three daily slots completed, two historical gaps retained. This is not a 72-hour pass. See [final assessment](shortened-observation-final.md).
 
 Snapshot: October 23, 2026. Reconstruction preview `0.1.0-alpha.4` includes the protected three-page editor, request-derived Q, exact S3 generation receipt and independently approved reconstruction. The baseline is merged PR #13 (`328f6e2`) plus this release follow-up. See [alpha.4 downloads, visible editor and limits](alpha4-preview.md). It remains a prototype; historical evidence below is not a production-readiness claim.

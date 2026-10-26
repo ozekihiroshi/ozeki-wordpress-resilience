@@ -62,15 +62,11 @@ final class ObserverSettings {
         if (!$state['channels'] || $report['state']!=='current' || !$c || ($input['revision_token'] ?? null)!==$state['revision_token'] || ($input['expected_hash'] ?? null)!==$c['active_hash']) { wp_die('最新の設定と外部状態を再読込みしてください。','',['response'=>409]); }
         $created=filter_var($input['created_at'] ?? null,FILTER_VALIDATE_INT);
         if ($created===false || $created>time()+5 || time()-$created>300) { wp_die('要求の時刻が古いか不正です。再読込みしてください。','',['response'=>409]); }
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Local worker queue protocol; no installation or remote filesystem writes.
         if (!defined('OWR_OBSERVER_REQUEST_DIR') || !is_dir(OWR_OBSERVER_REQUEST_DIR) || !is_writable(OWR_OBSERVER_REQUEST_DIR)) { wp_die('独立watchdogの設定受付先は未接続です。','',['response'=>503]); }
         $settings=$state;$settings['channels']=array_values($settings['channels']);
         $request=['format'=>'owr-observer-settings-request-v1','request_id'=>$rid,'expected_hash'=>$c['active_hash'],'created_at'=>$created,'settings'=>$settings];
         $raw=wp_json_encode($request,JSON_UNESCAPED_SLASHES);
         if (strlen($raw)>4096) { wp_die('設定要求は4KBまでです。通知先数や表示名を減らしてください。','',['response'=>400]); }
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Local worker queue protocol; no installation or remote filesystem writes.
         $dir=rtrim(OWR_OBSERVER_REQUEST_DIR,'/');$lock=fopen($dir.'/.request.lock','c');
         if (!$lock || !flock($lock,LOCK_EX|LOCK_NB)) { wp_die('別の要求を処理中です。','',['response'=>409]); }
         try {
@@ -81,12 +77,8 @@ final class ObserverSettings {
                 $files=glob($dir.'/*.json');
                 if ($files===false || count($files)>=100) { wp_die('設定要求が上限です。転送処理を確認してください。','',['response'=>503]); }
                 $tmp=tempnam($dir,'.pending-');
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod,WordPress.WP.AlternativeFunctions.rename_rename,WordPress.WP.AlternativeFunctions.unlink_unlink -- Local worker queue protocol; no installation or remote filesystem writes.
                 if ($tmp===false || file_put_contents($tmp,$raw)===false || !chmod($tmp,0640) || !rename($tmp,$path)) { if ($tmp && file_exists($tmp)) { unlink($tmp); }wp_die('要求を保存できませんでした。','',['response'=>503]); }
             }
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Local worker queue protocol; no installation or remote filesystem writes.
         } finally { flock($lock,LOCK_UN);fclose($lock); }
         wp_safe_redirect(admin_url('admin.php?page='.self::SLUG.'&requested=1'));exit;
     }
@@ -98,12 +90,8 @@ final class ObserverSettings {
         if ($report['state']!=='current' || !$config || $config['processing_error'] || $config['test_processing_error'] || $config['revision']!==$state['revision'] || $config['revision_token']!==$state['revision_token'] || ($input['revision_token'] ?? null)!==$state['revision_token'] || ($input['expected_hash'] ?? null)!==$config['active_hash'] || !is_string($channel) || empty($state['channels'][$channel]['enabled'])) { wp_die('反映済みの有効な設定と最新の外部状態を確認してください。','',['response'=>409]); }
         $created=filter_var($input['created_at'] ?? null,FILTER_VALIDATE_INT);
         if ($created===false || $created>time()+5 || time()-$created>300) { wp_die('要求の時刻が古いか不正です。','',['response'=>409]); }
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Local worker queue protocol; no installation or remote filesystem writes.
         if (!defined('OWR_OBSERVER_REQUEST_DIR') || !is_dir(OWR_OBSERVER_REQUEST_DIR) || !is_writable(OWR_OBSERVER_REQUEST_DIR)) { wp_die('独立watchdogの受付先は未接続です。','',['response'=>503]); }
         $request=['format'=>'owr-observer-test-request-v1','site_id'=>$state['site_id'],'request_id'=>$rid,'channel_id'=>$channel,'created_at'=>$created,'revision'=>$state['revision'],'revision_token'=>$state['revision_token'],'expected_hash'=>$config['active_hash']];
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Local worker queue protocol; no installation or remote filesystem writes.
         $raw=wp_json_encode($request,JSON_UNESCAPED_SLASHES);$dir=rtrim(OWR_OBSERVER_REQUEST_DIR,'/');$lock=fopen($dir.'/.request.lock','c');
         if (!$lock || !flock($lock,LOCK_EX|LOCK_NB)) { wp_die('別の要求を処理中です。','',['response'=>409]); }
         try {
@@ -122,16 +110,10 @@ final class ObserverSettings {
                 $files=glob($dir.'/*.json');
                 if ($files===false || count($files)>=100) { wp_die('受付記録が上限です。','',['response'=>503]); }
                 $rates[$channel]=time();$tmp=tempnam($dir,'.rate-');
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod,WordPress.WP.AlternativeFunctions.rename_rename,WordPress.WP.AlternativeFunctions.unlink_unlink -- Local worker queue protocol; no installation or remote filesystem writes.
                 if ($tmp===false || file_put_contents($tmp,wp_json_encode($rates))===false || !chmod($tmp,0640) || !rename($tmp,$ratepath)) { if ($tmp && file_exists($tmp)) { unlink($tmp); }wp_die('頻度管理を保存できませんでした。','',['response'=>503]); }
                 $tmp=tempnam($dir,'.pending-');
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod,WordPress.WP.AlternativeFunctions.rename_rename,WordPress.WP.AlternativeFunctions.unlink_unlink -- Local worker queue protocol; no installation or remote filesystem writes.
                 if ($tmp===false || file_put_contents($tmp,$raw)===false || !chmod($tmp,0640) || !rename($tmp,$path)) { if ($tmp && file_exists($tmp)) { unlink($tmp); }wp_die('テスト要求を保存できませんでした。','',['response'=>503]); }
             }
-        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Local worker queue protocol; no installation or remote filesystem writes.
         } finally { flock($lock,LOCK_UN);fclose($lock); }
         wp_safe_redirect(admin_url('admin.php?page='.self::SLUG.'&test_id='.$rid));exit;
     }
@@ -145,7 +127,7 @@ final class ObserverSettings {
             foreach ($state['channels'] as $channel) {
                 if (!$channel['enabled']) { continue; }$rid=wp_generate_uuid4();
                 echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('owr_observer_test_'.$rid);
-                foreach (['action'=>'owr_observer_test','request_id'=>$rid,'channel_id'=>$channel['id'],'created_at'=>(string)time(),'revision_token'=>$state['revision_token'],'expected_hash'=>$c['active_hash']] as $k=>$v) { echo '<input type="hidden" name="'.esc_attr($k).'" value="'.esc_attr($v).'">'; }
+                foreach (['action'=>'owr_observer_test','request_id'=>$rid,'channel_id'=>$channel['id'],'created_at'=>(string)time(),'revision_token'=>$state['revision_token'],'expected_hash'=>$c['active_hash']] as $k=>$v) { echo '<input type="hidden" name="'.$k.'" value="'.esc_attr($v).'">'; }
                 submit_button($channel['label'].'へテスト送信','secondary');echo '</form>';
             }
         } else { echo '<p>設定の反映と最新の外部状態・受付先の接続を待っています。</p>'; }
@@ -179,18 +161,18 @@ final class ObserverSettings {
         foreach ($state['channels'] as $c) { echo '<tr><td>'.esc_html($c['label']).'<br>'.esc_html($c['recipient']).'</td><td>'.esc_html(NotificationAdmin::PROVIDERS[$c['provider']]).' ／ '.($c['enabled']?'有効候補':'無効候補').'</td><td>'.esc_html(implode('、',array_map(fn($k)=>self::KINDS[$k],$c['kinds']))).'</td><td><a href="'.esc_url(admin_url('admin.php?page='.self::SLUG.'&edit='.$c['id'])).'">編集</a></td></tr>'; }
         if (!$state['channels']) { echo '<tr><td colspan="4">通知先は未登録です。外部の既存設定は自動で取り込みません。</td></tr>'; }
         echo '</tbody></table><h2>'.($channel['id']?'通知先を編集':'通知先を追加').'</h2><form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('owr_observer_save');
-        foreach (['action'=>'owr_observer_save','revision'=>(string)$state['revision'],'channel_id'=>$channel['id']] as $k=>$v) { echo '<input type="hidden" name="'.esc_attr($k).'" value="'.esc_attr($v).'">'; }
-        foreach (['label'=>'通知先名','profile'=>'外部で登録済みの接続設定名','recipient'=>'メール宛先／Pushover受信者の表示名'] as $k=>$label) { echo '<p><label>'.esc_html($label).'<br><input class="regular-text" required name="'.esc_attr($k).'" value="'.esc_attr($channel[$k]).'"></label></p>'; }
+        foreach (['action'=>'owr_observer_save','revision'=>(string)$state['revision'],'channel_id'=>$channel['id']] as $k=>$v) { echo '<input type="hidden" name="'.$k.'" value="'.esc_attr($v).'">'; }
+        foreach (['label'=>'通知先名','profile'=>'外部で登録済みの接続設定名','recipient'=>'メール宛先／Pushover受信者の表示名'] as $k=>$label) { echo '<p><label>'.esc_html($label).'<br><input class="regular-text" required name="'.$k.'" value="'.esc_attr($channel[$k]).'"></label></p>'; }
         echo '<p>APIキー・パスワードは入力しません。外部側で許可された接続設定・メール宛先だけを利用できます。</p><p><label>通知方式 <select name="provider">';
-        foreach (NotificationAdmin::PROVIDERS as $k=>$label) { echo '<option value="'.esc_attr($k).'" '.selected($channel['provider'],$k,false).'>'.esc_html($label).'</option>'; }
+        foreach (NotificationAdmin::PROVIDERS as $k=>$label) { echo '<option value="'.$k.'" '.selected($channel['provider'],$k,false).'>'.esc_html($label).'</option>'; }
         echo '</select></label></p><fieldset><legend>対象警報</legend>';
-        foreach (self::KINDS as $k=>$label) { echo '<p><label><input type="checkbox" name="kinds[]" value="'.esc_attr($k).'" '.checked(in_array($k,$channel['kinds'],true),true,false).'>'.esc_html($label).'</label></p>'; }
+        foreach (self::KINDS as $k=>$label) { echo '<p><label><input type="checkbox" name="kinds[]" value="'.$k.'" '.checked(in_array($k,$channel['kinds'],true),true,false).'>'.esc_html($label).'</label></p>'; }
         echo '</fieldset><p><label><input type="checkbox" name="enabled" value="1" '.checked($channel['enabled'],true,false).'>この通知先を有効にする</label></p>';
-        foreach (['retry'=>'Pushover再通知間隔（秒）','expire'=>'Pushover再通知期限（秒）'] as $k=>$label) { echo '<p><label>'.esc_html($label).' <input type="number" min="30" max="10800" name="'.esc_attr($k).'" value="'.esc_attr((string)($channel[$k] ?? ($k==='retry'?60:1800))).'"></label></p>'; }
+        foreach (['retry'=>'Pushover再通知間隔（秒）','expire'=>'Pushover再通知期限（秒）'] as $k=>$label) { echo '<p><label>'.esc_html($label).' <input type="number" min="30" max="10800" name="'.$k.'" value="'.esc_attr((string)($channel[$k] ?? ($k==='retry'?60:1800))).'"></label></p>'; }
         submit_button('独立watchdogの設定候補を保存');echo '</form><p><a href="'.esc_url(admin_url('admin.php?page='.self::SLUG)).'">新しい通知先を追加</a></p><h2>外部側へ反映</h2><p>必須警報の通知先がなくなる変更や、外部ルールに合わない宛先は拒否されます。反映結果は状態取得後に再読込みして確認してください。通常の通知設定は変更しません。</p>';
         if ($state['channels'] && $report['state']==='current' && $config && defined('OWR_OBSERVER_REQUEST_DIR')) {
             $rid=wp_generate_uuid4();echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('owr_observer_apply_'.$rid);
-            foreach (['action'=>'owr_observer_apply','request_id'=>$rid,'created_at'=>(string)time(),'revision_token'=>$state['revision_token'],'expected_hash'=>$config['active_hash']] as $k=>$v) { echo '<input type="hidden" name="'.esc_attr($k).'" value="'.esc_attr($v).'">'; }
+            foreach (['action'=>'owr_observer_apply','request_id'=>$rid,'created_at'=>(string)time(),'revision_token'=>$state['revision_token'],'expected_hash'=>$config['active_hash']] as $k=>$v) { echo '<input type="hidden" name="'.$k.'" value="'.esc_attr($v).'">'; }
             submit_button('外部側へ反映を要求','secondary');echo '</form>';
         }
         self::renderTests($state,$report);echo '</div>';

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
-if(PHP_SAPI!=='cli')throw new RuntimeException('CLI required');
+if(PHP_SAPI!=='cli'||getenv('OWR_RBR_DISPOSABLE')!=='1')throw new RuntimeException('Dedicated CLI required');
 require '/var/www/html/wp-load.php';
 require_once __DIR__.'/../src/SiteMaterialsProjection.php';
-
+if(!DISABLE_WP_CRON||!WP_HTTP_BLOCK_EXTERNAL)throw new RuntimeException('Guards required');
 $input=json_decode(file_get_contents('/bundle/received.json'),true,64,JSON_THROW_ON_ERROR);
 $projection=get_option('owr_site_projection');
-if(($projection['state']??null)!=='verified-reconstruction'||$projection['receipt']!==$input['receipt'])throw new RuntimeException('Verified target required');
+if(($projection['state']??null)!=='verified-private'||$projection['receipt']!==$input['receipt'])throw new RuntimeException('Verified target required');
 $map=$projection['map'];$replace=[];$pages=[];
 foreach($input['site']['entries'] as $row){
  $id=$row['id'];$post=get_post($map[$id]);if(!$post)throw new RuntimeException('Missing target material');
@@ -15,7 +15,7 @@ foreach($input['site']['entries'] as $row){
   if($raw!==$expected||get_post_meta($post->ID,'_wp_attachment_image_alt',true)!==$row['alt'])throw new RuntimeException('Target image changed');
   $replace[esc_url(wp_get_attachment_url($post->ID))]='data:'.$row['mime'].';base64,'.base64_encode($raw);
  }else{
-  if($post->post_status!==($row['status']??'draft')||$post->post_title!==$row['title']||$post->post_content!==owr_material_body($row,$map))throw new RuntimeException('Target content changed');
+  if($post->post_status!=='draft'||$post->post_title!==$row['title']||$post->post_content!==owr_material_body($row,$map))throw new RuntimeException('Target content changed');
   $replace[esc_url(home_url('/?p='.$post->ID))]='about:srcdoc#material-'.$id;
   $pages[]=['id'=>$id,'title'=>$post->post_title,'body'=>$post->post_content];
  }
