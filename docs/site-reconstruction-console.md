@@ -1,5 +1,7 @@
 # Multi-material reconstruction console
 
+> Release preparation (2026-10-26): [current distribution scope](releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
+
 This console belongs to `owr-site-materials-v1`, separately from the retained three-page signed console. It reuses fixed-version receive, request-derived Q and the shared WordPress projection CLI. No old three-page receipt, fixture generation, source database or signature approval is substituted for the selected material generation.
 
 ## Setup and operation

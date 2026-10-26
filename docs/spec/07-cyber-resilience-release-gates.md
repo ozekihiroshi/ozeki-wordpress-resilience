@@ -1,5 +1,7 @@
 # サイバー侵害を想定した製品コンセプトと公開判定
 
+> Release preparation (2026-10-26): [current distribution scope](../releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
+
 更新日：2026年10月19日
 状態：公開前レビューに署名ゲート経由の実復元結果を反映。包括的な侵害耐性の合格記録ではない。
 

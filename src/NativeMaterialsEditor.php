@@ -15,7 +15,7 @@ final class NativeMaterialsEditor {
         $allowed=['p','h1','h2','h3','h4','h5','h6','strong','b','em','i','s','del','br','a','ul','ol','li','blockquote','cite','figure','figcaption','img'];
         foreach(iterator_to_array($doc->getElementsByTagName('*')) as $el){
             if($el===$root)continue;
-            $tag=strtolower($el->tagName);if(!in_array($tag,$allowed,true))throw new \InvalidArgumentException('Unsupported HTML: '.$tag);
+            $tag=strtolower($el->tagName);if(!in_array($tag,$allowed,true))throw new \InvalidArgumentException('Unsupported HTML: '.esc_html($tag));
             foreach(iterator_to_array($el->attributes) as $attr){
                 $name=$attr->name;$value=$attr->value;
                 if(in_array($name,['class','width','height','loading','decoding'],true)){$el->removeAttribute($name);continue;}
@@ -25,7 +25,7 @@ final class NativeMaterialsEditor {
                     if($id){$el->setAttribute($name,'asset:'.self::asset((int)$id));}
                     elseif(wp_parse_url($value,PHP_URL_HOST)===wp_parse_url(home_url(),PHP_URL_HOST)){throw new \InvalidArgumentException('Unresolved internal link');}
                     elseif($tag==='img'||!preg_match('~^(https?://|mailto:|tel:|#[a-zA-Z0-9_-]+$)~',$value)){throw new \InvalidArgumentException('Unsupported or unprotected URL');}
-                }elseif(!(($tag==='img'&&$name==='alt')||($tag==='ol'&&$name==='start'&&ctype_digit($value)))){throw new \InvalidArgumentException('Unsupported attribute: '.$name);}
+                }elseif(!(($tag==='img'&&$name==='alt')||($tag==='ol'&&$name==='start'&&ctype_digit($value)))){throw new \InvalidArgumentException('Unsupported attribute: '.esc_html($name));}
             }
             if($tag==='img'&&!$el->hasAttribute('src'))throw new \InvalidArgumentException('Image source required');
         }
@@ -36,9 +36,9 @@ final class NativeMaterialsEditor {
         $nodes=[];foreach(parse_blocks($content) as $block){
             if($block['blockName']===null&&trim($block['innerHTML'])==='')continue;
             $name=$block['blockName']??'core/freeform';
-            if(!in_array($name,['core/paragraph','core/heading','core/list','core/quote','core/image','core/freeform'],true))throw new \InvalidArgumentException('Unsupported block: '.$name);
+            if(!in_array($name,['core/paragraph','core/heading','core/list','core/quote','core/image','core/freeform'],true))throw new \InvalidArgumentException('Unsupported block: '.esc_html($name));
             $allowedAttrs=match($name){'core/heading'=>['level'],'core/image'=>['id','sizeSlug','linkDestination'],'core/list'=>['ordered','start'],'core/quote'=>[],default=>[]};
-            foreach(array_keys($block['attrs']) as $key)if(!in_array($key,$allowedAttrs,true))throw new \InvalidArgumentException('Unsupported block setting: '.$key);
+            foreach(array_keys($block['attrs']) as $key)if(!in_array($key,$allowedAttrs,true))throw new \InvalidArgumentException('Unsupported block setting: '.esc_html($key));
             if($name==='core/image'&&($block['attrs']['linkDestination']??'none')!=='none')throw new \InvalidArgumentException('Linked image blocks are not supported');
             // Render static serialized markup only; never run dynamic blocks or shortcodes.
             $html=preg_replace('/<!--.*?-->/s','',serialize_block($block));
@@ -55,9 +55,9 @@ final class NativeMaterialsEditor {
         if(!current_user_can('manage_options')||($id&&!current_user_can('edit_post',$id)))throw new \RuntimeException('Permission denied');
         $s=self::parent($request);$site=$s['site'];$params=$request->get_json_params()??[];
         $allowed=['id','title','content','status','slug','parent','excerpt','comment_status','ping_status','meta','categories','tags','featured_media','author','date','date_gmt','template','sticky','password','format'];
-        foreach($params as $key=>$value){if(!in_array($key,$allowed,true))throw new \InvalidArgumentException('Unsupported field: '.$key);}
+        foreach($params as $key=>$value){if(!in_array($key,$allowed,true))throw new \InvalidArgumentException('Unsupported field: '.esc_html($key));}
         // Reject unsupported state rather than silently discarding it.
-        foreach(['excerpt','meta','tags','featured_media','template','sticky','password'] as $key){if(!empty($params[$key]))throw new \InvalidArgumentException('Unsupported field: '.$key);}
+        foreach(['excerpt','meta','tags','featured_media','template','sticky','password'] as $key){if(!empty($params[$key]))throw new \InvalidArgumentException('Unsupported field: '.esc_html($key));}
         if(!empty($params['categories'])&&$params['categories']!==[(int)get_option('default_category')])throw new \InvalidArgumentException('Custom categories not yet supported');
         foreach(['date','date_gmt'] as $key){if(!empty($params[$key]))throw new \InvalidArgumentException('Scheduled/custom dates are not yet supported');}
         if(isset($params['author'])&&(int)$params['author']!==get_current_user_id())throw new \InvalidArgumentException('Author reassignment not supported');
@@ -124,6 +124,6 @@ final class NativeMaterialsEditor {
             wp_register_script('owr-native-editor',false,['wp-api-fetch','wp-data','wp-notices','wp-edit-post'],'0.2.0',true);wp_enqueue_script('owr-native-editor');wp_add_inline_script('owr-native-editor',file_get_contents(__DIR__.'/../assets/native-materials-editor.js'));
             wp_add_inline_script('owr-native-editor','window.owrNative='.wp_json_encode(['parent'=>hash('sha256',SiteMaterialsEditor::canonical($s['receipt']))]).';','before');
         });
-        add_action('admin_notices',function(){if(!current_user_can('manage_options'))return;echo '<div class="notice notice-info"><p>S3先行保存：標準ブロックエディターの段落・見出し・リスト・引用・画像に対応。保存失敗時は公開内容を保持します。<a href="'.esc_url(admin_url('admin.php?page=owr-site-materials')).'">保存状態・同じ要求の再開</a>。予約投稿・フォーム・独自ブロック・分類等は未対応です。</p></div>';});
+        add_action('admin_notices',function(){if(!current_user_can('manage_options'))return;$screen=get_current_screen();if(!$screen||!in_array($screen->base,['post','upload','media'],true))return;echo '<div class="notice notice-info is-dismissible"><p>S3先行保存：標準ブロックエディターの段落・見出し・リスト・引用・画像に対応。保存失敗時は公開内容を保持します。<a href="'.esc_url(admin_url('admin.php?page=owr-site-materials')).'">保存状態・同じ要求の再開</a>。予約投稿・フォーム・独自ブロック・分類等は未対応です。</p></div>';});
     }
 }

@@ -14,7 +14,11 @@ final class SiteMaterialsEditor {
     private static function enqueueFile(array $pending):void {
         $path=self::$dir.'/requests/'.$pending['operation'].'-'.$pending['attempt'].'.json';$raw=self::canonical($pending);
         if(is_file($path)){if(file_get_contents($path)!==$raw){throw new \RuntimeException('Queue identity conflict');}return;}
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Local worker queue protocol; no installation or remote filesystem writes.
         $tmp=$path.'.tmp-'.bin2hex(random_bytes(8));$f=fopen($tmp,'xb');if(!$f){throw new \RuntimeException('Queue unavailable');}
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod,WordPress.WP.AlternativeFunctions.file_system_operations_fclose,WordPress.WP.AlternativeFunctions.file_system_operations_fwrite,WordPress.WP.AlternativeFunctions.rename_rename -- Local worker queue protocol; no installation or remote filesystem writes.
         try{chmod($tmp,0600);if(fwrite($f,$raw)!==strlen($raw)||!fflush($f)){throw new \RuntimeException('Queue write failed');}if(function_exists('fsync')){fsync($f);}}finally{fclose($f);}if(!rename($tmp,$path)){throw new \RuntimeException('Queue publish failed');}
     }
     private static function report(array $pending):array {
@@ -52,6 +56,7 @@ final class SiteMaterialsEditor {
         update_option('owr_site_editor',['site'=>$received['site'],'receipt'=>$received['receipt'],'last_operation'=>$p['operation'],'result'=>$result],false);return self::status();
     });}
     public static function boot(string $dir):void {
+        add_action('admin_enqueue_scripts',[self::class,'enqueue']);
         if(getenv('OWR_RBR_DISPOSABLE')!=='1'||!is_dir($dir.'/requests')||!is_dir($dir.'/reports')){throw new \RuntimeException('Explicit dedicated enrollment required');}self::$dir=$dir;
         require_once __DIR__.'/NativeMaterialsEditor.php';NativeMaterialsEditor::boot();
         require_once __DIR__.'/SiteReconstructionAdmin.php';SiteReconstructionAdmin::boot($dir);
@@ -70,9 +75,13 @@ final class SiteMaterialsEditor {
         add_filter('pre_delete_post',fn($delete)=>self::$applying?$delete:false,1);add_filter('pre_delete_attachment',fn($delete)=>self::$applying?$delete:false,1);
         add_filter('wp_handle_upload_prefilter',function($file){$file['error']='Use S3-first image registration';return $file;});
     }
+    public static function enqueue(string $hook):void {
+        if($hook !== 'toplevel_page_owr-site-materials' || !current_user_can('manage_options'))return;
+        wp_enqueue_script('owr-site-materials',plugins_url('../assets/site-materials-editor.js',__FILE__),[], '0.2.0',true);
+        wp_add_inline_script('owr-site-materials','window.owrMaterialsConfig='.wp_json_encode(['url'=>rest_url('owr-materials/v1/'),'nonce'=>wp_create_nonce('wp_rest')]).';','before');
+    }
     public static function screen():void {
         if(!current_user_can('manage_options')){wp_die('Forbidden');}
-        echo '<div class="wrap"><h1>S3先行編集：投稿・固定ページ・画像</h1><p>保存した素材をS3で確定してから、この専用WordPressへ下書きとして反映します。</p><p id="owr-material-status" role="status"></p><select id="owr-material-select"></select> <button id="owr-add-post">投稿を追加</button> <button id="owr-add-page">固定ページを追加</button> <button id="owr-add-image">画像を登録</button><fieldset id="owr-material-fields"><p>タイトル／画像の代替文字<br><input id="owr-material-title" class="regular-text"></p><p>スラッグ<br><input id="owr-material-slug"></p><p>親ページID（任意）<br><input id="owr-material-parent"></p><p>本文：段落、## 見出し、[文字](asset:ID)、![画像](asset:ID)<br><textarea id="owr-material-body" rows="12" cols="85"></textarea></p><p>PNG/JPEG画像<br><input id="owr-material-file" type="file" accept="image/png,image/jpeg"></p></fieldset><p><button id="owr-material-save" class="button button-primary">S3へ保存して反映</button> <button id="owr-material-resume" class="button">同じ要求を再開</button></p></div>';
-        $config=['url'=>rest_url('owr-materials/v1/'),'nonce'=>wp_create_nonce('wp_rest')];echo '<script>window.owrMaterialsConfig='.wp_json_encode($config).';</script><script>'.file_get_contents(__DIR__.'/../assets/site-materials-editor.js').'</script>';
+        echo '<div class="wrap"><h1>S3先行編集：投稿・固定ページ・画像</h1><p>保存した素材をS3で確定してから、この専用WordPressへ保存済みの投稿状態で反映します。</p><p id="owr-material-status" role="status"></p><select id="owr-material-select"></select> <button id="owr-add-post">投稿を追加</button> <button id="owr-add-page">固定ページを追加</button> <button id="owr-add-image">画像を登録</button><fieldset id="owr-material-fields"><p>タイトル／画像の代替文字<br><input id="owr-material-title" class="regular-text"></p><p>スラッグ<br><input id="owr-material-slug"></p><p>親ページID（任意）<br><input id="owr-material-parent"></p><p>本文：段落、## 見出し、[文字](asset:ID)、![画像](asset:ID)<br><textarea id="owr-material-body" rows="12" cols="85"></textarea></p><p>PNG/JPEG画像<br><input id="owr-material-file" type="file" accept="image/png,image/jpeg"></p></fieldset><p><button id="owr-material-save" class="button button-primary">S3へ保存して反映</button> <button id="owr-material-resume" class="button">同じ要求を再開</button></p></div>';
     }
 }

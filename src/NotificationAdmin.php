@@ -1,5 +1,6 @@
 <?php
 namespace Ozeki\Resilience;
+if (!defined('ABSPATH')) { exit; }
 require_once __DIR__ . '/ObserverAdmin.php';
 require_once __DIR__ . '/ObserverSettings.php';
 
@@ -88,7 +89,7 @@ final class NotificationAdmin {
             $id = self::text($input['channel_id'] ?? '');
             if ($id !== '' && !isset($old['channels'][$id])) { throw new \InvalidArgumentException('通知先が見つかりません。'); }
             if ($id === '') {
-                if (count($old['channels'])>=20) { throw new \InvalidArgumentException('試作版は通知先20件までです。'); }
+                if (count($old['channels'])>=20) { throw new \InvalidArgumentException('通知先は20件までです。'); }
                 $id = 'ch_' . str_replace('-','',wp_generate_uuid4());
             }
             $channel = self::channel($input,$id);
@@ -112,10 +113,14 @@ final class NotificationAdmin {
         $state=self::state();$status=self::status($state);$channel=$input['channel_id'] ?? '';
         if (!is_string($channel) || empty($state['channels'][$channel]['enabled']) || $status['state']!=='connected' ||
             ($input['revision_token'] ?? '')!==$state['revision_token']) { wp_die('反映済みの有効な設定を再読込みしてください。','',['response'=>409]); }
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Local worker queue protocol; no installation or remote filesystem writes.
         if (!defined('OWR_NOTIFICATION_REQUEST_DIR') || !is_dir(OWR_NOTIFICATION_REQUEST_DIR) || !is_writable(OWR_NOTIFICATION_REQUEST_DIR)) {
             wp_die('テスト送信の受付先は未接続です。','',['response'=>503]);
         }
         $dir=rtrim(OWR_NOTIFICATION_REQUEST_DIR,'/');
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Local worker queue protocol; no installation or remote filesystem writes.
         $lock=fopen($dir.'/.request.lock','c');
         if (!$lock || !flock($lock,LOCK_EX|LOCK_NB)) { wp_die('別の要求を処理中です。','',['response'=>409]); }
         try {
@@ -131,11 +136,17 @@ final class NotificationAdmin {
                 $request=['request_id'=>$id,'channel_id'=>$channel,'site_id'=>$state['site_id'],
                     'revision'=>$state['revision'],'revision_token'=>$state['revision_token'],'created_at'=>time()];
                 $tmp=tempnam($dir,'.pending-');
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod,WordPress.WP.AlternativeFunctions.rename_rename -- Local worker queue protocol; no installation or remote filesystem writes.
                 if ($tmp===false || file_put_contents($tmp,wp_json_encode($request))===false || !chmod($tmp,0640) || !rename($tmp,$path)) {
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Local worker queue protocol; no installation or remote filesystem writes.
                     if ($tmp && file_exists($tmp)) { unlink($tmp); }
                     wp_die('要求を保存できませんでした。','',['response'=>503]);
                 }
             }
+        // Local private IPC requires OS locks, exact permissions and atomic same-filesystem rename; FTP-backed WP_Filesystem cannot preserve this contract.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Local worker queue protocol; no installation or remote filesystem writes.
         } finally { flock($lock,LOCK_UN);fclose($lock); }
         wp_safe_redirect(admin_url('admin.php?page='.self::SLUG.'&test_requested=1'));exit;
     }
@@ -192,8 +203,8 @@ final class NotificationAdmin {
         $edit = isset($_GET['edit']) && is_string($_GET['edit']) ? sanitize_key(wp_unslash($_GET['edit'])) : '';
         $channel=$state['channels'][$edit] ?? ['id'=>'','label'=>'','provider'=>'pushover','profile'=>'','recipient'=>'','enabled'=>false,'kinds'=>['backup_missing','restore_failed','approval_expired'],'retry'=>60,'expire'=>300];
         echo '<div class="wrap"><h1>Resilience — 通知</h1><p>重要警報はプッシュ、詳細・履歴はメールへ。通知先ごとに対象を選択できます。</p>';
-        echo '<div class="notice notice-info inline" data-owr-development-scope="true"><p>開発・評価版です。このプラグインを有効化するだけではバックアップ・復元・監視・通知配送は開始しません。外部処理の配置と接続設定が必要です。</p></div>';
-        echo '<div class="notice notice-info inline"><p>開発版：この画面は設定候補の保存と外部配送状態の表示を行います。保存時に外部送信や監視設定の切替は行いません。</p></div>';
+        echo '<div class="notice notice-info inline" data-owr-development-scope="true"><p>外部処理との連携用プラグインです。このプラグインを有効化するだけではバックアップ・復元・監視・通知配送は開始しません。外部処理の配置と接続設定が必要です。</p></div>';
+        echo '<div class="notice notice-info inline"><p>この画面は設定候補の保存と外部配送状態の表示を行います。保存時に外部送信や監視設定の切替は行いません。</p></div>';
         if (isset($_GET['saved'])) { echo '<div class="notice notice-success inline"><p>設定を保存しました。外部配送への反映と配信試験は別の手順です。</p></div>'; }
         ObserverAdmin::render($state);
         echo '<h2>配送状態</h2><p data-status="'.esc_attr($status['state']).'">'.esc_html($status['message']).'</p>';
@@ -220,7 +231,7 @@ final class NotificationAdmin {
         echo '<input type="hidden" name="action" value="owr_notification_save"><input type="hidden" name="revision" value="'.esc_attr((string)$state['revision']).'"><input type="hidden" name="channel_id" value="'.esc_attr($channel['id']).'">';
         echo '<table class="form-table"><tbody>';
         foreach(['label'=>'通知先の名前','profile'=>'接続設定名','recipient'=>'宛先メール／Pushoverの受信者表示名'] as $field=>$label){
-            echo '<tr><th><label for="owr-'.$field.'">'.esc_html($label).'</label></th><td><input class="regular-text" required id="owr-'.$field.'" name="'.$field.'" value="'.esc_attr($channel[$field]).'" maxlength="'.($field==='recipient'?'254':($field==='label'?'160':'64')).'">';
+            echo '<tr><th><label for="owr-'.esc_attr($field).'">'.esc_html($label).'</label></th><td><input class="regular-text" required id="owr-'.esc_attr($field).'" name="'.esc_attr($field).'" value="'.esc_attr($channel[$field]).'" maxlength="'.($field==='recipient'?'254':($field==='label'?'160':'64')).'">';
             if($field==='profile'){echo '<p class="description">外部配送側に登録する接続設定の名前（英数字・_・-）。APIキーやパスワードはこの画面に入力しません。</p>';}
             echo '</td></tr>';
         }
@@ -229,7 +240,7 @@ final class NotificationAdmin {
         echo '</select><p class="description">LINE・Slack・PagerDutyは今後の対応です。</p></td></tr><tr><th>対象警報</th><td><fieldset><legend class="screen-reader-text">対象警報を選択</legend>';
         foreach(self::KINDS as $key=>$label){echo '<label style="display:block;margin-bottom:6px"><input type="checkbox" name="kinds[]" value="'.esc_attr($key).'" '.checked(in_array($key,$channel['kinds'],true),true,false).'> '.esc_html($label).'</label>';}
         echo '</fieldset></td></tr><tr><th>利用状態</th><td><label><input type="checkbox" name="enabled" value="1" '.checked($channel['enabled'],true,false).'>外部配送でこの通知先を利用する</label><p class="description">無効化は新しい警報への利用を止めます。旧設定の未配送・確認・取消処理と記録は保持します。</p></td></tr>';
-        foreach(['retry'=>'Pushover 再通知間隔（秒）','expire'=>'Pushover 再通知期限（秒）'] as $field=>$label){echo '<tr><th><label for="owr-'.$field.'">'.esc_html($label).'</label></th><td><input type="number" id="owr-'.$field.'" name="'.$field.'" min="30" max="10800" value="'.esc_attr((string)($channel[$field] ?? ($field==='retry'?60:300))).'"><p class="description">メールでは使用しません。</p></td></tr>';}
+        foreach(['retry'=>'Pushover 再通知間隔（秒）','expire'=>'Pushover 再通知期限（秒）'] as $field=>$label){echo '<tr><th><label for="owr-'.esc_attr($field).'">'.esc_html($label).'</label></th><td><input type="number" id="owr-'.esc_attr($field).'" name="'.esc_attr($field).'" min="30" max="10800" value="'.esc_attr((string)($channel[$field] ?? ($field==='retry'?60:300))).'"><p class="description">メールでは使用しません。</p></td></tr>';}
         echo '</tbody></table>';submit_button('設定候補を保存');echo '</form>';
         if($channel['id']){echo '<p><a href="'.esc_url(admin_url('admin.php?page='.self::SLUG)).'">新しい通知先を追加</a></p>';}
         echo '<h2>外部配送との接続</h2><p>設定版 '.esc_html((string)$state['revision']).'。接続設定の秘密情報は外部監視側で管理します。設定候補をエクスポートし、外部側で適用・試験してください。既存の未配送記録を削除して切り替えないでください。</p><form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';

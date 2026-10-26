@@ -1,5 +1,7 @@
 # Native WordPress editing — implementation scope
 
+> Release preparation (2026-10-26): [current distribution scope](releases/wordpress-org-preparation.md) supersedes earlier research gates and draft-only recovery claims. Recovery now preserves saved post status; network exposure is controlled by the target operator. Historical test results below describe their original builds.
+
 The enrolled **dedicated environment** can use WordPress's standard block editor
 for posts and pages. This change is not a production rollout or an automatic
 conversion of an existing site. Administrators only; other editorial roles are

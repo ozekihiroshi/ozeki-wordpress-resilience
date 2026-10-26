@@ -1,4 +1,4 @@
-"""Reconstruct only into new private Docker resources; never targets an existing site."""
+"""Optional Docker lab adapter. Product reconstruction uses an explicitly configured WordPress target."""
 import argparse,importlib.util,json,re
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--bundle',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--wordpress-image',required=True);p.add_argument('--database-image',required=True);p.add_argument('--allow-dedicated-target',action='store_true');a=p.parse_args()

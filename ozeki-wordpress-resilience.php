@@ -1,9 +1,15 @@
 <?php
 /**
- * Plugin Name: Ozeki WordPress Resilience
+ * Plugin Name: Ozeki Resilience
  * Description: S3-first immutable content and WordPress reconstruction; explicit worker configuration required.
  * Version: 0.2.0
+ * Requires at least: 6.8
  * Requires PHP: 8.1
+ * Author: Hiroshi Ozeki
+ * Author URI: https://github.com/ozekihiroshi
+ * Plugin URI: https://github.com/ozekihiroshi/ozeki-wordpress-resilience
+ * Text Domain: ozeki-resilience
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * License: GPL-2.0-or-later
  */
 if (!defined('ABSPATH')) { exit; }

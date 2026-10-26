@@ -5,13 +5,13 @@ s=importlib.util.spec_from_file_location('recovery_worker',Path(__file__).resolv
 class Recovery(unittest.TestCase):
     def setUp(self):
         self.t=tempfile.TemporaryDirectory();self.addCleanup(self.t.cleanup);self.p=Path(self.t.name)
-        self.c={'transport':'filesystem-lab','work':str(self.p/'store'),'prefix':'test/','bridge':str(self.p/'bridge'),'recovery_work':str(self.p/'recovery'),'target_label':'Private test','wordpress_image':'sha256:'+'a'*64,'database_image':'sha256:'+'b'*64}
+        self.c={'target_mode':'docker-lab','transport':'filesystem-lab','work':str(self.p/'store'),'prefix':'test/','bridge':str(self.p/'bridge'),'recovery_work':str(self.p/'recovery'),'target_label':'Private test','wordpress_image':'sha256:'+'a'*64,'database_image':'sha256:'+'b'*64}
         site={'schema':'owr-site-materials-v1','title':'Source','landing':'company','entries':[{'id':'company','kind':'page','title':'Company','slug':'company','parent':None,'nodes':[{'type':'paragraph','text':'Original'}]}]}
         self.store=w.w.store(self.c);self.ref=w.m.Repository(self.store,self.p/'store/journal','test/').save('edit',None,site);self.calls=0
         self.state=w.cycle(self.c,self.run_target);self.item=self.state['items'][0]
     def run_target(self,c,bundle,target):
         self.calls+=1;v=json.loads((bundle/'received.json').read_bytes())
-        return {'state':'verified-private','logical_sha256':w.m.sha(w.m.canon(v['expected'])),'side_effect_attempts':0,'public_activation':False}
+        return {'state':'verified-reconstruction','logical_sha256':w.m.sha(w.m.canon(v['expected'])),'side_effect_attempts':0,'public_activation':False}
     def request(self,**changes):
         q={'generation':self.item['id'],'q':self.item['q'],'profile':self.state['profile']};q.update(changes);q['job']=w.m.sha(w.m.canon(q));w.m.atomic(self.p/'bridge/reconstruction/requests'/ (q['job']+'.json'),q);return q
     def test_catalog_and_read_only(self):
@@ -32,7 +32,7 @@ class Recovery(unittest.TestCase):
         def fail(*args):self.calls+=1;raise RuntimeError('injected')
         self.request();w.cycle(self.c,fail);w.cycle(self.c,fail);self.assertEqual(self.calls,1)
     def test_wrong_result_not_verified(self):
-        def bad(*args):return {'state':'verified-private','logical_sha256':'0'*64,'side_effect_attempts':0,'public_activation':False}
+        def bad(*args):return {'state':'verified-reconstruction','logical_sha256':'0'*64,'side_effect_attempts':0,'public_activation':False}
         self.request();a=w.cycle(self.c,bad);self.assertEqual(a['jobs'][0]['state'],'failed')
     def test_live_reader_does_not_share_writer_transport_journal(self):
         self.c['transport']='experimental-s3'
@@ -69,4 +69,27 @@ class Recovery(unittest.TestCase):
         p=self.p/'bridge/reconstruction/previews'/(q['job']+'.json')
         v=json.loads(p.read_bytes());self.assertEqual(v['q'],q['q']);self.assertEqual(v['job'],q['job'])
         self.assertEqual(p.stat().st_mode & 0o777,0o600)
+    def test_published_result_is_not_a_failure(self):
+        self.request()
+        def published(*args):
+            result=self.run_target(*args)
+            result.update(restored_statuses={'company':'publish'},side_effect_attempts=1)
+            return result
+        self.assertEqual(w.cycle(self.c,published)['jobs'][0]['state'],'verified')
+    def test_wordpress_target_changes_profile(self):
+        c=dict(self.c,target_mode='wordpress',wordpress_path='/srv/recovery',target_url='https://recovery.invalid',wordpress_user=1)
+        a=w.profile(c);c['target_url']='https://other.invalid'
+        self.assertNotEqual(a,w.profile(c))
+    def test_normal_target_no_docker_or_preview(self):
+        c=dict(self.c,target_mode='wordpress',wordpress_path='/srv/recovery',target_url='https://recovery.invalid',wordpress_user=1)
+        bundle=self.p/'bundle';bundle.mkdir()
+        with patch.object(w.subprocess,'run') as run:
+            run.return_value.stdout=json.dumps({'state':'verified-reconstruction'}).encode()
+            w.execute(c,bundle,self.p/'normal-target')
+            command=run.call_args.args[0]
+            self.assertEqual(run.call_count,1)
+            self.assertNotIn('docker',command)
+            self.assertIn('--wordpress=/srv/recovery',command)
+            self.assertIn('--target-url=https://recovery.invalid',command)
+            self.assertIn('--allow-target',command)
 if __name__=='__main__':unittest.main()

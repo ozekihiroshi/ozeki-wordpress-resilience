@@ -13,7 +13,7 @@ class DistributionTests(unittest.TestCase):
   return out,json.loads((out/'manifest.json').read_text())
  def test_plugin_allowlist_and_hashes(self):
   out,m=self.build('one');item=m['artifacts'][0]
-  with zipfile.ZipFile(out/item['file']) as z:self.assertEqual(set(z.namelist()),{'ozeki-wordpress-resilience/'+x for x in b.PLUGIN})
+  with zipfile.ZipFile(out/item['file']) as z:self.assertEqual(set(z.namelist()),{'ozeki-resilience/'+x for x in b.PLUGIN})
   self.assertEqual(item['sha256'],hashlib.sha256((out/item['file']).read_bytes()).hexdigest())
  def test_editor_asset_shipped_in_development_kit_only(self):
   asset=self.root/'assets/rbr-editor.js';asset.parent.mkdir(exist_ok=True);asset.write_text('/* editor asset */')
