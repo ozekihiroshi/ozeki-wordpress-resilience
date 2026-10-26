@@ -2,11 +2,11 @@
 
 [English](start-here.md) | 日本語
 
-状態：未公開のpre.2候補です。公開済みv0.3.1-pre.1は変更していません。
+状態：v0.3.1-pre.2公開済み。pre.1は不変です。初めての方は[順番に進める利用ガイド](user-guide-ja.md)と[AWS設定](aws-setup-ja.md)からお読みください。
 
 ## 1. 導入する配布物
 
-`ozeki-wordpress-resilience-0.3.1-pre.2.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
+`ozeki-wordpress-resilience-0.3.1-pre.2.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、GitHub Pre-releaseとして公開済みで、安定版ではありません。
 
 [検証範囲と制限](site-checkpoint-verification.md)で実S3成功・試験用失敗注入・ZIP導入更新を区別しています。既存資産と公開済み配布物は変更していません。GitHubのソースアーカイブや旧研究版を導入しないでください。
 
@@ -52,12 +52,12 @@ Baselineは最初の独立した完全復旧点です。通常CheckpointはS3資
 
 1. [導入・更新手順](install-update.md)に従い、上記ファイルとハッシュを確認して導入します。
 2. 「ツール → Resilience」で保存先と適用する保持条件を設定。未確定履歴を解消し、編集を停止、管理者が信頼を確認して完全初期スナップショットを作成。通常操作の保護を有効にします。
-3. 確定履歴・未確定操作を確認し、必要時に完全Checkpointを手動作成。定期実行とサイト全体の実削除は後回しです。
+3. 確定履歴・未確定操作を確認し、必要時に完全Checkpointを手動作成。定期設定・保持規則に従う削除は[現在の利用ガイド](user-guide-ja.md)を参照。専用実S3範囲で確認済みで、制限を明記しています。
 4. 復旧時は専用WordPress、管理者ログイン（必要ならWP-Membersの有効化確認）、依存プラグイン、S3読取り設定を用意。復旧先の保護は無効のままにします。
 5. 完全Checkpointと正式履歴の終了番号を選択し、復旧先の置換を確認して実行。1履歴が編集操作全体とは限らない点に注意します。
 6. 結果と復旧内容・必要な動作を確認。失敗なら停止し、原因を調べた後、再実行を別に判断します。自動続行しません。外部公開は管理者の別判断です。
 
-[サイト復旧の詳細](site-snapshot-ja.md)・[保存履歴の再開](save-resume.md)・[現行候補の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/recovery-errors-final-m1-031.md)
+[サイト復旧の詳細](site-snapshot-ja.md)・[保存履歴の再開](save-resume.md)・[現行候補の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.2/docs/releases/prerelease-2-package.md)
 
 ブラウザ復旧、過去のブラウザZIP更新、今回の展開更新は別の検証です。この文書整理では内容・リンク確認だけを行い、新しい復旧・版移行試験は行いません。[旧研究資料](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md)は参照用であり、導入の前提ではありません。
 
