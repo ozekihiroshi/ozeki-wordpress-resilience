@@ -19,6 +19,7 @@ ok(!Owr\M1\CommentHistory::sameNativeState($row,'state',$attrs,$resources),'Chan
 ok(!Owr\M1\CommentHistory::sameNativeState($row,'changed',$attrs,$resources),'Changed taxonomy/state kept');
 class WP_Error {function __construct(public $code,public $message){}}
 function update_option(...$a){}
+function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function wp_strip_all_tags($s){return strip_tags($s);}
 function wp_die($e,$title,$args){ok($e instanceof WP_Error&&$e->code==='owr_save_failed','Structured error code');ok(str_contains($e->message,'specific reason'),'Reason retained');ok($args['response']===409,'Conflict status');throw new LogicException('captured');}
 $m=new ReflectionMethod(Owr\M1\Plugin::class,'stop');$m->setAccessible(true);
