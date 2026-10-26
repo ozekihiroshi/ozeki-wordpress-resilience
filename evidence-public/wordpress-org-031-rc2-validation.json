@@ -1,6 +1,6 @@
 {
-  "sha256": "83ab4912a07e79ed88df880bed26ce22a4d11aad7fba9404f955c12a16ea64fd",
-  "bytes": 7424199,
+  "sha256": "537504d9b5be632a277c084ddfacf2a4f8a220498f940b6dde32c9e7bf650dbe",
+  "bytes": 7423450,
   "files": 3846,
   "changed_from_rc1": [
     "ozeki-resilience/RAADME-jp.md",

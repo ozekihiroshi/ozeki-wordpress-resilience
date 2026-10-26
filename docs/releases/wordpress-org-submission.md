@@ -11,8 +11,8 @@
 | 希望slug | ozeki-resilience（割当未確定） |
 | バージョン | 0.3.1 |
 | アップロードZIP | ozeki-resilience-0.3.1.zip |
-| 容量 | 7,424,199 bytes |
-| SHA-256 | `83ab4912a07e79ed88df880bed26ce22a4d11aad7fba9404f955c12a16ea64fd` |
+| 容量 | 7,423,450 bytes |
+| SHA-256 | `537504d9b5be632a277c084ddfacf2a4f8a220498f940b6dde32c9e7bf650dbe` |
 | Requires at least / PHP | WordPress 6.4 / PHP 8.1（既存の宣言値。全組合せ試験は主張しない） |
 | Tested up to | 7.1（今回の環境7.1.3） |
 | Contributors | ozekihiroshi |

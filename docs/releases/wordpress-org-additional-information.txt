@@ -1,7 +1,7 @@
 Ozeki Resilience 0.3.1 preserves supported WordPress site originals and confirmed history in a user-controlled Amazon S3 bucket and reconstructs them on a prepared WordPress. Requested slug: ozeki-resilience. Author: Hiroshi Ozeki; WordPress.org account: ozekihiroshi. Ozeki is the author's surname.
 
 Installable ZIP: ozeki-resilience-0.3.1.zip
-SHA-256: 83ab4912a07e79ed88df880bed26ce22a4d11aad7fba9404f955c12a16ea64fd
+SHA-256: 537504d9b5be632a277c084ddfacf2a4f8a220498f940b6dde32c9e7bf650dbe
 Exact source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.1-rc.2/packages/markdown-m1
 Release: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2
 Checks and warning dispositions: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-checks.md
