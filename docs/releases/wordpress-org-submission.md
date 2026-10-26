@@ -46,4 +46,8 @@ Plugin Check 2.1.0 on WordPress 7.1.3/PHP 8.3 reported 0 errors and 103 warnings
 
 0.3.1候補リリースを公開し、匿名ダウンロードしたZIPのSHA-256とタグ上のreadmeがローカル候補に一致することを確認しました。[公開確認記録](../../evidence-public/wordpress-org-031-publication.json)。旧0.2.0リリースはSupersededと明示し、元のアーカイブは保持しています。
 
-[PR #59](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/59)でmainへ公開文書・必要修正を反映します。マージ状態はPRの表示を参照してください。申請用ZIPに対応する固定ソースは上記の0.3.1候補タグです。タグ以降の申請記録・単体試験の補足はZIPの製品ファイルを変更しません。申請送信は行っていません。
+mainを利用者向けの公開版の入口とし、README・導入案内を0.3.1申請候補に統一しています。研究・試作時点の資産は `archive/research-before-wordpress-org`（b2968c7）に保全しています。
+
+PR #59のマージ後に一度main側で取り消しましたが、公開版を訪れる利用者の混乱を避けるため、取り消しを打ち消して公開向けの内容を復元しました。履歴の強制書換えは行っていません。
+
+申請用ZIPに対応する固定ソースは上記の0.3.1候補タグです。mainと `release/wordpress-org` の製品ファイルはそのZIPに一致しています。公開済みZIP・タグは変更しておらず、WordPress.orgへの申請送信も行っていません。
