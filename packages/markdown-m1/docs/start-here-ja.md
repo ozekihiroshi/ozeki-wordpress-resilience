@@ -2,11 +2,11 @@
 
 [English](start-here.md) | 日本語
 
-状態：未公開のgfs候補です。公開済みv0.3.1-pre.1は変更していません。
+状態：未公開のpre.2候補です。公開済みv0.3.1-pre.1は変更していません。
 
 ## 1. 導入する配布物
 
-`ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
+`ozeki-wordpress-resilience-0.3.1-pre.2.zip` と付属のSHA-256・マニフェストで識別します。プラグインの表示版は0.3.1のままです。初期スナップショット／Checkpointのマニフェスト確定前に全資源の固定版照合を追加した別候補であり、公開済みPre-releaseのZIPや新たな公開版ではありません。
 
 [検証範囲と制限](site-checkpoint-verification.md)で実S3成功・試験用失敗注入・ZIP導入更新を区別しています。既存資産と公開済み配布物は変更していません。GitHubのソースアーカイブや旧研究版を導入しないでください。
 
@@ -60,3 +60,5 @@ Baselineは最初の独立した完全復旧点です。通常CheckpointはS3資
 [サイト復旧の詳細](site-snapshot-ja.md)・[保存履歴の再開](save-resume.md)・[現行候補の検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/recovery-errors-final-m1-031.md)
 
 ブラウザ復旧、過去のブラウザZIP更新、今回の展開更新は別の検証です。この文書整理では内容・リンク確認だけを行い、新しい復旧・版移行試験は行いません。[旧研究資料](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md)は参照用であり、導入の前提ではありません。
+
+[次のPre-releaseの範囲と制限](prerelease-2-ja.md)。

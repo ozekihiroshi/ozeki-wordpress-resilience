@@ -2,11 +2,11 @@
 
 English | [日本語](start-here-ja.md)
 
-Status: unpublished gfs candidate; published v0.3.1-pre.1 remains unchanged.
+Status: unpublished pre.2 candidate; published v0.3.1-pre.1 remains unchanged.
 
 ## 1. Identify the package
 
-Use `ozeki-wordpress-resilience-0.3.1-gfs-lock-read.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. This is not the published Pre-release ZIP or a new public release.
+Use `ozeki-wordpress-resilience-0.3.1-pre.2.zip` with its accompanying SHA-256 and manifest. Plugin version remains 0.3.1; the filename and hash distinguish this candidate. It adds full fixed-version resource verification before initial-snapshot/Checkpoint manifest confirmation. This is not the published Pre-release ZIP or a new public release.
 
 [Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
 
@@ -60,3 +60,5 @@ No permanent second EC2, Python worker, SSH credential helper, shared bridge or 
 [Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current package acceptance](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/releases/recovery-errors-final-m1-031.md)
 
 Existing browser recovery, earlier browser ZIP upload and current ZIP extraction-update are separate evidence. The new documentation itself has link/content review only; no repeat recovery or new version-migration acceptance is implied. Historical research documents are reference material, not installation prerequisites: [archive](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md).
+
+[Next Pre-release scope and limits](prerelease-2.md).
