@@ -1,0 +1,17 @@
+{
+  "sha256": "a2ba00eae43a0966b5e01bf2893d9591969d24b460dc6e9b295d0af58525a85e",
+  "bytes": 7499959,
+  "files": 3844,
+  "code_vendor_unchanged": true,
+  "changed": [
+    "ozeki-wordpress-resilience/README.md",
+    "ozeki-wordpress-resilience/RAADME-jp.md",
+    "ozeki-wordpress-resilience/docs/remaining-confirmations.md",
+    "ozeki-wordpress-resilience/docs/user-guide-ja.md",
+    "ozeki-wordpress-resilience/docs/user-guide.md",
+    "ozeki-wordpress-resilience/docs/recovery-faq-ja.md",
+    "ozeki-wordpress-resilience/docs/recovery-faq.md",
+    "ozeki-wordpress-resilience/docs/recovery-readiness-ja.md",
+    "ozeki-wordpress-resilience/docs/recovery-readiness.md"
+  ]
+}

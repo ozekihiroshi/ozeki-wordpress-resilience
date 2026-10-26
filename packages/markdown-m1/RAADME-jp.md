@@ -1,7 +1,7 @@
 # Ozeki WordPress Resilience
 
 
-**未公開候補の条件付き依存：** `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` では、Markdown未使用の通常投稿サイトのBaseline作成・復旧にMarkdown Documentsは不要です。有効な場合は収録し、文書・原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。公開済みpre.2は不変で、管理画面のBaseline作成には従来どおり必要です。[候補の検証記録](docs/optional-markdown-verification.md)。
+**未公開候補の条件付き依存：** `ozeki-wordpress-resilience-0.3.1-readiness.zip` では、Markdown未使用の通常投稿サイトのBaseline作成・復旧にMarkdown Documentsは不要です。有効な場合は収録し、文書・原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。公開済みpre.2は不変で、管理画面のBaseline作成には従来どおり必要です。[候補の検証記録](docs/optional-markdown-verification.md)。
 **初めて使う方へ：** [導入から復旧までの利用ガイド](docs/user-guide-ja.md)に、初期Baseline・日常運用・復旧の順序をまとめました。[AWS設定と差替え用の完全なIAMポリシー](docs/aws-setup-ja.md)も用意しています。現在の公開試験版は[v0.3.1-pre.2](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2)です。公開済みZIPは変更せず、最新手順はオンライン文書で案内します。
 
 [復旧方式に関するよくある疑問](docs/recovery-faq-ja.md)：ID・シリアライズ設定・版の違い・実行環境への依存・未確定保存について、設計上の対策、確認結果、利用条件を説明します。
@@ -101,3 +101,5 @@ Ozeki WordPress Resilienceが重視するのは、この依存を減らすこと
 | 検証と経緯を調べる | [検証記録の索引](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/product-evidence-index.md)・[公開版の配布物記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/prerelease-package-m1-031.md) |
 
 このREADMEは公開済みpre.2を説明し、以前のpre.1・候補の証拠と区別します。公開済みZIPは変更せず、pre.2には確定前照合・GFS設定・保存区分の記録を含みます。オンライン利用ガイド・AWSサンプルは公開後の文書整備であり、公開ZIPへの追加ではありません。以前の研究経路や積み重ねた試験の説明は索引から参照できますが、標準製品の構成を規定するものではありません。
+
+[配布整理・削除途中失敗の検証](docs/recovery-readiness-ja.md)：検証範囲と環境条件。
