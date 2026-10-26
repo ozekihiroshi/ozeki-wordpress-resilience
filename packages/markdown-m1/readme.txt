@@ -12,15 +12,41 @@ Preserve supported site content and confirmed history in Amazon S3, then reconst
 
 == Description ==
 
-Ozeki Resilience preserves independent originals and confirmed history for supported WordPress content. Start with an administrator-trusted Baseline, preserve supported changes, and create complete Checkpoints from saved S3 resources. Recover a selected point plus confirmed history on a designated destination.
+= How this product works =
 
-Supported content includes Posts/Pages, local images, core comments, and defined integrations with Ozeki Markdown Documents, Contact Form 7, Flamingo, WP-Members and TablePress. Optional plugins are separately installed. Markdown Documents is required only for Markdown content; native-only sites do not require it. Read the included guides for exact coverage and tested versions.
+Ozeki Resilience reconstructs supported WordPress state from saved originals and confirmed history. It is not a whole-server image or a general database-and-files backup that can reproduce every part of an arbitrary WordPress installation. Understand the supported scope before relying on it for recovery.
 
-Installing or activating alone does not enable protection. A versioned S3 bucket, one writing site per dedicated prefix, standard AWS SDK authentication available to PHP, InnoDB, ZipArchive and writable paths are required. Libraries are bundled; no external Python/SSH runtime kit is required. Optional integrations can impose higher PHP requirements.
+1. Baseline: an administrator judges the current site trustworthy, pauses editing and captures an initial supported recovery set.
+2. Protected operations: supported edits preserve originals and confirmed history in your S3 bucket. A visible WordPress change is not, by itself, proof that its history is confirmed.
+3. Checkpoint: build an independent supported recovery set from the saved Baseline and confirmed S3 history. This does not scan the live site for untracked changes.
+4. Recovery: prepare a compatible WordPress destination and reconstruct a selected point plus the required confirmed history. The destination is not continuously synchronized.
 
-Only confirmed history is recoverable after source loss. Body saves and associated operations may confirm separately. Unknown captured settings are preserved but not blindly applied. Theme/runtime changes outside tracked operations can require a new trusted Baseline. Source text is limited to 5 MiB and supported images to 32 MiB.
+= Supported scope =
 
-Recovery replaces supported destination state and reproduces saved publication status, including published posts. Prepare a compatible dedicated destination and control network exposure yourself. This is not malware removal, replication, infrastructure provisioning, or an unconditional recovery guarantee. WP-Cron schedules need execution opportunities. Optional cleanup deletes eligible fixed versions only when explicitly enabled; preview itself does not delete.
+* Posts and Pages: body, recorded attributes, Trash/restore/deletion, featured images and category/tag assignments.
+* Local images: supported originals, referenced files and attachment information.
+* Core comments: creation, editing, moderation and deletion.
+* Defined integrations: Ozeki Markdown Documents sources and supported relationships; Contact Form 7 form definitions and Flamingo received inquiries; WP-Members core subscriber accounts, recognized fields/settings and viewing restrictions; TablePress core tables, recognized options and references.
+
+These are defined integrations, not coverage of every extension or version. Optional plugins are installed separately. Markdown Documents is required only when Markdown content exists; native-only sites do not require it. See the included README.md and docs/user-guide.md for exact coverage and tested versions. Source text is limited to 5 MiB and supported image files to 32 MiB.
+
+= Outside scope and recovery limits =
+
+* Arbitrary plugins/extensions, all metadata, external/CDN resources and every later settings change are not automatically protected. Captured selected theme/plugin files do not imply continuous protection of all code changes. Theme/runtime or other untracked changes can require a new trusted Baseline; a normal Checkpoint does not discover them.
+* Only confirmed history is recoverable after source loss. Body saves and associated operations may confirm separately. WordPress and S3 do not form one atomic transaction; an unconfirmed change must not be counted as recoverable.
+* Unknown captured settings are preserved but not blindly applied. Recovery is not an unrestricted copy of all source settings, identities or credentials. Prepare a working destination administrator login; source administrator credentials are not restored.
+* This is not malware detection/removal or certification that saved content and code are safe. It is not replication, infrastructure provisioning, mail replay or an unconditional recovery guarantee.
+* Recovery replaces supported destination state and reproduces saved publication status, including published posts. A failed recovery must not be assumed to have left the destination unchanged; a local rollback copy is not a promise of automatic rollback.
+
+Keep other backup arrangements until you have confirmed the supported recovery scope for your own site. This product does not promise to replace protection for resources outside that scope.
+
+= What the administrator must prepare =
+
+Installing or activating alone does not enable protection. Prepare a versioned S3 bucket, a dedicated prefix with one writing site, appropriate permissions and standard AWS SDK authentication available to PHP. InnoDB, ZipArchive and writable paths are required. Libraries are bundled; no external Python/SSH runtime kit is required. Optional integrations can impose higher PHP requirements.
+
+Create a trusted Baseline and confirm success before enabling protection. Monitor confirmed history and pending saves. For recovery, prepare a compatible dedicated WordPress, the recorded required plugins, a working administrator login and private writable temporary storage. Control network exposure and DNS yourself; recovery does not make published content private.
+
+WP-Cron schedules need execution opportunities and are not exact-time guarantees. Keep required S3 versions and access available. Optional cleanup deletes eligible fixed versions only when explicitly enabled; preview itself does not delete. Follow docs/user-guide.md for setup, pending operations, retention and recovery.
 
 = External services and privacy =
 
@@ -45,6 +71,9 @@ Support: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues
 5. Monitor confirmed history and pending saves. Follow docs/user-guide.md for Checkpoints, retention and recovery.
 
 == Frequently Asked Questions ==
+
+= Is this a full copy of my server or database? =
+No. It reconstructs documented supported state from a trusted Baseline and confirmed saved history. Checkpoints do not discover untracked live changes. Read the scope and limits above before choosing it for your site.
 
 = Does installation protect all site content automatically? =
 No. Configure storage, create a trusted Baseline and enable protection. Only documented content/operations are covered.

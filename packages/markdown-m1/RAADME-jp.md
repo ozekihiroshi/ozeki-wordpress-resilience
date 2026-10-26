@@ -8,7 +8,7 @@
 
 ## ダウンロードと導入
 
-1. **[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.1-rc.1/ozeki-resilience-0.3.1.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
+1. **[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.1-rc.2/ozeki-resilience-0.3.1.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
 2. [導入から復旧までのガイド](docs/user-guide-ja.md)を読み、[AWS設定](docs/aws-setup-ja.md)を準備します。
 3. ZIPを導入し、**ツール → Resilience** で設定、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
 

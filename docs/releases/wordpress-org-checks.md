@@ -35,3 +35,7 @@ The private transaction helper is called only with literal START TRANSACTION and
 ## Existing evidence and limits
 
 Main's recovery-readiness, optional-Markdown and sample-only IAM records remain the basis for existing behavior. This task does not restart long-duration scheduling, live cloud trials or feature development. Minimum WP/PHP versions are declarations; this packaging check does not establish every combination. Recovery may expose published content unless the destination is restricted. Network/DNS, dependencies and retention remain administrator responsibilities.
+
+## Documentation-only rc.2
+
+The readme separates the Baseline/history/Checkpoint/reconstruction workflow, supported scope, exclusions and prerequisites. All runtime/vendor files are byte-identical to rc.1; only documentation changed. Plugin Check/runtime results above remain rc.1 evidence and were not rerun. See evidence-public/wordpress-org-031-rc2-validation.json and docs/releases/wordpress-org-submission.md.

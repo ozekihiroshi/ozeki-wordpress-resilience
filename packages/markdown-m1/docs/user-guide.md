@@ -2,7 +2,7 @@
 
 [日本語](user-guide-ja.md) · [AWS setup and complete policy files](aws-setup.md)
 
-This guide is for the [0.3.1 submission candidate](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1). A WordPress administrator performs the daily steps; an AWS/server administrator may be needed for setup. No AWS keys are entered into the plugin. This guide uses the verified EC2-role route. Shared hosting without a usable standard SDK credential provider needs separate administrator preparation.
+This guide is for the [0.3.1 submission candidate](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). A WordPress administrator performs the daily steps; an AWS/server administrator may be needed for setup. No AWS keys are entered into the plugin. This guide uses the verified EC2-role route. Shared hosting without a usable standard SDK credential provider needs separate administrator preparation.
 
 **Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
 
@@ -21,7 +21,7 @@ Record the source WordPress/PHP/plugin versions and the AWS settings worksheet. 
 Use `ozeki-resilience-0.3.1.zip` and `SHA256SUMS` from the linked candidate release. The version remains 0.3.1; identify the build by tag, filename and checksum.
 
 1. Complete [AWS setup](aws-setup.md). Begin with the **source-no-delete** policy, a versioned dedicated prefix and automatic cleanup off. Do not share one writing prefix between sites.
-2. Download the installable ZIP and verify its SHA-256 against `SHA256SUMS` from the [candidate release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1). Do not install Source code (zip).
+2. Download the installable ZIP and verify its SHA-256 against `SHA256SUMS` from the [candidate release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). Do not install Source code (zip).
 3. Before uploading, check that PHP `upload_max_filesize`, `post_max_size` and the web-server request limit allow the actual ZIP size recorded in its manifest plus request overhead. If too small, ask the server administrator to adjust the limits for the destination; do not change the ZIP. See [upload requirements](install-update.md). In WordPress **Plugins → Add New Plugin → Upload Plugin**, choose the ZIP, install and activate. For replacement, follow [update precautions](install-update.md); do not uninstall the product as an update method. Keep a copy of your settings and resolve pending work first where possible.
 4. Open **Tools → Resilience**. The current controls are English; labels below match the product.
 5. In **Storage and optional scheduling settings**, fill `bucket`, `region`, `prefix` (ending `/`) and `owner` (12-digit AWS account ID). Initially leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. Set **Optional S3 deletion protection in days** to `0` only if you have chosen not to request product-level locks. Save settings.

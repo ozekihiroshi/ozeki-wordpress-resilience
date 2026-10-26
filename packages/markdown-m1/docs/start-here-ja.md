@@ -6,7 +6,7 @@
 
 ## 1. 導入する配布物
 
-[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)と `SHA256SUMS`・マニフェストで識別します。表示版0.3.1だけでは配布物を特定できません。
+[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)と `SHA256SUMS`・マニフェストで識別します。表示版0.3.1だけでは配布物を特定できません。
 
 [検証範囲と制限](site-checkpoint-verification.md)で実S3成功・試験用失敗注入・ZIP導入更新を区別しています。既存資産と公開済み配布物は変更していません。GitHubのソースアーカイブや旧研究版を導入しないでください。
 

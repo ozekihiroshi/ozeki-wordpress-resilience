@@ -1,0 +1,17 @@
+Ozeki Resilience 0.3.1 preserves supported WordPress site originals and confirmed history in a user-controlled Amazon S3 bucket and reconstructs them on a prepared WordPress. Requested slug: ozeki-resilience. Author: Hiroshi Ozeki; WordPress.org account: ozekihiroshi. Ozeki is the author's surname.
+
+Installable ZIP: ozeki-resilience-0.3.1.zip
+SHA-256: 83ab4912a07e79ed88df880bed26ce22a4d11aad7fba9404f955c12a16ea64fd
+Exact source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.1-rc.2/packages/markdown-m1
+Release: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2
+Checks and warning dispositions: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-checks.md
+
+Concept and scope: this reconstructs supported state from a trusted Baseline, saved originals and confirmed history. It is not a whole-server image or a general database-and-files restore. Checkpoints assemble saved resources and do not discover untracked live changes. Only confirmed history is recoverable after source loss. The reorganized readme separates workflow, supported scope, exclusions and administrator prerequisites; no functionality or broader guarantee is added.
+
+All runtime libraries are included. No external Python worker, SSH helper or runtime kit is required. AWS credentials use the standard SDK provider chain. Service terms, privacy, data transfers and setup requirements are disclosed in readme.txt and the included guides. Native-only Baseline/recovery does not require Markdown Documents; it is required when Markdown content exists. Optional integrations and tested versions are documented.
+
+Important review detail concerning Guideline 8: at an administrator's explicit request, site recovery can restore selected theme/plugin files from that administrator's own captured S3 backup, alongside content. This is a backup/recovery workflow, not a developer-hosted plugin update channel. We disclose this behavior for your assessment; we do not claim a blanket exception from Guideline 8. Recovery reproduces saved publication status, including publish, and does not certify restored code/content as malware-free.
+
+The previous rc.1 package was tested with Plugin Check 2.1.0 on WordPress 7.1.3/PHP 8.3 reported 0 errors and 103 warnings. The linked report explains direct database/freshness checks, validated original-content inputs, local recovery filesystem operations and other warning dispositions. PHP 8.1/8.3 CI passed. Focused native recovery, directory switching, active reinstallation and installed-file hash checks passed in an isolated environment. For rc.2 only documentation and candidate links changed. All runtime and vendor files are byte-identical to rc.1. Plugin Check and runtime tests were not rerun for this documentation-only revision; the linked results describe rc.1. The rc.2 ZIP was compared entry-by-entry against rc.1 and its source manifest. Existing live AWS evidence is linked separately; it was not rerun for this packaging step.
+
+The public name/directory are Ozeki Resilience / ozeki-resilience. Existing settings/history keys are unchanged. Older prerelease installations must be deactivated before changing directories. The obsolete 0.2.0 research/worker package is not part of this submission. There are no payment gates or time-limited features in this plugin.

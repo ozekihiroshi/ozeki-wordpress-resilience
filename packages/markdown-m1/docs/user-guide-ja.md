@@ -2,7 +2,7 @@
 
 [English](user-guide.md) · [AWS設定と完全なポリシーJSON](aws-setup-ja.md)
 
-[0.3.1申請候補](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)の利用ガイドです。日常操作はWordPress管理者が行い、最初のAWS・サーバ設定には担当者の協力が必要になることがあります。プラグインにAWS秘密鍵を入力しません。このガイドは検証済みのEC2ロール構成を主経路とします。共有レンタルサーバ等はSDK標準認証を実行環境に用意できるか、別途確認が必要です。
+[0.3.1申請候補](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)の利用ガイドです。日常操作はWordPress管理者が行い、最初のAWS・サーバ設定には担当者の協力が必要になることがあります。プラグインにAWS秘密鍵を入力しません。このガイドは検証済みのEC2ロール構成を主経路とします。共有レンタルサーバ等はSDK標準認証を実行環境に用意できるか、別途確認が必要です。
 
 **Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
 
@@ -19,7 +19,7 @@
 ## 2. AWSを準備し、プラグインを導入する
 
 1. [AWS設定](aws-setup-ja.md)を完了し、専用prefixとsource-no-deleteポリシーで始めます。自動削除はオフにします。
-2. [申請候補リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)のインストール用ZIPを取得し、`SHA256SUMS` と照合します。Source code (zip)は導入用ではありません。
+2. [申請候補リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)のインストール用ZIPを取得し、`SHA256SUMS` と照合します。Source code (zip)は導入用ではありません。
 3. アップロード前に、PHPの `upload_max_filesize`・`post_max_size` とWebサーバの要求サイズ上限が、マニフェストに記載した実サイズのZIPと送信時の付加情報を収容できることを確認します。不足時はサーバ担当者が対象環境の上限を調整し、ZIPは変更しません。[アップロード条件](install-update.md)も参照してください。WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
 4. **ツール→Resilience** を開きます。現行画面の操作名は英語なので、以下にそのまま記載します。
 5. **Storage and optional scheduling settings** で `bucket`・`region`・末尾 `/` の `prefix`・12桁AWSアカウントIDの `owner` を入力します。最初は **Protect supported operations**、GFSの **Enabled**、自動削除をオフにします。製品から削除ロックを要求しない構成を選んだ場合、**Optional S3 deletion protection in days** は `0` にして **Save settings** を押します。

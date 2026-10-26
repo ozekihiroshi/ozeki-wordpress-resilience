@@ -6,7 +6,7 @@ Status: 0.3.1 WordPress.org submission candidate; not yet submitted or approved.
 
 ## 1. Identify the package
 
-Use [ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1) with its SHA256SUMS and manifest. Version 0.3.1 alone does not identify the build.
+Use [ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2) with its SHA256SUMS and manifest. Version 0.3.1 alone does not identify the build.
 
 [Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
 

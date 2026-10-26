@@ -1,0 +1,17 @@
+{
+  "sha256": "83ab4912a07e79ed88df880bed26ce22a4d11aad7fba9404f955c12a16ea64fd",
+  "bytes": 7424199,
+  "files": 3846,
+  "changed_from_rc1": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/start-here-ja.md",
+    "ozeki-resilience/docs/start-here.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md",
+    "ozeki-resilience/readme.txt"
+  ],
+  "runtime_and_vendor_byte_identical": true,
+  "plugin_check": "Inherited rc.1 result: Plugin Check 2.1.0, 0 errors / 103 warnings. Not rerun for documentation-only rc.2.",
+  "submission_sent": false
+}
