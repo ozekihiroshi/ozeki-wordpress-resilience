@@ -1,7 +1,7 @@
 # Ozeki WordPress Resilience
 
 
-**Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](docs/optional-markdown-verification.md).
+**Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-readiness.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](docs/optional-markdown-verification.md).
 **First-time users:** Follow the [installation-to-recovery user guide](docs/user-guide.md), including the first Baseline and daily operation. [AWS setup and complete replacement IAM policies](docs/aws-setup.md) are provided. The current published trial is [v0.3.1-pre.2](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2). Released ZIPs are unchanged; use the online guide for current instructions.
 
 [Questions about reconstruction](docs/recovery-faq.md): how IDs, serialized settings, versions, runtime dependencies and incomplete saves are handled, with evidence and conditions.
@@ -101,3 +101,7 @@ Use the linked setup and adapter specifications for dependency versions, permiss
 | Find verification and historical detail | [Evidence index](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/product-evidence-index.md) · [Published package record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/prerelease-package-m1-031.md) |
 
 This README describes published pre.2 and distinguishes the earlier pre.1 and candidate evidence. Published ZIPs remain unchanged; pre.2 includes snapshot verification, GFS scheduling and retention labels. The online user guide and AWS samples are later documentation, not additions to the released ZIP. Earlier research paths and accumulated test narratives remain accessible through the evidence index; they are not the standard product architecture.
+
+[Distribution and interrupted-cleanup verification](docs/recovery-readiness.md): evidence boundaries and environment requirements.
+
+Sample-only source/recovery IAM policies also passed save, verification, confirmed history, retention exclusion, cleanup and separate recovery in the dedicated SSE-S3 trial; see the evidence for boundaries.
