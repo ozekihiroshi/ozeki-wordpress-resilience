@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture for guarded product includes.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once __DIR__.'/../src/Store.php';
 require_once __DIR__.'/../src/TableHistory.php';
 use Owr\M1\TableHistory;

@@ -16,6 +16,7 @@ final class RecoveryRules
     }
     private function value(mixed $v,array|string $rule,string $path): mixed {
         if(is_array($rule)){
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if(!is_array($v))throw new \RuntimeException('Invalid recognized setting: '.$path);
             $out=[];foreach($v as $k=>$x){if(!array_key_exists($k,$rule)){$this->omit($path.'.'.$k);continue;}$out[$k]=$this->value($x,$rule[$k],$path.'.'.$k);}return $out;
         }
@@ -36,6 +37,7 @@ final class RecoveryRules
         }
         if($rule==='member-fields'&&is_array($v)){
             $out=[];foreach($v as $i=>$field){
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
                 if(!is_array($field)||!isset($field[2],$field[3]))throw new \RuntimeException('Invalid member field definition: '.$path);
                 if(!in_array($field[3],['text','textarea','email','url','password','checkbox','select','radio','multiselect','number','date','hidden'],true)){
                     $this->omit($path.'.'.$i,'Unsupported registration field type');continue;
@@ -43,6 +45,7 @@ final class RecoveryRules
                 $out[]=$this->value($field,[0=>'number',1=>'text',2=>'text',3=>'text',4=>'text',5=>'text',6=>'text','profile'=>'number','native'=>'bool','value'=>'plain','values'=>'plain'],$path.'.'.$i);
             }return $out;
         }
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         throw new \RuntimeException('Invalid recognized setting: '.$path);
     }
     private function metadata(string $raw,array|string $rule,string $path,bool $json=false): string {
@@ -52,6 +55,7 @@ final class RecoveryRules
         // WordPress metadata serialization is storage encoding, never instantiate objects.
         if(preg_match('/^(?:a|s|i|b|d|O|C):|^N;$/',$raw)){
             $v=@unserialize($raw,['allowed_classes'=>false]);
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if($v===false&&$raw!=='b:0;')throw new \RuntimeException('Invalid recognized serialization: '.$path);
             $out=$this->value($v,$rule,$path);return $out===$v?$raw:serialize($out);
         }

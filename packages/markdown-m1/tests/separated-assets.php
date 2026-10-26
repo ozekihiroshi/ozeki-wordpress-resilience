@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/Store.php';
 require $argv[1].'/src/SiteSnapshot.php';
 require $argv[1].'/src/CommentHistory.php';

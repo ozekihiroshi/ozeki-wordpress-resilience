@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/Plugin.php';
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function show($history,$error='',$pending=[],$queue=[],$notice='',$qe=''){ob_start();Owr\M1\Plugin::renderSaveStatus($history,$error,$pending,$queue,$notice,$qe,true);return ob_get_clean();}

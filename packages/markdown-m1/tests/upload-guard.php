@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture for guarded product includes.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/../src/SiteSnapshot.php';
 use Owr\M1\SiteSnapshot;
 $guard="# Apache 2.4+\n<IfModule authz_core_module>\n    Require all denied\n</IfModule>\n\n# Apache 2.2\n<IfModule !authz_core_module>\n    Deny from all\n</IfModule>\n";

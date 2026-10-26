@@ -2,9 +2,9 @@
 
 [English](user-guide.md) · [AWS設定と完全なポリシーJSON](aws-setup-ja.md)
 
-公開済み[GitHub Pre-release v0.3.1-pre.2](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2)の案内です。WordPress管理者向け試験版であり、運用代行サービスではありません。日常操作はWordPress管理者が行い、最初のAWS・サーバ設定は担当者の協力が必要になることがあります。プラグインにAWS秘密鍵を入力しません。このガイドは検証済みのEC2ロール構成を主経路とします。共有レンタルサーバ等はSDK標準認証を実行環境に用意できるか、別途確認が必要です。
+[0.3.1申請候補](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)の利用ガイドです。日常操作はWordPress管理者が行い、最初のAWS・サーバ設定には担当者の協力が必要になることがあります。プラグインにAWS秘密鍵を入力しません。このガイドは検証済みのEC2ロール構成を主経路とします。共有レンタルサーバ等はSDK標準認証を実行環境に用意できるか、別途確認が必要です。
 
-**未公開候補の条件付き依存：** `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` では、Markdown未使用の通常投稿サイトのBaseline作成・復旧にMarkdown Documentsは不要です。有効な場合は収録し、文書・原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。公開済みpre.2は不変で、管理画面のBaseline作成には従来どおり必要です。[候補の検証記録](optional-markdown-verification.md)。
+**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
 
 [復旧方式に関するよくある疑問](recovery-faq-ja.md)で、5つの懸念に対する設計上の対策・確認済みの動作・利用条件を説明しています。
 
@@ -18,12 +18,9 @@
 
 ## 2. AWSを準備し、プラグインを導入する
 
-未公開候補は別途提供する `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` と同名の `.sha256` を使います。下記pre.2のハッシュ・容量を候補に流用せず、候補の実サイズと送信分を考慮してアップロード上限を確認してください。プラグイン表示版は0.3.1のままなのでファイル名とハッシュで区別します。
-
-1. [AWS設定手順](aws-setup-ja.md)を実施します。最初は削除不可の **source-no-delete** ポリシー、バージョニング済みの専用prefix、自動削除オフで開始します。複数サイトから同じprefixへ書き込まないでください。
-2. 公開済み版を使う場合は、リリースページのAssetsから `ozeki-wordpress-resilience-0.3.1-pre.2.zip` と `.sha256` を取得します。Source code (zip)は導入用ではありません。SHA-256は以下です。
-   `109f0db79f1e5b0886b11d6ebcb2df0f4728912baa1217f977de91760b0b3d0a`
-3. アップロード前に、PHPの `upload_max_filesize`・`post_max_size` とWebサーバの要求サイズ上限が、7,455,881バイトのZIPと送信時の付加情報を収容できることを確認します。不足時はサーバ担当者が対象環境の上限を調整し、ZIPは変更しません。[アップロード条件](install-update.md)も参照してください。WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
+1. [AWS設定](aws-setup-ja.md)を完了し、専用prefixとsource-no-deleteポリシーで始めます。自動削除はオフにします。
+2. [申請候補リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.1)のインストール用ZIPを取得し、`SHA256SUMS` と照合します。Source code (zip)は導入用ではありません。
+3. アップロード前に、PHPの `upload_max_filesize`・`post_max_size` とWebサーバの要求サイズ上限が、マニフェストに記載した実サイズのZIPと送信時の付加情報を収容できることを確認します。不足時はサーバ担当者が対象環境の上限を調整し、ZIPは変更しません。[アップロード条件](install-update.md)も参照してください。WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
 4. **ツール→Resilience** を開きます。現行画面の操作名は英語なので、以下にそのまま記載します。
 5. **Storage and optional scheduling settings** で `bucket`・`region`・末尾 `/` の `prefix`・12桁AWSアカウントIDの `owner` を入力します。最初は **Protect supported operations**、GFSの **Enabled**、自動削除をオフにします。製品から削除ロックを要求しない構成を選んだ場合、**Optional S3 deletion protection in days** は `0` にして **Save settings** を押します。
 
@@ -31,7 +28,7 @@
 
 ## 3. 最初のBaselineを作る
 
-1. 元サイトが信頼できることを判断し、編集を一時停止して未確定履歴を解消します。未公開の条件付き依存候補ではMarkdown未使用なら追加導入不要です。有効なら収録し、文書や `_ozmd_source` 原文が残っているのに無効なら有効化してから取得します。回避のために原文を削除しないでください。公開済みpre.2は通常投稿だけでもMD導入・有効化が必要です。確認版は0.1.1。他の対応プラグインはコンテンツに応じて有効化します。
+1. 元サイトが信頼できることを判断し、編集を一時停止して未確定履歴を解消します。この候補ではMarkdown未使用なら追加導入不要です。有効なら収録し、文書や `_ozmd_source` 原文が残っているのに無効なら有効化してから取得します。回避のために原文を削除しないでください。確認版は0.1.1。他の対応プラグインはコンテンツに応じて有効化します。
 2. **Site-wide recovery — primary workflow** で **I trust the whole current site and have paused editing.** にチェックし、**Create complete initial snapshot** を押します。対応する現在のDB情報・ファイルを読み取る操作です。侵害の疑いがあるサイトを、エラーを消す目的で新基点にしないでください。
 3. 結果を待ち、成功表示と確定した復旧点が一覧に現れることを確認します。送信できたことだけを成功としません。全資源の保存・固定版照合後にマニフェストが確定します。失敗や結果不明なら理由を記録し、停止して調べます。
 4. **Protect supported operations (one writer per prefix)** を有効にして設定保存後、通常編集を再開します。
@@ -78,4 +75,4 @@ Baseline自体で復旧できます。初期取得をもう一度行うのは、
 
 無害化の証明・無条件復旧の保証ではありません。AccessDenied、認証情報の取得不能、PHP拡張の不足、一時領域への書込み不能、非互換ランタイムは環境条件として原因を調べ、確定条件を弱めて回避しません。問い合わせには版・タグ、操作、エラー、確定番号、必要な環境版を添え、秘密鍵・トークン・個人情報・非公開原本は除いてください。
 
-[残る確認事項](remaining-confirmations.md)にHTTP起動・長期運用・削除途中停止を確認済み機能と分けて記録しています。[初回導入の検証](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/user-guide-onboarding.md)では、不足していたMarkdown Documentsの必須前提を補い、ブラウザZIP導入・Baseline・通常投稿更新・正式履歴・別の隔離WordPressへの復旧を確認しました。既存EC2ロールを再利用したため、完全版IAM JSONの新規適用とその権限だけでの導入は未検証です。ビジュアル編集や全対応プラグインの組合せを再試験したものではありません。公開済みZIPは変更せず、新しい案内はオンラインで参照します。
+[今回の候補確認](wordpress-org-candidate.md)と[既存の受入記録](recovery-readiness-ja.md)を参照してください。後者にはサンプル単独IAM受入を記録しており、それ以前の未検証という記載を更新しています。

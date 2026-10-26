@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 
 /** CF7 definition and Flamingo receipt snapshots at their completed-save boundaries. */
@@ -49,6 +50,7 @@ final class FormHistory
         if(!in_array($plugin,self::DEPENDENCIES,true))throw new \RuntimeException('Unsupported form dependency.');
         $path=WP_PLUGIN_DIR.'/'.$plugin;
         $data=is_file($path)?get_file_data($path,['Version'=>'Version']):[];
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         if(($data['Version']??'')!==$version)throw new \RuntimeException('Install recorded form dependency before recovery: '.$plugin.' '.$version);
     }
     public function capture(array $ids): void {

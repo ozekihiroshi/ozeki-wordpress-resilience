@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 // Existing in-memory S3 fixture; no AWS or WordPress database writes.
 require __DIR__.'/checkpoint.php';
 require $argv[1].'/src/SiteSnapshot.php';
