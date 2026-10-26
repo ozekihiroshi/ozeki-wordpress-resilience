@@ -6,7 +6,7 @@ READMEは目的と構成を説明し、詳細な実証はこの索引から参�
 
 ## Current package / 現在の配布物
 
-[Next prepared distribution / 次の未公開配布候補](prerelease-2-package.md): pre.2 packages the tested executable files with current documentation through PR52. No release published; the existing pre.1 below remains unchanged. 検証済みコードと最新文書を収録し、公開済みpre.1は不変です。
+[pre.2 package record / pre.2配布記録](prerelease-2-package.md): pre.2 packages the tested executable files with current documentation through PR52. [pre.2 is published](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2); the existing pre.1 below remains unchanged. 検証済みコードと最新文書を収録し、公開済みpre.1は不変です。
 
 [GitHub v0.3.1-pre.1](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.1) · [Package identity, checksum and actual S3 write acceptance / 配布物・実S3書込み](prerelease-package-m1-031.md)
 
@@ -15,6 +15,8 @@ The latest representative protected page/image test used real original PUTs, fix
 最新の代表的な記事・画像の確認は実PUT・実GET・正式履歴の実PUTです。先行する保存時照合試験の履歴PUTは模擬でした。両者を混同しません。導入・更新はプログラムによる展開・置換で、ブラウザからの更新とは別です。公開版は検証済み候補から文書4ファイルだけの差であり、今回のREADME再構成によって公開ZIPを差し替えることはありません。
 
 ## Verification map / 検証の索引
+
+[User-guide onboarding / 利用ガイドでの初回導入](user-guide-onboarding.md): browser installation, Baseline, native edit/history and separate recovery; prerequisite gaps and existing-role versus exact-policy deployment distinguished. / 必須前提の不足と既存ロールによる検証範囲を区別。
 
 [Browser and scheduled cleanup / 管理画面・定期自動削除](cleanup-browser-scheduled-acceptance.md): follow-up verifies these previously untested routes and retained-point recovery; earlier records below keep their historical scope. 先行記録の未確認経路を後続試験で確認。過去の記録は当時の範囲を維持。
 

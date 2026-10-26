@@ -16,7 +16,7 @@
 
 信頼した初期スナップショットまたは完全Checkpointと、S3正式履歴から**対応範囲内のサイト状態**を再構築します。「サイト全体」は、すべてのWordPress拡張機能や、その後の全設定変更への対応という意味ではありません。
 
-通常操作の対応対象はPosts／Pages、参照されるローカル画像、標準コメント、Ozeki Markdown Documents、Contact Form 7、Flamingo、WP-Membersの基本購読者機能、TablePressの基本機能です。[README](../RAADME-jp.md)の対応一覧・除外事項・確認済みバージョンを参照してください。任意プラグインは必要なコンテンツに応じて導入します。
+通常操作の対応対象はPosts／Pages、参照されるローカル画像、標準コメント、Ozeki Markdown Documents、Contact Form 7、Flamingo、WP-Membersの基本購読者機能、TablePressの基本機能です。[README](../RAADME-jp.md)の対応一覧・除外事項・確認済みバージョンを参照してください。現行の管理画面によるBaseline作成には、通常投稿だけでもMarkdown Documentsの有効化が必要です。[利用ガイドの前提](user-guide-ja.md)を確認し、その他の任意プラグインは必要なコンテンツに応じて導入します。
 
 初期状態の信頼性は管理者が判断します。その後の完全CheckpointはS3の基準状態と正式履歴から作り、未追跡の現サイト変更を取り込みません。未確定操作は復旧対象外です。保存済みの公開状態を再現し、外部公開・DNSは管理者が判断します。レプリケーション、無侵害の証明、サーバ自動構築ではありません。
 
