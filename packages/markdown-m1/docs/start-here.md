@@ -16,7 +16,7 @@ Use `ozeki-wordpress-resilience-0.3.1-pre.2.zip` with its accompanying SHA-256 a
 
 The product reconstructs the **supported site state** from a trusted initial snapshot or complete Checkpoint plus confirmed S3 history. “Complete site” does not mean every WordPress extension or all subsequent settings changes.
 
-Normal supported operations cover Posts/Pages, referenced local images, core comments, Ozeki Markdown Documents, Contact Form 7, Flamingo, WP-Members core subscribers and TablePress core. Read the exact inclusions, exclusions and tested versions in the [support table](../README.md#supported-content-and-plugins). Install optional plugins only for content that needs them.
+Normal supported operations cover Posts/Pages, referenced local images, core comments, Ozeki Markdown Documents, Contact Form 7, Flamingo, WP-Members core subscribers and TablePress core. Read the exact inclusions, exclusions and tested versions in the [support table](../README.md#supported-content-and-plugins). The current admin Baseline operation requires active Ozeki Markdown Documents even for native-only sites; see the [Baseline prerequisites](user-guide.md#3-create-the-first-baseline). Install other optional plugins only for content that needs them.
 
 The administrator judges the initial site trustworthy. Later complete Checkpoints are built from S3's baseline and confirmed history; they do not import untracked live-site changes. Unconfirmed operations are excluded. Saved publish status is reproduced; server/network exposure and DNS are administrator responsibilities. This is not replication, malware certification or infrastructure provisioning.
 

@@ -17,7 +17,7 @@
 1. [AWS設定手順](aws-setup-ja.md)を実施します。最初は削除不可の **source-no-delete** ポリシー、バージョニング済みの専用prefix、自動削除オフで開始します。複数サイトから同じprefixへ書き込まないでください。
 2. リリースページのAssetsから `ozeki-wordpress-resilience-0.3.1-pre.2.zip` と `.sha256` を取得します。Source code (zip)は導入用ではありません。SHA-256は以下です。
    `109f0db79f1e5b0886b11d6ebcb2df0f4728912baa1217f977de91760b0b3d0a`
-3. WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
+3. アップロード前に、PHPの `upload_max_filesize`・`post_max_size` とWebサーバの要求サイズ上限が、7,455,881バイトのZIPと送信時の付加情報を収容できることを確認します。不足時はサーバ担当者が対象環境の上限を調整し、ZIPは変更しません。[アップロード条件](install-update.md)も参照してください。WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
 4. **ツール→Resilience** を開きます。現行画面の操作名は英語なので、以下にそのまま記載します。
 5. **Storage and optional scheduling settings** で `bucket`・`region`・末尾 `/` の `prefix`・12桁AWSアカウントIDの `owner` を入力します。最初は **Protect supported operations**、GFSの **Enabled**、自動削除をオフにします。製品から削除ロックを要求しない構成を選んだ場合、**Optional S3 deletion protection in days** は `0` にして **Save settings** を押します。
 
@@ -25,7 +25,7 @@
 
 ## 3. 最初のBaselineを作る
 
-1. 元サイトが信頼できることを管理者が判断し、編集を一時停止して未確定履歴を解消します。必要な対応プラグインは取得前に有効化します。
+1. 元サイトが信頼できることを管理者が判断し、編集を一時停止して未確定履歴を解消します。**Ozeki Markdown Documentsを取得前に導入・有効化してください。通常のPosts・Pagesだけでも、現行pre.2の管理画面によるBaseline作成には必須です。** 今回は0.1.1を使用しました。未有効化なら `Dependency must be an active plugin.` で停止します。他の対応プラグインは対象コンテンツに応じて有効化します。これは現行製品の依存条件であり、AWS権限エラーではありません。
 2. **Site-wide recovery — primary workflow** で **I trust the whole current site and have paused editing.** にチェックし、**Create complete initial snapshot** を押します。対応する現在のDB情報・ファイルを読み取る操作です。侵害の疑いがあるサイトを、エラーを消す目的で新基点にしないでください。
 3. 結果を待ち、成功表示と確定した復旧点が一覧に現れることを確認します。送信できたことだけを成功としません。全資源の保存・固定版照合後にマニフェストが確定します。失敗や結果不明なら理由を記録し、停止して調べます。
 4. **Protect supported operations (one writer per prefix)** を有効にして設定保存後、通常編集を再開します。
@@ -72,4 +72,4 @@ Baseline自体で復旧できます。初期取得をもう一度行うのは、
 
 無害化の証明・無条件復旧の保証ではありません。AccessDenied、認証情報の取得不能、PHP拡張の不足、一時領域への書込み不能、非互換ランタイムは環境条件として原因を調べ、確定条件を弱めて回避しません。問い合わせには版・タグ、操作、エラー、確定番号、必要な環境版を添え、秘密鍵・トークン・個人情報・非公開原本は除いてください。
 
-[残る確認事項](remaining-confirmations.md)にHTTP起動・長期運用・削除途中停止を確認済み機能と分けて記録しています。このガイドとJSONは文書・静的確認のみで、新しい環境での導入実証ではありません。公開済みZIPは変更せず、新しい案内はオンラインで参照します。
+[残る確認事項](remaining-confirmations.md)にHTTP起動・長期運用・削除途中停止を確認済み機能と分けて記録しています。[初回導入の検証](../../../docs/releases/user-guide-onboarding.md)では、不足していたMarkdown Documentsの必須前提を補い、ブラウザZIP導入・Baseline・通常投稿更新・正式履歴・別の隔離WordPressへの復旧を確認しました。既存EC2ロールを再利用したため、完全版IAM JSONの新規適用とその権限だけでの導入は未検証です。ビジュアル編集や全対応プラグインの組合せを再試験したものではありません。公開済みZIPは変更せず、新しい案内はオンラインで参照します。
