@@ -4,6 +4,8 @@ For first-time source/destination setup: [English](start-here.md) · [日本語]
 
 ## English
 
+**Unreleased candidate — conditional dependency:** In `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip`, native-only Baseline/recovery does not require Markdown Documents. Active Markdown Documents is included; if Markdown documents or originals remain while it is inactive, capture stops before saving. For Markdown recovery, prepare and activate the recorded compatible plugin first (tested 0.1.1). Published pre.2 is unchanged and still requires it at the admin Baseline entry. See the [candidate verification](optional-markdown-verification.md).
+
 1. Prepare a supported WordPress/PHP environment and the required plugins described in the [README](../README.md). Use the exact validated ZIP linked there and verify its SHA-256 against the acceptance record; the display version alone does not identify the candidate. For a new installation, configure the dedicated S3 scope and standard AWS authentication after activation.
 2. Before updating, preserve the current plugin files, database and configuration using your normal maintenance procedure. Record active plugins, S3 settings, latest confirmed history, pending operations/errors and recovery results. Verify administrator login first, including WP-Members activation where applicable. Avoid concurrent editing during the update.
 3. Check that WordPress permits plugin installation, PHP upload/POST limits exceed the ZIP plus request overhead, and the web-server user can replace the plugin files. Apply any necessary changes only within the intended maintenance environment; do not broadly relax shared-server permissions. Record temporary settings for restoration.
@@ -16,6 +18,8 @@ For first-time source/destination setup: [English](start-here.md) · [日本語]
 **Accepted scope:** the [0.3.1 browser update](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md) replaced a prior same-version trial deployment with the frozen validated ZIP and preserved settings, history and recovery results. Earlier fresh-install/extraction tests are separate evidence. This does not establish all version migrations, all hosting configurations, or arbitrary nonempty-queue combinations. The later article/native-detail test adds only the scope described above. Core may register maintenance events during administration; event registration and scheduled execution are separate. Periodic execution remains deferred.
 
 ## 日本語
+
+**未公開候補の条件付き依存：** `ozeki-wordpress-resilience-0.3.1-optional-markdown.zip` では、Markdown未使用の通常投稿サイトのBaseline作成・復旧にMarkdown Documentsは不要です。有効な場合は収録し、文書・原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。公開済みpre.2は不変で、管理画面のBaseline作成には従来どおり必要です。[候補の検証記録](optional-markdown-verification.md)。
 
 1. [README](../RAADME-jp.md)に従いWordPress・PHP・必要プラグインを用意します。リンク先の検証済みZIPを使い、検証記録のSHA-256と照合してください。表示バージョンだけでは候補を特定できません。新規導入では有効化後に専用S3範囲と標準AWS認証を設定します。
 2. 更新前に通常の保守手順で現行プラグイン・DB・設定を退避し、有効プラグイン、S3設定、最後の確定履歴、未確定操作／エラー、復旧結果を記録します。WP-Members利用時の有効化を含め管理者ログインを確認し、更新中の同時編集を避けます。
