@@ -1,4 +1,6 @@
 <?php
+// Standalone WordPress API fixture; product includes reject direct access.
+if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/Plugin.php';
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 eval('namespace Owr\\M1; class Store { public static function json($v){return json_encode($v);} }');
