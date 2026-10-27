@@ -17,6 +17,17 @@ final class Store
         if (!empty($this->config['owner'])) $a['ExpectedBucketOwner']=$this->config['owner'];
         return $a;
     }
+    /** Read-only: no probe objects, retention changes or deletion permissions. */
+    public function checkSetupStorage(): void {
+        try {
+            $version=$this->s3->getBucketVersioning($this->args());
+            $this->s3->listObjectsV2($this->args()+['Prefix'=>$this->config['prefix'],'MaxKeys'=>1]);
+        } catch (\Throwable $e) {
+            // Never expose SDK exception messages (which may contain request details).
+            throw new \RuntimeException(SetupReadiness::text('AWS/server administrator: check bucket, region, owner, web PHP credentials, network access and permissions (s3:GetBucketVersioning, s3:ListBucket for this prefix), then retry.','AWS・サーバー管理者：バケット名・リージョン・所有者、Web側PHPの認証情報、通信、権限（s3:GetBucketVersioningと指定prefixのs3:ListBucket）を確認し、再実行してください。'));
+        }
+        if(($version['Status']??'')!=='Enabled')throw new \RuntimeException(SetupReadiness::text('AWS administrator: enable S3 bucket versioning, then check storage again.','AWS管理者：S3バケットのバージョン管理を有効にしてから、保存先を再確認してください。'));
+    }
     public static function json(array $value): string {
         return json_encode($value, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
     }

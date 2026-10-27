@@ -1,5 +1,7 @@
 # First-time setup — from preparation to protection
 
+**Version note:** The following describes the submitted 0.3.1 setup workflow. Development version 0.3.2-dev adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
+
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
 Prepare to preserve articles, images, comments and supported inquiry and member information, so you can resume publishing and serving users if an attack makes the original site unusable. Read [what is protected and how its role differs from backups](../README.md#keep-a-path-to-recovery-after-an-attack). Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.

@@ -1,5 +1,7 @@
 # Pre-setup checks — current implementation review
 
+**Version note:** The following describes the submitted 0.3.1 assessment. Development version 0.3.2-dev adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
+
 [日本語](setup-preflight-review-ja.md) · [Setup guide](user-guide.md)
 
 October 28, 2026. Source reviewed: 2cf014c (0.3.1 series). Based on reading code and existing documentation; no feature changes or execution tests. This is an assessment, not an approved feature specification or delivery commitment.

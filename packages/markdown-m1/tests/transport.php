@@ -5,6 +5,7 @@ add_filter('owr_m1_s3_options',function($options){
     $options['credentials']=['key'=>'test','secret'=>'test'];
     $options['handler']=function($command){
         $name=$command->getName();$args=$command->toArray();
+        if(is_file('/lab/setup-commands.log'))file_put_contents('/lab/setup-commands.log',$name."\n",FILE_APPEND);
         $control=json_decode(@file_get_contents('/lab/control.json')?:'{}',true);
         if (($control['fail']??'')==='s3' && $name==='PutObject') throw new RuntimeException('Injected S3 failure');
         if (($control['fail']??'')==='history' && $name==='PutObject' && str_contains($args['Key'],'/history/')) throw new RuntimeException('Injected formal history failure');
@@ -21,7 +22,9 @@ add_filter('owr_m1_s3_options',function($options){
             $r=$reply['result'];if(isset($r['body64'])){$r['Body']=base64_decode($r['body64']);unset($r['body64']);}
         } else {
             $root='/lab/objects/';$key=$args['Key']??'';$path=$root.$key;
-            if ($name==='PutObject') {
+            if (($control['fail']??'')==='setup') throw new RuntimeException('Injected access failure with private request details');
+            if ($name==='GetBucketVersioning') {$r=['Status'=>($control['versioning']??'Enabled')];}
+            elseif ($name==='PutObject') {
                 if (is_file($path)) throw new RuntimeException('412 create-only');
                 if (!is_dir(dirname($path))) mkdir(dirname($path),0777,true);
                 file_put_contents($path,(string)$args['Body']);$r=['VersionId'=>hash_file('sha256',$path)];

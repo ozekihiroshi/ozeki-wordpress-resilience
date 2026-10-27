@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 require_once __DIR__.'/CheckpointSchedule.php';
 require_once __DIR__.'/GfsPolicy.php';
+require_once __DIR__.'/SetupReadiness.php';
 
 final class Plugin
 {
@@ -270,7 +271,11 @@ final class Plugin
     }
     public function store(): Store {
         $c=$this->config();
+        if (!SetupReadiness::accepted($c)) throw new \RuntimeException(SetupReadiness::text('Save storage settings and confirm the terms before connecting.','接続する前に、保存先の設定と利用条件の確認を保存してください。'));
         if (empty($c['bucket']) || empty($c['prefix']) || empty($c['region'])) throw new \RuntimeException('Configure the S3 bucket, region and dedicated prefix first.');
+        return $this->storeForSetup($c);
+    }
+    private function storeForSetup(array $c): Store {
         $options=apply_filters('owr_m1_s3_options',['version'=>'latest','region'=>$c['region'],'http'=>['connect_timeout'=>5,'timeout'=>30],'retries'=>1]);
         $client=new \Aws\S3\S3Client($options);
         return new Store($client,$c);
@@ -470,9 +475,27 @@ final class Plugin
             $action=(string)($_POST['operation']??'');
             if ($action==='configure') {
                 if (get_option(self::PENDING) || get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
+                $old=$this->config();
+                if(!isset($_POST['confirm_terms']))throw new \RuntimeException(SetupReadiness::text('Review the terms and select the confirmation checkbox before saving settings.','利用条件を読み、確認欄にチェックしてから設定を保存してください。'));
                 $c=[];foreach (['bucket','region','prefix','owner'] as $key) $c[$key]=sanitize_text_field(wp_unslash($_POST[$key]??''));
-                if (!preg_match('/^[a-z0-9.-]{3,63}$/D',$c['bucket']) || !preg_match('/^[a-z0-9-]+$/D',$c['region']) || !preg_match('~^[a-zA-Z0-9/_-]+/$~D',$c['prefix']) || ($c['owner']!=='' && !preg_match('/^[0-9]{12}$/D',$c['owner']))) throw new \RuntimeException('Invalid S3 configuration. Prefix must end with /.');
-                $c['protect']=isset($_POST['protect']);$c['retention_days']=max(0,min(3650,(int)($_POST['retention_days']??0)));
+                foreach([
+                    'bucket'=>['/^[a-z0-9.-]{3,63}$/D',SetupReadiness::text('Enter the S3 bucket name without s3://.','bucketにS3バケット名を入力してください。s3://は付けません。')],
+                    'region'=>['/^[a-z0-9-]+$/D',SetupReadiness::text('Enter the bucket region, for example ap-northeast-1.','regionにバケットのリージョンを入力してください（例：ap-northeast-1）。')],
+                    'prefix'=>['~^[a-zA-Z0-9/_-]+/$~D',SetupReadiness::text('Enter a dedicated prefix ending in /, for example sites/my-site/.','prefixにサイト専用の保存先を入力してください（例：sites/my-site/）。末尾の/も必要です。')],
+                    'owner'=>['/^(|[0-9]{12})$/D',SetupReadiness::text('Enter the owner account ID as 12 digits, or leave it blank.','ownerには所有者の12桁のアカウントIDを入力するか、空欄にしてください。')],
+                ] as $key=>[$pattern,$message])if(!preg_match($pattern,$c[$key]))throw new \RuntimeException($message);
+                $c['setup_version']=1;
+                $c['setup_role']=($_POST['setup_role']??'source')==='recovery'?'recovery':'source';
+                $c['terms_version']=SetupReadiness::TERMS;
+                $c['terms_confirmed_at']=gmdate('c');
+                $c['terms_confirmed_by']=get_current_user_id();
+                $c['protect']=isset($_POST['protect']);
+                if($c['protect'] && $c['setup_role']==='recovery')throw new \RuntimeException(SetupReadiness::text('Keep protection disabled on a recovery destination.','復旧先では保護を無効にしてください。'));
+                if($c['protect'] && (empty($old['protect']) || SetupReadiness::identity($c)!==SetupReadiness::identity($old))){
+                    SetupReadiness::requireStart($c);
+                    $this->storeForSetup($c)->checkSetupStorage();
+                }
+                $c['retention_days']=max(0,min(3650,(int)($_POST['retention_days']??0)));
                 $gfs=wp_unslash($_POST['gfs']??[]);
                 if(!is_array($gfs))throw new \RuntimeException('Invalid GFS settings.');
                 $c['gfs']=GfsPolicy::normalize($gfs);$c['checkpoint_interval_days']=0;
@@ -484,6 +507,17 @@ final class Plugin
                 delete_option('owr_site_cleanup_preview');
                 wp_clear_scheduled_hook('owr_m1_checkpoint');
                 $this->scheduleCheckpoints();
+            } elseif ($action==='setup_check') {
+                $c=$this->config();
+                if(!SetupReadiness::accepted($c))throw new \RuntimeException(SetupReadiness::text('Save storage settings and confirm the terms first.','先に保存先の設定と利用条件の確認を保存してください。'));
+                $r=['identity'=>SetupReadiness::identity($c),'at'=>gmdate('c'),'ok'=>false];
+                try {
+                    $this->store()->checkSetupStorage();
+                    $r['ok']=true;$r['message']=SetupReadiness::text('Connection and versioning confirmed.','接続とバージョン管理を確認しました。');
+                } catch (\Throwable $e) {
+                    $r['message']=$e->getMessage();
+                }
+                update_option('owr_setup_storage',$r,false);
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') $this->restore(array_map('strval',(array)($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
@@ -493,9 +527,18 @@ final class Plugin
                 $this->runSiteCleanup(false,sanitize_text_field(wp_unslash($_POST['cleanup_hash']??'')));
             }
             elseif ($action==='site_retention_renew') $this->renewSiteRetention();
-            elseif ($action==='initial_snapshot') $this->initialSnapshot(isset($_POST['trust_initial']));
+            elseif ($action==='initial_snapshot') {
+                if(($this->config()['setup_role']??'source')==='recovery')throw new \RuntimeException(SetupReadiness::text('This is a recovery destination. Select an existing Checkpoint instead.','このサイトは復旧先です。既存のCheckpointを選択してください。'));
+                $this->initialSnapshot(isset($_POST['trust_initial']));
+            }
             elseif ($action==='whole_initial') {
+                $c=$this->config();
+                if(($c['setup_role']??'source')==='recovery')throw new \RuntimeException(SetupReadiness::text('This is a recovery destination. Select an existing Checkpoint instead.','このサイトは復旧先です。既存のCheckpointを選択してください。'));
+                SetupReadiness::requireLocal();
+                // Repeat the read-only check; cached UI results never authorize a write.
+                $this->store()->checkSetupStorage();
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),[]);
+                update_option('owr_setup_baseline',['identity'=>SetupReadiness::identity($c),'manifest'=>$result['manifest'],'at'=>gmdate('c')],false);
                 update_option('owr_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {
@@ -602,9 +645,28 @@ final class Plugin
         if($count && $notice==='' && $queueError==='')echo '<p>No failure reason was recorded; pending state still requires inspection and resume.</p>';
         echo '<p>Recovery adopts only confirmed S3 history. If the source is lost before confirmation, omit that operation. An old error alone does not establish a current pending operation. Checkpoint, recovery and other administration errors are shown separately below.</p>';
     }
+    private function setupSettings(): void {
+        echo '<h2 id="owr-storage">Storage and optional scheduling settings / 保存先の設定</h2>';
+        $c=$this->config();$this->form('configure');
+        echo '<p><label>'.esc_html(SetupReadiness::text('Use this site to: ','このサイトの用途：')).'<select name="setup_role"><option value="source" '.selected($c['setup_role']??'source','source',false).'>'.esc_html(SetupReadiness::text('Protect this site','このサイトを保護')).'</option><option value="recovery" '.selected($c['setup_role']??'source','recovery',false).'>'.esc_html(SetupReadiness::text('Recover another site','別サイトを復旧')).'</option></select></label></p>';
+        foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
+        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported operations (one writer per prefix)</label></p>';
+        $terms='https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/terms-of-use'.(str_starts_with(determine_locale(),'ja')?'-ja':'').'.md';
+        echo '<p><a href="'.esc_url($terms).'">'.esc_html(SetupReadiness::text('Terms of use and saved content','利用条件と保存対象')).'</a></p><p>'.esc_html(SetupReadiness::text('Supported site content is sent to your specified Amazon S3 storage. Your AWS contract and storage charges apply. Recovery reads from that storage.','保存対象のサイト情報を、指定したAmazon S3へ送信します。AWSの契約・利用料金は利用者の負担です。復旧時は同じ保存先から読み取ります。')).'</p>';
+        echo '<p><label><input type="checkbox" name="confirm_terms" required>'.esc_html(SetupReadiness::text('I have reviewed the terms and saved content, and approve access to the specified Amazon S3 storage for saving or recovery.','利用条件と保存対象を確認し、保存・復旧のために指定したAmazon S3へ接続することを了承しました。')).'</label></p>';
+        self::renderGfsSettings($c);
+        echo '<p><label>Optional S3 deletion protection in days (0 = do not request a lock) <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.</p>';
+        echo '<p><label>Detailed history recovery window in days (0 = latest Checkpoint and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
+        $this->form('setup_check');submit_button(SetupReadiness::text('Check storage','保存先を確認'));echo '</form>';
+        $check=(array)get_option('owr_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html($check['message']??'').'</p>';
+    }
     public function page(): void {
         if (!current_user_can('manage_options')) return;
         echo '<div class="wrap"><h1>Resilience — Site recovery</h1><p>Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.</p>';
+        SetupReadiness::render($this->config());
+        $this->setupSettings();
+        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';
+        if(!SetupReadiness::accepted($this->config())){echo '</div>';return;}
         echo '<h2>Recovery boundary</h2><p>Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.</p><p>Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.</p>';
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
@@ -615,7 +677,7 @@ final class Plugin
         echo '<h2>Site-wide recovery — primary workflow</h2><p>Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.</p><p>Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.</p>';
         echo '<p>TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.</p>';
         echo '<p>WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.</p>';
-        $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>';
+        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>'; }
         try{
             $siteSnapshots=$this->store()->siteSnapshots();
             $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]='Checkpoint boundary';
@@ -634,13 +696,6 @@ final class Plugin
             }
         }catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
         self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
-        echo '<h2>Storage and optional scheduling settings</h2>';
-        $c=$this->config();$this->form('configure');
-        foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
-        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported operations (one writer per prefix)</label></p>';
-        self::renderGfsSettings($c);
-        echo '<p><label>Optional S3 deletion protection in days (0 = do not request a lock) <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.</p>';
-        echo '<p><label>Detailed history recovery window in days (0 = latest Checkpoint and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
         $next=wp_next_scheduled('owr_m1_checkpoint');
         echo '<p>Next complete-site Checkpoint (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
         self::renderSiteCleanup((array)get_option('owr_site_cleanup_preview',[]));
@@ -662,7 +717,7 @@ final class Plugin
         }
         echo '<pre>'.esc_html(Store::json((array)get_option('owr_m1_cleanup_status',[]))).'</pre>';
         echo '<details><summary>Supplementary asset snapshots and recovery — not site-wide recovery</summary><p>This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.</p>';
-        $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.</label></p>';submit_button('Create initial snapshot');echo '</form>';
+        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.</label></p>';submit_button('Create initial snapshot');echo '</form>'; }
         $next=wp_next_scheduled('owr_m1_checkpoint');
         echo '<p>Next scheduled check (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
         $this->form('checkpoint');submit_button('Create Checkpoint now');echo '</form>';

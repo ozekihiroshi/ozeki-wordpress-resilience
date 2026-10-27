@@ -1,5 +1,7 @@
 # Ozeki Resilience
 
+**Development version:** Current source is `0.3.2-dev`, with a [setup readiness screen and terms confirmation](packages/markdown-m1/docs/setup-readiness.md). The submitted `0.3.1 rc.2` ZIP is unchanged.
+
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)

@@ -1,0 +1,16 @@
+{
+  "state": "PASS",
+  "scope": "Generated isolated WordPress and MariaDB; synthetic S3 SDK transport, no AWS or existing sites",
+  "checks": [
+    "Fresh setup renders without external calls",
+    "Server rejects missing consent and protection before baseline",
+    "Read-only storage check, suspended versioning and sanitized failure guidance",
+    "Non-InnoDB database blocks capture with named table and next action",
+    "Initial capture, fixed-version read-back, protection and confirmed post history",
+    "Changing destination cannot reuse baseline or enable protection",
+    "Recovery destination hides and rejects initial capture",
+    "Japanese and English preparation and terms text",
+    "Legacy configured installation retains authorized service access",
+    "Chromium desktop and mobile layout, consent control and role selector"
+  ]
+}

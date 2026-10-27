@@ -6,6 +6,8 @@ function checkGfs($v,$m){if(!$v)throw new RuntimeException($m);}
 function get_option($k,$default=false){return $GLOBALS['options'][$k]??$default;}
 function update_option($k,$v,$autoload=false){$GLOBALS['options'][$k]=$v;return true;}
 function delete_option($k){unset($GLOBALS['options'][$k]);}
+function get_current_user_id(){return 1;}
+function determine_locale(){return 'en_US';}
 function current_user_can($c){return true;}
 function check_admin_referer($n){}
 function sanitize_text_field($s){return trim((string)$s);}
@@ -20,7 +22,7 @@ function admin_url($p){return $p;}
 class GfsRedirect extends RuntimeException{}
 function wp_safe_redirect($url){throw new GfsRedirect($url);}
 $options=['owr_m1_config'=>['sentinel'=>'old']];
-$_POST=['operation'=>'configure','bucket'=>'fixture-bucket','region'=>'ap-northeast-1','prefix'=>'fixture/','owner'=>'','retention_days'=>'0','cleanup_keep_days'=>'14','cleanup_enabled'=>'1','gfs'=>[
+$_POST=['operation'=>'configure','confirm_terms'=>'1','bucket'=>'fixture-bucket','region'=>'ap-northeast-1','prefix'=>'fixture/','owner'=>'','retention_days'=>'0','cleanup_keep_days'=>'14','cleanup_enabled'=>'1','gfs'=>[
  'weekly'=>['enabled'=>'on','weekday'=>'0','time'=>'02:00','keep'=>'2'],
  'monthly'=>['enabled'=>'on','day'=>'1','time'=>'02:00','keep'=>'3'],
  'yearly'=>['enabled'=>'on','month'=>'1','day'=>'1','time'=>'02:00','keep'=>'3'],
