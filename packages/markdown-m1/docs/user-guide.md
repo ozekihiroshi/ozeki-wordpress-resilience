@@ -39,17 +39,17 @@ Next, verify actual storage access by creating a Baseline.
 
 1. Confirm that the source is trustworthy and pause editing. If Markdown documents are used, activate the compatible Markdown Documents plugin first.
 2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Click **Create complete initial snapshot**.
-3. Confirm success and that the new Baseline appears in the recovery-point list. For an error, record its message and use [troubleshooting](#troubleshooting) below.
+3. In the **Checkpoint** selector, find `administrator_initial` with the time of this capture. This is your first Baseline (`history 0` for a new prefix). For an error, record its message and use [troubleshooting](#troubleshooting) below.
 4. Scroll down, enable **Protect supported operations (one writer per prefix)** and click **Save settings**. Resume editing.
 
 A Baseline initially captures current supported state. Later Checkpoints use saved resources and confirmed history. For untracked changes such as themes, consult the [changes table](start-here.md).
 
 ## 4. Confirm protection
 
-Save one identifiable test post through the normal WordPress editor. Open **Tools → Resilience → Save protection status**.
+Create a test post with an identifiable title and content suitable for public viewing in the normal WordPress editor, then **Publish** it. Saving a new draft alone does not start tracking. Open **Tools → Resilience → Save protection status**.
 
 - **Protection setting: Enabled** is shown.
-- **Last confirmed sequence**, title and time identify the confirmed history for the post you saved.
+- **Last confirmed sequence** and the confirmation time have updated, and the **Confirmed formal history / Individual recovery** table farther down lists your post title and its related information. The latest **Title** may be something like `Article details #7` rather than the post title. Only inspect the table; do not click a recovery button.
 - **Locally pending operations: 0** is shown, with no outstanding error from that save.
 
 These checks complete initial setup and a representative post-save check, not validation of every integration or all site content. Body and related operations can confirm separately, so also check the pending count. Keep existing backups until you have confirmed recovery for your own site's scope.
@@ -58,7 +58,7 @@ These checks complete initial setup and a representative post-save check, not va
 
 | Situation | Next step |
 |---|---|
-| ZIP upload fails | Ask the server administrator to check PHP upload/POST and web-server request limits |
+| ZIP upload fails | Ask the server administrator to check PHP upload/POST limits, web-server request limits and write permissions for the uploads directory |
 | Authentication error / AccessDenied after setup | Check the [AWS worksheet](aws-setup.md), web PHP credentials and prefix permissions with the administrator |
 | Pending operations remain | Resolve the cause, then use **Resume history**; see [save resumption](save-resume.md) |
 | Unclear error | Record the operation and error for support; omit credentials and private content |

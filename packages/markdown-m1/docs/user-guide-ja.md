@@ -39,17 +39,17 @@
 
 1. 保存元の内容が信頼できることを確認し、編集を一時停止します。Markdown文書を使う場合は、対応するMarkdown Documentsを有効にしておきます。
 2. 同じ画面の **Site-wide recovery — primary workflow** で **I trust the whole current site and have paused editing.** にチェックし、**Create complete initial snapshot** を押します。
-3. 成功表示と、復旧点一覧に作成したBaselineが現れることを確認します。エラーの場合はその内容を控え、[困ったとき](#困ったとき)を参照してください。
+3. **Checkpoint** の選択欄に `administrator_initial` と今回の作成日時が現れることを確認します。これが最初のBaselineです（新規prefixでは `history 0`）。エラーの場合はその内容を控え、[困ったとき](#困ったとき)を参照してください。
 4. ページ下部の **Protect supported operations (one writer per prefix)** をオンにし、**Save settings** を押します。編集を再開できます。
 
 Baselineは現在の対応範囲を初めて保存する操作です。その後のCheckpointは保存済みの資源と確定履歴から作ります。テーマなど追跡対象外の変更後は、[変更別の対応表](start-here-ja.md)を確認してください。
 
 ## 4. 保護開始を確認する
 
-通常の投稿編集画面で、確認用の投稿を一件保存します。その後 **ツール → Resilience → Save protection status** を開きます。
+通常の投稿編集画面で、識別しやすいタイトルと公開してよい内容の確認用投稿を一件作り、**公開（Publish）** します。新規投稿の下書き保存だけでは追跡は始まりません。その後 **ツール → Resilience → Save protection status** を開きます。
 
 - **Protection setting: Enabled** になっている。
-- **Last confirmed sequence** とタイトル・時刻で、今回保存した投稿の履歴が確定したことを確認できる。
+- **Last confirmed sequence** と確定時刻が更新され、下部の **Confirmed formal history / Individual recovery** 一覧に今回の投稿名と関連情報の履歴がある。最新の **Title** は投稿名ではなく `Article details #7` のようになる場合があります。一覧の確認だけでよく、復旧ボタンは押しません。
 - **Locally pending operations: 0** で、今回の保存エラーが残っていない。
 
 この3点を確認できれば、初期設定と代表的な投稿保存の確認は完了です。サイト全体やすべての連携機能を検証したという意味ではありません。本文と関連情報の確定は別になる場合があるため、未確定件数も見ます。既存のバックアップは、自分のサイトの復旧確認ができるまで残してください。
@@ -58,7 +58,7 @@ Baselineは現在の対応範囲を初めて保存する操作です。その後
 
 | 状況 | 次にすること |
 |---|---|
-| ZIPをアップロードできない | サーバ担当者へPHPのアップロード・POST上限とWebサーバの要求サイズ上限の確認を依頼する |
+| ZIPをアップロードできない | サーバ担当者へPHPのアップロード・POST上限、Webサーバの要求サイズ上限、アップロード先（uploads）の書込み権限の確認を依頼する |
 | 設定後も認証エラー／AccessDenied | [AWS設定](aws-setup-ja.md)の設定表・PHPの認証・対象prefixの権限を担当者と確認する |
 | 未確定操作が残る | 原因を解消して **Resume history**。[保存再開の詳細](save-resume.md)を参照 |
 | エラーの意味が分からない | 操作名とエラーを控えて問い合わせる。認証情報や非公開コンテンツは載せない |
