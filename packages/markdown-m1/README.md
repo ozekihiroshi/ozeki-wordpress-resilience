@@ -1,10 +1,22 @@
 # Ozeki Resilience
 
-Preserve supported site content in Amazon S3 and reconstruct it on a prepared WordPress when the original site is lost or cannot be trusted.
+Keep a path to restarting your site after a cyberattack: preserve supported content in Amazon S3 and reconstruct it on a prepared WordPress when the original environment is lost or cannot be trusted.
 
 English | [日本語](RAADME-jp.md)
 
 Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 2026**. Status: **Awaiting Review — not yet approved or published in the WordPress.org Plugin Directory**. It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
+
+## Keep a path to recovery after an attack
+
+Backup and restore provide an everyday way to return a site to a captured state. After an attack makes the original server or database untrustworthy, however, you must decide whether that state should be restored wholesale. Resilience provides another path: reconstruct supported content from preserved originals and confirmed history on a prepared WordPress, so the site can return to service.
+
+Replacing the convenience of a routine full restore is not its purpose. Capture a trusted initial state, record supported changes, then reconstruct on a separate WordPress when needed. Preparing that destination and checking the result are steps toward continuing service without reusing the original environment. Backups protect the wider site and resources outside this product's scope; Resilience provides a separate recovery path for supported content. Their coverage overlaps, but the incident they prepare for and the unit of recovery differ.
+
+### What the product checks
+
+- It checks that the data needed for recovery matches what was saved, then restores supported content through the change history you select. It reports an error if required data is missing or does not match.
+- It restores settings it knows how to handle and reports items it did not restore automatically. It does not transfer the original site administrator’s login details.
+- The administrator selects a trusted initial capture (Baseline) and how far to restore subsequent changes. The product checks consistency with saved content. It does not identify and remove malicious content from saved themes or articles. Decide whether changes from a suspected attack period should be included, then check the destination before making it public.
 
 ## Download and start
 
@@ -40,14 +52,14 @@ The administrator first captures a trusted current site as a **Baseline**. Suppo
 
 Body saves preserve originals before WordPress application. Comments and some adapter operations record changes after application, so visible changes can still be pending. Only confirmed history is recoverable after source loss. Resolve [pending saves](docs/save-resume.md); WordPress and S3 do not form one atomic transaction.
 
-Recovery replaces supported destination state. Use a designated recovery WordPress and inspect the result. **Saved publication status, including `publish`, is restored.** Network access and DNS are the administrator's responsibility. This is not replication, malware removal, infrastructure provisioning or an unconditional recovery guarantee.
+Recovery replaces supported destination state. Use a designated recovery WordPress and inspect the result. **Saved publication status, including `publish`, is restored.** Network access and DNS are the administrator's responsibility. Check the applied history and any withheld items before returning the site to service.
 
 Optional schedules depend on WP-Cron execution opportunities. Retention preview does not delete; optional cleanup requires explicit configuration and deletion permissions. Preserve required versions and access. See [the user guide](docs/user-guide.md) before enabling cleanup.
 
 ## Documentation and support
 
 - [Install and update](docs/install-update.md), including migration from the old prerelease folder
-- [Recovery procedure](docs/site-snapshot.md) and [recovery FAQ](docs/recovery-faq.md)
+- [Recovery procedure](docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](docs/recovery-faq.md)
 - [Application rules and withheld information](docs/application-rules.md)
 - [External-service and privacy disclosure](readme.txt)
 - [Candidate checks and build instructions](docs/wordpress-org-candidate.md)

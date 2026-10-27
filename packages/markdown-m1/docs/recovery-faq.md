@@ -2,7 +2,7 @@
 
 [日本語](recovery-faq-ja.md) · [User guide](user-guide.md) · [Recovery specification](site-snapshot.md)
 
-Ozeki WordPress Resilience reconstructs a supported state from protected originals, a Baseline/Checkpoint and confirmed history. It is not a generic importer that merges arbitrary records into another live site. These answers distinguish **design**, **existing evidence** and **conditions**; they do not promise that every recovery succeeds or that saved information is free of malware. No additional tests were performed to write this FAQ.
+Ozeki Resilience reconstructs a supported state from protected originals, a Baseline/Checkpoint and confirmed history. It is not a generic importer that merges arbitrary records into another live site. These answers distinguish **design**, **existing evidence** and **conditions**; first read [the purpose and verification boundaries](../README.md#keep-a-path-to-recovery-after-an-attack) for restarting service without reusing an attacked environment. No additional tests were performed to write this FAQ.
 
 The primary subject is **complete-site recovery onto a dedicated destination**. The legacy individual-Markdown recovery path is a different operation and does not inherit the complete-site relationship guarantees. For this 0.3.1 submission candidate, native-only sites do not require Markdown Documents; see the user guide for conditions when Markdown content exists.
 
@@ -36,7 +36,7 @@ The primary subject is **complete-site recovery onto a dedicated destination**. 
 
 **Existing evidence.** Complete-site trials exercised content, images and supported plugin behaviour. The recent conditional-Markdown trial checked the bundled plugin and software hash; its destination already had identical software, so it was not an empty-disk installation test. See [that bounded evidence](optional-markdown-verification.md).
 
-**Conditions.** Root `.htaccess`, web-server/PHP configuration, DNS, external APIs, secrets and arbitrary excluded plugins are not a promise of complete environment recovery. The administrator prepares these dependencies separately. A theme's captured code may depend on such external services. Capturing code also does not prove it is harmless: the initial Baseline requires an administrator's trust decision. Changes outside tracked operations require a new trusted Baseline. See [Baseline and Checkpoint responsibilities](site-snapshot.md).
+**Conditions.** Root `.htaccess`, web-server/PHP configuration, DNS, external APIs, secrets and arbitrary excluded plugins are not a promise of complete environment recovery. The administrator prepares these dependencies separately. A theme's captured code may depend on such external services. Captured code is restored after checking it against its saved hash. This check does not detect or remove malicious code, so the administrator establishes trust in the code included in the initial Baseline. Changes outside tracked operations require a new trusted Baseline. See [Baseline and Checkpoint responsibilities](site-snapshot.md).
 
 ## 5. What if WordPress saves but S3 history does not confirm?
 

@@ -2,7 +2,7 @@
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
-This product preserves originals and confirmed history in S3 to reconstruct supported WordPress state when needed. Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.
+This product reconstructs supported content from preserved originals and confirmed history on a separate WordPress when an attack makes the original environment untrustworthy, providing a path back to service. Prepare this alongside routine backups of the wider site. Read [the different roles and what the product checks](../README.md#keep-a-path-to-recovery-after-an-attack). Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.
 
 ## 1. Check your environment
 
@@ -77,17 +77,19 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 
 ## 6. Recover onto a separate WordPress
 
-1. Prepare a clean, dedicated destination with compatible WordPress, product ZIP, required plugins and a working administrator login. If WP-Members requires activation, activate the destination administrator separately; source administrator credentials are not restored. Do not use a live unrelated site as the destination.
-2. Apply the **recovery-read-only** policy to its AWS identity. Enter the same bucket/region/prefix/owner in Resilience. Leave protection, schedules and cleanup **off**; do not create a Baseline on the destination. Keep unresolved local pending work out of the recovery environment.
-3. Under **Site-wide recovery — primary workflow**, select the desired **Checkpoint** (Baseline is also selectable) and **Formal history end**. The end is inclusive: selecting the point's own `through` restores that point alone; a later end needs all necessary subsequent confirmed records/resources. It is not necessarily a complete editing-session boundary.
+Recovery reads saved data from S3 instead of the original site’s database or files. After an attack, select a trusted initial capture (Baseline) and decide how far to restore subsequent changes. “Confirmed” history means saving completed; it does not mean the content was checked for safety. Check the destination with public access blocked before reopening it and resuming service.
+
+1. Prepare a clean, dedicated destination with the same WordPress release line as the capture, at the same or a newer maintenance patch (for example, 7.1.2 to 7.1.3), the product ZIP, required plugins and a working administrator login. If WP-Members requires activation, activate the destination administrator separately; source administrator credentials are not restored. Do not use a live unrelated site as the destination.
+2. Apply the **recovery-read-only** policy to its AWS identity. Enter the same bucket/region/prefix/owner under **Storage and optional scheduling settings** and click **Save settings**. Leave protection, schedules and cleanup **off**; do not create a Baseline on the destination. Keep unresolved local pending work out of the recovery environment.
+3. Under **Site-wide recovery — primary workflow**, use the **Checkpoint** selector below **Create complete Checkpoint**, next to **Formal history end**, to choose the Baseline (`administrator_initial`) or a Checkpoint and **Formal history end**. The end is inclusive: selecting the point's own `through` restores that point alone; a later end needs all necessary subsequent confirmed records/resources. It is not necessarily a complete editing-session boundary. For example, if body history is 1 and related information is 2, select through 2 to adopt both.
 4. Confirm replacement and use **Restore complete site**. It replaces destination content. A local rollback copy is not a promise of automatic rollback. Keep source S3 resources intact.
-5. Check success/failure, used Checkpoint, requested/applied history boundary and counts; keep detailed JSON if investigating. A failed run is failed: stop, identify the reason, prepare the destination appropriately and decide whether to rerun. Do not assume it was unchanged.
-6. Re-login and inspect representative body, image, links and relevant member/table/form behaviour. Saved `publish` state is reproduced. DNS/network exposure is a separate administrator decision. Mail replay is not a recovery function.
+5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. A failed run is failed: stop, identify the reason, prepare the destination appropriately and decide whether to rerun. Do not assume it was unchanged.
+6. Re-login with the administrator prepared on the destination and inspect representative body, author display, images, links and relevant member/table/form behaviour. The site name may change to the source name; keep checking the destination URL. Saved `publish` state is reproduced. DNS/network exposure is a separate administrator decision. Mail replay is not a recovery function.
 
 [Detailed recovery](site-snapshot.md) · [Application rules and withheld information](application-rules.md)
 
 ## 7. Known boundaries and help
 
-This is not malware certification or an unconditional recovery guarantee. An AWS AccessDenied, unavailable credentials, missing PHP extension, unwritable temporary path or incompatible runtime is an environment condition to diagnose, not permission to weaken the product's confirmation rules. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
+See [what the product checks](../README.md#what-the-product-checks) for its recovery scope and verification boundaries. An AWS AccessDenied, unavailable credentials, missing PHP extension, unwritable temporary path or incompatible runtime is an environment condition to diagnose, not permission to weaken the product's confirmation rules. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
 [Known operational limits](remaining-confirmations.md) and [candidate checks](wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
