@@ -6,7 +6,7 @@ Prepare to preserve articles, images, comments and supported inquiry and member 
 
 ## 1. Check your environment
 
-Posts/Pages, supported images and core comments are the basic scope. Check the [coverage table](../README.md#supported-content-and-plugins) for integrations. Native-only sites do not need Markdown Documents.
+Start by identifying what you need to resume service: Posts, Pages, images and comments, plus integrations such as inquiries, membership and tables. The [README](../README.md#what-remains-and-what-you-can-recover) lists what is saved and restored, and explains exclusions. Check the [coverage table](../README.md#supported-content-and-plugins) for integrations. Native-only sites do not need Markdown Documents.
 
 | Who | What to prepare |
 |---|---|
@@ -52,7 +52,7 @@ Create a test post with an identifiable title and content suitable for public vi
 - **Last confirmed sequence** and the confirmation time have updated, and the **Confirmed formal history / Individual recovery** table farther down lists your post title and its related information. The latest **Title** may be something like `Article details #7` rather than the post title. Only inspect the table; do not click a recovery button.
 - **Locally pending operations: 0** is shown, with no outstanding error from that save.
 
-These checks complete initial setup and a representative post-save check, not validation of every integration or all site content. Body and related operations can confirm separately, so also check the pending count. Keep existing backups until you have confirmed recovery for your own site's scope.
+These checks complete initial setup and the post-save check. Next, check the inquiry, membership or other integrations your site uses. Continue backing up assets outside this product’s scope.
 
 ### Troubleshooting
 
@@ -67,7 +67,7 @@ Only confirmed history is available after source loss. If an original save faile
 
 ## 5. Checkpoint schedules and retention
 
-In Tools → Resilience, check the displayed timezone. For example, enable weekly Sunday 02:00 / keep 2 weeks, monthly day 1 at 02:00 / keep 3 months, yearly January 1 at 02:00 / keep 1 year. These are examples, not mandatory or capacity-tested defaults. Coincident dates **and times** produce one set with all labels. A still-active label preserves the whole point. Unchanged content is copied into every new independent point. Stagger sites on a shared server.
+In Tools → Resilience, check the displayed timezone. For example, enable weekly Sunday 02:00 / keep 2 weeks, monthly day 1 at 02:00 / keep 3 months, yearly January 1 at 02:00 / keep 1 year. Choose settings to suit the period you want to preserve and your storage usage. Coincident dates **and times** produce one set with all labels. A still-active label preserves the whole point. Unchanged content is copied into every new independent point. Stagger sites on a shared server.
 
 **Detailed history recovery window in days** controls how far detailed history is kept with its boundary point; `0` retains the latest Checkpoint and necessary tail, not zero resources. Historical GFS points can remain without all intervening history. **Optional S3 deletion protection** is a separate AWS lock request; `0` does not remove existing locks. [GFS details](gfs-checkpoints.md).
 
@@ -77,19 +77,19 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 
 ## 6. Recover onto a separate WordPress
 
-Recovery reads saved data from S3 instead of the original site’s database or files. After an attack, select a trusted initial capture (Baseline) and decide how far to restore subsequent changes. “Confirmed” history means saving completed; it does not mean the content was checked for safety. Check the destination with public access blocked before reopening it and resuming service.
+Restore saved articles, images, inquiries and other supported content on a separate WordPress to resume publishing and serving users. Recovery uses what remains in S3 even when the original site is offline. After an attack, choose a trusted initial capture (Baseline) and the changes to restore. Prepare administrator access and external service connections on the destination, and check it with public access restricted before reopening.
 
 1. Prepare a clean, dedicated destination with the same WordPress release line as the capture, at the same or a newer maintenance patch (for example, 7.1.2 to 7.1.3), the product ZIP, required plugins and a working administrator login. If WP-Members requires activation, activate the destination administrator separately; source administrator credentials are not restored. Do not use a live unrelated site as the destination.
 2. Apply the **recovery-read-only** policy to its AWS identity. Enter the same bucket/region/prefix/owner under **Storage and optional scheduling settings** and click **Save settings**. Leave protection, schedules and cleanup **off**; do not create a Baseline on the destination. Keep unresolved local pending work out of the recovery environment.
 3. Under **Site-wide recovery — primary workflow**, use the **Checkpoint** selector below **Create complete Checkpoint**, next to **Formal history end**, to choose the Baseline (`administrator_initial`) or a Checkpoint and **Formal history end**. The end is inclusive: selecting the point's own `through` restores that point alone; a later end needs all necessary subsequent confirmed records/resources. It is not necessarily a complete editing-session boundary. For example, if body history is 1 and related information is 2, select through 2 to adopt both.
-4. Confirm replacement and use **Restore complete site**. It replaces destination content. A local rollback copy is not a promise of automatic rollback. Keep source S3 resources intact.
-5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. A failed run is failed: stop, identify the reason, prepare the destination appropriately and decide whether to rerun. Do not assume it was unchanged.
+4. Confirm replacement and use **Restore complete site**. It replaces destination content. Keep source S3 resources intact.
+5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. If an error occurs, inspect the message and destination state, resolve the cause, then rerun.
 6. Re-login with the administrator prepared on the destination and inspect representative body, author display, images, links and relevant member/table/form behaviour. The site name may change to the source name; keep checking the destination URL. Saved `publish` state is reproduced. DNS/network exposure is a separate administrator decision. Mail replay is not a recovery function.
 
 [Detailed recovery](site-snapshot.md) · [Application rules and withheld information](application-rules.md)
 
-## 7. Known boundaries and help
+## 7. Help
 
-See [what the product checks](../README.md#what-the-product-checks) for its recovery scope and verification boundaries. An AWS AccessDenied, unavailable credentials, missing PHP extension, unwritable temporary path or incompatible runtime is an environment condition to diagnose, not permission to weaken the product's confirmation rules. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
+See the [README](../README.md#what-remains-and-what-you-can-recover) for saved and restored content, and [troubleshooting](#troubleshooting) for setup errors. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
 [Known operational limits](remaining-confirmations.md) and [candidate checks](wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.

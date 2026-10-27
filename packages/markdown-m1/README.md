@@ -8,15 +8,11 @@ Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 20
 
 ## Keep a path to recovery after an attack
 
-Protect the content and interactions you have built up through your site.
+Losing a site should not mean losing the information and relationships built through it. Ozeki Resilience preserves articles, images, comments and supported inquiry and member information, then restores them on a separate WordPress so you can resume publishing and serving users.
 
-- **Information you publish:** Posts, Pages, supported images, Markdown documents and tables.
-- **Conversations with users:** Comments, supported forms and received inquiries.
-- **Member access:** Supported member information and viewing restrictions.
+Backup and restore prepare you to return a site to a captured state. Resilience prepares you to **bring back the content needed to continue your work when restoring the attacked site as it stood is not an option**. Its priority is preserving valuable content and making it usable again, rather than carrying over the entire original environment.
 
-Inquiries, membership, tables and other integrations are limited to the plugins and features in the coverage table below. Preserving these gives you a way to resume publishing and serving users on a separate WordPress if the original site is lost or cannot be trusted.
-
-Routine backups help return a site to an earlier state. Resilience prepares for a different need: **keeping the content needed to restart when restoring the attacked site as it stood is not a suitable option**. Alongside your plan to restore the familiar site, keep a plan to continue its work in another environment. Features outside this product's scope and server configuration still need backups or other protection.
+The scope balances the value of what is preserved with the work needed to handle and restore it safely. The tables below show what is saved and restored, and what you prepare separately on the destination.
 
 ## Download and start
 
@@ -28,39 +24,53 @@ Use the installable ZIP, not GitHub's source archive. Runtime libraries are bund
 
 ## Requirements and supported content
 
-WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. These are declared floors, not acceptance of every environment. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The current controls are English.
+WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The current controls are English.
 
 **Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
 
 <a id="supported-content-and-plugins"></a>
 
-| Content | Supported scope |
+## What remains and what you can recover
+
+Restore successfully saved content through the recovery point you select. Integrations cover the plugins named in this table.
+
+| What is preserved | What you can recover |
 |---|---|
-| Posts and Pages | Body, recorded attributes, Trash/restore/deletion, featured images and category/tag assignments |
-| Local images | Supported originals, referenced files and attachment information |
-| Core comments | Creation, editing, moderation and deletion |
-| Ozeki Markdown Documents | Source and supported relationships; tested 0.1.1, installed separately when needed |
-| Contact Form 7 / Flamingo | Supported form definitions and received inquiries; tested 6.2.3 / 2.6.4 |
-| WP-Members | Core subscriber accounts, recognized fields/settings and viewing restrictions; tested 3.5.8.1 |
-| TablePress | Core tables, recognized options and references; tested 3.4.1 |
+| Posts, Pages and local images | Body, supported images, publication state, categories, tags, featured images and related information needed to use the articles |
+| Core comments | Comments and moderation state, including saved edits and deletions |
+| Markdown documents | Source and supported relationships. Ozeki Markdown Documents 0.1.1 |
+| Inquiry forms and received inquiries | Forms and the inquiries you received. Contact Form 7 6.2.3 / Flamingo 2.6.4 |
+| Member access | Core subscriber information and supported fields, settings and viewing restrictions. WP-Members 3.5.8.1 |
+| Tables | Table content, supported display settings and references. TablePress 3.4.1 |
+| Site appearance included in the initial capture | Selected themes and supported presentation settings. Capture a new initial state after later theme changes |
 
-Optional plugins are installed separately. Tested Contact Form 7 6.2.3 requires PHP 8.3+. Arbitrary extensions, all metadata, external/CDN resources and every plugin version are outside this coverage. Source text is limited to 5 MiB and supported image files to 32 MiB. See [scope and setup](docs/start-here.md).
+Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images up to 32 MiB.
 
-## Saving and recovery
+<a id="what-the-product-checks"></a>
 
-The administrator first captures a trusted current site as a **Baseline**. Supported changes preserve originals and confirmed history in S3. A **Checkpoint** builds an independent recovery set from those saved resources; it does not discover untracked changes in the live site. Theme, runtime or other untracked settings changes can require a new trusted Baseline.
+## What is excluded from recovery, and why
 
-Body saves preserve originals before WordPress application. Comments and some adapter operations record changes after application, so visible changes can still be pending. Only confirmed history is recoverable after source loss. Resolve [pending saves](docs/save-resume.md); WordPress and S3 do not form one atomic transaction.
+Preserving content is separate from carrying over the original site's administrative access and entire operating environment.
 
-Recovery replaces supported destination state. Use a designated recovery WordPress and inspect the result. **Saved publication status, including `publish`, is restored.** Network access and DNS are the administrator's responsibility. Check the applied history and any withheld items before returning the site to service.
+| Excluded from recovery | Reason and handling |
+|---|---|
+| Original administrator logins, active sessions, AWS and mail connection secrets | Use access prepared on the destination instead of carrying over the original environment's administrative access and connections. Supported core subscriber information is covered above |
+| Server/PHP configuration, DNS and external service or CDN resources | These belong to the destination or external service. Prepare their configuration and protection through those systems |
+| Plugin-specific features and data outside the coverage table, and arbitrary custom settings | Each needs dedicated support to restore its behavior safely. This product focuses on the scope listed above |
+| Saved settings whose handling is not defined | To avoid bringing back unknown behavior, these are withheld from automatic application and listed in the result. Saved information remains in S3 |
 
-Optional schedules depend on WP-Cron execution opportunities. Retention preview does not delete; optional cleanup requires explicit configuration and deletion permissions. Preserve required versions and access. See [the user guide](docs/user-guide.md) before enabling cleanup.
+Use backups or the relevant service's protection for assets outside this scope. Resilience preserves and restores the content needed to resume your site's work.
 
-### What the product checks
+## From preservation to resuming service
 
-- It checks that the data needed for recovery matches what was saved, then restores supported content through the change history you select. It reports an error if required data is missing or does not match.
-- It restores settings it knows how to handle and reports items it did not restore automatically. It does not transfer the original site administrator’s login details.
-- The administrator selects a trusted initial capture (Baseline) and how far to restore subsequent changes. The product checks consistency with saved content. It does not identify and remove malicious content from saved themes or articles. Decide whether changes from a suspected attack period should be included, then check the destination before making it public.
+1. Capture a trusted initial site state as a **Baseline** and enable protection.
+2. Save supported changes during daily use. A **Checkpoint** is a recovery point made from what has already been saved. Follow [the change procedures](docs/start-here.md) after changes such as theme updates.
+3. When needed, prepare a separate WordPress and select the initial capture or recovery point and the changes to restore.
+4. Check the articles, images, inquiries and other content you need, along with items reported as not applied, then reopen the site and resume service.
+
+Check completed saves under **Save protection status**. If operations remain pending, follow [save resumption](docs/save-resume.md). Recovery also restores saved publication state, so restrict public access while checking the destination. When responding to an attack, select a trusted initial capture and the changes you decide to adopt.
+
+The [user guide](docs/user-guide.md) covers schedules, retention and cleanup. See the [recovery FAQ](docs/recovery-faq.md) for details of recovery behavior.
 
 ## Documentation and support
 
