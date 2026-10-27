@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-Keep a path to restarting your site after a cyberattack: preserve supported content in Amazon S3 and reconstruct it on a prepared WordPress when the original environment is lost or cannot be trusted.
+Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
@@ -8,15 +8,15 @@ Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 20
 
 ## Keep a path to recovery after an attack
 
-Backup and restore provide an everyday way to return a site to a captured state. After an attack makes the original server or database untrustworthy, however, you must decide whether that state should be restored wholesale. Resilience provides another path: reconstruct supported content from preserved originals and confirmed history on a prepared WordPress, so the site can return to service.
+Protect the content and interactions you have built up through your site.
 
-Replacing the convenience of a routine full restore is not its purpose. Capture a trusted initial state, record supported changes, then reconstruct on a separate WordPress when needed. Preparing that destination and checking the result are steps toward continuing service without reusing the original environment. Backups protect the wider site and resources outside this product's scope; Resilience provides a separate recovery path for supported content. Their coverage overlaps, but the incident they prepare for and the unit of recovery differ.
+- **Information you publish:** Posts, Pages, supported images, Markdown documents and tables.
+- **Conversations with users:** Comments, supported forms and received inquiries.
+- **Member access:** Supported member information and viewing restrictions.
 
-### What the product checks
+Inquiries, membership, tables and other integrations are limited to the plugins and features in the coverage table below. Preserving these gives you a way to resume publishing and serving users on a separate WordPress if the original site is lost or cannot be trusted.
 
-- It checks that the data needed for recovery matches what was saved, then restores supported content through the change history you select. It reports an error if required data is missing or does not match.
-- It restores settings it knows how to handle and reports items it did not restore automatically. It does not transfer the original site administrator’s login details.
-- The administrator selects a trusted initial capture (Baseline) and how far to restore subsequent changes. The product checks consistency with saved content. It does not identify and remove malicious content from saved themes or articles. Decide whether changes from a suspected attack period should be included, then check the destination before making it public.
+Routine backups help return a site to an earlier state. Resilience prepares for a different need: **keeping the content needed to restart when restoring the attacked site as it stood is not a suitable option**. Alongside your plan to restore the familiar site, keep a plan to continue its work in another environment. Features outside this product's scope and server configuration still need backups or other protection.
 
 ## Download and start
 
@@ -55,6 +55,12 @@ Body saves preserve originals before WordPress application. Comments and some ad
 Recovery replaces supported destination state. Use a designated recovery WordPress and inspect the result. **Saved publication status, including `publish`, is restored.** Network access and DNS are the administrator's responsibility. Check the applied history and any withheld items before returning the site to service.
 
 Optional schedules depend on WP-Cron execution opportunities. Retention preview does not delete; optional cleanup requires explicit configuration and deletion permissions. Preserve required versions and access. See [the user guide](packages/markdown-m1/docs/user-guide.md) before enabling cleanup.
+
+### What the product checks
+
+- It checks that the data needed for recovery matches what was saved, then restores supported content through the change history you select. It reports an error if required data is missing or does not match.
+- It restores settings it knows how to handle and reports items it did not restore automatically. It does not transfer the original site administrator’s login details.
+- The administrator selects a trusted initial capture (Baseline) and how far to restore subsequent changes. The product checks consistency with saved content. It does not identify and remove malicious content from saved themes or articles. Decide whether changes from a suspected attack period should be included, then check the destination before making it public.
 
 ## Documentation and support
 

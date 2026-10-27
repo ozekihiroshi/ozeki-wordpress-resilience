@@ -2,7 +2,7 @@
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
-This product reconstructs supported content from preserved originals and confirmed history on a separate WordPress when an attack makes the original environment untrustworthy, providing a path back to service. Prepare this alongside routine backups of the wider site. Read [the different roles and what the product checks](../README.md#keep-a-path-to-recovery-after-an-attack). Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.
+Prepare to preserve articles, images, comments and supported inquiry and member information, so you can resume publishing and serving users if an attack makes the original site unusable. Read [what is protected and how its role differs from backups](../README.md#keep-a-path-to-recovery-after-an-attack). Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.
 
 ## 1. Check your environment
 
