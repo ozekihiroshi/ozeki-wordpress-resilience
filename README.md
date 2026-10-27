@@ -74,6 +74,7 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 
 ## Documentation and support
 
+- [Terms of use](packages/markdown-m1/docs/terms-of-use.md): license, operational roles, data, costs, warranty and liability
 - [Install and update](packages/markdown-m1/docs/install-update.md), including migration from the old prerelease folder
 - [Recovery procedure](packages/markdown-m1/docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](packages/markdown-m1/docs/recovery-faq.md)
 - [Application rules and withheld information](packages/markdown-m1/docs/application-rules.md)
@@ -83,3 +84,5 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 [Report an issue](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues) with the exact ZIP/hash, operation, error and runtime versions. Remove credentials and private content. Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
+
+Setup assistance assessment: [current pre-setup checks](packages/markdown-m1/docs/setup-preflight-review.md) (includes proposals not yet implemented).

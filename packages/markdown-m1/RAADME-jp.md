@@ -74,6 +74,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 
 ## 文書と問い合わせ
 
+- [利用条件](docs/terms-of-use-ja.md)：ライセンス、運用上の役割、データ・費用、保証と責任
 - [導入・更新](docs/install-update.md)：旧試験版フォルダーからの切替も記載
 - [復旧手順](docs/user-guide-ja.md#6-別のwordpressへ復旧する)・[よくある疑問](docs/recovery-faq-ja.md)
 - [反映規則と反映しない情報](docs/application-rules.md)
@@ -83,3 +84,5 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 [Issue](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)にはZIP名・ハッシュ・操作・エラー・環境の版を記載し、認証情報や私有データを除いてください。既存の検証記録は、それぞれの版と環境についての証拠であり、追加の導入条件ではありません。
 
 [ライセンス](LICENSE)。Ozeki Database Backup for S3とは独立した製品です。
+
+セットアップ支援の検討資料：[条件判定の現状整理](docs/setup-preflight-review-ja.md)（未実装の追加案を含む）。

@@ -74,6 +74,7 @@ The [user guide](docs/user-guide.md) covers schedules, retention and cleanup. Se
 
 ## Documentation and support
 
+- [Terms of use](docs/terms-of-use.md): license, operational roles, data, costs, warranty and liability
 - [Install and update](docs/install-update.md), including migration from the old prerelease folder
 - [Recovery procedure](docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](docs/recovery-faq.md)
 - [Application rules and withheld information](docs/application-rules.md)
@@ -83,3 +84,5 @@ The [user guide](docs/user-guide.md) covers schedules, retention and cleanup. Se
 [Report an issue](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues) with the exact ZIP/hash, operation, error and runtime versions. Remove credentials and private content. Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
+
+Setup assistance assessment: [current pre-setup checks](docs/setup-preflight-review.md) (includes proposals not yet implemented).
