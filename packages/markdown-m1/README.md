@@ -9,7 +9,7 @@ Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 20
 ## Download and start
 
 1. Download **[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.1-rc.2/ozeki-resilience-0.3.1.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2).
-2. Read the [installation-to-recovery guide](docs/user-guide.md) and prepare [AWS access](docs/aws-setup.md).
+2. Read the [first-time setup guide](docs/user-guide.md) and prepare [AWS access](docs/aws-setup.md).
 3. Install the ZIP, configure **Tools → Resilience**, create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
 Use the installable ZIP, not GitHub's source archive. Runtime libraries are bundled. **No Python worker, SSH helper, external runtime kit, Docker or continuously running recovery server is required.** Standard AWS SDK credentials must be available to PHP; the guide uses an EC2 instance role. AWS charges are separate.

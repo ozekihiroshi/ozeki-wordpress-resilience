@@ -1,18 +1,10 @@
-# Start here: package, protection scope and recovery
+# Coverage and operations after changes
 
-English | [日本語](start-here-ja.md)
+For first-time setup, follow the [user guide](user-guide.md). This reference explains supported scope and what to do after theme or configuration changes.
 
-Status: 0.3.1 WordPress.org submission candidate; not yet submitted or approved. Start with the [user guide](user-guide.md) and [AWS setup](aws-setup.md).
+0.3.1 rc.2 was submitted on October 26, 2026 and is awaiting review; it is not yet approved on WordPress.org.
 
-## 1. Identify the package
-
-Use [ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2) with its SHA256SUMS and manifest. Version 0.3.1 alone does not identify the build.
-
-[Verification scope and limits](site-checkpoint-verification.md) distinguishes actual S3 success, injected failures and ZIP installation/update. Existing resources and published artifacts are unchanged. Do not install GitHub source archives or the old research distribution.
-
-[GFS scheduling, retention and ZIP verification](gfs-checkpoints.md).
-
-## 2. What is protected
+## 1. What is protected
 
 The product reconstructs the **supported site state** from a trusted initial snapshot or complete Checkpoint plus confirmed S3 history. “Complete site” does not mean every WordPress extension or all subsequent settings changes.
 
@@ -22,7 +14,7 @@ The administrator judges the initial site trustworthy. Later complete Checkpoint
 
 Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](site-snapshot.md#baseline-and-checkpoint-operations). The legacy Markdown asset-level path is separate.
 
-## 3. Changes requiring administrator attention
+## 2. Changes requiring administrator attention
 
 | Change | What to do |
 |---|---|
@@ -33,7 +25,7 @@ Baseline is the first independent complete recovery point. A normal Checkpoint u
 
 Do not replace trusted pre-incident recovery points with a new capture of a suspected compromised source. A new baseline requires the administrator's trust decision. Keep earlier recovery resources according to the retention plan; this guide does not authorize deletion. The current UI does not automatically detect every untracked change or prompt for a new baseline.
 
-## 4. Minimum setup: source and destination
+## 3. Minimum setup: source and destination
 
 | Requirement | Saving WordPress | Recovery WordPress |
 |---|---|---|
@@ -47,18 +39,3 @@ Do not replace trusted pre-incident recovery points with a new capture of a susp
 The product declares WP6.4+/PHP8.1+, but this is not acceptance of every combination. Tested CF7 6.2.3 needs PHP8.3+. Use the [README's tested dependencies](../README.md). Recovery enforces the recorded WordPress release line and same/newer maintenance patch; record dependency versions before source loss. IAM/bucket/KMS conditions may impose additional requirements; no universal IAM policy is implied. Object Lock retention needs a correctly configured bucket and permissions. Ordinary saving/recovery does not require retention bypass or deletion rights. Version-list rights for retention preview are separate from recovery access.
 
 No permanent second EC2, Python worker, SSH credential helper, shared bridge or Docker dependency. Docker is an optional way to prepare the destination. Administrator credentials and AWS/mail transport settings are configured independently, not recovered from source credentials.
-
-## 5. Operational route
-
-1. Follow [installation/update](install-update.md); use the exact package and hash above.
-2. In Tools → Resilience configure source bucket, region, prefix and applicable retention. Resolve pending history, pause editing, acknowledge trust and create a complete initial snapshot. Enable protection for normal supported operations.
-3. Monitor confirmed versus pending history. Create complete Checkpoints manually as needed. For configured schedules and policy-based cleanup, follow the [current guide](user-guide.md#5-checkpoint-schedules-and-retention); scoped real-S3 verification is complete, with documented limits.
-4. If recovery is needed, prepare the dedicated destination, administrator login (including WP-Members activation where applicable), dependencies and read-only S3 access. Leave destination protection off.
-5. Select the complete Checkpoint and inclusive confirmed-history end in Tools → Resilience. Confirm destination replacement. One formal record need not represent an entire user edit.
-6. Inspect the result and restored behavior. On failure stop, investigate the reported cause and decide separately whether to retry. There is no automatic continuation. Internet exposure is a separate administrator decision.
-
-[Detailed site recovery](site-snapshot.md) · [Pending-save handling](save-resume.md) · [Current candidate checks](wordpress-org-candidate.md)
-
-Existing browser recovery, earlier browser ZIP upload and current ZIP extraction-update are separate evidence. The new documentation itself has link/content review only; no repeat recovery or new version-migration acceptance is implied. Historical research documents are reference material, not installation prerequisites: [archive](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/v0.3.1-pre.1/docs/archive/readme-before-product-consolidation-20261024/root-en.md).
-
-[Historical pre.2 evidence](prerelease-2.md).

@@ -1,54 +1,69 @@
-# 利用ガイド — 導入から復旧まで
+# 初めての導入 — 準備から保護開始まで
 
-[English](user-guide.md) · [AWS設定と完全なポリシーJSON](aws-setup-ja.md)
+[English](user-guide.md) · [更新する場合](install-update.md) · [復旧手順](#6-別のwordpressへ復旧する)
 
-[0.3.1申請候補](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)の利用ガイドです。日常操作はWordPress管理者が行い、最初のAWS・サーバ設定には担当者の協力が必要になることがあります。プラグインにAWS秘密鍵を入力しません。このガイドは検証済みのEC2ロール構成を主経路とします。共有レンタルサーバ等はSDK標準認証を実行環境に用意できるか、別途確認が必要です。
+原本と確定した履歴をS3へ保存し、必要なときにWordPressを再構成する製品です。まず **準備 → 保存先設定 → Baseline作成 → 保護開始の確認** の順に進めます。定期取得・保持・復旧は、初回確認が終わってから設定できます。
 
-**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
+## 1. 自分の環境で使えるか確認する
 
-[復旧方式に関するよくある疑問](recovery-faq-ja.md)で、5つの懸念に対する設計上の対策・確認済みの動作・利用条件を説明しています。
+投稿・固定ページ、対応画像・標準コメントが基本の対象です。連携プラグインを使う場合は[対応表](../RAADME-jp.md#supported-content-and-plugins)を確認してください。Markdownを使わないサイトにMarkdown Documentsの追加導入は不要です。
 
-## 1. 何をするのか
+| 担当 | 初回に用意するもの |
+|---|---|
+| WordPress管理者 | 管理者ログイン、対応するコンテンツ・プラグインの確認、初期保存時に編集を止められる時間 |
+| AWS担当者 | バージョニング有効のS3バケット、サイト専用prefix、保存用の権限。bucket・region・prefix・所有者の12桁アカウントIDを管理者へ渡す |
+| サーバ担当者 | WordPress 6.4以上・PHP 8.1以上、InnoDB・ZipArchive・書込み可能な領域、WebのPHPから使えるAWS SDK標準認証、約7.5MBのZIPをアップロードできる設定 |
 
-最初に信頼できる現在のサイトを **Baseline（初期復旧点）** として保存します。その後、対応する通常編集から独立した原本と正式履歴をS3へ保存します。**Checkpoint** はその保存資産から、対応範囲を再構築する一式を作ります。必要になったら別のWordPressを準備し、選んだ復旧点と正式履歴から復旧します。保存するたびに復旧先が更新される仕組みではありません。
-
-まず管理できる小さなサイトで使い始め、[対応表](../RAADME-jp.md#supported-content-and-plugins)を確認してください。Posts・Pages、ローカル画像、標準コメント、Markdown Documents、CF7・Flamingo、WP-Members基本会員、TablePress基本機能にはそれぞれ制限があります。任意の拡張、外部・CDN資源、追跡対象外の設定変更は自動保護されません。自分のサイトの対応範囲を復旧確認するまでは、既存のバックアップ運用も残してください。
-
-元サイトのWordPress・PHP・プラグインの版とAWS設定表を控えます。宣言上の最低版はWordPress 6.4／PHP 8.1ですが、全組合せの保証ではありません。検証したCF7 6.2.3にはPHP 8.3以上が必要です。InnoDB、ZipArchive、書込み可能なパスが必要で、復旧には非公開の一時領域と互換性のあるWordPressリリース系列・同等以上の保守版を使います。[導入詳細](install-update.md)も参照してください。
+[具体的なAWS設定](aws-setup-ja.md)はEC2ロール構成を例にしています。EC2以外では、WebのPHPに標準認証を用意できるかサーバ担当者へ確認してください。プラグインにアクセスキーを入力する欄はありません。連携プラグインの要件も適用されます（確認済みCF7 6.2.3はPHP 8.3以上）。
 
 ## 2. AWSを準備し、プラグインを導入する
 
-1. [AWS設定](aws-setup-ja.md)を完了し、専用prefixとsource-no-deleteポリシーで始めます。自動削除はオフにします。
-2. [申請候補リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)のインストール用ZIPを取得し、`SHA256SUMS` と照合します。Source code (zip)は導入用ではありません。
-3. アップロード前に、PHPの `upload_max_filesize`・`post_max_size` とWebサーバの要求サイズ上限が、マニフェストに記載した実サイズのZIPと送信時の付加情報を収容できることを確認します。不足時はサーバ担当者が対象環境の上限を調整し、ZIPは変更しません。[アップロード条件](install-update.md)も参照してください。WordPressの **プラグイン→新規プラグインを追加→プラグインのアップロード** でZIPを選び、インストール・有効化します。更新時は[既存の注意点](install-update.md)に従い、更新のためにアンインストールしないでください。設定を控え、可能なら未確定操作を先に解消します。
-4. **ツール→Resilience** を開きます。現行画面の操作名は英語なので、以下にそのまま記載します。
-5. **Storage and optional scheduling settings** で `bucket`・`region`・末尾 `/` の `prefix`・12桁AWSアカウントIDの `owner` を入力します。最初は **Protect supported operations**、GFSの **Enabled**、自動削除をオフにします。製品から削除ロックを要求しない構成を選んだ場合、**Optional S3 deletion protection in days** は `0` にして **Save settings** を押します。
+1. AWS担当者が[AWS設定](aws-setup-ja.md)に従って準備します。保存側は `source-no-delete` を選び、自動削除を使わずに始めます。
+2. [rc.2リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)から **ozeki-resilience-0.3.1.zip** を取得します。`Source code (zip)` は導入用ではありません。照合用の `SHA256SUMS` も同じ場所にあります。
+3. WordPressの **プラグイン → 新規プラグインを追加 → プラグインのアップロード** でZIPを選び、インストール・有効化します。旧版が入っている場合は[更新手順](install-update.md)へ進みます。
+4. **ツール → Resilience** を開き、ページ下部の **Storage and optional scheduling settings** まで移動します。上部の状態表示・復旧操作は、保存先の設定後に使います。初回の未設定状態でS3履歴の読取りエラーが出た場合も、まず以下を設定してください。
+5. 次の4項目を入力します。
 
-設定保存だけでは接続・保護成功の証明になりません。次のBaseline成功と、その後の正式履歴で確認します。エラー解消のために他サイトのprefixへ切り替えないでください。
+| 画面の項目 | 入力する内容 |
+|---|---|
+| bucket | S3バケット名。`s3://` は付けない |
+| region | バケットのリージョン。例：`ap-northeast-1` |
+| prefix | このサイト専用の保存先。例：`sites/my-site/`（末尾 `/` を含む） |
+| owner | バケット所有者の12桁AWSアカウントID |
+
+6. **Protect supported operations**、GFSの **Enabled**、自動削除はオフのままにします。製品から削除ロックを要求しない構成では **Optional S3 deletion protection in days** を `0` にして、**Save settings** を押します。
+
+設定の保存後、次のBaseline作成で実際の保存を確認します。
 
 ## 3. 最初のBaselineを作る
 
-1. 元サイトが信頼できることを判断し、編集を一時停止して未確定履歴を解消します。この候補ではMarkdown未使用なら追加導入不要です。有効なら収録し、文書や `_ozmd_source` 原文が残っているのに無効なら有効化してから取得します。回避のために原文を削除しないでください。確認版は0.1.1。他の対応プラグインはコンテンツに応じて有効化します。
-2. **Site-wide recovery — primary workflow** で **I trust the whole current site and have paused editing.** にチェックし、**Create complete initial snapshot** を押します。対応する現在のDB情報・ファイルを読み取る操作です。侵害の疑いがあるサイトを、エラーを消す目的で新基点にしないでください。
-3. 結果を待ち、成功表示と確定した復旧点が一覧に現れることを確認します。送信できたことだけを成功としません。全資源の保存・固定版照合後にマニフェストが確定します。失敗や結果不明なら理由を記録し、停止して調べます。
-4. **Protect supported operations (one writer per prefix)** を有効にして設定保存後、通常編集を再開します。
+1. 保存元の内容が信頼できることを確認し、編集を一時停止します。Markdown文書を使う場合は、対応するMarkdown Documentsを有効にしておきます。
+2. 同じ画面の **Site-wide recovery — primary workflow** で **I trust the whole current site and have paused editing.** にチェックし、**Create complete initial snapshot** を押します。
+3. 成功表示と、復旧点一覧に作成したBaselineが現れることを確認します。エラーの場合はその内容を控え、[困ったとき](#困ったとき)を参照してください。
+4. ページ下部の **Protect supported operations (one writer per prefix)** をオンにし、**Save settings** を押します。編集を再開できます。
 
-Baseline自体で復旧できます。初期取得をもう一度行うのは、新たな信頼判断に基づく別Baselineです。対して **Create complete Checkpoint** は既存復旧点とその後の正式履歴をS3から使い、未記録の稼働サイト変更を取り込みません。[三原則の詳細](site-snapshot-ja.md)を参照してください。
+Baselineは現在の対応範囲を初めて保存する操作です。その後のCheckpointは保存済みの資源と確定履歴から作ります。テーマなど追跡対象外の変更後は、[変更別の対応表](start-here-ja.md)を確認してください。
 
-## 4. 日常編集と保存失敗
+## 4. 保護開始を確認する
 
-通常のWordPressや対応プラグインの編集画面を使います。代表的な保存の後に **Save protection status** を確認します。「保護設定が有効」は設定状態であり、最後の確定番号・未確定操作・エラーが保存の実態です。本文と付随情報が別の正式履歴になることがあるため、一件の確定だけで関連操作すべてが確定したと考えないでください。
+通常の投稿編集画面で、確認用の投稿を一件保存します。その後 **ツール → Resilience → Save protection status** を開きます。
 
-対応する本文保存はS3原本保存後にWordPressへ反映します。コメントや一部の連携・詳細操作は成功直後のデータを取得するため、画面上の変更が未確定のことがあります。現在の新規保存資源は固定版から再取得・照合して履歴確定しますが、状態表示のたびに過去の原本すべてを再監査するわけではありません。
+- **Protection setting: Enabled** になっている。
+- **Last confirmed sequence** とタイトル・時刻で、今回保存した投稿の履歴が確定したことを確認できる。
+- **Locally pending operations: 0** で、今回の保存エラーが残っていない。
 
-| 表示・状況 | 操作 | 完了の目安 |
-|---|---|---|
-| キュー登録前の原本保存失敗 | 保存先・権限などの原因を解消し、通常編集画面で再保存。登録されていない要求はResume historyでは戻せない | 意図した内容が保存され正式履歴が確定 |
-| 未確定操作・履歴保存失敗 | 理由を調べ、保存先回復後に **Resume history** | 未確定が解消し、対象履歴が確定 |
-| 確定前に元サーバを喪失 | 確定済みの境界までを復旧する | 最後の未確定変更を復旧可能と数えない |
-| 結果不明・エラー | 理由を控え、連打や成功扱いをせず調べる | 原因を把握してから再実行を判断 |
+この3点を確認できれば、初期設定と代表的な投稿保存の確認は完了です。サイト全体やすべての連携機能を検証したという意味ではありません。本文と関連情報の確定は別になる場合があるため、未確定件数も見ます。既存のバックアップは、自分のサイトの復旧確認ができるまで残してください。
 
-[履歴再開手順](save-resume.md)。テーマ、メニュー、実行プラグインなど通常履歴が追跡しない変更は、編集停止後に新しい信頼済みBaselineが必要になる場合があります。通常Checkpointでは発見できません。[既存の変更別対応表](start-here-ja.md)を参照してください。
+### 困ったとき
+
+| 状況 | 次にすること |
+|---|---|
+| ZIPをアップロードできない | サーバ担当者へPHPのアップロード・POST上限とWebサーバの要求サイズ上限の確認を依頼する |
+| 設定後も認証エラー／AccessDenied | [AWS設定](aws-setup-ja.md)の設定表・PHPの認証・対象prefixの権限を担当者と確認する |
+| 未確定操作が残る | 原因を解消して **Resume history**。[保存再開の詳細](save-resume.md)を参照 |
+| エラーの意味が分からない | 操作名とエラーを控えて問い合わせる。認証情報や非公開コンテンツは載せない |
+
+元サイト喪失後の復旧に使えるのは確定済みの履歴です。キュー登録前に保存が失敗した場合は、原因解消後に通常編集画面から再保存します。
 
 ## 5. Checkpointの日時・保持を設定する
 

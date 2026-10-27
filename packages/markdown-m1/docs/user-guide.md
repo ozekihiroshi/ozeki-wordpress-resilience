@@ -1,56 +1,69 @@
-# User guide — from installation to recovery
+# First-time setup — from preparation to protection
 
-[日本語](user-guide-ja.md) · [AWS setup and complete policy files](aws-setup.md)
+[日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
-This guide is for the [0.3.1 submission candidate](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). A WordPress administrator performs the daily steps; an AWS/server administrator may be needed for setup. No AWS keys are entered into the plugin. This guide uses the verified EC2-role route. Shared hosting without a usable standard SDK credential provider needs separate administrator preparation.
+This product preserves originals and confirmed history in S3 to reconstruct supported WordPress state when needed. Follow **prepare → configure storage → create a Baseline → confirm protection**. Scheduling, retention and recovery can follow the initial check.
 
-**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
+## 1. Check your environment
 
-[Questions about reconstruction](recovery-faq.md) explains the five common concerns, the design measures, existing evidence and required conditions.
+Posts/Pages, supported images and core comments are the basic scope. Check the [coverage table](../README.md#supported-content-and-plugins) for integrations. Native-only sites do not need Markdown Documents.
 
-## 1. Understand what you will do
+| Who | What to prepare |
+|---|---|
+| WordPress administrator | Administrator login, supported content/plugins, and a pause in editing for the initial capture |
+| AWS administrator | Versioned S3 bucket, dedicated site prefix and source permissions; provide bucket, region, prefix and the owner's 12-digit account ID |
+| Server administrator | WordPress 6.4+, PHP 8.1+, InnoDB, ZipArchive, writable paths, standard AWS SDK credentials usable by web PHP, and upload limits allowing the approximately 7.5 MB ZIP |
 
-You first capture a trusted current site as a **Baseline**. Normal supported edits then produce independent S3 originals and confirmed history. A **Checkpoint** collects a complete supported reconstruction set from those saved resources. When needed, you prepare a separate WordPress and restore a selected point plus confirmed history. The destination does not update automatically after each source edit.
-
-Start with a small site you control. Check the [supported content and plugins](../README.md#supported-content-and-plugins): Posts/Pages, local images, core comments, Markdown Documents, CF7/Flamingo, WP-Members core subscribers and TablePress core have defined limits. Unsupported extensions, external/CDN resources and arbitrary later settings changes are not automatically protected. Preserve other backup arrangements until you have confirmed your own supported recovery scope.
-
-Record the source WordPress/PHP/plugin versions and the AWS settings worksheet. The declared minimum is WordPress 6.4/PHP 8.1, not proof of every combination; tested CF7 6.2.3 requires PHP 8.3+. You need InnoDB tables, ZipArchive and writable paths. Recovery needs private writable temporary storage and a compatible WordPress release line/same-or-newer maintenance patch. See [installation details](install-update.md).
+The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whether standard credentials can be provided to web PHP. This plugin has no access-key input field. Integration requirements also apply (tested CF7 6.2.3 needs PHP 8.3+).
 
 ## 2. Prepare AWS, then install
 
-Use `ozeki-resilience-0.3.1.zip` and `SHA256SUMS` from the linked candidate release. The version remains 0.3.1; identify the build by tag, filename and checksum.
+1. Complete [AWS setup](aws-setup.md). Start with the `source-no-delete` policy and cleanup disabled.
+2. Download **ozeki-resilience-0.3.1.zip** from the [rc.2 release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). `Source code (zip)` is not installable. `SHA256SUMS` is available there for verification.
+3. In WordPress, use **Plugins → Add New Plugin → Upload Plugin**, install the ZIP and activate it. If an older version is installed, follow [update instructions](install-update.md).
+4. Open **Tools → Resilience**, then scroll down to **Storage and optional scheduling settings**. The status and recovery controls above are used after storage setup. If the unconfigured screen reports an S3 history read error, first configure the following fields.
+5. Enter these four values.
 
-1. Complete [AWS setup](aws-setup.md). Begin with the **source-no-delete** policy, a versioned dedicated prefix and automatic cleanup off. Do not share one writing prefix between sites.
-2. Download the installable ZIP and verify its SHA-256 against `SHA256SUMS` from the [candidate release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). Do not install Source code (zip).
-3. Before uploading, check that PHP `upload_max_filesize`, `post_max_size` and the web-server request limit allow the actual ZIP size recorded in its manifest plus request overhead. If too small, ask the server administrator to adjust the limits for the destination; do not change the ZIP. See [upload requirements](install-update.md). In WordPress **Plugins → Add New Plugin → Upload Plugin**, choose the ZIP, install and activate. For replacement, follow [update precautions](install-update.md); do not uninstall the product as an update method. Keep a copy of your settings and resolve pending work first where possible.
-4. Open **Tools → Resilience**. The current controls are English; labels below match the product.
-5. In **Storage and optional scheduling settings**, fill `bucket`, `region`, `prefix` (ending `/`) and `owner` (12-digit AWS account ID). Initially leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. Set **Optional S3 deletion protection in days** to `0` only if you have chosen not to request product-level locks. Save settings.
+| Field | Value |
+|---|---|
+| bucket | Bucket name, without `s3://` |
+| region | Bucket region, for example `ap-northeast-1` |
+| prefix | Dedicated site prefix, for example `sites/my-site/`, including the trailing `/` |
+| owner | Bucket owner's 12-digit AWS account ID |
 
-Saving settings is not a connection test or proof of protection. Successful Baseline creation and subsequent confirmed history are the next checks. Never switch the configured prefix to another site's data to resolve an error.
+6. Leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. If your setup does not request product-level deletion locks, set **Optional S3 deletion protection in days** to `0`. Click **Save settings**.
+
+Next, verify actual storage access by creating a Baseline.
 
 ## 3. Create the first Baseline
 
-1. Make sure the source is trustworthy, pause editing and resolve pending history. For this candidate, native-only sites do not need Markdown Documents. If it is active, it is included; if documents or `_ozmd_source` originals remain while inactive, activate it before capture. Do not delete originals to bypass this check. Version 0.1.1 was tested. Activate other supported plugins only as needed.
-2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Select **Create complete initial snapshot**. This reads the supported live data/files; do not do it on a suspected compromised site merely to silence an error.
-3. Wait for the result. Success means a confirmed point is listed and the initial-snapshot result reports success, not merely that the request was submitted. The resource set is saved and fixed-version verified before manifest confirmation. A failure or missing result is not success; record its reason and stop to investigate.
-4. Enable **Protect supported operations (one writer per prefix)** and save settings. Resume normal editing.
+1. Confirm that the source is trustworthy and pause editing. If Markdown documents are used, activate the compatible Markdown Documents plugin first.
+2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Click **Create complete initial snapshot**.
+3. Confirm success and that the new Baseline appears in the recovery-point list. For an error, record its message and use [troubleshooting](#troubleshooting) below.
+4. Scroll down, enable **Protect supported operations (one writer per prefix)** and click **Save settings**. Resume editing.
 
-The Baseline is independently recoverable. Creating another initial snapshot is a new trust decision. **Create complete Checkpoint** instead uses an existing point and subsequent confirmed S3 history; it does not recapture unrecorded live changes. See [the three principles](site-snapshot.md#baseline-and-checkpoint-operations).
+A Baseline initially captures current supported state. Later Checkpoints use saved resources and confirmed history. For untracked changes such as themes, consult the [changes table](start-here.md).
 
-## 4. Everyday editing and failed saves
+## 4. Confirm protection
 
-Use the normal WordPress or supported plugin editor. After a representative save, check **Save protection status**: protection enabled is a setting, while the latest confirmed sequence and pending/error information describe actual saved operations. One user edit can create separate body and related-information records; confirmation of one is not confirmation of every related operation.
+Save one identifiable test post through the normal WordPress editor. Open **Tools → Resilience → Save protection status**.
 
-Supported body saves put originals in S3 before WordPress application. Comments and some adapter/detail operations capture completed operation data, so a visible change can still be pending. Current newly saved resources are fixed-version retrieved and checked before their history is confirmed. The status screen is not a fresh audit of every older original.
+- **Protection setting: Enabled** is shown.
+- **Last confirmed sequence**, title and time identify the confirmed history for the post you saved.
+- **Locally pending operations: 0** is shown, with no outstanding error from that save.
 
-| What you see | What to do | Finished when |
-|---|---|---|
-| Original save failed before a pending record exists | Resolve the reported storage/permission issue and save again in the normal editor; Resume history cannot recover a request that was never queued | The intended content is saved and its history confirmed |
-| Pending operation / history save failed | Investigate the reason; when storage is usable, use **Resume history** | Pending records clear and the intended formal records confirm |
-| Source lost before confirmation | Restore only the confirmed boundary | Do not count the last unconfirmed change as recoverable |
-| Unknown/error result | Preserve the message and inspect it; do not assume success or repeatedly click | Cause is understood before retry |
+These checks complete initial setup and a representative post-save check, not validation of every integration or all site content. Body and related operations can confirm separately, so also check the pending count. Keep existing backups until you have confirmed recovery for your own site's scope.
 
-[Detailed pending-save procedure](save-resume.md). Changes to themes, menus, runtime plugins or other captured information outside supported history may require a **new trusted Baseline** after editing is paused. Normal Checkpoint does not discover these changes; [the existing operations table](start-here.md#3-changes-requiring-administrator-attention) explains the distinction.
+### Troubleshooting
+
+| Situation | Next step |
+|---|---|
+| ZIP upload fails | Ask the server administrator to check PHP upload/POST and web-server request limits |
+| Authentication error / AccessDenied after setup | Check the [AWS worksheet](aws-setup.md), web PHP credentials and prefix permissions with the administrator |
+| Pending operations remain | Resolve the cause, then use **Resume history**; see [save resumption](save-resume.md) |
+| Unclear error | Record the operation and error for support; omit credentials and private content |
+
+Only confirmed history is available after source loss. If an original save failed before being queued, resolve the cause and save again through the normal editor.
 
 ## 5. Checkpoint schedules and retention
 
