@@ -16,6 +16,8 @@ Backup and restore prepare you to return a site to a captured state. Resilience 
 
 The scope balances the value of what is preserved with the work needed to handle and restore it safely. The tables below show what is saved and restored, and what you prepare separately on the destination.
 
+The underlying idea is to separate the lifespan of information from that of the system that created it. The aim is to preserve articles, images and other content as independent information assets that remain understandable and usable even if the original system is lost, and from which a needed system can be reconstructed. **Preserved originals have value independent of the recovery engine.**
+
 ## Download and start
 
 1. Download **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1).

@@ -16,6 +16,8 @@
 
 残す対象は、業務上の価値と、安全に扱って復旧するための負担を踏まえて定めています。下の表で、保存・復旧する内容と、復旧先で別に用意するものを確認できます。
 
+背景にあるのは、情報の寿命を、それを作成したシステムの寿命から切り離すという考え方です。記事や画像などを独立した情報資産として残し、元のシステムが失われても、理解し、利用し、必要なシステムを再構築できるようにすることを目指しています。**残した原本には、復旧エンジンから独立した価値があります。**
+
 ## ダウンロードと導入
 
 1. **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
