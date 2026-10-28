@@ -41,7 +41,7 @@ def create(title,body):
 try:
  open_('/wp-login.php');field('log','operator');field('pwd','lab-only-password');d.find_element(By.ID,'wp-submit').click();wait.until(lambda x:'/wp-admin/' in x.current_url)
  if len(sys.argv)>1:
-  open_('/wp-admin/tools.php?page=owr-m1');wait.until(EC.presence_of_element_located((By.NAME,'sequences[]')))
+  open_('/wp-admin/tools.php?page=ozeki-resilience');wait.until(EC.presence_of_element_located((By.NAME,'sequences[]')))
   # Last version of A and the only version of B. Earlier versions remain selectable.
   seen=set()
   for row in d.find_elements(By.CSS_SELECTOR,'table tr')[1:]:
@@ -71,11 +71,11 @@ try:
    if failure!='stop':assert 'Resilience' in d.title
    (lab/'control.json').write_text('{}');edit(a);assert source()==final;log('PASS '+failure+' preserves committed source')
   # Stale editor optimistic conflict must not write another original or history.
-  edit(a);d.execute_script("document.querySelector('[name=owr_m1_base]').value='stale'");field('ozmd_source','stale edit');save();assert 'changed since' in d.find_element(By.TAG_NAME,'body').text
+  edit(a);d.execute_script("document.querySelector('[name=ozeki_resilience_m1_base]').value='stale'");field('ozmd_source','stale edit');save();assert 'changed since' in d.find_element(By.TAG_NAME,'body').text
   edit(a);assert source()==final;log('PASS stale editor rejected')
   # A lost formal-history write preserves WP state and resumes the same operation.
   (lab/'control.json').write_text(json.dumps({'fail':'history'}));edit(a);final+='\nFinal confirmed update\n';field('ozmd_source',final);save();assert source()==final
-  open_('/wp-admin/tools.php?page=owr-m1');assert 'Resume history' in d.find_element(By.TAG_NAME,'body').text
+  open_('/wp-admin/tools.php?page=ozeki-resilience');assert 'Resume history' in d.find_element(By.TAG_NAME,'body').text
   (lab/'control.json').write_text('{}');next(b for b in d.find_elements(By.CSS_SELECTOR,'input[type=submit]') if b.get_attribute('value')=='Resume history').click();wait.until(lambda x:not any(b.get_attribute('value')=='Resume history' for b in x.find_elements(By.CSS_SELECTOR,'input[type=submit]')))
   d.save_screenshot('/lab/source-history.png');log('PASS formal history resumed')
   (lab/'expected.json').write_text(json.dumps({'M1 A':{'source':final.replace('\n','\r\n'),'status':'publish','slug':'m1-a'},'M1 B':{'source':braw.replace('\n','\r\n'),'status':'publish','slug':'m1-b'}},ensure_ascii=False))

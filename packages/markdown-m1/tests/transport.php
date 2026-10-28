@@ -1,7 +1,7 @@
 <?php
 // Test infrastructure only. Never included in the product ZIP.
 add_filter('pre_wp_mail',fn()=>false);
-add_filter('owr_m1_s3_options',function($options){
+$ozeki_resilience_test_transport=function($options){
     $options['credentials']=['key'=>'test','secret'=>'test'];
     $options['handler']=function($command){
         $name=$command->getName();$args=$command->toArray();
@@ -44,7 +44,9 @@ add_filter('owr_m1_s3_options',function($options){
         return \GuzzleHttp\Promise\Create::promiseFor(new \Aws\Result($r));
     };
     return $options;
-});
+};
+add_filter('ozeki_resilience_m1_s3_options',$ozeki_resilience_test_transport);
+add_filter('owr_m1_s3_options',$ozeki_resilience_test_transport); // Previous submitted version, isolated upgrade fixture only.
 add_action('save_post_ozmd_document',function($id){
     $c=json_decode(@file_get_contents('/lab/control.json')?:'{}',true);
     if (($c['fail']??'')==='wordpress') update_post_meta($id,'_ozmd_source','INJECTED INCOMPLETE APPLY');

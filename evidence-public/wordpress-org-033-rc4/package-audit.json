@@ -1,0 +1,11 @@
+{
+  "sha256": "726e2024b5bd5f8b05dda188e4394de4fedbf8f9070bff6f478ab38984e91d30",
+  "bytes": 8312336,
+  "files": 3822,
+  "runtime_test_zip": "5c7bae3a2f0413e34522f09e11cf22cc189cc591042c87bea0735c2c26c0019b",
+  "only_changes_after_runtime_test_packaging": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md"
+  ],
+  "runtime_and_dependency_files_byte_identical": true
+}

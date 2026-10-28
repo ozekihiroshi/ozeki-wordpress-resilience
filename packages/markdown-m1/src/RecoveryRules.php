@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AcfHistory.php';
+require_once __DIR__.'/Identifiers.php';
 
 /** Projection at the destination boundary only. Never use this to rewrite stored originals. */
 final class RecoveryRules
@@ -65,6 +66,7 @@ final class RecoveryRules
     }
     public static function project(array $data,array $coreOptions): array {
         $self=new self();$d=$data;$types=[];
+        $d['tables']['postmeta']=Identifiers::metadata($d['tables']['postmeta']??[]);
         $acf=AcfHistory::project($data);$self->skipped=$acf['skipped'];
         if(isset($data['acf'])){
             $removed=[];foreach($d['tables']['posts'] as $p)if(in_array($p['post_type'],['acf-field','acf-field-group'],true))$removed[]=(string)$p['ID'];
@@ -86,7 +88,7 @@ final class RecoveryRules
         }));
         $d['tables']['commentmeta']=array_values(array_filter($d['tables']['commentmeta']??[],fn($row)=>!in_array((string)$row['comment_id'],$removedComments,true)));
         foreach($d['tables']['posts']??[] as $post)$types[(string)$post['ID']]=$post['post_type'];
-        $base=['_owr_m1_asset'=>'text','_owr_m1_origin_url'=>'text','_owr_m1_origin'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
+        $base=['_ozeki_resilience_m1_asset'=>'text','_ozeki_resilience_m1_origin_url'=>'text','_ozeki_resilience_m1_origin'=>'text','_ozeki_resilience_m1_origin_id'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
         $out=[];
         foreach($d['tables']['postmeta']??[] as $row){
             $type=$types[(string)$row['post_id']]??'';$key=$row['meta_key'];$rules=$base;

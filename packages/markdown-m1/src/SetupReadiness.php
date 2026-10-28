@@ -41,7 +41,7 @@ final class SetupReadiness
         $active=(array)get_option('active_plugins',[]);
         $add('markdown',!$markdown||in_array('ozeki-markdown-documents/ozeki-markdown-documents.php',$active,true),'Ozeki Markdown Documents',self::text('WordPress administrator: activate Ozeki Markdown Documents to preserve existing Markdown content.','WordPress管理者：既存のMarkdown文書を保存するため、Ozeki Markdown Documentsを有効にしてください。'));
         if(!$markdown)$rows['markdown']['unused']=true;
-        $add('pending',!get_option('owr_m1_pending')&&!get_option('owr_m1_comment_pending'),self::text('Unfinished saves','未完了の保存'),self::text('WordPress administrator: resolve the storage error, then use Resume history.','WordPress管理者：保存先のエラーを解消し、「未完了の保存を再開」を押してください。'));
+        $add('pending',!get_option('ozeki_resilience_m1_pending')&&!get_option('ozeki_resilience_m1_comment_pending'),self::text('Unfinished saves','未完了の保存'),self::text('WordPress administrator: resolve the storage error, then use Resume history.','WordPress管理者：保存先のエラーを解消し、「未完了の保存を再開」を押してください。'));
         return $rows;
     }
     public static function requireLocal(): void {
@@ -49,7 +49,7 @@ final class SetupReadiness
         foreach(self::local() as $row)if(!$row['ok'])throw new \RuntimeException($row['next']);
     }
     public static function baseline(array $c): bool {
-        $b=(array)get_option('owr_setup_baseline',[]);
+        $b=(array)get_option('ozeki_resilience_setup_baseline',[]);
         return ($b['identity']??'')===self::identity($c) && !empty($b['manifest']);
     }
     public static function acfMode(): string {
@@ -66,7 +66,7 @@ final class SetupReadiness
     }
     public static function acfReady(array $c): bool {
         if(!AcfHistory::enabled())return true;
-        $b=(array)get_option('owr_setup_baseline',[]);
+        $b=(array)get_option('ozeki_resilience_setup_baseline',[]);
         return self::baseline($c) && ($b['acf_free_version']??null)===(string)acf_get_setting('version');
     }
     public static function acfRow(array $c): array {
@@ -101,7 +101,7 @@ final class SetupReadiness
             echo '<p>'.esc_html($t('Recovery destination: keep protection off. Choose an existing Checkpoint under Site-wide recovery; do not create an initial snapshot here.','復旧先：保護は無効のまま、「初期保存とサイト全体の復旧」で既存の復旧ポイントを選択してください。ここで最初の保存は作成しません。')).'</p></section>';return;
         }
         $rows=self::local();$localReady=!in_array(false,array_column($rows,'ok'),true);
-        $r=(array)get_option('owr_setup_storage',[]);
+        $r=(array)get_option('ozeki_resilience_setup_storage',[]);
         $current=($r['identity']??'')===self::identity($c);
         $rows['storage']=['ok'=>$current&&!empty($r['ok']),'unchecked'=>!$current,'label'=>$t('Storage connection and versioning','保存先への接続・バージョン管理'),'next'=>$current?(!empty($r['ok'])?self::storageNext($c):AdminText::message((string)($r['message']??''))):$t('Save storage settings and confirm the terms, then select Check storage.','保存先の設定と利用条件の確認を保存し、「保存先を確認」を押してください。')];
         $rows['baseline']=['ok'=>self::baseline($c),'unchecked'=>!self::baseline($c),'label'=>$t('First save and verified read-back','最初の保存・読み戻し'),'next'=>self::baseline($c)?$t('Completed for this destination.','この保存先で完了しています。'):$t('Use Create complete initial snapshot after checking storage.','保存先の確認後、「最初の保存を作成」を押してください。')];

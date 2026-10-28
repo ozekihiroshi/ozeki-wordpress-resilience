@@ -6,7 +6,7 @@ for _ in range(50):
  except Exception:time.sleep(.2)
 d=Driver();base=os.environ['M1_SOURCE']
 def css(selector):return d.find_element(By.CSS_SELECTOR,selector)
-def page():d.get(base+'/wp-admin/tools.php?page=owr-m1')
+def page():d.get(base+'/wp-admin/tools.php?page=ozeki-resilience')
 def body():return d.execute_script('return document.body ? document.body.innerText : ""')
 def wait_text(text):
  for _ in range(60):

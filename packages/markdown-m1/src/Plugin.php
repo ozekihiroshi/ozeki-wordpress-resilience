@@ -15,22 +15,22 @@ final class Plugin
     private bool $locked=false;
     private bool $restoring=false;
     private const SOURCE='_ozmd_source';
-    private const ID='_owr_m1_asset';
-    private const CONFIG='owr_m1_config';
-    private const PENDING='owr_m1_pending';
+    private const ID='_ozeki_resilience_m1_asset';
+    private const CONFIG='ozeki_resilience_m1_config';
+    private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
         add_filter('wp_handle_upload_prefilter',[$this,'protectUpload']);
         add_filter('wp_handle_sideload_prefilter',[$this,'protectUpload']);
         add_filter('wp_insert_post_data',[$this,'before'],PHP_INT_MAX,4);
         add_action('wp_after_insert_post',[$this,'after'],PHP_INT_MAX,4);
         add_action('edit_form_after_title',[$this,'token']);
-        add_action('admin_menu',function(){add_management_page('Resilience','Resilience','manage_options','owr-m1',[$this,'page']);});
-        add_action('admin_post_owr_m1',[$this,'action']);
+        add_action('admin_menu',function(){add_management_page('Resilience','Resilience','manage_options','ozeki-resilience',[$this,'page']);});
+        add_action('admin_post_ozeki_resilience_m1',[$this,'action']);
         add_action('admin_notices',[$this,'notice']);
         add_filter('the_content',[$this,'links'],100);
         add_filter('the_content',[$this,'relocateContent'],101);
         add_action('init',[$this,'scheduleCheckpoints']);
-        add_action('owr_m1_checkpoint',[$this,'checkpointTick']);
+        add_action('ozeki_resilience_m1_checkpoint',[$this,'checkpointTick']);
         register_shutdown_function([$this,'release']);
     }
     public function config(): array { return (array)get_option(self::CONFIG,[]); }
@@ -62,7 +62,7 @@ final class Plugin
             if(!is_file($file['tmp_name']) || filesize($file['tmp_name'])>32*1024*1024)throw new \RuntimeException('Image exceeds 32 MiB.');
             if(!in_array($mime,['image/jpeg','image/png','image/gif','image/webp','image/avif'],true))throw new \RuntimeException('Unsupported image original.');
             $this->store()->put('image-ingress/'.wp_generate_uuid4().'/'.sanitize_file_name($file['name']),file_get_contents($file['tmp_name']),$mime);
-        }catch(\Throwable $e){$file['error']='Resilience: image not registered: '.$e->getMessage();update_option('owr_m1_notice',$file['error'],false);}
+        }catch(\Throwable $e){$file['error']='Resilience: image not registered: '.$e->getMessage();update_option('ozeki_resilience_m1_notice',$file['error'],false);}
         return $file;
     }
     /** Freeze the images used by this exact body, not the entire media library. */
@@ -97,107 +97,107 @@ final class Plugin
         return $out;
     }
     public function scheduleCheckpoints(): void {
-        wp_clear_scheduled_hook('owr_m1_checkpoint_daily');
+        wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint_daily');
         $c=$this->config();$days=(int)($c['checkpoint_interval_days']??0);
-        $event=wp_get_scheduled_event('owr_m1_checkpoint');
+        $event=wp_get_scheduled_event('ozeki_resilience_m1_checkpoint');
         if(array_key_exists('gfs',$c)){
-            if($event && !empty($event->schedule)){wp_clear_scheduled_hook('owr_m1_checkpoint');$event=false;}
-            if(!$c['gfs']){wp_clear_scheduled_hook('owr_m1_checkpoint');delete_option('owr_gfs_due');return;}
+            if($event && !empty($event->schedule)){wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');$event=false;}
+            if(!$c['gfs']){wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');delete_option('ozeki_resilience_gfs_due');return;}
             if(!$event){
                 $slot=GfsPolicy::next($c['gfs'],time(),wp_timezone());
-                update_option('owr_gfs_due',$slot,false);
-                $r=wp_schedule_single_event($slot['at'],'owr_m1_checkpoint',[],true);
-                if(is_wp_error($r)||$r===false)update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule GFS Checkpoint'],false);
+                update_option('ozeki_resilience_gfs_due',$slot,false);
+                $r=wp_schedule_single_event($slot['at'],'ozeki_resilience_m1_checkpoint',[],true);
+                if(is_wp_error($r)||$r===false)update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule GFS Checkpoint'],false);
             }
             return;
         }
 
-        if ($event && ($days===0 || !empty($event->schedule))) {wp_clear_scheduled_hook('owr_m1_checkpoint');$event=false;}
+        if ($event && ($days===0 || !empty($event->schedule))) {wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');$event=false;}
         if ($days>0 && !$event) {
             $next=CheckpointSchedule::next(time(),$days,$c['checkpoint_interval_unit']??'days',wp_timezone(),(int)($c['checkpoint_anchor_day']??0));
-            $r=wp_schedule_single_event($next,'owr_m1_checkpoint',[],true);
-            if(is_wp_error($r)||$r===false)update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule Checkpoint'],false);
+            $r=wp_schedule_single_event($next,'ozeki_resilience_m1_checkpoint',[],true);
+            if(is_wp_error($r)||$r===false)update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>'Unable to schedule Checkpoint'],false);
         }
     }
     public function checkpointTick(): void {
         $c=$this->config();$slot=null;
         if(array_key_exists('gfs',$c)){
             if(!$c['gfs'])return;
-            $slot=get_option('owr_gfs_due');
+            $slot=get_option('ozeki_resilience_gfs_due');
             if(!is_array($slot)||empty($slot['rules'])||!isset($slot['at'],$slot['timezone'])||$slot['at']>time())return;
         }elseif(empty($c['checkpoint_interval_days']))return;
         try { $this->wholeCheckpoint(null,$slot); } catch (\Throwable $e) {
-            update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);
-            if($slot!==null)wp_clear_scheduled_hook('owr_m1_checkpoint');
+            update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);
+            if($slot!==null)wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');
             $this->scheduleCheckpoints();
             return;
         }
         if (!empty($this->config()['cleanup_enabled'])) {
-            try {$this->runSiteCleanup(true);} catch (\Throwable $e) {update_option('owr_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);}
+            try {$this->runSiteCleanup(true);} catch (\Throwable $e) {update_option('ozeki_resilience_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);}
         }
-        if($slot!==null)wp_clear_scheduled_hook('owr_m1_checkpoint');
+        if($slot!==null)wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');
         $this->scheduleCheckpoints();
     }
     public function wholeCheckpoint(?array $ref=null,?array $slot=null): array {
         try{
             $this->lock();
-            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before creating a Checkpoint.');
+            if(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before creating a Checkpoint.');
             $store=$this->store();
             if($slot!==null){
                 foreach($store->siteSnapshots() as $point)if(($point['scheduled_at']??null)===gmdate('c',$slot['at'])){
                     (new SiteSnapshot($store))->load($point['ref']);
                     $result=['manifest'=>$point['ref'],'through'=>$point['through'],'already_confirmed'=>true];
-                    update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);return $result;
+                    update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);return $result;
                 }
             }
             if($ref===null){$points=$store->siteSnapshots();if(!$points)throw new \RuntimeException('Create an initial complete-site snapshot first.');$ref=end($points)['ref'];}
             $result=(new SiteSnapshot($store))->checkpoint($ref,$slot);
-            update_option('owr_site_snapshot_result',$result,false);
-            update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
+            update_option('ozeki_resilience_site_snapshot_result',$result,false);
+            update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
             return $result;
-        }catch(\Throwable $e){update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
+        }catch(\Throwable $e){update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
         finally{$this->release();}
     }
     public function runSiteCleanup(bool $automatic=false,string $hash=''): array {
         try{
             $this->lock();
-            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before deletion.');
+            if(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resolve pending operations before deletion.');
             if($automatic){
                 if(empty($this->config()['cleanup_enabled']))throw new \RuntimeException('Automatic cleanup disabled.');
                 $cutoff=max(0,time()-max(0,(int)($this->config()['cleanup_keep_days']??90))*DAY_IN_SECONDS);
                 $plan=$this->store()->siteCleanupPreview($cutoff);$hash=$plan['hash'];
             }else{
-                $plan=(array)get_option('owr_site_cleanup_preview',[]);
+                $plan=(array)get_option('ozeki_resilience_site_cleanup_preview',[]);
                 if(empty($plan['hash'])||!hash_equals($plan['hash'],$hash))throw new \RuntimeException('Preview complete-site deletion first.');
                 $cutoff=$plan['cutoff_timestamp'];
             }
             $result=$this->store()->siteCleanup($cutoff,$hash);
-            update_option('owr_site_cleanup_status',['at'=>gmdate('c')]+$result,false);
-            delete_option('owr_site_cleanup_preview');return $result;
-        }catch(\Throwable $e){update_option('owr_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
+            update_option('ozeki_resilience_site_cleanup_status',['at'=>gmdate('c')]+$result,false);
+            delete_option('ozeki_resilience_site_cleanup_preview');return $result;
+        }catch(\Throwable $e){update_option('ozeki_resilience_site_cleanup_status',['at'=>gmdate('c'),'ok'=>false,'error'=>$e->getMessage()],false);throw $e;}
         finally{$this->release();}
     }
     public function previewSiteCleanup(): array {
         try {
             $this->lock();
-            if(get_option(self::PENDING) || get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume article and shared pending operations before calculating candidates.');
+            if(get_option(self::PENDING) || get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resume article and shared pending operations before calculating candidates.');
             $days=max(0,min(3650,(int)($this->config()['cleanup_keep_days']??90)));
             $plan=$this->store()->siteCleanupPreview(max(0,time()-$days*DAY_IN_SECONDS));
         } catch(\Throwable $e) {
             $plan=['read_only'=>true,'at'=>gmdate('c'),'error'=>$e->getMessage()];
         } finally {$this->release();}
-        update_option('owr_site_cleanup_preview',$plan,false);
+        update_option('ozeki_resilience_site_cleanup_preview',$plan,false);
         return $plan;
     }
     public function renewSiteRetention(): array {
-        update_option('owr_site_retention_result',['status'=>'running','at'=>gmdate('c')],false);
+        update_option('ozeki_resilience_site_retention_result',['status'=>'running','at'=>gmdate('c')],false);
         try{
             $this->lock();
-            if(get_option(self::PENDING)||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending operations before renewing Checkpoint protection.');
+            if(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resume pending operations before renewing Checkpoint protection.');
             $result=$this->store()->renewLatestSiteRetention();
-            update_option('owr_site_retention_result',$result,false);return $result;
+            update_option('ozeki_resilience_site_retention_result',$result,false);return $result;
         }catch(\Throwable $e){
-            update_option('owr_site_retention_result',['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()],false);throw $e;
+            update_option('ozeki_resilience_site_retention_result',['status'=>'failed','at'=>gmdate('c'),'error'=>$e->getMessage()],false);throw $e;
         }finally{$this->release();}
     }
     public static function renderSiteCleanup(array $plan): void {
@@ -223,7 +223,7 @@ final class Plugin
             if (get_option(self::PENDING)) throw new \RuntimeException('Resume pending history before cleanup.');
             $days=max(0,min(3650,(int)($this->config()['cleanup_keep_days']??90)));
             $plan=$this->store()->cleanupPlan(max(0,time()-$days*DAY_IN_SECONDS));
-            update_option('owr_m1_cleanup_preview',$plan,false);return $plan;
+            update_option('ozeki_resilience_m1_cleanup_preview',$plan,false);return $plan;
         } finally {$this->release();}
     }
     public function runCleanup(bool $automatic=false, string $hash=''): array {
@@ -235,12 +235,12 @@ final class Plugin
                 $days=max(0,min(3650,(int)($this->config()['cleanup_keep_days']??90)));
                 $plan=$this->store()->cleanupPlan(max(0,time()-$days*DAY_IN_SECONDS));
             } else {
-                $plan=(array)get_option('owr_m1_cleanup_preview',[]);
+                $plan=(array)get_option('ozeki_resilience_m1_cleanup_preview',[]);
                 if (!$plan || !hash_equals((string)$plan['hash'],$hash)) throw new \RuntimeException('Preview cleanup before confirming.');
             }
             $result=$this->store()->cleanup((int)$plan['cutoff'],(string)$plan['hash']);
-            update_option('owr_m1_cleanup_status',['at'=>gmdate('c')]+$result,false);
-            delete_option('owr_m1_cleanup_preview');return $result;
+            update_option('ozeki_resilience_m1_cleanup_status',['at'=>gmdate('c')]+$result,false);
+            delete_option('ozeki_resilience_m1_cleanup_preview');return $result;
         } finally {$this->release();}
     }
     public function checkpoint(): array {
@@ -248,7 +248,7 @@ final class Plugin
             $this->lock();
             if (get_option(self::PENDING)) throw new \RuntimeException('Resume pending formal history before creating a Checkpoint.');
             $result=$this->store()->createCheckpoint();
-            update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
+            update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
             return $result;
         } finally { $this->release(); }
     }
@@ -266,7 +266,7 @@ final class Plugin
             }
             $result=$this->store()->createInitialSnapshot($materials);
             foreach ($ids as $id=>$asset) update_post_meta($id,self::ID,$asset);
-            update_option('owr_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
+            update_option('ozeki_resilience_m1_checkpoint_status',['at'=>gmdate('c'),'ok'=>true,'result'=>$result],false);
             return $result;
         } finally {$this->release();}
     }
@@ -278,7 +278,7 @@ final class Plugin
         return $this->storeForSetup($c);
     }
     private function storeForSetup(array $c): Store {
-        $options=apply_filters('owr_m1_s3_options',['version'=>'latest','region'=>$c['region'],'http'=>['connect_timeout'=>5,'timeout'=>30],'retries'=>1]);
+        $options=apply_filters('ozeki_resilience_m1_s3_options',['version'=>'latest','region'=>$c['region'],'http'=>['connect_timeout'=>5,'timeout'=>30],'retries'=>1]);
         $client=new \Aws\S3\S3Client($options);
         return new Store($client,$c);
     }
@@ -288,12 +288,12 @@ final class Plugin
     }
     public function token($post): void {
         if ($post->post_type==='ozmd_document' && !empty($this->config()['protect']))
-            echo '<input type="hidden" name="owr_m1_base" value="'.esc_attr($this->fingerprint((int)$post->ID)).'">';
+            echo '<input type="hidden" name="ozeki_resilience_m1_base" value="'.esc_attr($this->fingerprint((int)$post->ID)).'">';
     }
     private function lock(): void {
         global $wpdb;
         if ($this->locked) return;
-        if ((int)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)','owr-m1-'.$wpdb->prefix))!==1) throw new \RuntimeException('Another protected save is running. Retry after it completes.');
+        if ((int)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 5)','ozeki-resilience-'.$wpdb->prefix))!==1) throw new \RuntimeException('Another protected save is running. Retry after it completes.');
         $this->locked=true;
         foreach ([$wpdb->posts,$wpdb->postmeta,$wpdb->options] as $table) {
             $engine=$wpdb->get_var($wpdb->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s',$table));
@@ -313,15 +313,15 @@ final class Plugin
     public function release(): void {
         global $wpdb;
         if ($this->transaction) { $wpdb->query('ROLLBACK');$this->transaction=false;wp_cache_flush(); }
-        if ($this->locked) {$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)','owr-m1-'.$wpdb->prefix));$this->locked=false;}
+        if ($this->locked) {$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)','ozeki-resilience-'.$wpdb->prefix));$this->locked=false;}
     }
     private function stop(\Throwable $e): never {
         $this->release();
-        update_option('owr_m1_notice','Last article save failed; inspect pending history before retrying the editor. Reason: '.$e->getMessage(),false);
+        update_option('ozeki_resilience_m1_notice','Last article save failed; inspect pending history before retrying the editor. Reason: '.$e->getMessage(),false);
         // api-fetch needs a nonempty error code to retain the reason in the block editor.
         $message='Resilience: '.wp_strip_all_tags($e->getMessage()).' WordPress was not confirmed. Check Resilience for pending history before retrying.';
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP_Error is required by the REST error handler; its message is escaped at construction.
-        wp_die(new \WP_Error('owr_save_failed',esc_html($message)),'Resilience',['response'=>409,'code'=>'owr_save_failed','back_link'=>true]);
+        wp_die(new \WP_Error('ozeki_resilience_save_failed',esc_html($message)),'Resilience',['response'=>409,'code'=>'ozeki_resilience_save_failed','back_link'=>true]);
         exit;
     }
     public function before(array $data,array $postarr,array $unsanitized,bool $update): array {
@@ -341,10 +341,10 @@ final class Plugin
             if ($this->active) throw new \RuntimeException('Nested protected saves are unsupported.');
             $this->lock();
             if (get_option(self::PENDING)) throw new \RuntimeException('A previous WordPress save is awaiting formal S3 history. Resume it in Tools → Resilience first.');
-            if (get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending comment history in Tools → Resilience first.');
+            if (get_option('ozeki_resilience_m1_comment_pending')) throw new \RuntimeException('Resume pending comment history in Tools → Resilience first.');
             clean_post_cache($id);
             $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
-            if ($wasProtected && $editor && (!isset($_POST['owr_m1_base']) || !hash_equals($this->fingerprint($id),sanitize_text_field(wp_unslash($_POST['owr_m1_base']))))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
+            if ($wasProtected && $editor && (!isset($_POST['ozeki_resilience_m1_base']) || !hash_equals($this->fingerprint($id),sanitize_text_field(wp_unslash($_POST['ozeki_resilience_m1_base']))))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
             $source=$markdown?($editor?self::validatedMarkdown(wp_unslash($_POST['ozmd_source'])):(string)get_post_meta($id,self::SOURCE,true)):(string)wp_unslash($data['post_content']);
             if (strlen($source)>5*1024*1024 || str_contains($source,"\0") || !preg_match('//u',$source)) throw new \RuntimeException('Markdown must be UTF-8 without NUL, at most 5 MiB.');
             $asset=$wasProtected?(string)$wasProtected:wp_generate_uuid4();$operation=wp_generate_uuid4();
@@ -381,8 +381,8 @@ final class Plugin
             $record=['schema'=>'owr-md-history-1','sequence'=>$a['sequence'],'original'=>$a['original'],'attributes'=>$attrs,'confirmed_at'=>gmdate('c')];
             if (!update_option(self::PENDING,['id'=>$id,'fingerprint'=>$this->fingerprint($id),'record'=>$record],false)) throw new \RuntimeException('Cannot persist pending confirmation.');
             $this->commitDb();$this->active=null;
-            try {$a['store']->commit($record);delete_option(self::PENDING);delete_option('owr_m1_notice');}
-            catch (\Throwable $e) {update_option('owr_m1_notice','WordPress saved; formal S3 history is pending. Use Resume history. No successful history has been assumed. Reason: '.$e->getMessage(),false);}
+            try {$a['store']->commit($record);delete_option(self::PENDING);delete_option('ozeki_resilience_m1_notice');}
+            catch (\Throwable $e) {update_option('ozeki_resilience_m1_notice','WordPress saved; formal S3 history is pending. Use Resume history. No successful history has been assumed. Reason: '.$e->getMessage(),false);}
             $this->release();
         } catch (\Throwable $e) {$this->active=null;$this->stop($e);}
     }
@@ -393,7 +393,7 @@ final class Plugin
             if (!$pending) return;
             clean_post_cache($pending['id']);
             if (!hash_equals($pending['fingerprint'],$this->fingerprint($pending['id']))) throw new \RuntimeException('Pending content no longer matches WordPress. Do not certify it as successful.');
-            $this->store()->commit($pending['record']);delete_option(self::PENDING);delete_option('owr_m1_notice');
+            $this->store()->commit($pending['record']);delete_option(self::PENDING);delete_option('ozeki_resilience_m1_notice');
         } finally {$this->release();}
     }
     public function restore(array $sequences): array {
@@ -442,13 +442,13 @@ final class Plugin
                 if (is_wp_error($id)) throw new \RuntimeException($id->get_error_message());
                 if($type==='ozmd_document')(new \OzekiMarkdownDocuments\Content\MarkdownSource())->store($id,$source);
                 update_post_meta($id,self::ID,$asset);
-                update_post_meta($id,'_owr_m1_origin_url',$attr['origin_url']);
-                update_post_meta($id,'_owr_m1_origin_id',$attr['origin_id']);
+                update_post_meta($id,'_ozeki_resilience_m1_origin_url',$attr['origin_url']);
+                update_post_meta($id,'_ozeki_resilience_m1_origin_id',$attr['origin_id']);
                 $p=get_post($id);
                 if ($p->post_title!==$attr['title'] || $p->post_status!==$attr['status'] || $p->post_name!==$attr['slug'] || ($type==='ozmd_document'?get_post_meta($id,self::SOURCE,true):$p->post_content)!==$source) throw new \RuntimeException('Restore did not match the selected original (possibly a slug collision).');
                 $result[]=['asset'=>$asset,'sequence'=>$row['sequence'],'post_id'=>$id,'sha256'=>hash('sha256',$source),'status'=>$p->post_status];
             }
-            update_option('owr_m1_restore_result',$result,false);$this->commitDb();
+            update_option('ozeki_resilience_m1_restore_result',$result,false);$this->commitDb();
         } finally {$this->restoring=false;$this->release();}
         return $result;
     }
@@ -471,7 +471,7 @@ final class Plugin
     }
     /** Alter URL attributes only; preserve HTML already rendered by core/shortcodes. */
     public function relocateContent(string $html): string {
-        $from=get_option('owr_site_origin_url');
+        $from=get_option('ozeki_resilience_site_origin_url');
         $to=esc_url_raw(home_url(),['http','https']);
         if(!is_string($from) || $from==='' || !$to || esc_url_raw($from,['http','https'])!==$from)return $html;
         $fromUploads=get_option('ozeki_resilience_origin_upload_url');
@@ -492,9 +492,9 @@ final class Plugin
     }
     public function links(string $html): string {
         // Remap rendered links only. Canonical .md bytes are never rewritten.
-        $posts=get_posts(['post_type'=>'ozmd_document','post_status'=>['publish','private','draft','pending'],'meta_key'=>'_owr_m1_origin_url','numberposts'=>-1]);
+        $posts=get_posts(['post_type'=>'ozmd_document','post_status'=>['publish','private','draft','pending'],'meta_key'=>'_ozeki_resilience_m1_origin_url','numberposts'=>-1]);
         foreach ($posts as $p) {
-            $old=(string)get_post_meta($p->ID,'_owr_m1_origin_url',true);
+            $old=(string)get_post_meta($p->ID,'_ozeki_resilience_m1_origin_url',true);
             if ($old!=='') $html=str_replace(['href="'.esc_attr($old).'"','href="'.esc_attr($old).'#'],['href="'.esc_url(get_permalink($p)).'"','href="'.esc_url(get_permalink($p)).'#'],$html);
         }
         return $html;
@@ -508,18 +508,18 @@ final class Plugin
         $failure=(array)get_option(SaveFailure::OPTION,[]);
         if($failure){
             $screen=function_exists('get_current_screen')?get_current_screen():null;
-            if($screen && $screen->id==='tools_page_owr-m1')self::renderCaptureFailure($failure);
-            else echo '<div class="notice notice-error"><p>'.esc_html(SetupReadiness::text('Resilience: a content protection operation needs attention.','Resilience：保護処理で確認が必要な項目があります。')).' <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">'.esc_html(SetupReadiness::text('View details','詳細を確認')).'</a></p></div>';
+            if($screen && $screen->id==='tools_page_ozeki-resilience')self::renderCaptureFailure($failure);
+            else echo '<div class="notice notice-error"><p>'.esc_html(SetupReadiness::text('Resilience: a content protection operation needs attention.','Resilience：保護処理で確認が必要な項目があります。')).' <a href="'.esc_url(admin_url('tools.php?page=ozeki-resilience')).'">'.esc_html(SetupReadiness::text('View details','詳細を確認')).'</a></p></div>';
         }
-        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>'.esc_html(AdminText::text('Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. ')).'<a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">'.esc_html(AdminText::text('Resume history')).'</a>.</p></div>';
+        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>'.esc_html(AdminText::text('Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. ')).'<a href="'.esc_url(admin_url('tools.php?page=ozeki-resilience')).'">'.esc_html(AdminText::text('Resume history')).'</a>.</p></div>';
     }
     public function action(): void {
         if (!current_user_can('manage_options')) wp_die('Forbidden',403);
-        check_admin_referer('owr_m1');
+        check_admin_referer('ozeki_resilience_m1');
         try {
             $action=sanitize_key(wp_unslash($_POST['operation']??''));
             if ($action==='configure') {
-                if (get_option(self::PENDING) || get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
+                if (get_option(self::PENDING) || get_option('ozeki_resilience_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
                 $old=$this->config();
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if(!isset($_POST['confirm_terms']))throw new \RuntimeException(SetupReadiness::text('Review the terms and select the confirmation checkbox before saving settings.','利用条件を読み、確認欄にチェックしてから設定を保存してください。'));
@@ -550,9 +550,9 @@ final class Plugin
                 $c['cleanup_keep_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['cleanup_keep_days']??'90'))));
                 if ($c['cleanup_enabled'] && !$c['gfs']) throw new \RuntimeException('Set a Checkpoint interval before enabling automatic cleanup.');
                 update_option(self::CONFIG,$c,false);
-                delete_option('owr_m1_cleanup_preview');
-                delete_option('owr_site_cleanup_preview');
-                wp_clear_scheduled_hook('owr_m1_checkpoint');
+                delete_option('ozeki_resilience_m1_cleanup_preview');
+                delete_option('ozeki_resilience_site_cleanup_preview');
+                wp_clear_scheduled_hook('ozeki_resilience_m1_checkpoint');
                 $this->scheduleCheckpoints();
             } elseif ($action==='setup_check') {
                 $c=$this->config();
@@ -565,7 +565,7 @@ final class Plugin
                 } catch (\Throwable $e) {
                     $r['message']=$e->getMessage();
                 }
-                update_option('owr_setup_storage',$r,false);
+                update_option('ozeki_resilience_setup_storage',$r,false);
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') $this->restore(array_map('sanitize_text_field',(array)wp_unslash($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
@@ -588,8 +588,8 @@ final class Plugin
                 // Repeat the read-only check; cached UI results never authorize a write.
                 $this->store()->checkSetupStorage();
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),[]);
-                update_option('owr_setup_baseline',SetupReadiness::baselineRecord($c,$result['manifest']),false);
-                update_option('owr_site_snapshot_result',$result,false);
+                update_option('ozeki_resilience_setup_baseline',SetupReadiness::baselineRecord($c,$result['manifest']),false);
+                update_option('ozeki_resilience_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {
                 $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
@@ -598,20 +598,20 @@ final class Plugin
             elseif ($action==='whole_restore') {
                 $attempt=['status'=>'running','at'=>gmdate('c')];
                 try {
-                    SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
+                    SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',$attempt,false);
                     $end=wp_unslash($_POST['site_through']??'');
                     if(!is_string($end)||!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
                     $target=(int)$end;$attempt['requested_through']=$target;
                     $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
-                    $attempt['manifest']=$ref;SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
+                    $attempt['manifest']=$ref;SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',$attempt,false);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
                     $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
                     $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work,$target);
-                    SiteSnapshot::writeOption('owr_site_restore_attempt',['status'=>'success']+$result,false);
+                    SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',['status'=>'success']+$result,false);
                 } catch (\Throwable $e) {
                     $message=$e->getMessage();
-                    try { SiteSnapshot::writeOption('owr_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$message]),false); }
+                    try { SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$message]),false); }
                     catch (\Throwable $recordError) { $message.=' | Failure record could not be saved: '.$recordError->getMessage().'. Stored results may belong to an earlier attempt.'; }
                     // The current response remains authoritative even if the database cannot store the failure.
                     wp_die(esc_html('Site recovery failed: '.$message),'Site recovery failed',['response'=>500,'back_link'=>true]);
@@ -625,9 +625,9 @@ final class Plugin
             }
             elseif ($action==='restore_site') $this->restoreSite(!empty($_POST['checkpoint'])?sanitize_text_field(wp_unslash($_POST['checkpoint'])):null);
             else throw new \RuntimeException('Unknown action.');
-            delete_option('owr_m1_error');
-        } catch (\Throwable $e) {update_option('owr_m1_error',$e->getMessage(),false);}
-        wp_safe_redirect(admin_url('tools.php?page=owr-m1'));exit;
+            delete_option('ozeki_resilience_m1_error');
+        } catch (\Throwable $e) {update_option('ozeki_resilience_m1_error',$e->getMessage(),false);}
+        wp_safe_redirect(admin_url('tools.php?page=ozeki-resilience'));exit;
     }
     /** Render only recorded facts; a failed/latest attempt never inherits old success counts. */
     public static function renderSiteResult(array $attempt,array $success,array $snapshot,array $snapshots=[]): void {
@@ -666,7 +666,7 @@ final class Plugin
         echo '<details><summary>'.esc_html(AdminText::text('Detailed JSON — latest attempt, last successful recovery and snapshot')).'</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto">'.esc_html(Store::json(['latest_attempt'=>$attempt,'last_successful_recovery'=>$success,'last_snapshot'=>$snapshot])).'</pre></details>';
     }
     private function form(string $operation): void {
-        echo '<form id="owr-action-'.esc_attr($operation).'" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
+        echo '<form id="owr-action-'.esc_attr($operation).'" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="ozeki_resilience_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('ozeki_resilience_m1');
     }
     /** Read-only summary: local pending data is never treated as S3 confirmation. */
     public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect, array $captureError=[]): void {
@@ -709,22 +709,22 @@ final class Plugin
         echo '<p><label>'.esc_html(AdminText::text('Optional S3 deletion protection in days (0 = do not request a lock)')).' <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>'.esc_html(AdminText::text('Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.')).'</p>';
         echo '<p><label>'.esc_html(AdminText::text('Detailed history recovery window in days (0 = latest Checkpoint and required tail)')).' <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>'.esc_html(AdminText::text('Automatically clean expired versions after successful scheduled Checkpoint checks')).'</label></p>';echo '</details>';submit_button(AdminText::text('Save settings'));echo '</form>';
         $this->form('setup_check');submit_button(SetupReadiness::text('Check storage','保存先を確認'));echo '</form>';
-        $check=(array)get_option('owr_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html(AdminText::message((string)($check['message']??''))).'</p>';
+        $check=(array)get_option('ozeki_resilience_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html(AdminText::message((string)($check['message']??''))).'</p>';
     }
     public function page(): void {
         if (!current_user_can('manage_options')) return;
         echo '<div class="wrap"><h1>'.esc_html(AdminText::text('Resilience — Site recovery')).'</h1><p>'.esc_html(AdminText::text('Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.')).'</p>';
         SetupReadiness::render($this->config());
         $this->setupSettings();
-        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        if ($error=get_option('ozeki_resilience_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         if(!SetupReadiness::accepted($this->config())){echo '</div>';return;}
         echo '<h2>'.esc_html(AdminText::text('Recovery boundary')).'</h2><p>'.esc_html(AdminText::text('Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.')).'</p><p>'.esc_html(AdminText::text('Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.')).'</p>';
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
-        self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('owr_m1_comment_pending',[]),(string)get_option('owr_m1_notice',''),(string)get_option('owr_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
-        if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('ozeki_resilience_m1_comment_pending',[]),(string)get_option('ozeki_resilience_m1_notice',''),(string)get_option('ozeki_resilience_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
+        if(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>'.esc_html(AdminText::text('WordPress applied; S3 formal history pending.')).'</strong> '.esc_html(AdminText::text('This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.')).'</p>';
-        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        if ($error=get_option('ozeki_resilience_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(SetupReadiness::text('Prepare WordPress, themes and required plugins from trusted distributors. Recovery restores information assets, not software from S3; the destination theme and active plugins remain unchanged.','WordPress・テーマ・必要なプラグインは信頼できる配布元から準備してください。復旧するのは情報資産です。S3からソフトウェアを配置せず、復旧先のテーマと有効なプラグインを維持します。')).'</p>';
         echo '<h2>'.esc_html(AdminText::text('Site-wide recovery — primary workflow')).'</h2><p>'.esc_html(AdminText::text('Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.')).'</p><p>'.esc_html(AdminText::text('Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.')).'</p>';
         echo '<p>'.esc_html(AdminText::text('TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.')).'</p>';
@@ -747,31 +747,31 @@ final class Plugin
                 submit_button($label);echo '</form>';
             }
         }catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
-        $next=wp_next_scheduled('owr_m1_checkpoint');
-        echo '<p>'.esc_html(AdminText::text('Next complete-site Checkpoint (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
-        self::renderSiteCleanup((array)get_option('owr_site_cleanup_preview',[]));
+        self::renderSiteResult((array)get_option('ozeki_resilience_site_restore_attempt',[]),(array)get_option('ozeki_resilience_site_restore_result',[]),(array)get_option('ozeki_resilience_site_snapshot_result',[]),$siteSnapshots??[]);
+        $next=wp_next_scheduled('ozeki_resilience_m1_checkpoint');
+        echo '<p>'.esc_html(AdminText::text('Next complete-site Checkpoint (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_checkpoint_status',[]))).'</pre>';
+        self::renderSiteCleanup((array)get_option('ozeki_resilience_site_cleanup_preview',[]));
         $this->form('site_cleanup_preview');submit_button(AdminText::text('Preview complete-site retention'));echo '</form>';
-        $sitePlan=(array)get_option('owr_site_cleanup_preview',[]);
+        $sitePlan=(array)get_option('ozeki_resilience_site_cleanup_preview',[]);
         if(!empty($sitePlan['hash'])&&!empty($sitePlan['inventory_complete'])&&!empty($sitePlan['candidates'])){
             $this->form('site_cleanup_execute');
             echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($sitePlan['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">'.esc_html(AdminText::text('Delete only the previewed expired Checkpoints and resources, preserving retained recovery points')).'</label>';
             submit_button(AdminText::text('Delete expired complete-site resources'));echo '</form>';
         }
-        echo '<pre>'.esc_html(Store::json((array)get_option('owr_site_cleanup_status',[]))).'</pre>';
+        echo '<pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_site_cleanup_status',[]))).'</pre>';
 
         echo '<h2>'.esc_html(AdminText::text('Legacy asset-only cleanup — not complete-site cleanup')).'</h2><p>'.esc_html(AdminText::text('This separate earlier path uses asset snapshots. It does not implement complete-site retention. Do not use it to clean a complete-site stream.')).'</p>';
         $this->form('cleanup_preview');submit_button(AdminText::text('Preview expired versions'));echo '</form>';
-        $preview=(array)get_option('owr_m1_cleanup_preview',[]);
+        $preview=(array)get_option('ozeki_resilience_m1_cleanup_preview',[]);
         if ($preview) {
             echo '<pre>'.esc_html(Store::json($preview)).'</pre>';
             $this->form('cleanup_execute');echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($preview['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">'.esc_html(AdminText::text('Permanently delete only the previewed eligible versions')).'</label>';submit_button(AdminText::text('Delete previewed versions'));echo '</form>';
         }
-        echo '<pre>'.esc_html(Store::json((array)get_option('owr_m1_cleanup_status',[]))).'</pre>';
+        echo '<pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_cleanup_status',[]))).'</pre>';
         echo '<details><summary>'.esc_html(AdminText::text('Supplementary asset snapshots and recovery — not site-wide recovery')).'</summary><p>'.esc_html(AdminText::text('This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.')).'</p>';
         if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">'.esc_html(AdminText::text('I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.')).'</label></p>';submit_button(AdminText::text('Create initial snapshot'));echo '</form>'; }
-        $next=wp_next_scheduled('owr_m1_checkpoint');
-        echo '<p>'.esc_html(AdminText::text('Next scheduled check (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
+        $next=wp_next_scheduled('ozeki_resilience_m1_checkpoint');
+        echo '<p>'.esc_html(AdminText::text('Next scheduled check (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_checkpoint_status',[]))).'</pre>';
         $this->form('checkpoint');submit_button(AdminText::text('Create Checkpoint now'));echo '</form>';
         try {
             $keys=$this->store()->checkpoints();$this->form('restore_site');
@@ -780,9 +780,9 @@ final class Plugin
             echo '</select>';submit_button(AdminText::text('Restore assets from Checkpoint + later history'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
-        if (get_option(self::PENDING)||get_option('owr_m1_comment_pending')) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
-        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
-        if($error=get_option('owr_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        if (get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(get_option('ozeki_resilience_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
+        if($error=get_option('ozeki_resilience_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(AdminText::text('Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.')).'</p>';
         echo '<h2>'.esc_html(AdminText::text('Contact Form 7 and Flamingo')).'</h2><p>'.esc_html(AdminText::text('Completed form definitions and received Flamingo messages use independent JSON originals and the shared pending-history queue. Use complete site recovery with the recorded versions of both plugins installed. Message storage and mail delivery are separate; recovery imports records without sending mail. Received-message edits, spam/ham, trash/restore and permanent deletion, and form deletion are recorded. Received-message changes are captured at request completion. Attachments and address-book entries are outside this adapter.')).'</p>';
         echo '<h2>'.esc_html(AdminText::text('Confirmed formal history / Individual recovery')).'</h2><p>'.esc_html(AdminText::text('This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.')).'</p>';
@@ -791,6 +791,6 @@ final class Plugin
             foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html($row['attributes']['title']).'</td><td>'.esc_html($row['attributes']['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
             echo '</table>';submit_button(AdminText::text('Restore selected assets (text and attributes)'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        echo '<h2>'.esc_html(AdminText::text('Last asset recovery result')).'</h2><pre>'.esc_html(Store::json((array)get_option('owr_m1_restore_result',[]))).'</pre></div>';
+        echo '<h2>'.esc_html(AdminText::text('Last asset recovery result')).'</h2><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_restore_result',[]))).'</pre></div>';
     }
 }

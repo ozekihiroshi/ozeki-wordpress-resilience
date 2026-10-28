@@ -5,7 +5,7 @@ namespace OzekiResilience\M1;
 /** Diagnostic only: never a recovery payload, confirmation or retry queue. */
 final class SaveFailure
 {
-    public const OPTION='owr_m1_capture_error';
+    public const OPTION='ozeki_resilience_m1_capture_error';
     public static function run(string $context,callable $operation): mixed {
         try { return $operation(); }
         catch (\Throwable $error) {

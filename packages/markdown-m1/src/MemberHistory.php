@@ -36,7 +36,7 @@ final class MemberHistory
         $keys=['first_name','last_name','nickname','description','active','_wpmem_user_confirmed','_wpmem_activation_confirm'];
         foreach($fields??(array)get_option('wpmembers_fields',[]) as $field)if(is_array($field)&&isset($field[2])&&is_string($field[2]))$keys[]=$field[2];
         // Never transport sessions, reset tokens, application passwords or capabilities.
-        return array_values(array_filter(array_unique($keys),fn($k)=>!preg_match('/password|pass$|session|capabilities|user_level|activation_key|application|^_owr_/i',$k)));
+        return array_values(array_filter(array_unique($keys),fn($k)=>!preg_match('/password|pass$|session|capabilities|user_level|activation_key|application|^_(?:owr|ozeki_resilience)_/i',$k)));
     }
     private static function user(int $id): ?array {
         $u=get_userdata($id);if(!$u||$u->roles!==['subscriber']||array_diff_key($u->caps,['subscriber'=>true]))return null;
@@ -91,7 +91,7 @@ final class MemberHistory
             if(array_diff(array_keys($u),['ID','user_login','user_pass','user_nicename','user_email','user_url','user_registered','user_status','display_name']))throw new \RuntimeException('Unexpected member field.');
             foreach($entry['meta'] as $k=>$values)if(!in_array($k,self::metaKeys((array)($state['settings']['wpmembers_fields']??[])),true)||!is_array($values))throw new \RuntimeException('Disallowed member metadata.');
             foreach(['user_login','user_email'] as $k){$s=$k.':'.strtolower($u[$k]);if(isset($seen[$s]))throw new \RuntimeException('Duplicate member identity.');$seen[$s]=true;}
-            $found=get_users(['meta_key'=>'_owr_member_origin','meta_value'=>$marker]);if(count($found)>1)throw new \RuntimeException('Duplicate recovery mapping.');$target=$found[0]??null;
+            $found=get_users(['meta_key'=>'_ozeki_resilience_member_origin','meta_value'=>$marker]);if(count($found)>1)throw new \RuntimeException('Duplicate recovery mapping.');$target=$found[0]??null;
             foreach(['login'=>$u['user_login'],'email'=>$u['user_email']] as $field=>$value){$old=get_user_by($field,$value);if($old&&(!$target||$old->ID!==$target->ID))throw new \RuntimeException('Member identity conflicts with an existing destination account.');}
             if($target&&($target->roles!==['subscriber']||array_diff_key($target->caps,['subscriber'=>true])))throw new \RuntimeException('Refusing to replace privileged destination member.');
             $plan[(string)$id]=['target'=>$target?$target->ID:0,'marker'=>$marker,'entry'=>$entry];
@@ -106,12 +106,12 @@ final class MemberHistory
             $uid=(int)$p['target'];$ok=$uid?$wpdb->update($wpdb->users,$u,['ID'=>$uid]):$wpdb->insert($wpdb->users,$u);
             if($ok===false)throw new \RuntimeException('Cannot restore member.');if(!$uid)$uid=(int)$wpdb->insert_id;
             if($wpdb->delete($wpdb->usermeta,['user_id'=>$uid])===false)throw new \RuntimeException('Cannot replace recovered member metadata.');
-            $meta=$p['entry']['meta']+['_owr_member_origin'=>[$p['marker']],'_owr_member_source'=>[$source],$wpdb->prefix.'capabilities'=>[['subscriber'=>true]],$wpdb->prefix.'user_level'=>[0]];
+            $meta=$p['entry']['meta']+['_ozeki_resilience_member_origin'=>[$p['marker']],'_ozeki_resilience_member_source'=>[$source],$wpdb->prefix.'capabilities'=>[['subscriber'=>true]],$wpdb->prefix.'user_level'=>[0]];
             foreach($meta as $k=>$values)foreach($values as $value)if($wpdb->insert($wpdb->usermeta,['user_id'=>$uid,'meta_key'=>$k,'meta_value'=>maybe_serialize($value)])===false)throw new \RuntimeException('Cannot restore member metadata.');
             $map[(string)$id]=$uid;
         }
         // Remove only accounts created by this recovery source, never unrelated users.
-        foreach(get_users(['meta_key'=>'_owr_member_source','meta_value'=>$source]) as $u)if(!in_array($u->ID,$map,true)){
+        foreach(get_users(['meta_key'=>'_ozeki_resilience_member_source','meta_value'=>$source]) as $u)if(!in_array($u->ID,$map,true)){
             if($u->roles!==['subscriber']||array_diff_key($u->caps,['subscriber'=>true]))throw new \RuntimeException('Removed member has privileged destination role.');
             if($wpdb->delete($wpdb->usermeta,['user_id'=>$u->ID])===false||$wpdb->delete($wpdb->users,['ID'=>$u->ID])===false)throw new \RuntimeException('Cannot remove recovered member.');
         }

@@ -38,7 +38,7 @@ def main(out,live=False,plugin_zip=None):
   else:raise RuntimeError('Database/startup timeout')
   php("define('WP_INSTALLING',true);require '/var/www/html/wp-load.php';require ABSPATH.'wp-admin/includes/upgrade.php';wp_install('M1 generated trial','operator','operator@example.invalid',false,'','lab-only-password');update_option('siteurl','http://"+web+"');update_option('home','http://"+web+"');mkdir(ABSPATH.'wp-content/mu-plugins',0777,true);file_put_contents(ABSPATH.'wp-content/mu-plugins/trial.php',\"<?php require '/test/transport.php';\");")
   php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/plugin.php';foreach(['ozeki-markdown-documents/ozeki-markdown-documents.php','ozeki-wordpress-resilience/ozeki-wordpress-resilience.php'] as $p){symlink('/plugins/'.dirname($p),ABSPATH.'wp-content/plugins/'.dirname($p));wp_clean_plugins_cache();$r=activate_plugin($p);if(is_wp_error($r))throw new Exception($p.': '.$r->get_error_message());}")
-  php("require '/var/www/html/wp-load.php';update_option('owr_m1_config',json_decode(base64_decode('"+base64.b64encode(json.dumps(config).encode()).decode()+"'),true));")
+  php("require '/var/www/html/wp-load.php';update_option('ozeki_resilience_m1_config',json_decode(base64_decode('"+base64.b64encode(json.dumps(config).encode()).decode()+"'),true));")
   return web,db,php
  try:
   web,db,php=start('source')
@@ -61,7 +61,7 @@ def main(out,live=False,plugin_zip=None):
   # The source container/DB are removed before a fresh WordPress exists.
   run('docker','rm','-f','-v',web,db);created.remove(('container',web));created.remove(('container',db))
   target,tdb,tphp=start('target')
-  tphp("require '/var/www/html/wp-load.php';$c=get_option('owr_m1_config');$c['protect']=false;update_option('owr_m1_config',$c);wp_insert_post(['post_title'=>'Different IDs','post_status'=>'publish']);")
+  tphp("require '/var/www/html/wp-load.php';$c=get_option('ozeki_resilience_m1_config');$c['protect']=false;update_option('ozeki_resilience_m1_config',$c);wp_insert_post(['post_title'=>'Different IDs','post_status'=>'publish']);")
   result=run('docker','exec','-e','M1_TARGET=http://'+target,browser,'python3','/test/browser.py','restore');(out/'browser-target.log').write_bytes(result.stdout+result.stderr)
   restored=json.loads(tphp("require '/var/www/html/wp-load.php';$r=[];foreach(get_posts(['post_type'=>'ozmd_document','numberposts'=>-1]) as $p)$r[$p->post_title]=['source'=>get_post_meta($p->ID,'_ozmd_source',true),'status'=>$p->post_status,'slug'=>$p->post_name];echo json_encode($r);").stdout)
   assert restored==expected,(restored,expected)

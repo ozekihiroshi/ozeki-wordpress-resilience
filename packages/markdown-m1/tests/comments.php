@@ -47,13 +47,13 @@ function get_option($key,$default=false){return $GLOBALS['options'][$key]??$defa
 function update_option($key,$value,$autoload=false){$GLOBALS['options'][$key]=$value;return true;}
 function admin_url($path){return $path;}
 function wp_safe_redirect($url){throw new CommentRedirect();}
-foreach(['owr_m1_pending','owr_m1_comment_pending'] as $pending){
- $options=['owr_m1_config'=>['bucket'=>'original','prefix'=>'existing/'],$pending=>['frozen'=>'payload']];
+foreach(['ozeki_resilience_m1_pending','ozeki_resilience_m1_comment_pending'] as $pending){
+ $options=['ozeki_resilience_m1_config'=>['bucket'=>'original','prefix'=>'existing/'],$pending=>['frozen'=>'payload']];
  $_POST=['operation'=>'configure','bucket'=>'different','prefix'=>'wrong/'];
  try{(new OzekiResilience\M1\Plugin())->action();}catch(CommentRedirect $e){}
- ok($options['owr_m1_config']===['bucket'=>'original','prefix'=>'existing/'],'pending destination unchanged');
+ ok($options['ozeki_resilience_m1_config']===['bucket'=>'original','prefix'=>'existing/'],'pending destination unchanged');
  ok($options[$pending]===['frozen'=>'payload'],'pending payload unchanged');
- ok($options['owr_m1_error']==='Resume pending history before changing storage.','pending configuration rejected');
+ ok($options['ozeki_resilience_m1_error']==='Resume pending history before changing storage.','pending configuration rejected');
 }
 echo "PASS pending article/comment history prevents storage reconfiguration.\n";
 

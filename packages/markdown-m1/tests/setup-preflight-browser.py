@@ -8,7 +8,7 @@ d=Driver()
 try:
  d.set_window_size(1440,1000);base=os.environ['M1_SOURCE'];d.get(base+'/wp-login.php')
  d.find_element(By.ID,'user_login').send_keys('operator');d.find_element(By.ID,'user_pass').send_keys('lab-only-password');d.find_element(By.ID,'wp-submit').click()
- d.get(base+'/wp-admin/tools.php?page=owr-m1')
+ d.get(base+'/wp-admin/tools.php?page=ozeki-resilience')
  assert 'Preparation for protection' in d.find_element(By.TAG_NAME,'body').text
  checkbox=d.find_element(By.CSS_SELECTOR,'[name="confirm_terms"]')
  assert checkbox.get_attribute('required') and not checkbox.get_attribute('checked')

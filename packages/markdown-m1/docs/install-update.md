@@ -43,3 +43,9 @@ Past checks describe their specific builds and environments; they are not extra 
 Updating from 0.3.2 retains existing settings, history and pending saves. Existing article protection continues. To add ACF fields to protection, activate the supported free version and create a new trusted Baseline while editing is paused. Earlier captures do not acquire ACF coverage retroactively. See [ACF scope](acf-free.md).
 
 0.3.2からの更新では、設定・履歴・未完了の保存を保持し、既存の記事保護を継続します。ACFフィールドを保護に加える場合は、対応する無料版を有効化し、編集を止めて新しい信頼済みBaselineを作成します。過去の保存が自動でACF対応になるわけではありません。[ACF対応範囲](acf-free-ja.md)。
+
+## Review-response update / 審査対応版への更新
+
+Settings, pending saves, recovery mappings and scheduled Checkpoints are carried over automatically. Open **Tools → Resilience** after updating and confirm the settings and protection status. Existing S3 originals and history are not rewritten; a new initial save is not required solely for this update.
+
+設定・未完了の保存・復旧用の対応情報・Checkpointの予約は自動で引き継ぎます。更新後は **ツール → Resilience** から設定と保護状態を確認してください。S3の既存原本と履歴は書き換えず、この更新だけを理由に初期保存をやり直す必要はありません。

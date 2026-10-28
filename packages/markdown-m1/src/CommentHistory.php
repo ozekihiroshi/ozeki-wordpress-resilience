@@ -7,7 +7,7 @@ require_once __DIR__.'/SaveFailure.php';
 /** Core successful-comment callbacks, immutable complete records, shared history order. */
 final class CommentHistory
 {
-    public const PENDING='owr_m1_comment_pending';
+    public const PENDING='ozeki_resilience_m1_comment_pending';
     private array $statusOperations=[];
     public function boot(): void {
         // Freeze the successful operation payload, never re-fetch the comment by ID.
@@ -25,7 +25,7 @@ final class CommentHistory
         add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form/member/table/article-detail/ACF changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
     }
     private function lock(): string {
-        global $wpdb;$name='owr-m1-'.$wpdb->prefix;
+        global $wpdb;$name='ozeki-resilience-'.$wpdb->prefix;
         if((int)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 30)',$name))!==1)throw new \RuntimeException('Comment history is busy; inspect pending history.');
         return $name;
     }
@@ -39,7 +39,7 @@ final class CommentHistory
         // Strings make an immutable value copy before invoking storage or other hooks.
         $data=[];foreach(['comment_ID','comment_post_ID','comment_author','comment_author_email','comment_author_url','comment_author_IP','comment_date','comment_date_gmt','comment_content','comment_karma','comment_approved','comment_agent','comment_type','comment_parent','user_id'] as $k)$data[$k]=(string)$operation[$k];
         $post=get_post((int)$data['comment_post_ID']);
-        if(!$post||!in_array($post->post_type,['post','page','ozmd_document'],true)||($post->post_status!=='publish'&&!get_post_meta($post->ID,'_owr_m1_asset',true)))return;
+        if(!$post||!in_array($post->post_type,['post','page','ozmd_document'],true)||($post->post_status!=='publish'&&!get_post_meta($post->ID,'_ozeki_resilience_m1_asset',true)))return;
         $source=Store::json(['schema'=>'owr-comment-1','deleted'=>$deleted,'comment'=>$data]);
         $attrs=['post_type'=>'owr_comment','content_format'=>'comment-json','origin_id'=>$id,'origin_url'=>get_permalink($post),'title'=>'Comment #'.$id.' — '.$post->post_title,'status'=>$deleted?'deleted':$data['comment_approved'],'post_id'=>(int)$post->ID];
         $this->enqueue('comment-'.$id,$source,$attrs);
@@ -57,7 +57,7 @@ final class CommentHistory
             $queue=(array)get_option(self::PENDING,[]);
             // Native state can be emitted by both REST and legacy meta-box requests.
             // Compare against S3 authority under the writer lock, never a local cache.
-            if(!$queue && !get_option('owr_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf'],true)){
+            if(!$queue && !get_option('ozeki_resilience_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf'],true)){
                 try {
                     $state=(new Plugin())->store()->latestState();
                     if(self::sameNativeState($state['assets'][$asset]??null,$source,$attrs,$resources))return;
@@ -68,7 +68,7 @@ final class CommentHistory
             }
             $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs,'resources'=>$resources];
             if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment history pending state.');
-            try{$this->flushLocked();}catch(\Throwable $e){update_option('owr_m1_comment_error',$e->getMessage(),false);}
+            try{$this->flushLocked();}catch(\Throwable $e){update_option('ozeki_resilience_m1_comment_error',$e->getMessage(),false);}
         } finally {$this->unlock($name);}
     }
     public static function sameNativeState(?array $row,string $source,array $attrs,array $resources): bool {
@@ -85,7 +85,7 @@ final class CommentHistory
     }
     public function resume(): void {$name=$this->lock();try{$this->flushLocked();}finally{$this->unlock($name);}}
     private function flushLocked(): void {
-        if(get_option('owr_m1_pending'))throw new \RuntimeException('Resume pending article history first.');
+        if(get_option('ozeki_resilience_m1_pending'))throw new \RuntimeException('Resume pending article history first.');
         $queue=(array)get_option(self::PENDING,[]);if(!$queue)return;
         $store=(new Plugin())->store();
         foreach($queue as $key=>$entry){
@@ -102,7 +102,7 @@ final class CommentHistory
             $store->commit($entry['record']);unset($queue[$key]);
             if($queue)update_option(self::PENDING,$queue,false);else delete_option(self::PENDING);
         }
-        delete_option('owr_m1_comment_error');
+        delete_option('ozeki_resilience_m1_comment_error');
     }
     public static function replay(array &$data,string $source,array $attributes): void {
         $v=json_decode($source,true,512,JSON_THROW_ON_ERROR);$c=$v['comment']??[];

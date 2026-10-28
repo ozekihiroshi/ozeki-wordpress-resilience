@@ -14,26 +14,26 @@ function sanitize_text_field($s){return trim((string)$s);}
 function wp_unslash($s){return $s;}
 function wp_timezone(){return new DateTimeZone('Asia/Tokyo');}
 function wp_date($f){return (new DateTimeImmutable('now',wp_timezone()))->format($f);}
-function wp_clear_scheduled_hook($h){if($h==='owr_m1_checkpoint')$GLOBALS['event']=false;}
+function wp_clear_scheduled_hook($h){if($h==='ozeki_resilience_m1_checkpoint')$GLOBALS['event']=false;}
 function wp_get_scheduled_event($h){return $GLOBALS['event']??false;}
 function wp_schedule_single_event($at,$hook,$args=[],$error=false){$GLOBALS['event']=(object)['timestamp'=>$at,'schedule'=>false];return true;}
 function is_wp_error($r){return false;}
 function admin_url($p){return $p;}
 class GfsRedirect extends RuntimeException{}
 function wp_safe_redirect($url){throw new GfsRedirect($url);}
-$options=['owr_m1_config'=>['sentinel'=>'old']];
+$options=['ozeki_resilience_m1_config'=>['sentinel'=>'old']];
 $_POST=['operation'=>'configure','confirm_terms'=>'1','bucket'=>'fixture-bucket','region'=>'ap-northeast-1','prefix'=>'fixture/','owner'=>'','retention_days'=>'0','cleanup_keep_days'=>'14','cleanup_enabled'=>'1','gfs'=>[
  'weekly'=>['enabled'=>'on','weekday'=>'0','time'=>'02:00','keep'=>'2'],
  'monthly'=>['enabled'=>'on','day'=>'1','time'=>'02:00','keep'=>'3'],
  'yearly'=>['enabled'=>'on','month'=>'1','day'=>'1','time'=>'02:00','keep'=>'3'],
 ]];
 try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
-checkGfs(empty($options['owr_m1_error']),'Settings accepted');$saved=$options['owr_m1_config'];
+checkGfs(empty($options['ozeki_resilience_m1_error']),'Settings accepted');$saved=$options['ozeki_resilience_m1_config'];
 checkGfs(count($saved['gfs'])===3&&$saved['gfs']['monthly']['keep']===3&&$saved['retention_days']===0,'All form fields persisted');
-checkGfs($event->timestamp===$options['owr_gfs_due']['at'],'Next event and due slot registered');
+checkGfs($event->timestamp===$options['ozeki_resilience_gfs_due']['at'],'Next event and due slot registered');
 $_POST['gfs']['yearly']['time']='25:99';
 try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
-checkGfs($options['owr_m1_config']===$saved&&str_contains($options['owr_m1_error'],'Invalid GFS'),'Invalid settings do not replace config');
+checkGfs($options['ozeki_resilience_m1_config']===$saved&&str_contains($options['ozeki_resilience_m1_error'],'Invalid GFS'),'Invalid settings do not replace config');
 echo "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n";
 
 function sanitize_key($v){return is_scalar($v)?preg_replace("/[^a-z0-9_-]/","",strtolower((string)$v)):"";}

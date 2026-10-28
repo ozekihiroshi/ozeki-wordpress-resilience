@@ -35,7 +35,7 @@ def main(out):
   php("file_put_contents('/var/www/html/wp-content/mu-plugins/language.php',base64_decode('"+base64.b64encode(b"<?php add_filter('pre_determine_locale',static fn($v)=>($_COOKIE['owr_test_locale']??'')==='ja'?'ja':$v);").decode()+"'));")
   browser=tag+'-browser';run('docker','run','-d','--name',browser,'--network',net,'--memory','2g','--shm-size','1g','-v',str(ROOT/'tests')+':/test:ro','-v',str(lab)+':/lab','--entrypoint','sleep','selenium/standalone-chrome:latest','infinity');created.append(('container',browser))
   result=run('docker','exec','-e','M1_SOURCE=http://'+web,browser,'python3','/test/admin-language-browser.py');(out/'browser.log').write_bytes(result.stdout+result.stderr)
-  state=json.loads(php("require '/var/www/html/wp-load.php';echo json_encode(['config'=>get_option('owr_m1_config'),'baseline'=>get_option('owr_setup_baseline')]);").stdout)
+  state=json.loads(php("require '/var/www/html/wp-load.php';echo json_encode(['config'=>get_option('ozeki_resilience_m1_config'),'baseline'=>get_option('ozeki_resilience_setup_baseline')]);").stdout)
   assert state['config']['protect'] and state['baseline']['manifest']
   php("require '/var/www/html/wp-load.php';wp_set_current_user(1);wp_insert_post(['post_title'=>'Save settings <b>Original</b>','post_content'=>'Generated language test','post_status'=>'publish']);")
   html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new OzekiResilience\\M1\\Plugin())->page();").stdout.decode()

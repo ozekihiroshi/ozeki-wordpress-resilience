@@ -74,7 +74,7 @@ final class SiteSnapshot
     }
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
-        if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
+        if(get_option('ozeki_resilience_m1_pending')||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         // Include active supported runtimes; native-only sites do not require Markdown Documents.
         foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN,AcfHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=['themes'=>[],'plugins'=>[]];
@@ -198,7 +198,7 @@ final class SiteSnapshot
             if(!$found){
                 $d['tables']['posts'][]=array_replace(['ID'=>$id,'post_author'=>'0','post_date'=>$a['date'],'post_date_gmt'=>$a['date_gmt'],'post_content'=>'','post_title'=>$a['title'],'post_excerpt'=>'','post_status'=>$a['status'],'comment_status'=>'closed','ping_status'=>'closed','post_password'=>'','post_name'=>$a['slug'],'to_ping'=>'','pinged'=>'','post_modified'=>$a['date'],'post_modified_gmt'=>$a['date_gmt'],'post_content_filtered'=>'','post_parent'=>'0','guid'=>$a['origin_url'],'menu_order'=>'0','post_type'=>$type,'post_mime_type'=>'','comment_count'=>'0'],$values);
                 $next=max(array_merge([0],array_map('intval',array_column($d['tables']['postmeta'],'meta_id'))))+1;
-                foreach(($type==='ozmd_document'?['_ozmd_source'=>'']:[])+['_owr_m1_asset'=>$r['original']['asset']] as $k=>$v)$d['tables']['postmeta'][]=['meta_id'=>(string)$next++,'post_id'=>$id,'meta_key'=>$k,'meta_value'=>$v];
+                foreach(($type==='ozmd_document'?['_ozmd_source'=>'']:[])+['_ozeki_resilience_m1_asset'=>$r['original']['asset']] as $k=>$v)$d['tables']['postmeta'][]=['meta_id'=>(string)$next++,'post_id'=>$id,'meta_key'=>$k,'meta_value'=>$v];
             }
             if($type==='ozmd_document'){
                 $files['markdown/'.$id.'.md']=$raw;
@@ -251,7 +251,7 @@ final class SiteSnapshot
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
-        if(!empty((new Plugin())->config()['protect'])||get_option('owr_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
+        if(!empty((new Plugin())->config()['protect'])||get_option('ozeki_resilience_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
         [$m,$files]=$this->load($ref,true);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
         foreach($m['required_form_plugins']??[] as $plugin=>$version){
@@ -324,16 +324,16 @@ final class SiteSnapshot
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
                 (new \OzekiMarkdownDocuments\Content\MarkdownSource())->store((int)$match[1],$raw);
-                self::writeMeta((int)$match[1],'_owr_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
+                self::writeMeta((int)$match[1],'_ozeki_resilience_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
             }
             self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
-        self::writeOption('owr_site_origin_url',$from,false);
+        self::writeOption('ozeki_resilience_site_origin_url',$from,false);
         self::writeOption('ozeki_resilience_origin_upload_url',$fromUploads,false);
         $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from,'application_report'=>$application['report']];
-        self::writeOption('owr_site_restore_result',$result,false);
+        self::writeOption('ozeki_resilience_site_restore_result',$result,false);
         return $result;
     }
 }

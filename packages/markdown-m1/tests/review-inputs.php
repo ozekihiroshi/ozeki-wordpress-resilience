@@ -9,7 +9,7 @@ foreach(['key'=>['../manifest.json','site-snapshots/x/manifest.json','<script>',
 ozekre_reject(wp_json_encode($ref+['injected'=>'<script>']));
 foreach(["# 日本語\n\n```html\n<script>alert(1)</script>\n```\n",'a:0:{}',"![image](https://example.test/a.png)\n"] as $source)ozekre_assert(OzekiResilience\M1\Plugin::validatedMarkdown($source)===$source,'Original bytes changed');
 foreach([[],null,"a\0b","\xff",str_repeat('x',5*1024*1024+1)] as $source){$rejected=false;try{OzekiResilience\M1\Plugin::validatedMarkdown($source);}catch(Throwable $e){$rejected=true;}ozekre_assert($rejected,'Invalid Markdown accepted');}
-update_option('owr_site_origin_url','https://old.example');
+update_option('ozeki_resilience_site_origin_url','https://old.example');
 $p=new OzekiResilience\M1\Plugin();
 $html='<form action="https://old.example/send"><input name="test" value="retained"></form><a href="https://old.example/a?x=1&amp;y=2">Link</a><img src="https://old.example/a.jpg" srcset="https://old.example/a.jpg 1x, https://old.example/b.jpg 2x"><p>https://old.example/raw</p><script type="application/json">{"url":"https://old.example/data"}</script><a href="https://old.example.evil/a">Other host</a>';
 $result=$p->relocateContent($html);$to=rtrim(home_url(),'/');
@@ -19,7 +19,7 @@ ozekre_assert(in_array($to.'/send',$attributes['action']??[],true)&&in_array($to
 ozekre_assert(str_contains($result,'srcset="'.$to.'/a.jpg 1x, '.$to.'/b.jpg 2x"'),'Responsive images not rebased');
 ozekre_assert(str_contains($result,'<input name="test" value="retained">')&&str_contains($result,'<p>https://old.example/raw</p>')&&str_contains($result,'"https://old.example/data"'),'Unrelated shortcode HTML/text changed');
 ozekre_assert(str_contains($result,'https://old.example.evil/a'),'Host boundary broken');
-update_option('owr_site_origin_url','javascript:alert(1)');ozekre_assert($p->relocateContent($html)===$html,'Unsafe origin accepted');delete_option('owr_site_origin_url');
+update_option('ozeki_resilience_site_origin_url','javascript:alert(1)');ozekre_assert($p->relocateContent($html)===$html,'Unsafe origin accepted');delete_option('ozeki_resilience_site_origin_url');
 foreach(['uploads/a.php','uploads/a.js','uploads/a.css','uploads/a.PHP.jpg','uploads/.htaccess','uploads/a.svg','plugins/a.png'] as $path)ozekre_assert(!OzekiResilience\M1\SiteSnapshot::isInformationFile($path),'Executable path accepted');
 foreach(['uploads/a.jpg','uploads/a.png','uploads/manual.pdf'] as $path)ozekre_assert(OzekiResilience\M1\SiteSnapshot::isInformationFile($path),'Information asset rejected');
 echo "PASS review input rejection, byte-preserved Markdown, escaped URL attributes and information-file boundary.\n";

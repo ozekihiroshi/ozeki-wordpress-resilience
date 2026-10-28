@@ -14,14 +14,14 @@ final class AcfHistory {
         add_action('wp_after_insert_post',fn($id)=>$this->mark((int)$id),PHP_INT_MAX,1);
         add_action('acf/save_post',function($id){if(is_numeric($id))$this->mark((int)$id);},30);
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)
-            add_action($hook,function($mid,$id,$key){if(!str_starts_with((string)$key,'_owr_'))$this->mark((int)$id);},PHP_INT_MAX,3);
+            add_action($hook,function($mid,$id,$key){if(!(str_starts_with((string)$key,'_owr_')||str_starts_with((string)$key,'_ozeki_resilience_')))$this->mark((int)$id);},PHP_INT_MAX,3);
         add_action('deleted_post',function($id){unset($this->dirty[(int)$id]);});
         add_action('shutdown',[$this,'flush'],PHP_INT_MAX);
     }
     private function mark(int $id): void {
         if(!self::enabled()||empty((new Plugin())->config()['protect']))return;
         $p=get_post($id);
-        if($p&&in_array($p->post_type,['post','page'],true)&&($p->post_status==='publish'||get_post_meta($id,'_owr_m1_asset',true)))$this->dirty[$id]=true;
+        if($p&&in_array($p->post_type,['post','page'],true)&&($p->post_status==='publish'||get_post_meta($id,'_ozeki_resilience_m1_asset',true)))$this->dirty[$id]=true;
     }
     public static function capture(int $id): array {
         global $wpdb;
@@ -32,7 +32,7 @@ final class AcfHistory {
         $rows=$wpdb->get_results($wpdb->prepare("SELECT meta_key,meta_value FROM {$wpdb->postmeta} WHERE post_id=%d ORDER BY meta_id",$id),ARRAY_A);
         if($wpdb->last_error)throw new \RuntimeException('Cannot freeze ACF values.');
         $raw=[];$references=[];$values=[];
-        foreach($rows as $row){$key=$row['meta_key'];if(in_array($key,['_edit_lock','_edit_last'],true)||str_starts_with($key,'_owr_'))continue;$raw[$key][]=$row['meta_value'];
+        foreach($rows as $row){$key=$row['meta_key'];if(in_array($key,['_edit_lock','_edit_last'],true)||(str_starts_with($key,'_owr_')||str_starts_with($key,'_ozeki_resilience_')))continue;$raw[$key][]=$row['meta_value'];
             if(str_starts_with($key,'_')&&preg_match('/^field_[A-Za-z0-9_-]+$/D',$row['meta_value']))$references[substr($key,1)]=$row['meta_value'];
         }
         foreach($references as $name=>$key){

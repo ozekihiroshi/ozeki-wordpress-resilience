@@ -28,10 +28,10 @@ class CheckpointAdminDb {
 $wpdb=new CheckpointAdminDb();
 class TestRedirect extends RuntimeException {}
 function wp_safe_redirect($url){throw new TestRedirect($url);}
-$fixture=new AdminCheckpointS3();$options=['owr_m1_config'=>['bucket'=>'fixture','prefix'=>'admin/','region'=>'fixture']];
-$store=new Store($fixture,$options['owr_m1_config']);$site=new SiteSnapshot($store);
+$fixture=new AdminCheckpointS3();$options=['ozeki_resilience_m1_config'=>['bucket'=>'fixture','prefix'=>'admin/','region'=>'fixture']];
+$store=new Store($fixture,$options['ozeki_resilience_m1_config']);$site=new SiteSnapshot($store);
 $baseline=$site->save(['content.json'=>Store::json(['tables'=>['posts'=>[],'postmeta'=>[],'comments'=>[]],'options'=>[]])],['schema'=>'owr-site-snapshot-1','origin'=>'administrator_initial','through'=>0,'source_url'=>'https://fixture.invalid']);
-$options['owr_site_snapshot_result']=$baseline;
+$options['ozeki_resilience_site_snapshot_result']=$baseline;
 $_POST=['operation'=>'whole_checkpoint','site_ref'=>Store::json($baseline['manifest'])];
 // Fail only the new Checkpoint verification, after the baseline has been read.
 $fixture->writes=[];
@@ -41,9 +41,9 @@ $fixture=new class($fixture) extends AdminCheckpointS3 {
  function putObject($a){if(str_contains($a['Key'],'/resources/'))$this->corrupt=true;return parent::putObject($a);}
 };
 try{(new Plugin())->action();throw new RuntimeException('Expected redirect');}catch(TestRedirect $e){}
-ok(str_contains($options['owr_m1_error']??'','Site snapshot resource verification failed:'),'Current failure recorded');
-ok(str_contains($options['owr_m1_error'],'S3 content mismatch'),'Cause retained');
-ok($options['owr_site_snapshot_result']===$baseline,'No replacement success result');
+ok(str_contains($options['ozeki_resilience_m1_error']??'','Site snapshot resource verification failed:'),'Current failure recorded');
+ok(str_contains($options['ozeki_resilience_m1_error'],'S3 content mismatch'),'Cause retained');
+ok($options['ozeki_resilience_site_snapshot_result']===$baseline,'No replacement success result');
 foreach($fixture->writes as $key)ok(!str_ends_with($key,'/manifest.json'),'No failed manifest');
 echo "PASS actual admin action with WordPress/S3 fixtures: verification failure recorded with cause, prior snapshot unchanged, no manifest or new success. No browser/real AWS claim.\n";
 

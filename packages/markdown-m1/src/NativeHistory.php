@@ -9,7 +9,7 @@ final class NativeHistory {
     private array $dirty=[];
     private array $deleting=[];
     private function eligible(int $id): bool {
-        $p=get_post($id);return $p&&in_array($p->post_type,['post','page'],true)&&($p->post_status==='publish'||get_post_meta($id,'_owr_m1_asset',true))&&!empty((new Plugin())->config()['protect']);
+        $p=get_post($id);return $p&&in_array($p->post_type,['post','page'],true)&&($p->post_status==='publish'||get_post_meta($id,'_ozeki_resilience_m1_asset',true))&&!empty((new Plugin())->config()['protect']);
     }
     private function mark(int $id): void {if($this->eligible($id)&&!isset($this->deleting[$id]))$this->dirty[$id]=true;}
     public function boot(): void {

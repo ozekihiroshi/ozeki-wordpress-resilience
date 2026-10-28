@@ -22,6 +22,8 @@ if (!function_exists('Aws\\constantly')) {
 if (!function_exists('JmesPath\\search')) {
     require_once __DIR__.'/vendor/mtdowling/jmespath.php/src/JmesPath.php';
 }
+require_once __DIR__.'/src/Identifiers.php';
+add_action('plugins_loaded', [\OzekiResilience\M1\Identifiers::class, 'migrate'], -100);
 require_once __DIR__.'/src/Store.php';
 require_once __DIR__.'/src/SiteSnapshot.php';
 require_once __DIR__.'/src/Plugin.php';

@@ -43,3 +43,7 @@ $success=['at'=>'now','through'=>1,'posts'=>4,'files'=>0,'application_report'=>$
 check(str_contains($html,'Preserved in S3')&&str_contains($html,'postmeta.10.unknown')&&!str_contains($html,'private unknown'),'Visible value-free reasons');
 ob_start();OzekiResilience\M1\Plugin::renderSiteResult(['status'=>'failed','error'=>'failure'],$success,[]);$html=ob_get_clean();check(!str_contains(explode('<details>',$html)[0],'Preserved in S3'),'Failure cannot show old projection as current');
 echo "PASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\n";
+
+$legacy=[["post_id"=>"1","meta_key"=>"_owr_m1_asset","meta_value"=>"asset","meta_id"=>"1"]];
+$mapped=\OzekiResilience\M1\Identifiers::metadata($legacy);
+if($mapped[0]["meta_key"]!=="_ozeki_resilience_m1_asset"||$legacy[0]["meta_key"]!=="_owr_m1_asset")throw new RuntimeException("Legacy archive mapping failed");

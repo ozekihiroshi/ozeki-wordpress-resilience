@@ -36,8 +36,8 @@ def main(out):
   def wp(code):return php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);"+code).stdout.decode()
   def action(data):
    payload=base64.b64encode(json.dumps(data).encode()).decode()
-   wp("$_POST=json_decode(base64_decode('"+payload+"'),true);$_REQUEST=$_POST;$_REQUEST['_wpnonce']=wp_create_nonce('owr_m1');(new OzekiResilience\\M1\\Plugin())->action();")
-  def state():return json.loads(wp("echo json_encode(['config'=>get_option('owr_m1_config',[]),'error'=>get_option('owr_m1_error',''),'storage'=>get_option('owr_setup_storage',[]),'baseline'=>get_option('owr_setup_baseline',[])]);"))
+   wp("$_POST=json_decode(base64_decode('"+payload+"'),true);$_REQUEST=$_POST;$_REQUEST['_wpnonce']=wp_create_nonce('ozeki_resilience_m1');(new OzekiResilience\\M1\\Plugin())->action();")
+  def state():return json.loads(wp("echo json_encode(['config'=>get_option('ozeki_resilience_m1_config',[]),'error'=>get_option('ozeki_resilience_m1_error',''),'storage'=>get_option('ozeki_resilience_setup_storage',[]),'baseline'=>get_option('ozeki_resilience_setup_baseline',[])]);"))
   def page():return wp("(new OzekiResilience\\M1\\Plugin())->page();")
   def control(v):(lab/'control.json').write_text(json.dumps(v))
   checks=[]
@@ -79,7 +79,7 @@ def main(out):
   (out/'setup-en.html').write_text(page())
   checks.append('Japanese and English preparation and terms text')
   # Existing installations keep service access; confirmation is still required on settings save.
-  wp("$c=get_option('owr_m1_config');unset($c['setup_version'],$c['terms_version']);update_option('owr_m1_config',$c);")
+  wp("$c=get_option('ozeki_resilience_m1_config');unset($c['setup_version'],$c['terms_version']);update_option('ozeki_resilience_m1_config',$c);")
   assert 'Existing settings remain in use' in page()
   wp("echo count((new OzekiResilience\\M1\\Plugin())->store()->history());")
   checks.append('Legacy configured installation retains authorized service access')
