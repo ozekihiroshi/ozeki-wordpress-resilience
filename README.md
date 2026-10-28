@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**Release candidate: 0.3.3 (rc.1), not submitted.** Adds ACF free basic-field preservation and recovery. WordPress.org is still reviewing the submitted 0.3.2 rc.1; earlier ZIPs and tags remain preserved.
+**Release candidate: 0.3.3 (rc.2), not submitted.** Adds ACF free basic-field preservation and recovery. WordPress.org is still reviewing the submitted 0.3.2 rc.1; earlier ZIPs and tags remain preserved.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
@@ -20,7 +20,7 @@ The underlying idea is to separate the lifespan of information from that of the 
 
 ## Download and start
 
-1. Download **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.1/ozeki-resilience-0.3.3.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.1).
+1. Download **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.2/ozeki-resilience-0.3.3.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.2).
 2. Read the [first-time setup guide](packages/markdown-m1/docs/user-guide.md) and prepare [AWS access](packages/markdown-m1/docs/aws-setup.md).
 3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 

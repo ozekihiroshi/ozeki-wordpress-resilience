@@ -6,7 +6,7 @@ def run(*args,input=None,check=True):
  p=subprocess.run(args,input=input,capture_output=True,timeout=900)
  if check and p.returncode:raise RuntimeError(str(args[:4])+': '+p.stderr.decode(errors='replace')[-1800:]+p.stdout.decode(errors='replace')[-1500:])
  return p
-def main(out, candidate, previous, wpcli, checker):
+def main(out, candidate, previous, wpcli, checker, acf=None):
  out.mkdir(parents=True,exist_ok=False);lab=out/'lab';lab.mkdir();os.chmod(lab,0o777);(lab/'control.json').write_text('{}');os.chmod(lab/'control.json',0o666);(lab/'ipc').mkdir();os.chmod(lab/'ipc',0o777)
  plugin=out/'plugins'/'ozeki-resilience'
  (out/'plugins').mkdir()
@@ -46,6 +46,16 @@ def main(out, candidate, previous, wpcli, checker):
   html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new Owr\\M1\\Plugin())->page();").stdout.decode()
   assert 'Save settings' in html and '&lt;b&gt;Original&lt;/b&gt;' in html,'User title must remain original and escaped'
   print('PASS fresh ZIP installation, initial capture and protected saving via CLI',flush=True)
+  if acf:
+   shutil.copyfile(acf,lab/'acf.zip')
+   print(wp(web,'plugin','install','/lab/acf.zip','--activate'),flush=True)
+   assert 'false'==wp(web,'eval',"echo json_encode(Owr\\M1\\SetupReadiness::acfReady((new Owr\\M1\\Plugin())->config()));").strip()
+   wp(web,'eval',"wp_set_current_user(1);acf_import_field_group(['key'=>'group_readiness','title'=>'Readiness fixture','location'=>[[['param'=>'post_type','operator'=>'==','value'=>'post']]],'fields'=>[['key'=>'field_readiness','name'=>'sub-title','label'=>'Fixture','type'=>'text']]]);$id=wp_insert_post(['post_title'=>'ACF readiness fixture','post_status'=>'publish']);update_field('field_readiness','a:0:{}',$id);$p=new Owr\\M1\\Plugin();$point=(new Owr\\M1\\SiteSnapshot($p->store()))->capture(true,[]);$c=$p->config();update_option('owr_setup_baseline',Owr\\M1\\SetupReadiness::baselineRecord($c,$point['manifest']));Owr\\M1\\SetupReadiness::requireStart($c);echo 'READY';")
+   assert 'true'==wp(web,'eval',"echo json_encode(Owr\\M1\\SetupReadiness::acfReady((new Owr\\M1\\Plugin())->config()));").strip()
+   for locale,message in [('ja','現在のACF無料版を含む初期保存を確認済み'),('en_US','Initial save includes this ACF free version')]:
+    rendered=wp(web,'eval',"add_filter('pre_determine_locale',static fn()=> '"+locale+"');Owr\\M1\\SetupReadiness::render((new Owr\\M1\\Plugin())->config());")
+    assert message in rendered
+   print('PASS real ACF free: old capture unconfirmed, new captured version ready, Japanese/English display',flush=True)
   update,udb,uphp=start('upgrade')
   print(wp(update,'plugin','install','/lab/previous.zip','--activate'),flush=True)
   assert wp(update,'plugin','get','ozeki-resilience','--field=version').strip()=='0.3.2'
@@ -72,7 +82,7 @@ def main(out, candidate, previous, wpcli, checker):
   if not rows:raise RuntimeError('Plugin Check output was not recognized: '+raw[:2000]+check.stderr.decode()[:500])
   (out/'plugin-check.json').write_text(json.dumps(rows,indent=2))
   counts=collections.Counter(x['type'] for x in rows);print('Plugin Check '+check_version+': '+str(counts),flush=True)
-  result={'state':'PASS' if not counts['ERROR'] else 'CHECK_FAILED','scope':'Isolated WordPress / MariaDB / local S3 simulation; no live AWS','wordpress':wp(web,'core','version').strip(),'php':run('docker','exec',web,'php','-r','echo PHP_VERSION;').stdout.decode(),'plugin_check_version':check_version,'plugin_check_errors':counts['ERROR'],'plugin_check_warnings':counts['WARNING'],'installed_files':len(expected),'zip_sha256':__import__('hashlib').sha256(candidate.read_bytes()).hexdigest(),'checks':['Fresh install from candidate ZIP with all installed file hashes matching','CLI initial capture, readiness gate and enabled protection; not a browser test','Japanese rendering with untranslated escaped user content','Active replacement from submitted 0.3.2 rc.1 ZIP preserves config, posts, confirmed history, synthetic body/related pending records and recovery result','Legacy enabled protection continues saving after update without a new setup','Updated installed file hashes match candidate ZIP'],'submitted':False}
+  result={'state':'PASS' if not counts['ERROR'] else 'CHECK_FAILED','scope':'Isolated WordPress / MariaDB / local S3 simulation; no live AWS','wordpress':wp(web,'core','version').strip(),'php':run('docker','exec',web,'php','-r','echo PHP_VERSION;').stdout.decode(),'plugin_check_version':check_version,'plugin_check_errors':counts['ERROR'],'plugin_check_warnings':counts['WARNING'],'installed_files':len(expected),'zip_sha256':__import__('hashlib').sha256(candidate.read_bytes()).hexdigest(),'checks':['Fresh install from candidate ZIP with all installed file hashes matching','CLI initial capture, readiness gate and enabled protection; not a browser test','Japanese rendering with untranslated escaped user content','Active replacement from submitted 0.3.2 rc.1 ZIP preserves config, posts, confirmed history, synthetic body/related pending records and recovery result','Legacy enabled protection continues saving after update without a new setup','Updated installed file hashes match candidate ZIP'],'acf_free_readiness_checked':bool(acf),'submitted':False}
   (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
   assert not counts['ERROR'],'Plugin Check errors require review'
 

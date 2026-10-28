@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**公開候補：0.3.3（rc.1）、未送信。** ACF無料版の基本フィールド対応を追加しました。WordPress.orgには0.3.2 rc.1を提出済みで、現在も審査待ちです。以前のZIP・タグは保全しています。
+**公開候補：0.3.3（rc.2）、未送信。** ACF無料版の基本フィールド対応を追加しました。WordPress.orgには0.3.2 rc.1を提出済みで、現在も審査待ちです。以前のZIP・タグは保全しています。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
@@ -20,7 +20,7 @@
 
 ## ダウンロードと導入
 
-1. **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.1/ozeki-resilience-0.3.3.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
+1. **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.2/ozeki-resilience-0.3.3.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.2)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
 2. [初回導入ガイド（準備から保護開始まで）](docs/user-guide-ja.md)を読み、[AWS設定](docs/aws-setup-ja.md)を準備します。
 3. ZIPを導入し、**ツール → Resilience** で準備状況を確認し、保存先を確認、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
 

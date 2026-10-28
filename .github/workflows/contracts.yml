@@ -34,6 +34,8 @@ jobs:
           php packages/markdown-m1/tests/checkpoint.php packages/markdown-m1
           php packages/markdown-m1/tests/separated-assets.php packages/markdown-m1
           php packages/markdown-m1/tests/acf.php packages/markdown-m1
+          php packages/markdown-m1/tests/acf-readiness.php packages/markdown-m1
+          php packages/markdown-m1/tests/acf-readiness.php packages/markdown-m1 pro
           php packages/markdown-m1/tests/site-checkpoint-verification.php packages/markdown-m1
           php packages/markdown-m1/tests/retention-extension.php packages/markdown-m1
           php packages/markdown-m1/tests/checkpoint-lifecycle.php packages/markdown-m1

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Owr\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AdminText.php';
+require_once __DIR__.'/AcfHistory.php';
 
 /** Read-only preparation checks; actual capture still verifies every stored resource. */
 final class SetupReadiness
@@ -51,12 +52,41 @@ final class SetupReadiness
         $b=(array)get_option('owr_setup_baseline',[]);
         return ($b['identity']??'')===self::identity($c) && !empty($b['manifest']);
     }
+    public static function acfMode(): string {
+        if (defined('ACF_PRO') && ACF_PRO) return 'pro';
+        if (AcfHistory::enabled()) return 'free';
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Read current stored definitions for the preparation display; stale cached absence could hide inactive ACF content.
+        $exists=$wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_type='acf-field-group' LIMIT 1");
+        return $exists ? 'inactive' : 'unused';
+    }
+    public static function baselineRecord(array $c,array $manifest): array {
+        return ['identity'=>self::identity($c),'manifest'=>$manifest,'at'=>gmdate('c'),
+            'acf_free_version'=>AcfHistory::enabled()?(string)acf_get_setting('version'):null];
+    }
+    public static function acfReady(array $c): bool {
+        if(!AcfHistory::enabled())return true;
+        $b=(array)get_option('owr_setup_baseline',[]);
+        return self::baseline($c) && ($b['acf_free_version']??null)===(string)acf_get_setting('version');
+    }
+    public static function acfRow(array $c): array {
+        $t=[self::class,'text'];$mode=self::acfMode();
+        $row=['ok'=>true,'label'=>$t('ACF free basic fields','ACF無料版の基本フィールド')];
+        if($mode==='pro')return $row+['excluded'=>true,'next'=>$t('ACF PRO fields are outside protection. Article protection can continue.','ACF PROのフィールドは保護対象外です。記事などの保護は継続できます。')];
+        if($mode==='inactive')return $row+['excluded'=>true,'next'=>$t('Stored ACF definitions were found, but ACF free is not active. Activate ACF free and create a new trusted initial snapshot to protect supported fields.','ACFの定義がありますが、無料版が有効ではありません。対応フィールドを保護する場合は無料版を有効化し、新しい信頼済みの初期保存を作成してください。')];
+        if($mode==='unused')return $row+['unused'=>true,'next'=>$t('Not used; no action needed.','使用していないため対応は不要です。')];
+        $ready=self::acfReady($c);$row['ok']=$ready;
+        $row['next']=$ready?$t('Initial save includes this ACF free version. Basic fields only; create a new trusted initial snapshot after changing field definitions.','現在のACF無料版を含む初期保存を確認済みです。基本フィールドが対象です。定義を変更した場合は初期保存を作り直してください。'):$t('Create a new trusted initial snapshot with ACF free active. Older initial saves do not confirm ACF coverage; existing article protection continues.','ACF無料版を有効にして、新しい信頼済みの初期保存を作成してください。過去の保存だけではACF対応を確認できません。既存の記事保護は継続します。');
+        return $row;
+    }
     public static function requireStart(array $c): void {
         self::requireLocal();
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         if(($c['setup_role']??'source')!=='source')throw new \RuntimeException(self::text('Choose Protect this site before starting protection.','保護を開始する場合は「このサイトを保護」を選択してください。'));
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         if(!self::baseline($c))throw new \RuntimeException(self::text('Create a complete initial snapshot for this storage destination before starting protection.','この保存先への最初の保存を完了してから、保護を開始してください。'));
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; admin renderers escape messages at their HTML sink.
+        if(!self::acfReady($c))throw new \RuntimeException(self::acfRow($c)['next']);
     }
     public static function storageNext(array $c): string {
         if(($c['setup_role']??'source')==='recovery')return self::text('Select an existing Checkpoint under Site-wide recovery.','「初期保存とサイト全体の復旧」で既存の復旧ポイントを選択してください。');
@@ -75,16 +105,17 @@ final class SetupReadiness
         $current=($r['identity']??'')===self::identity($c);
         $rows['storage']=['ok'=>$current&&!empty($r['ok']),'unchecked'=>!$current,'label'=>$t('Storage connection and versioning','保存先への接続・バージョン管理'),'next'=>$current?(!empty($r['ok'])?self::storageNext($c):AdminText::message((string)($r['message']??''))):$t('Save storage settings and confirm the terms, then select Check storage.','保存先の設定と利用条件の確認を保存し、「保存先を確認」を押してください。')];
         $rows['baseline']=['ok'=>self::baseline($c),'unchecked'=>!self::baseline($c),'label'=>$t('First save and verified read-back','最初の保存・読み戻し'),'next'=>self::baseline($c)?$t('Completed for this destination.','この保存先で完了しています。'):$t('Use Create complete initial snapshot after checking storage.','保存先の確認後、「最初の保存を作成」を押してください。')];
+        $rows['acf']=self::acfRow($c);
         $rows['protect']=['ok'=>!empty($c['protect']),'unchecked'=>empty($c['protect']),'label'=>$t('Protection','保護'),'next'=>!empty($c['protect'])?$t('Protection is enabled. Check a published post in Save protection status.','保護中です。公開した投稿の保存を「投稿などの保存状況」で確認してください。'):$t('After the first save, enable Protect supported operations in storage settings.','最初の保存が完了したら、保存先設定の「保護を開始する」を有効にしてください。')];
         echo '<table class="widefat striped"><thead><tr><th>'.esc_html($t('Item','項目')).'</th><th>'.esc_html($t('Status','状態')).'</th><th>'.esc_html($t('Next action','次の操作')).'</th></tr></thead><tbody>';
         foreach($rows as $row){
-            $status=!empty($row['unused'])?$t('Not used','今回は使用しない'):($row['ok']?$t('Confirmed','確認済み'):(!empty($row['unchecked'])?$t('Not checked','未確認'):$t('Action needed','対応が必要')));
+            $status=!empty($row['excluded'])?$t('Outside protection','保護対象外'):(!empty($row['unused'])?$t('Not used','今回は使用しない'):($row['ok']?$t('Confirmed','確認済み'):(!empty($row['unchecked'])?$t('Not checked','未確認'):$t('Action needed','対応が必要'))));
             echo '<tr><th scope="row">'.esc_html($row['label']).'</th><td>'.esc_html($status).'</td><td>'.esc_html($row['next']).'</td></tr>';
         }
         echo '</tbody></table><p>'.esc_html($t('Connection checks do not write or delete objects. The first save verifies writing and reading. Active supported integrations are included in that save; see the coverage table for requirements.','接続確認ではデータの書き込み・削除は行いません。書き込みと読み戻しは最初の保存で確認します。有効な対応連携も保存対象です。連携ごとの条件は対応表を参照してください。')).'</p>';
         if($current&&!empty($r['at']))echo '<p>'.esc_html($t('Storage last checked (UTC): ','保存先の最終確認（UTC）：').$r['at']).'</p>';
         if(self::configured($c)&&!isset($c['setup_version']))echo '<p>'.esc_html($t('Existing settings remain in use. Older initial saves are not reclassified by this new display. Confirm the terms when next saving settings.','既存の設定は継続して使用します。過去の初期保存はこの新しい表示では判定し直しません。次に設定を保存するときに利用条件を確認してください。')).'</p>';
-        if(self::configured($c)&&$localReady&&$current&&!empty($r['ok'])&&!self::baseline($c))echo '<p><a class="button" href="#owr-action-whole_initial">'.esc_html($t('Go to first save','最初の保存へ進む')).'</a></p>';
+        if(self::configured($c)&&$localReady&&$current&&!empty($r['ok'])&&(!self::baseline($c)||!self::acfReady($c)))echo '<p><a class="button" href="#owr-action-whole_initial">'.esc_html($t('Go to first save','最初の保存へ進む')).'</a></p>';
         echo '<p><a href="#owr-storage">'.esc_html($t('Open storage settings','保存先の設定へ')).'</a> · <a href="https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide'.(str_starts_with(determine_locale(),'ja')?'-ja':'').'.md">'.esc_html($t('Setup and recovery guide','導入・復旧ガイド')).'</a></p></section>';
     }
 }

@@ -81,6 +81,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Preparation distinguishes ACF free, PRO and unused ACF; guides creating an initial save for the current free version. ACF PRO fields are outside protection.
 * Preserve and recover 15 basic ACF free field types on posts/pages, including values, definitions and field-key references.
 * Preserve literal text types and hyphenated field names during ACF recovery.
 * For ACF protection after updating, create a new trusted Baseline with the supported ACF free version active. See docs/acf-free.md.

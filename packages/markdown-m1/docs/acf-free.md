@@ -9,3 +9,5 @@ ACF PRO is not supported or planned. Media/post/user/taxonomy reference fields, 
 ## Verification records
 
 [Research trial and integration boundaries](acf-free-verification.md). This integration is not in submitted 0.3.2 rc.1 .
+
+Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it requests a new initial save when a capture including the current version cannot be confirmed. ACF PRO fields are outside protection; article protection can continue. Stored definitions with inactive ACF free are also shown as outside protection with a next action.

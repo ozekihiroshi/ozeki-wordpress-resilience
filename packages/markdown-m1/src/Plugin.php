@@ -545,7 +545,7 @@ final class Plugin
                 // Repeat the read-only check; cached UI results never authorize a write.
                 $this->store()->checkSetupStorage();
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),[]);
-                update_option('owr_setup_baseline',['identity'=>SetupReadiness::identity($c),'manifest'=>$result['manifest'],'at'=>gmdate('c')],false);
+                update_option('owr_setup_baseline',SetupReadiness::baselineRecord($c,$result['manifest']),false);
                 update_option('owr_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {

@@ -98,3 +98,5 @@ See the [README](../README.md#what-remains-and-what-you-can-recover) for saved a
 ## ACF free
 
 0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing ACF version/field definitions, pause editing and create a new trusted Baseline. Prepare the recorded ACF free version on the recovery destination. See [coverage](acf-free.md).
+
+Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it requests a new initial save when a capture including the current version cannot be confirmed. ACF PRO fields are outside protection; article protection can continue. Stored definitions with inactive ACF free are also shown as outside protection with a next action.
