@@ -1,5 +1,7 @@
 # WordPress.org 0.3.3 rc.5 — startup-failure correction
 
+**Superseded by [rc.6](wordpress-org-033-rc6.md) for submission preparation.**
+
 **Documentation follow-up:** The bundled guides still directed readers to earlier ZIPs. GitHub guidance has since been corrected; repackage those corrections before submission. The recorded rc.5 ZIP remains unchanged and must not be treated as matching the updated guides. [Current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 **Prepared, not submitted.** This replaces the unsubmitted rc.4 candidate, which must not be submitted. The submitted rc.3 ZIP and existing tags remain unchanged. Publication has not been approved. No upload or email reply has been sent for rc.5.

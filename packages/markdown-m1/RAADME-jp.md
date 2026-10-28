@@ -81,20 +81,20 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 ## 保存から業務再開まで
 
 1. 信頼できるサイトの初期状態を **Baseline** として保存し、保護を開始します。
-2. 日々の対応する変更を保存します。**Checkpoint** は、それまでに保存した内容から作る復旧点です。テーマなどの変更時は、[変更後の手順](docs/start-here-ja.md)に従います。
+2. 日々の対応する変更を保存します。**Checkpoint** は、それまでに保存した内容から作る復旧点です。テーマなどの変更時は、[変更後の手順](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/start-here-ja.md)に従います。
 3. 必要になったら別のWordPressを用意し、初期保存または復旧点と、戻す変更の範囲を選びます。
 4. 記事・画像・問い合わせなど必要な内容と、復旧結果に表示された未適用項目を確認し、公開して業務を再開します。
 
 保存完了は **Save protection status** で確認できます。未確定の操作があれば[保存再開の手順](docs/save-resume.md)へ進みます。復旧では保存済みの公開状態も戻るため、確認中の復旧先は外部公開を制限します。攻撃への対応では、信頼できる初期保存と、採用する変更の範囲を選んでください。
 
-定期取得・保存期間・削除の設定は[利用ガイド](docs/user-guide-ja.md)にまとめています。復旧時の扱いは[よくある疑問](docs/recovery-faq-ja.md)を参照してください。
+定期取得・保存期間・削除の設定は[利用ガイド](docs/user-guide-ja.md)にまとめています。復旧時の扱いは[よくある疑問](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-faq-ja.md)を参照してください。
 
 ## 文書と問い合わせ
 
 - [利用条件](docs/terms-of-use-ja.md)：ライセンス、運用上の役割、データ・費用、保証と責任
 - [導入・更新](docs/install-update.md)：旧試験版フォルダーからの切替も記載
-- [復旧手順](docs/user-guide-ja.md#6-別のwordpressへ復旧する)・[よくある疑問](docs/recovery-faq-ja.md)
-- [反映規則と反映しない情報](docs/application-rules.md)
+- [復旧手順](docs/user-guide-ja.md#6-別のwordpressへ復旧する)・[よくある疑問](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-faq-ja.md)
+- [反映規則と反映しない情報](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/application-rules.md)
 - [外部送信とプライバシー](readme.txt)
 - [現行版の配布状況・対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
@@ -108,4 +108,6 @@ WordPress.orgでの公開後は、プラグインページの **Support（サポ
 
 準備状況の説明：[セットアップ前の確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness-ja.md)。
 
-[ACF無料版の基本フィールド — 0.3.3の対応範囲](docs/acf-free-ja.md).
+[ACF無料版の基本フィールド — 0.3.3の対応範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-ja.md).
+
+[文書案内 / Documentation index](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/README.md)

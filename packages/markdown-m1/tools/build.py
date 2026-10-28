@@ -7,9 +7,9 @@ assert not output.exists(), 'Use a new output filename; preserve earlier evidenc
 files=[root/x for x in ['ozeki-wordpress-resilience.php','README.md','RAADME-jp.md','readme.txt','LICENSE','composer.json','composer.lock']]
 files+=list((root/'src').glob('*.php'))
 # Only maintained user instructions belong in the installable package.
-USER_DOCS = ['user-guide','start-here','aws-setup','terms-of-use','setup-readiness','acf-free','gfs-checkpoints']
+USER_DOCS = ['user-guide','aws-setup','terms-of-use']
 USER_DOCS = [name+suffix+'.md' for name in USER_DOCS for suffix in ['', '-ja']]
-USER_DOCS += ['install-update.md','save-resume.md','application-rules.md','recovery-faq.md','recovery-faq-ja.md']
+USER_DOCS += ['install-update.md','save-resume.md']
 files += [root/'docs'/name for name in USER_DOCS]
 files += sorted((root/'docs'/'aws-examples').glob('*.json'))
 def runtime_vendor(file):

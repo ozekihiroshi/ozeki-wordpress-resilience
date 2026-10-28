@@ -1,0 +1,9 @@
+{
+  "zip_sha256": "e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3",
+  "wordpress": "7.1.3",
+  "plugin_check_version": "2.1.0",
+  "errors": 0,
+  "warnings": 107,
+  "installed_files_match_zip": 3812,
+  "scope": "Fresh installation and Plugin Check only; rc.5 runtime is byte-identical"
+}

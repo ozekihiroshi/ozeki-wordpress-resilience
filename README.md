@@ -29,9 +29,10 @@ Install WordPress, themes and required plugins separately from trusted distribut
 | Settings and metadata | Apply only recognized items selectively |
 | Members, inquiries and tables | Recover according to the supported adapter rules |
 
+
 ## Download and start
 
-1. Check [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) for installable ZIP availability. Once listed, use the ZIP and SHA-256 on that page; do not select an earlier review package or `Source code (zip)`.
+1. Check [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) for installable ZIP availability. Use the ZIP and SHA-256 on that page; do not select an earlier review package or `Source code (zip)`.
 2. Read the [first-time setup guide](packages/markdown-m1/docs/user-guide.md) and prepare [AWS access](packages/markdown-m1/docs/aws-setup.md).
 3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
@@ -80,26 +81,26 @@ Use backups or the relevant service's protection for assets outside this scope. 
 ## From preservation to resuming service
 
 1. Capture a trusted initial site state as a **Baseline** and enable protection.
-2. Save supported changes during daily use. A **Checkpoint** is a recovery point made from what has already been saved. Follow [the change procedures](packages/markdown-m1/docs/start-here.md) after changes such as theme updates.
+2. Save supported changes during daily use. A **Checkpoint** is a recovery point made from what has already been saved. Follow [the change procedures](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/start-here.md) after changes such as theme updates.
 3. When needed, prepare a separate WordPress and select the initial capture or recovery point and the changes to restore.
 4. Check the articles, images, inquiries and other content you need, along with items reported as not applied, then reopen the site and resume service.
 
 Check completed saves under **Save protection status**. If operations remain pending, follow [save resumption](packages/markdown-m1/docs/save-resume.md). Recovery also restores saved publication state, so restrict public access while checking the destination. When responding to an attack, select a trusted initial capture and the changes you decide to adopt.
 
-The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, retention and cleanup. See the [recovery FAQ](packages/markdown-m1/docs/recovery-faq.md) for details of recovery behavior.
+The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, retention and cleanup. See the [recovery FAQ](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-faq.md) for details of recovery behavior.
 
 ## Documentation and support
 
 - [Terms of use](packages/markdown-m1/docs/terms-of-use.md): license, operational roles, data, costs, warranty and liability
 - [Install and update](packages/markdown-m1/docs/install-update.md), including migration from the old prerelease folder
-- [Recovery procedure](packages/markdown-m1/docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](packages/markdown-m1/docs/recovery-faq.md)
-- [Application rules and withheld information](packages/markdown-m1/docs/application-rules.md)
+- [Recovery procedure](packages/markdown-m1/docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-faq.md)
+- [Application rules and withheld information](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/application-rules.md)
 - [External-service and privacy disclosure](packages/markdown-m1/readme.txt)
 - [Current distribution status and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
 **Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
-After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is preparing a further response to the review findings; WordPress.org publication is not yet approved. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
+After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is currently responding to review findings. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
 
 Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 
@@ -107,4 +108,6 @@ Existing verification records describe their specific builds and environments; t
 
 Preparation: [current setup checklist](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness.md).
 
-[ACF free basic fields — 0.3.3 coverage](packages/markdown-m1/docs/acf-free.md).
+[ACF free basic fields — 0.3.3 coverage](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
+
+[文書案内 / Documentation index](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/README.md)

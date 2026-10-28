@@ -26,23 +26,15 @@ Where possible, resolve pending operations before updating. Otherwise preserve t
 
 ## Updating from 0.3.1 / 0.3.1からの更新
 
-Existing storage settings and enabled protection are retained. Older initial saves may show **Not checked** in the new checklist; this does not mean they were lost. Confirm the terms when next saving settings. If you turn protection off and restart it, first create a trusted initial save with 0.3.2 or later for that storage destination. See [preparation](setup-readiness.md).
+Existing storage settings and enabled protection are retained. Older initial saves may show **Not checked** in the new checklist; this does not mean they were lost. Confirm the terms when next saving settings. If you turn protection off and restart it, first create a trusted initial save with 0.3.2 or later for that storage destination. See [preparation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness.md).
 
-保存先設定と有効な保護は引き継ぎます。過去の初期保存が新しい準備画面で「未確認」でも、消失した意味ではありません。次に設定を保存するときに利用条件を確認してください。保護を停止して再開する場合は、その保存先へ0.3.2以降で信頼できる初期保存を作成します。[準備状況の案内](setup-readiness-ja.md)も参照してください。
-
-## Verification records / 検証記録
-
-Past checks describe their specific builds and environments; they are not extra installation steps. 過去の確認範囲は以下に分けて記録しています。
-
-- [Browser ZIP update](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/browser-zip-update-m1-031.md)
-- [Update with pending operations](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/pending-zip-update-m1-031.md)
-- [WordPress.org candidate checks](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-checks.md)
+保存先設定と有効な保護は引き継ぎます。過去の初期保存が新しい準備画面で「未確認」でも、消失した意味ではありません。次に設定を保存するときに利用条件を確認してください。保護を停止して再開する場合は、その保存先へ0.3.2以降で信頼できる初期保存を作成します。[準備状況の案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness-ja.md)も参照してください。
 
 ## 0.3.3 / ACF free
 
-Updating from 0.3.2 retains existing settings, history and pending saves. Existing article protection continues. To add ACF fields to protection, activate the supported free version and create a new trusted Baseline while editing is paused. Earlier captures do not acquire ACF coverage retroactively. See [ACF scope](acf-free.md).
+Updating from 0.3.2 retains existing settings, history and pending saves. Existing article protection continues. To add ACF fields to protection, activate the supported free version and create a new trusted Baseline while editing is paused. Earlier captures do not acquire ACF coverage retroactively. See [ACF scope](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
 
-0.3.2からの更新では、設定・履歴・未完了の保存を保持し、既存の記事保護を継続します。ACFフィールドを保護に加える場合は、対応する無料版を有効化し、編集を止めて新しい信頼済みBaselineを作成します。過去の保存が自動でACF対応になるわけではありません。[ACF対応範囲](acf-free-ja.md)。
+0.3.2からの更新では、設定・履歴・未完了の保存を保持し、既存の記事保護を継続します。ACFフィールドを保護に加える場合は、対応する無料版を有効化し、編集を止めて新しい信頼済みBaselineを作成します。過去の保存が自動でACF対応になるわけではありません。[ACF対応範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-ja.md)。
 
 ## Review-response update / 審査対応版への更新
 

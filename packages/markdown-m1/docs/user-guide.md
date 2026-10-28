@@ -13,7 +13,7 @@ Install WordPress, themes and required plugins separately from trusted distribut
 | Members, inquiries and tables | Recover according to the supported adapter rules |
 
 
-**Version: current GitHub 0.3.3 series. Check [package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).** Includes the [preparation checklist and terms confirmation](setup-readiness.md).
+**Version: current GitHub 0.3.3 series. Check [package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).** Includes the [preparation checklist and terms confirmation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness.md).
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
@@ -34,7 +34,7 @@ The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whe
 ## 2. Prepare AWS, then install
 
 1. Complete [AWS setup](aws-setup.md). Start with the `source-no-delete` policy and cleanup disabled.
-2. Check [current package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and use the installable ZIP and SHA-256 listed there. If no package is listed yet, wait for distribution preparation to finish. Earlier review ZIPs and `Source code (zip)` are not the installable package for these instructions.
+2. Check [current package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and use the installable ZIP and SHA-256 listed there. Earlier review ZIPs and `Source code (zip)` are not the installable package for these instructions.
 3. In WordPress, use **Plugins → Add New Plugin → Upload Plugin**, install the ZIP and activate it. If an older version is installed, follow [update instructions](install-update.md).
 4. Open **Tools → Resilience**. Check **Preparation for protection**, then select **Protect this site** in storage settings. Each action-needed row identifies the missing condition and next action.
 5. Enter these four values.
@@ -56,7 +56,7 @@ The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whe
 3. In the **Checkpoint** selector, find `administrator_initial` with the time of this capture. This is your first Baseline (`history 0` for a new prefix). For an error, record its message and use [troubleshooting](#troubleshooting) below.
 4. Confirm **First save and verified read-back** is confirmed in the preparation checklist. In storage settings, enable **Protect supported operations (one writer per prefix)**, select the terms confirmation again and click **Save settings**. Resume editing.
 
-A Baseline initially captures current supported state. Later Checkpoints use saved resources and confirmed history. For untracked changes such as themes, consult the [changes table](start-here.md).
+A Baseline initially captures current supported state. Later Checkpoints use saved resources and confirmed history. For untracked changes such as themes, consult the [changes table](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/start-here.md).
 
 ## 4. Confirm protection
 
@@ -83,7 +83,7 @@ Only confirmed history is available after source loss. If an original save faile
 
 In Tools → Resilience, expand **Optional: schedules, retention and cleanup** and check the displayed timezone. For example, enable weekly Sunday 02:00 / keep 2 weeks, monthly day 1 at 02:00 / keep 3 months, yearly January 1 at 02:00 / keep 1 year. Choose settings to suit the period you want to preserve and your storage usage. Coincident dates **and times** produce one set with all labels. A still-active label preserves the whole point. Unchanged content is copied into every new independent point. Stagger sites on a shared server.
 
-**Detailed history recovery window in days** controls how far detailed history is kept with its boundary point; `0` retains the latest Checkpoint and necessary tail, not zero resources. Historical GFS points can remain without all intervening history. **Optional S3 deletion protection** is a separate AWS lock request; `0` does not remove existing locks. [GFS details](gfs-checkpoints.md).
+**Detailed history recovery window in days** controls how far detailed history is kept with its boundary point; `0` retains the latest Checkpoint and necessary tail, not zero resources. Historical GFS points can remain without all intervening history. **Optional S3 deletion protection** is a separate AWS lock request; `0` does not remove existing locks. [GFS details](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/gfs-checkpoints.md).
 
 After saving, check **Next complete-site Checkpoint (UTC)**. Arrange a regular execution opportunity with your server administrator; WP-Cron is not an exact-time timer. After a run inspect the actual success/failure and next reservation. On failed capture, cleanup is skipped; an older successful cleanup result may still be shown with its old timestamp.
 
@@ -102,16 +102,15 @@ Restore saved articles, images, inquiries and other supported content on a separ
 5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. If an error occurs, inspect the message and destination state, resolve the cause, then rerun.
 6. Re-login with the administrator prepared on the destination and inspect representative body, author display, images, links and relevant member/table/form behaviour. The site name may change to the source name; keep checking the destination URL. Saved `publish` state is reproduced. DNS/network exposure is a separate administrator decision. Mail replay is not a recovery function.
 
-[Detailed recovery](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot.md) · [Application rules and withheld information](application-rules.md)
+[Recovery FAQ](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-faq.md) · [Application rules and withheld information](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/application-rules.md)
 
 ## 7. Help
 
 See the [README](../README.md#what-remains-and-what-you-can-recover) for saved and restored content, and [troubleshooting](#troubleshooting) for setup errors. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
-[Known operational limits](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/remaining-confirmations.md) and [candidate checks](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
 
 ## ACF free
 
-0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing ACF version/field definitions, pause editing and create a new trusted Baseline. Prepare the recorded ACF free version on the recovery destination. See [coverage](acf-free.md).
+0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing ACF version/field definitions, pause editing and create a new trusted Baseline. Prepare the recorded ACF free version on the recovery destination. See [coverage](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
 
 Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it requests a new initial save when a capture including the current version cannot be confirmed. ACF PRO fields are outside protection; article protection can continue. Stored definitions with inactive ACF free are also shown as outside protection with a next action.

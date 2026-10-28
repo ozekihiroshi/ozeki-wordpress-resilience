@@ -13,7 +13,7 @@
 | 会員・問い合わせ・表 | 対応するアダプターの規則に従って復旧 |
 
 
-**対象：GitHubの現行0.3.3系。配布状況は[こちら](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。** [準備状況と利用条件の確認](setup-readiness-ja.md)を含む手順です。
+**対象：GitHubの現行0.3.3系。配布状況は[こちら](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。** [準備状況と利用条件の確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness-ja.md)を含む手順です。
 
 [English](user-guide.md) · [更新する場合](install-update.md) · [復旧手順](#6-別のwordpressへ復旧する)
 
@@ -34,7 +34,7 @@
 ## 2. AWSを準備し、プラグインを導入する
 
 1. AWS担当者が[AWS設定](aws-setup-ja.md)に従って準備します。保存側は `source-no-delete` を選び、自動削除を使わずに始めます。
-2. [現行版の配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認し、掲載された導入用ZIPとSHA-256を使用します。まだZIPが掲載されていない場合は、配布準備の完了を待ってください。過去の申請ZIPや `Source code (zip)` は、この手順の導入用ZIPではありません。
+2. [現行版の配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認し、掲載された導入用ZIPとSHA-256を使用します。過去の申請ZIPや `Source code (zip)` は、この手順の導入用ZIPではありません。
 3. WordPressの **プラグイン → 新規プラグインを追加 → プラグインのアップロード** でZIPを選び、インストール・有効化します。旧版が入っている場合は[更新手順](install-update.md)へ進みます。
 4. **ツール → Resilience** を開き、上部の **保護開始までの準備状況** を確認します。保存先設定の用途は **このサイトを保護** を選びます。「対応が必要」の行で不足条件と次の操作を確認できます。
 5. 次の4項目を入力します。
@@ -56,7 +56,7 @@
 3. **復旧ポイント** の選択欄に `administrator_initial` と今回の作成日時が現れることを確認します。これが最初のBaselineです（新規prefixでは `history 0`）。エラーの場合はその内容を控え、[困ったとき](#困ったとき)を参照してください。
 4. 準備状況の **最初の保存・読み戻し** が確認済みになったら、保存先設定の **保護を開始する** をオンにし、利用条件の確認欄をもう一度チェックして **設定を保存** を押します。編集を再開できます。
 
-Baselineは現在の対応範囲を初めて保存する操作です。その後の復旧ポイントは保存済みの資源と確定履歴から作ります。テーマなど追跡対象外の変更後は、[変更別の対応表](start-here-ja.md)を確認してください。
+Baselineは現在の対応範囲を初めて保存する操作です。その後の復旧ポイントは保存済みの資源と確定履歴から作ります。テーマなど追跡対象外の変更後は、[変更別の対応表](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/start-here-ja.md)を確認してください。
 
 ## 4. 保護開始を確認する
 
@@ -83,7 +83,7 @@ Baselineは現在の対応範囲を初めて保存する操作です。その後
 
 「任意：定期保存・保持期間・自動整理」を開き、画面のタイムゾーンを確認します。例えば週次は日曜02:00・2週間、月次は1日02:00・3か月、年次は1月1日02:00・1年と設定できます。保存したい期間と利用量に合わせて設定してください。日付と時刻が重なると一式を一回作って複数区分を付け、一つでも有効な区分があれば残します。更新がなくても独立一式を取得します。同じサーバの複数サイトでは時刻をずらせます。
 
-**詳しい操作履歴を残す日数** は詳細履歴を残す期間と境界の復旧点を決めます。`0` は最新復旧ポイントと必要な後続履歴であり、全資源を消す意味ではありません。過去のGFS基点は途中の全履歴がなくても残せます。**S3削除ロック** は別のAWS削除ロックで、`0` に変えても既存ロックは解除されません。[GFS詳細](gfs-checkpoints-ja.md)。
+**詳しい操作履歴を残す日数** は詳細履歴を残す期間と境界の復旧点を決めます。`0` は最新復旧ポイントと必要な後続履歴であり、全資源を消す意味ではありません。過去のGFS基点は途中の全履歴がなくても残せます。**S3削除ロック** は別のAWS削除ロックで、`0` に変えても既存ロックは解除されません。[GFS詳細](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/gfs-checkpoints-ja.md)。
 
 設定後は **次回のサイト全体の定期保存（UTC）** を確認します。サーバ担当者と定期的な起動機会を用意してください。WP-Cronは厳密な時計ではありません。実行後は今回の成功・失敗と次回予約を確認します。取得失敗時には削除を行わず、前回の削除成功記録が過去の時刻付きで残る場合があります。
 
@@ -102,16 +102,15 @@ Baselineは現在の対応範囲を初めて保存する操作です。その後
 5. **最後のサイト全体の復旧結果** の成功・失敗、使用復旧ポイント、要求・適用履歴番号を確認します。**S3に残っている、自動適用しなかった内容** の未適用項目も確認します。投稿件数は過去版等を含み、ファイル書込み0件は既存の同一ファイルを再利用した場合にも表示されます。調査には詳細JSONを残します。エラー時は表示内容と復旧先の状態を確認し、原因を解消してから再実行します。
 6. 復旧先で用意した管理者で再ログインし、代表的な本文・著者表示・画像・リンクと必要な会員制限・表・フォームの動作を確認します。サイト名が元の名前に変わっても、復旧先URLで確認を続けます。元の `publish` はそのまま再現します。DNS・ネットワーク公開は管理者の別判断であり、メール再送は復旧機能に含めません。
 
-[詳細な復旧仕様](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot-ja.md) · [適用規則と未適用情報](application-rules.md)
+[詳細な復旧仕様](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot-ja.md) · [適用規則と未適用情報](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/application-rules.md)
 
 ## 7. 問い合わせ
 
 保存・復旧の対象は[README](../RAADME-jp.md#残るもの復旧できるもの)、設定エラーへの対処は[困ったとき](#困ったとき)を参照してください。問い合わせには版・タグ、操作、エラー、確定番号、必要な環境版を添え、秘密鍵・トークン・個人情報・非公開原本は除いてください。
 
-[今回の候補確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)と[既存の受入記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-readiness-ja.md)を参照してください。後者にはサンプル単独IAM受入を記録しており、それ以前の未検証という記載を更新しています。
 
 ## ACF無料版を使用する場合
 
-0.3.3は投稿・固定ページの基本15型に対応します。初回の保存前にACF無料版を有効化してください。0.3.2から更新してACFを保護に加える場合や、ACFの版・フィールド定義を変更した場合は、編集を止めて新しい信頼済みBaselineを作成します。復旧先にも記録した版のACF無料版を用意します。[対応範囲](acf-free-ja.md)。
+0.3.3は投稿・固定ページの基本15型に対応します。初回の保存前にACF無料版を有効化してください。0.3.2から更新してACFを保護に加える場合や、ACFの版・フィールド定義を変更した場合は、編集を止めて新しい信頼済みBaselineを作成します。復旧先にも記録した版のACF無料版を用意します。[対応範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-ja.md)。
 
 準備画面は無料版・PRO・未使用を区別します。無料版は現在の版を含む初期保存が確認できない場合、作成を案内します。ACF PROのフィールドは保護対象外ですが、記事などの保護は継続できます。既存のACF定義があり無料版が無効の場合も、対象外と次の操作を表示します。

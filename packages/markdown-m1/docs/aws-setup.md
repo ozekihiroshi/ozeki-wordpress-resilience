@@ -65,4 +65,4 @@ Return to [installation and Baseline](user-guide.md#3-create-the-first-baseline)
 
 If AccessDenied appears, record the operation and exact scope. Check the runtime identity, policy substitutions, explicit Deny, bucket/KMS conditions and environment credentials. Never use AdministratorAccess as the product's error workaround. A lock with an unexpired date/Legal Hold is a blocked deletion condition, not a request to bypass it. Unknown/network errors are not treated as “no lock.”
 
-Template evidence: on October 26, 2026, real-S3 checks used `source-with-cleanup` and `recovery-read-only` as standalone policies. That trial did not include standalone deployment of the initial `source-no-delete` policy. See the [evidence record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-readiness.md). Keep the worksheet and recovery setup information outside the source server; do not include credentials in documentation or support requests.
+Keep the worksheet and recovery setup information outside the source server; do not include credentials in documentation or support requests.

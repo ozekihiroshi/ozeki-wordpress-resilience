@@ -2,34 +2,22 @@
 
 ## 日本語
 
-現在のソースは **0.3.3 rc.5の修正を含む0.3.3系**です。WordPress.orgは追加審査への対応中で、公開承認はまだ得ていません。
+現在の公開候補は **0.3.3 rc.6** です。rc.5の機能を維持し、同梱文書と導入案内を整理しました。**WordPress.org公開承認前・rc.6未提出**です。提出済みrc.3に対する追加審査へ回答する準備を進めています。
 
-**現在の案内に対応する導入用ZIPは、GitHub Releasesにまだ掲載していません。** 過去のリリースにある0.3.2 rc.1や0.3.3 rc.3を、このガイドに対応する現行版としてダウンロードしないでください。GitHubの `Source code (zip)` も導入用ZIPではありません。
+- [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.6/ozeki-resilience-0.3.3.zip)（8,277,278 bytes）
+- [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.6) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.6)
+- SHA-256: `e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3`
+- [確認結果・返信案](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc6.md)
 
-| 区分 | 状況 |
-|---|---|
-| GitHubの現行ソース・利用ガイド | 0.3.3系。旧版への誘導を修正済み |
-| 手元の0.3.3 rc.5 ZIP | 未提出・GitHub未掲載。同梱文書に旧案内があるため、この文書整理を取り込んだ再梱包が必要 |
-| WordPress.orgへ提出済み | 0.3.3 rc.3。追加指摘への対応後、再提出待ち |
-| 過去のZIP・タグ・申請記録 | 履歴として保全。新規導入の推奨先ではない |
-
-配布準備が完了したら、**このページに導入用ZIPの直接リンク・SHA-256・対応ソース**を揃えて掲載します。それまでは[導入ガイド](user-guide-ja.md)で準備内容を確認してください。
-
-[rc.5の検証・返信案](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc5.md)。今回の文書整理では、コード・既存ZIP・タグは変更していません。
+[導入・復旧ガイド](user-guide-ja.md)に従って準備してください。GitHubの `Source code (zip)` は導入用ZIPではありません。旧ZIP・タグは履歴として残していますが、新規導入の案内先は上記候補です。
 
 ## English
 
-Current source is the **0.3.3 series including the rc.5 fixes**. WordPress.org publication has not been approved; we are preparing the response to the additional review.
+The current release candidate is **0.3.3 rc.6**. It keeps the rc.5 runtime and consolidates the bundled documentation and download guidance. **WordPress.org publication is not approved; rc.6 has not been submitted.** We are preparing the response to the additional review of the submitted rc.3 package.
 
-**An installable ZIP matching the current guidance is not yet listed on GitHub Releases.** Do not use the historical 0.3.2 rc.1 or 0.3.3 rc.3 release as the current package for these instructions. GitHub's `Source code (zip)` is not an installable plugin package.
+- [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.6/ozeki-resilience-0.3.3.zip) (8,277,278 bytes)
+- [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.6) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.6)
+- SHA-256: `e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3`
+- [Validation and reply draft](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc6.md)
 
-| Item | Status |
-|---|---|
-| Current GitHub source and user guides | 0.3.3 series; outdated download directions corrected |
-| Locally prepared 0.3.3 rc.5 ZIP | Not submitted or listed on GitHub; its bundled documents still contain old directions and need repackaging with these corrections |
-| Submitted WordPress.org package | 0.3.3 rc.3; a further response and replacement are pending |
-| Earlier ZIPs, tags and review records | Preserved as history, not recommended for a new installation |
-
-When ready, this page will list the **direct installable ZIP link, SHA-256 and matching source** together. Until then, use the [setup guide](user-guide.md) to review the prerequisites.
-
-[rc.5 validation and reply draft](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc5.md). This documentation cleanup does not change code, existing ZIPs or tags.
+Follow the [setup and recovery guide](user-guide.md). GitHub's `Source code (zip)` is not the installable plugin ZIP. Earlier ZIPs and tags remain historical records; use the candidate above for these instructions.

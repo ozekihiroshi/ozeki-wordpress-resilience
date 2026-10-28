@@ -1,0 +1,44 @@
+{
+  "zip_sha256": "e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3",
+  "bytes": 8277278,
+  "files": 3812,
+  "runtime_files_identical_to_rc5": 3795,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/aws-setup-ja.md",
+    "ozeki-resilience/docs/aws-setup.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/docs/save-resume.md",
+    "ozeki-resilience/docs/terms-of-use-ja.md",
+    "ozeki-resilience/docs/terms-of-use.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md"
+  ],
+  "removed_files": [
+    "ozeki-resilience/docs/acf-free-ja.md",
+    "ozeki-resilience/docs/acf-free.md",
+    "ozeki-resilience/docs/application-rules.md",
+    "ozeki-resilience/docs/gfs-checkpoints-ja.md",
+    "ozeki-resilience/docs/gfs-checkpoints.md",
+    "ozeki-resilience/docs/recovery-faq-ja.md",
+    "ozeki-resilience/docs/recovery-faq.md",
+    "ozeki-resilience/docs/setup-readiness-ja.md",
+    "ozeki-resilience/docs/setup-readiness.md",
+    "ozeki-resilience/docs/start-here-ja.md",
+    "ozeki-resilience/docs/start-here.md"
+  ],
+  "bundled_guides": [
+    "ozeki-resilience/docs/aws-setup-ja.md",
+    "ozeki-resilience/docs/aws-setup.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/docs/save-resume.md",
+    "ozeki-resilience/docs/terms-of-use-ja.md",
+    "ozeki-resilience/docs/terms-of-use.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md"
+  ],
+  "relative_links_checked": 78,
+  "broken_relative_links": [],
+  "submitted": false
+}
