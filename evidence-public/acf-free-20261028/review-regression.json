@@ -1,0 +1,56 @@
+{
+    "status": "PASS",
+    "acf_version": "6.8.10",
+    "wordpress": "7.1.3",
+    "scope": "Actual WordPress DB\/ACF: capture, replay, projection and SiteSnapshot decode\/relocate\/re-encode; no full-site restore or S3 rerun",
+    "cases": {
+        "plain": {
+            "db": "日本語の通常文字列",
+            "value": "日本語の通常文字列",
+            "type": "string",
+            "acf": "日本語の通常文字列"
+        },
+        "literal_array": {
+            "db": "s:6:\"a:0:{}\";",
+            "value": "a:0:{}",
+            "type": "string",
+            "acf": "a:0:{}"
+        },
+        "literal_string": {
+            "db": "s:10:\"s:3:\"abc\";\";",
+            "value": "s:3:\"abc\";",
+            "type": "string",
+            "acf": "s:3:\"abc\";"
+        },
+        "literal_bool": {
+            "db": "s:4:\"b:0;\";",
+            "value": "b:0;",
+            "type": "string",
+            "acf": "b:0;"
+        },
+        "literal_null": {
+            "db": "s:2:\"N;\";",
+            "value": "N;",
+            "type": "string",
+            "acf": "N;"
+        },
+        "sub-title": {
+            "db": "ハイフン入り",
+            "value": "ハイフン入り",
+            "type": "string",
+            "acf": "ハイフン入り"
+        },
+        "multi": {
+            "db": "a:2:{i:0;s:6:\"a:0:{}\";i:1;s:9:\"日本語\";}",
+            "value": [
+                "a:0:{}",
+                "日本語"
+            ],
+            "type": "array",
+            "acf": [
+                "a:0:{}",
+                "日本語"
+            ]
+        }
+    }
+}

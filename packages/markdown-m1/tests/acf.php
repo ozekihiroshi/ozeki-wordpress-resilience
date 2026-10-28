@@ -8,6 +8,7 @@ require $argv[1].'/src/MemberHistory.php';
 require $argv[1].'/src/TableHistory.php';
 require $argv[1].'/src/NativeHistory.php';
 use Owr\M1\{Store,SiteSnapshot,AcfHistory,RecoveryRules,AssetFormat};
+function maybe_serialize($v){return is_array($v)||is_string($v)&&preg_match('/^(?:a|s|i|b|d|O):|^N;/',$v)?serialize($v):$v;}
 function ok($v,$m){if(!$v)throw new RuntimeException($m);}
 class AcfS3 {public array $objects=[];public bool $corrupt=false;
  function putObject($a){$this->objects[$a['Key']]=['Body'=>$a['Body'],'VersionId'=>hash('sha256',$a['Body'])];return $this->objects[$a['Key']];}
@@ -37,6 +38,21 @@ $meta=array_column($project['data']['tables']['postmeta'],'meta_value','meta_key
 ok($meta['caption']==="日本語\n原本"&&$meta['_caption']==='field_caption','Value and field-key reference');
 ok(unserialize($meta['choices'])===['one','two'],'Ordered selection');
 ok(!isset($meta['opaque'])&&count($project['report']['not_applied'])>=2,'Unknown type/setting reported, withheld');
+// WordPress stores serialization-shaped strings in an outer string envelope.
+foreach(['plain Japanese 日本語','a:0:{}','s:3:"abc";','b:0;','N;'] as $literal){
+ $case=json_decode($raw,true);$case['acf_values']['caption']=[$literal];
+ AcfHistory::replay($d,Store::json($case),$a);$m=AcfHistory::project($d)['meta'];
+ $stored=array_column($m,'meta_value','meta_key')['caption'];
+ $read=$stored===$literal?$stored:unserialize($stored,['allowed_classes'=>false]);
+ ok(is_string($read)&&$read===$literal,'Literal text survives metadata decode');
+ if($literal==='a:0:{}')ok($stored==='s:6:"a:0:{}";','Serialization-shaped text must be wrapped');
+}
+$case=json_decode($raw,true);$case['acf_definitions'][0]['fields'][0]['name']='sub-title';
+$case['acf_values']['sub-title']=$case['acf_values']['caption'];unset($case['acf_values']['caption']);
+$case['acf_references']['sub-title']=$case['acf_references']['caption'];unset($case['acf_references']['caption']);
+AcfHistory::replay($d,Store::json($case),$a);$m=array_column(AcfHistory::project($d)['meta'],'meta_value','meta_key');
+ok($m['sub-title']==="日本語\n原本"&&$m['_sub-title']==='field_caption','Hyphenated name and reference preserved');
+AcfHistory::replay($d,$raw,$a);
 $v['acf_values']['caption']=['updated'];AcfHistory::replay($d,Store::json($v),$a);
 ok(AcfHistory::project($d)['meta'][0]['meta_value']==='updated','Complete latest field state');
 unset($v['acf_values']['caption']);AcfHistory::replay($d,Store::json($v),$a);

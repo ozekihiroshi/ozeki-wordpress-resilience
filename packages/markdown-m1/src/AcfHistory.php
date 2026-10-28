@@ -88,7 +88,7 @@ final class AcfHistory {
             foreach($g['fields']??[] as $f){
                 $fp=$path.'.'.($f['key']??'?');
                 if(!in_array($f['type']??'',self::TYPES,true)){$omit($fp,'Unsupported ACF field type; original retained');continue;}
-                if(!preg_match('/^field_[A-Za-z0-9_-]+$/D',$f['key']??'')||!preg_match('/^[A-Za-z][A-Za-z0-9_]*$/D',$f['name']??''))throw new \RuntimeException('Invalid recognized ACF field identity.');
+                if(!preg_match('/^field_[A-Za-z0-9_-]+$/D',$f['key']??'')||!preg_match('/^[A-Za-z0-9_-]+$/D',$f['name']??''))throw new \RuntimeException('Invalid recognized ACF field identity.');
                 $allowed=['key','name','label','type','required','default_value','choices','multiple','allow_null','return_format','min','max','step','maxlength','placeholder','prepend','append','rows','new_lines','display_format','return_format','first_day','ui','message','ui_on_text','ui_off_text','layout','toggle','allow_custom','save_custom','menu_order'];
                 $field=[];foreach($f as $k=>$value){if(in_array($k,$allowed,true)){
                     if(!self::plain($value)||(!in_array($k,['default_value','choices'],true)&&!is_scalar($value)&&$value!==null))throw new \RuntimeException('Invalid ACF setting.');
@@ -117,7 +117,8 @@ final class AcfHistory {
                     elseif(!is_scalar($value)&&$value!==null)throw new \RuntimeException('Invalid ACF scalar: '.$path);
                     if(in_array($field['type'],['number','range'],true)&&$value!==''&&$value!==null&&!is_numeric($value))throw new \RuntimeException('Invalid ACF number: '.$path);
                     if($field['type']==='true_false'&&!in_array($value,['0','1',0,1,false,true,''],true))throw new \RuntimeException('Invalid ACF boolean: '.$path);
-                    $out['meta'][]=['post_id'=>(string)$id,'meta_key'=>$name,'meta_value'=>is_array($value)?serialize($value):(string)$value];
+                    // WordPress must decode exactly one storage layer; literal serialized text stays text.
+                $out['meta'][]=['post_id'=>(string)$id,'meta_key'=>$name,'meta_value'=>maybe_serialize(is_array($value)?$value:(string)$value)];
                 }
                 if($values)$out['meta'][]=['post_id'=>(string)$id,'meta_key'=>'_'.$name,'meta_value'=>$key];
             }

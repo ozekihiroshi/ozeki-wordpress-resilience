@@ -7,3 +7,5 @@ Research trial: ACF free 6.8.10 / isolated WordPress 7.1.3, 2026-10-28. Standard
 See [English scope](../../packages/markdown-m1/docs/acf-free.md) and [日本語の対応範囲](../../packages/markdown-m1/docs/acf-free-ja.md) for exact boundaries and separation from simulated failure tests. Local logs, login credentials and temporary browser entry points are not distributed. No screenshot containing temporary access material is included.
 
 The PR is based on public main 6951978. Product changes port the research implementation; the new direct-access guard follows main conventions. Offline contract results are recorded in the PR. Real S3/browser testing was on the research build; the integrated main candidate was not deployed to either server. No new ZIP or release is produced.
+
+Review fixes: [actual WordPress regression](review-regression.json) checks seven DB encodings and get_post_meta/get_field values/types through the integration's projection and SiteSnapshot conversion functions. It is not an end-to-end restore or S3 rerun. See the [detailed boundaries](../../packages/markdown-m1/docs/acf-free-verification.md).
