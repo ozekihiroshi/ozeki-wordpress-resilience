@@ -1,5 +1,9 @@
 # Updating an existing installation / 既存環境の更新
 
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
+復旧先のWordPress・テーマ・必要なプラグインは、管理者が信頼できる配布元から別途インストールし、必要なプラグインを有効化してください。Resilienceが戻すのは情報資産と対応する関係情報です。S3からソフトウェアを配置・有効化せず、復旧先のテーマ選択も維持します。不明な設定は適用せず、結果に表示します。
+
 **First installation?** Follow the [first-time setup guide](user-guide.md). **初めての導入は[初回導入ガイド](user-guide-ja.md)へ。** このページは既に導入済みの場合だけ使用します。
 
 ## English

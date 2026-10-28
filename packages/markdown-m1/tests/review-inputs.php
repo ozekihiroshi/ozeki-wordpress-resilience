@@ -20,7 +20,6 @@ ozekre_assert(str_contains($result,'srcset="'.$to.'/a.jpg 1x, '.$to.'/b.jpg 2x"'
 ozekre_assert(str_contains($result,'<input name="test" value="retained">')&&str_contains($result,'<p>https://old.example/raw</p>')&&str_contains($result,'"https://old.example/data"'),'Unrelated shortcode HTML/text changed');
 ozekre_assert(str_contains($result,'https://old.example.evil/a'),'Host boundary broken');
 update_option('owr_site_origin_url','javascript:alert(1)');ozekre_assert($p->relocateContent($html)===$html,'Unsafe origin accepted');delete_option('owr_site_origin_url');
-add_filter('file_mod_allowed','__return_false');$denied=false;
-try{(new OzekiResilience\M1\SiteSnapshot($p->store()))->restore($ref,true,'/tmp/not-used');}catch(Throwable $e){$denied=str_contains($e->getMessage(),'does not allow theme/plugin file changes');}
-remove_filter('file_mod_allowed','__return_false');ozekre_assert($denied,'Host file policy ignored');
-echo "PASS review input rejection, byte-preserved Markdown, escaped URL attributes, shortcode/form preservation, srcset and host file policy.\n";
+foreach(['uploads/a.php','uploads/a.js','uploads/a.css','uploads/a.PHP.jpg','uploads/.htaccess','uploads/a.svg','plugins/a.png'] as $path)ozekre_assert(!OzekiResilience\M1\SiteSnapshot::isInformationFile($path),'Executable path accepted');
+foreach(['uploads/a.jpg','uploads/a.png','uploads/manual.pdf'] as $path)ozekre_assert(OzekiResilience\M1\SiteSnapshot::isInformationFile($path),'Information asset rejected');
+echo "PASS review input rejection, byte-preserved Markdown, escaped URL attributes and information-file boundary.\n";

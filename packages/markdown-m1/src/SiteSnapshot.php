@@ -19,10 +19,11 @@ final class SiteSnapshot
     private static function decode(string $s): mixed {
         return is_serialized($s)?unserialize($s,['allowed_classes'=>false]):$s;
     }
-    public static function relocate(mixed $v,string $from,string $to): mixed {
-        if (is_array($v)) {foreach($v as &$x)$x=self::relocate($x,$from,$to);return $v;}
+    public static function relocate(mixed $v,string $from,string $to,?string $fromUploads=null,?string $toUploads=null): mixed {
+        if (is_array($v)) {foreach($v as &$x)$x=self::relocate($x,$from,$to,$fromUploads,$toUploads);return $v;}
         if (is_object($v)) throw new \RuntimeException('Object-valued settings are not portable.');
         if (!is_string($v)) return $v;
+        if($fromUploads && $toUploads)$v=self::relocate($v,$fromUploads,$toUploads);
         // Boundary prevents rewriting another host with a similar name.
         return preg_replace('~'.preg_quote(rtrim($from,'/'),'~').'(?=/|[\s"\'<>)]|$)~',rtrim($to,'/'),$v);
     }
@@ -51,10 +52,18 @@ final class SiteSnapshot
             if($f->isLink())throw new \RuntimeException('Symlink not portable: '.$f->getFilename());
             if(!$f->isFile())continue;
             $rel=$prefix.'/'.substr($f->getPathname(),strlen($root)+1);self::safePath($rel);
+            if($prefix==='uploads'&&!self::isInformationFile($rel))continue;
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if($f->getSize()>32*1024*1024)throw new \RuntimeException('Resource exceeds 32 MiB: '.$rel);
             $out[$rel]=file_get_contents($f->getPathname());
         }
+    }
+    /** Only inert information files are written to the destination uploads directory. */
+    public static function isInformationFile(string $path): bool {
+        self::safePath($path);
+        if(!str_starts_with($path,'uploads/'))return false;
+        if(preg_match('~(?:^|/)[.]|[.](?:php[0-9]*|phtml|pht|phar|cgi|pl|py|sh|js|mjs|cjs|css|html?|svg|shtml|asp|aspx)(?:[./]|$)~i',$path))return false;
+        return (bool)preg_match('~[.](?:jpe?g|png|gif|webp|avif|pdf|txt|csv|docx|xlsx|pptx|odt|ods|odp)$~iD',$path);
     }
     /** Preserve only CF7's exact deny-all guard; never accept arbitrary upload directives. */
     public static function validateUpload(string $path,string $body): void {
@@ -68,33 +77,28 @@ final class SiteSnapshot
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         // Include active supported runtimes; native-only sites do not require Markdown Documents.
         foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN,AcfHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
-        $data=$this->data();$files=[];$software=[];
+        $data=$this->data();$files=[];$software=['themes'=>[],'plugins'=>[]];
         $hasMarkdown=(bool)array_filter($data['tables']['posts'],fn($p)=>$p['post_type']==='ozmd_document')
             ||(bool)array_filter($data['tables']['postmeta'],fn($m)=>$m['meta_key']==='_ozmd_source');
         if($hasMarkdown&&!in_array('ozeki-markdown-documents/ozeki-markdown-documents.php',(array)get_option('active_plugins'),true))
             throw new \RuntimeException('Markdown documents or originals exist. Activate Ozeki Markdown Documents before creating a Baseline.');
         $theme=get_stylesheet();$parent=get_template();
-        foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$this->files(get_theme_root().'/'.$name,'themes/'.$name,$software);}
+        foreach(array_unique([$theme,$parent]) as $name){self::safePath($name);$t=wp_get_theme($name);$software['themes'][$name]=['name'=>$t->get('Name'),'version'=>$t->get('Version')];}
         foreach($plugins as $plugin){
             self::safePath($plugin);
             if(!in_array($plugin,(array)get_option('active_plugins'),true))throw new \RuntimeException('Dependency must be an active plugin.');
             $dir=dirname($plugin);if($dir==='.')throw new \RuntimeException('Select a directory-based dependency.');
-            $this->files(WP_PLUGIN_DIR.'/'.$dir,'plugins/'.$dir,$software);
+            $header=get_file_data(WP_PLUGIN_DIR.'/'.$plugin,['name'=>'Plugin Name','version'=>'Version']);$software['plugins'][$plugin]=$header;
         }
         $upload=wp_upload_dir();$this->files($upload['basedir'],'uploads',$files);
-        foreach($files as $path=>$body)self::validateUpload($path,$body);
+        foreach($files as $path=>$body)if(!self::isInformationFile($path))unset($files[$path]);else self::validateUpload($path,$body);
         foreach($data['tables']['postmeta'] as $r)if($r['meta_key']==='_ozmd_source')$files['markdown/'.$r['post_id'].'.md']=$r['meta_value'];
-        // Bundling program files avoids thousands of requests; content remains independent files.
-        $tmp=tempnam(sys_get_temp_dir(),'owr-site-');$zip=new \ZipArchive();$zip->open($tmp,\ZipArchive::OVERWRITE);$hashes=[];
-        ksort($software);foreach($software as $path=>$body){$zip->addFromString($path,$body);$hashes[$path]=hash('sha256',$body);}$zip->close();
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        $files['software.zip']=file_get_contents($tmp);unlink($tmp);
         if(Store::json($data)!==Store::json($this->data()))throw new \RuntimeException('Site changed during capture; retry while editing is paused.');
         $files['content.json']=Store::json($data);
         $state=$this->store->latestState();
-        $manifest=['schema'=>'owr-site-snapshot-1','origin'=>'administrator_initial','source_url'=>home_url(),
+        $manifest=['schema'=>'owr-site-snapshot-1','origin'=>'administrator_initial','source_url'=>home_url(),'source_upload_url'=>$upload['baseurl'],
             'wordpress'=>$GLOBALS['wp_version'],'php'=>PHP_VERSION,'through'=>$state['through'],'plugins'=>$plugins,
-            'software_hashes'=>$hashes,'excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
+            'software_inventory'=>$software,'recovery_mode'=>'information-assets-only','excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
             'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
         return $this->save($files,$manifest);
     }
@@ -129,11 +133,11 @@ final class SiteSnapshot
         $ref=$this->store->put($base.'manifest.json',Store::json($manifest),'application/json',$until);
         return ['manifest'=>$ref,'files'=>count($files),'through'=>$manifest['through']];
     }
-    public function load(array $ref): array {
+    public function load(array $ref,bool $informationOnly=false): array {
         $m=json_decode($this->store->get($ref),true,512,JSON_THROW_ON_ERROR);
         if(($m['schema']??'')!=='owr-site-snapshot-1'||!is_array($m['resources']??null))throw new \RuntimeException('Invalid site manifest.');
         $base=dirname($ref['key']).'/resources/';$files=[];
-        foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');$files[$p]=$this->store->get($r);}
+        foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
             if($m['asset_format']!==AssetFormat::SCHEMA||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
@@ -247,9 +251,8 @@ final class SiteSnapshot
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
-        if(function_exists('wp_is_file_mod_allowed') && !wp_is_file_mod_allowed('ozeki_resilience_recovery'))throw new \RuntimeException('This WordPress installation does not allow theme/plugin file changes.');
         if(!empty((new Plugin())->config()['protect'])||get_option('owr_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
-        [$m,$files]=$this->load($ref);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
+        [$m,$files]=$this->load($ref,true);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
         foreach($m['required_form_plugins']??[] as $plugin=>$version){
             FormHistory::checkDependency($plugin,$version);
@@ -265,33 +268,46 @@ final class SiteSnapshot
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         foreach(self::TABLES as $t){if(!isset($d['tables'][$t]))throw new \RuntimeException('Missing table '.$t);$engine=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$wpdb->$t));if(strtolower($engine->Engine??'')!=='innodb')throw new \RuntimeException('Transactional tables required.');}
-        file_put_contents($work.'/software.zip',$files['software.zip']);$zip=new \ZipArchive();if($zip->open($work.'/software.zip')!==true)throw new \RuntimeException('Invalid software bundle.');$program=[];
-        for($i=0;$i<$zip->numFiles;$i++){$p=$zip->getNameIndex($i);self::safePath($p);if(!isset($m['software_hashes'][$p])||!preg_match('~^(themes|plugins)/~',$p))throw new \RuntimeException('Unexpected program path.');$body=$zip->getFromIndex($i);if(!hash_equals($m['software_hashes'][$p],hash('sha256',$body)))throw new \RuntimeException('Software mismatch.');$program[$p]=$body;}$zip->close();
-        if(isset($m['required_tablepress_version'])){
-            $code=$program['plugins/'.TableHistory::PLUGIN]??'';
-            if(!preg_match('/Version:\s*([^\s]+)/',$code,$version)||$version[1]!==$m['required_tablepress_version'])throw new \RuntimeException('Create a new trusted baseline after changing TablePress version.');
+        // Software is supplied and activated by the administrator, never imported from S3.
+        foreach($m['plugins']??[] as $plugin){
+            self::safePath($plugin);
+            if(!in_array($plugin,(array)get_option('active_plugins'),true))
+                throw new \RuntimeException('Install and activate the recorded dependency from a trusted source before recovery: '.esc_html($plugin));
+            $expected=$m['software_inventory']['plugins'][$plugin]['version']??null;
+            $header=get_file_data(WP_PLUGIN_DIR.'/'.$plugin,['Version'=>'Version']);
+            if($expected!==null&&$header['Version']!==$expected)
+                throw new \RuntimeException('Install the recorded dependency version before recovery: '.esc_html($plugin).' '.esc_html($expected));
         }
-        if(count($program)!==count($m['software_hashes']))throw new \RuntimeException('Incomplete software bundle.');
-        if(isset($d['acf'])){
-            $code=$program['plugins/'.AcfHistory::PLUGIN]??'';
-            if(!in_array(AcfHistory::PLUGIN,$m['plugins'],true)||!preg_match('/Version:\s*([^\s]+)/',$code,$version)||$version[1]!==$d['acf']['version'])
-                throw new \RuntimeException('Create a new trusted Baseline after installing or changing ACF version.');
+        if(isset($m['required_tablepress_version'])&&(!TableHistory::enabled()||\TablePress::version!==$m['required_tablepress_version']))
+            throw new \RuntimeException('Activate the recorded TablePress version before recovery.');
+        // Keep the destination theme selection; apply theme settings only to that same theme.
+        foreach(['template','stylesheet'] as $key)unset($d['options'][$key]);
+        foreach(array_keys($d['options']) as $key)if(str_starts_with($key,'theme_mods_')&&$key!=='theme_mods_'.get_stylesheet()){
+            unset($d['options'][$key]);$application['report']['not_applied'][]=['item'=>'options.'.$key,'reason'=>'Destination theme differs; install and select the intended theme separately'];
         }
-        $install=$program;foreach($files as $p=>$body)if(str_starts_with($p,'uploads/'))$install[$p]=$body;
+        $install=[];foreach($files as $p=>$body)if(str_starts_with($p,'uploads/')){
+            if(!self::isInformationFile($p)){$application['report']['not_applied'][]=['item'=>$p,'reason'=>'Not a supported information file'];continue;}
+            self::validateUpload($p,$body);$install[$p]=$body;
+        }
+        $application['report']['count']=count($application['report']['not_applied']);
+        $uploads=wp_upload_dir();
+        if(!empty($uploads['error']))throw new \RuntimeException('Destination uploads directory is unavailable.');
+        $uploadRoot=$uploads['basedir'];$fromUploads=$m['source_upload_url']??rtrim($from,'/').'/wp-content/uploads';$toUploads=$uploads['baseurl'];
+        if(!is_dir($uploadRoot)&&!wp_mkdir_p($uploadRoot))throw new \RuntimeException('Cannot create uploads directory.');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         file_put_contents($work.'/before-content.json',Store::json($this->data()));chmod($work.'/before-content.json',0600);
         $backups=[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped, WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it. Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        foreach($install as $p=>$body){$target=WP_CONTENT_DIR.'/'.$p;$parent=dirname($target);if(!is_dir($parent)&&!wp_mkdir_p($parent))throw new \RuntimeException('Cannot create resource directory.');if(is_link($target)||!str_starts_with(realpath($parent).'/',realpath(WP_CONTENT_DIR).'/'))throw new \RuntimeException('Resource escapes destination.');$before=is_file($target)?file_get_contents($target):null;if($before===$body){unset($install[$p]);continue;}if(!is_writable($parent))throw new \RuntimeException('Destination resource directory is not writable: '.$p);$backups[$target]=$before;}
+        foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);$parent=dirname($target);if(!is_dir($parent)&&!wp_mkdir_p($parent))throw new \RuntimeException('Cannot create resource directory.');if(is_link($target)||!str_starts_with(realpath($parent).'/',realpath($uploadRoot).'/'))throw new \RuntimeException('Resource escapes destination.');$before=is_file($target)?file_get_contents($target):null;if($before===$body){unset($install[$p]);continue;}if(!is_writable($parent))throw new \RuntimeException('Destination resource directory is not writable: '.$p);$backups[$target]=$before;}
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         file_put_contents($work.'/before-files.json',Store::json(array_map(fn($v)=>$v===null?null:base64_encode($v),$backups)));chmod($work.'/before-files.json',0600);
-        $oldOptions=[];foreach($d['options'] as $k=>$v)$oldOptions[$k]=get_option($k);$oldOptions['active_plugins']=get_option('active_plugins');
+        $oldOptions=[];foreach($d['options'] as $k=>$v)$oldOptions[$k]=get_option($k);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         file_put_contents($work.'/before-options.json',Store::json($oldOptions));chmod($work.'/before-options.json',0600);
         $touched=[];
         try {
         // phpcs:ignore PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite, WordPress.WP.AlternativeFunctions.rename_rename -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-            foreach($install as $p=>$body){$target=WP_CONTENT_DIR.'/'.$p;if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');$touched[]=$target;}
+            foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');$touched[]=$target;}
             // Imported authors have no login identity from the lost system and no capabilities.
             $authors=[];foreach($d['authors'] as $id=>$a){$login='owr-author-'.substr(hash('sha256',$from.'|'.$id),0,20);$u=get_user_by('login',$login);$uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$a['display_name'],'user_nicename'=>$a['user_nicename'],'role'=>'']);if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());$authors[(string)$id]=$uid;}
             self::transaction('START TRANSACTION');
@@ -300,12 +316,11 @@ final class SiteSnapshot
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
                 if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??0;
                 if($t==='comments')$row['user_id']=$authors[(string)$row['user_id']]??0;
-                foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to);$row[$k]=is_serialized($v)?serialize($value):$value;}
+                foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to,$fromUploads,$toUploads);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
             AcfHistory::install($d['acf_restore_groups']??[]);
-            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}self::writeOption($k,self::relocate($v,$from,$to));}
-            $active=array_values(array_unique(array_merge([plugin_basename(dirname(__DIR__).'/ozeki-wordpress-resilience.php')],$m['plugins'])));self::writeOption('active_plugins',$active);
+            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}self::writeOption($k,self::relocate($v,$from,$to,$fromUploads,$toUploads));}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
                 (new \OzekiMarkdownDocuments\Content\MarkdownSource())->store((int)$match[1],$raw);
@@ -316,6 +331,7 @@ final class SiteSnapshot
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
         self::writeOption('owr_site_origin_url',$from,false);
+        self::writeOption('ozeki_resilience_origin_upload_url',$fromUploads,false);
         $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from,'application_report'=>$application['report']];
         self::writeOption('owr_site_restore_result',$result,false);
         return $result;

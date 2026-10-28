@@ -1,8 +1,9 @@
-# Preparation for protection (0.3.2)
+# Preparation for protection
+
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
 
 [日本語](setup-readiness-ja.md) · [Setup and recovery guide](user-guide.md) · [Terms of use](terms-of-use.md)
 
-This guide applies to the 0.3.2 release candidate. The previously submitted 0.3.1 rc.2 ZIP remains unchanged.
 
 The screen follows the WordPress admin language: Japanese for Japanese locales, English otherwise. Expand **Optional: schedules, retention and cleanup** when needed.
 

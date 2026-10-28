@@ -42,4 +42,4 @@ WordPress反映やS3原本保存だけでは復旧対象に確定しません。
 
 ## Capture failures before queue registration (save-verification-final candidate)
 
-See [save confirmation and capture failures](save-confirmation.md). A capture diagnostic is not a resumable operation. Inspect existing history and queued payloads before choosing Resume history or re-saving the affected data. 本文と付随情報の確定を区別し、キュー登録前の診断を未確定データそのものと扱わないでください。
+See [save confirmation and capture failures](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/save-confirmation.md). A capture diagnostic is not a resumable operation. Inspect existing history and queued payloads before choosing Resume history or re-saving the affected data. 本文と付随情報の確定を区別し、キュー登録前の診断を未確定データそのものと扱わないでください。

@@ -18,6 +18,19 @@ The scope balances the value of what is preserved with the work needed to handle
 
 The underlying idea is to separate the lifespan of information from that of the system that created it. The aim is to preserve articles, images and other content as independent information assets that remain understandable and usable even if the original system is lost, and from which a needed system can be reconstructed. **Preserved originals have value independent of the recovery engine.**
 
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
+| Item | Handling |
+|---|---|
+| WordPress core | Install fresh |
+| Themes | Reinstall from trusted distributors |
+| Plugins | Reinstall from trusted distributors |
+| Posts and Pages | Recover from independent originals preserved in S3 |
+| Images and attachments | Recover saved supported formats from S3 originals |
+| Settings and metadata | Apply only recognized items selectively |
+| Members, inquiries and tables | Recover according to the supported adapter rules |
+
+
 ## Download and start
 
 1. Use `ozeki-resilience-0.3.3.zip` attached to the **0.3.3 rc.3 review-response candidate**, and verify its `SHA256SUMS`. Candidate files and matching source are listed on [GitHub Releases](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases).
@@ -47,7 +60,7 @@ Restore successfully saved content through the recovery point you select. Integr
 | Member access | Core subscriber information and supported fields, settings and viewing restrictions. WP-Members 3.5.8.1 |
 | Tables | Table content, supported display settings and references. TablePress 3.4.1 |
 | ACF free basic fields | Values, definitions and field keys for 15 basic types on posts/pages. ACF free 6.8.10. Create a new trusted Baseline including ACF after updating |
-| Site appearance included in the initial capture | Selected themes and supported presentation settings. Capture a new initial state after later theme changes |
+| Site appearance included in the initial capture | Supported presentation settings for the separately prepared theme; software names and versions help reinstallation |
 
 Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images up to 32 MiB.
 
@@ -94,6 +107,6 @@ Existing verification records describe their specific builds and environments; t
 
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
 
-Setup assistance assessment: [current pre-setup checks](docs/setup-preflight-review.md) (includes proposals not yet implemented).
+Setup assistance assessment: [current pre-setup checks](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-preflight-review.md) (includes proposals not yet implemented).
 
 [ACF free basic fields — 0.3.3 coverage](docs/acf-free.md).

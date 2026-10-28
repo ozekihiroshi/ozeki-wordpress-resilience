@@ -1,0 +1,147 @@
+[
+  {
+    "test": "checkpoint",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\n"
+  },
+  {
+    "test": "separated-assets",
+    "ok": true,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\n"
+  },
+  {
+    "test": "acf",
+    "ok": true,
+    "output": "PASS ACF separated originals, comparison failure, history, projection, removed value, independent Checkpoint (simulated S3).\n"
+  },
+  {
+    "test": "acf-readiness",
+    "ok": true,
+    "output": "PASS unused/inactive/free, legacy marker, initial capture, changed version/destination and bilingual next steps.\n"
+  },
+  {
+    "test": "site-checkpoint-verification",
+    "ok": true,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS initial common save and Checkpoint: data/metadata/image/software mismatches and unavailable versions stop before manifest; same fixed versions verified on retry; normal load/tail retained; existing objects unchanged\n"
+  },
+  {
+    "test": "retention-extension",
+    "ok": true,
+    "output": "PASS retention: new/reused/delayed confirmation, insufficient/read/extension failure, reread, same versions/modes, latest Checkpoint+tail renewal, no old content mutation or rollback; memory storage only.\n"
+  },
+  {
+    "test": "checkpoint-lifecycle",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\n"
+  },
+  {
+    "test": "gfs",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\nPASS GFS: W/M/Y schedule collision, separate times, calendar month, validation, S3 labels, all-label retention, no archive history pin, independent manual point. Memory S3 only.\n"
+  },
+  {
+    "test": "gfs-admin",
+    "ok": true,
+    "output": "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n"
+  },
+  {
+    "test": "site-checkpoint-admin-failure",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS actual admin action with WordPress/S3 fixtures: verification failure recorded with cause, prior snapshot unchanged, no manifest or new success. No browser/real AWS claim.\n"
+  },
+  {
+    "test": "application-rules",
+    "ok": true,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\n"
+  },
+  {
+    "test": "capture-failure",
+    "ok": true,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\nPASS prequeue failure, original exception, no synthetic pending payload, unrelated-success retention, status distinction and diagnostic-write failure\nResilience: capture failure diagnostic could not be persisted.\n"
+  },
+  {
+    "test": "commit-verification",
+    "ok": true,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\nPASS source/metadata/split-part/media hash mismatch and read failure prevent history PUT; pending retained; same operation resumes after verification; fixed versions and originals preserved\n"
+  },
+  {
+    "test": "recovery-result",
+    "ok": true,
+    "output": "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n"
+  },
+  {
+    "test": "site-point-time",
+    "ok": true,
+    "output": "PASS exact boundaries, full update, deletion, Checkpoint-only, incompatible Checkpoint, missing end/gap/resource, later records excluded. Memory S3 only.\n"
+  },
+  {
+    "test": "recovery-errors",
+    "ok": true,
+    "output": "PASS unchanged/empty/false/zero/array options; failed write/read; failed START/COMMIT. Synthetic DB failures, not interruption/restart acceptance.\n"
+  },
+  {
+    "test": "save-status",
+    "ok": true,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\n"
+  },
+  {
+    "test": "editor-save",
+    "ok": true,
+    "output": "PASS confirmed-body and media/state equality; changed/unconfirmed data retained; editor error reason.\n"
+  },
+  {
+    "test": "comments",
+    "ok": true,
+    "output": "PASS comment addition/edit/moderation/delete/reparent/count, complete JSON, failed original exclusion, independent checkpoint.\nPASS pending article/comment history prevents storage reconfiguration.\n"
+  },
+  {
+    "test": "forms",
+    "ok": true,
+    "output": "PASS complete form/inquiry JSON, idempotent replay, channels, identity rejection, failed original exclusion.\nPASS receipt/form tombstones and channel counts.\nPASS form deletion does not cascade to inquiry.\n"
+  },
+  {
+    "test": "tablepress",
+    "ok": true,
+    "output": "TablePress replay checks PASS\nTablePress unpersisted defaults check PASS\n"
+  },
+  {
+    "test": "tablepress-capture",
+    "ok": true,
+    "output": "TablePress queue identity and frozen settings checks PASS\n"
+  },
+  {
+    "test": "upload-guard",
+    "ok": true,
+    "output": "PASS CF7 deny-only upload guard and executable rejection\n"
+  },
+  {
+    "test": "native-details",
+    "ok": true,
+    "output": "PASS native state thumbnail removal, terms/counts, delete relations, unrelated records, repeat and identity\n"
+  },
+  {
+    "test": "native-queue",
+    "ok": true,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\n"
+  },
+  {
+    "test": "members",
+    "ok": true,
+    "output": "membership replay checks PASS\n"
+  },
+  {
+    "test": "cleanup",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\n"
+  },
+  {
+    "test": "site-retention",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\n"
+  },
+  {
+    "test": "site-retention-fallback",
+    "ok": true,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\nPASS missing version-list permission: fixed-version read fallback, retained assets, blocked reasons, no candidates or mutations.\n"
+  }
+]

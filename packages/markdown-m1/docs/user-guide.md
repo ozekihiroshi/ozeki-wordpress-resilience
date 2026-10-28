@@ -1,5 +1,18 @@
 # First-time setup — from preparation to protection
 
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
+| Item | Handling |
+|---|---|
+| WordPress core | Install fresh |
+| Themes | Reinstall from trusted distributors |
+| Plugins | Reinstall from trusted distributors |
+| Posts and Pages | Recover from independent originals preserved in S3 |
+| Images and attachments | Recover saved supported formats from S3 originals |
+| Settings and metadata | Apply only recognized items selectively |
+| Members, inquiries and tables | Recover according to the supported adapter rules |
+
+
 **Version: 0.3.2 release candidate.** Includes the [preparation checklist and terms confirmation](setup-readiness.md).
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
@@ -78,6 +91,8 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 
 ## 6. Recover onto a separate WordPress
 
+Initial saves include JPEG, PNG, GIF, WebP and AVIF images; PDF, TXT/CSV, DOCX/XLSX/PPTX and ODT/ODS/ODP attachments. Incremental tracking covers supported referenced images; create a new initial save after changing other attachments.
+
 Restore saved articles, images, inquiries and other supported content on a separate WordPress to resume publishing and serving users. Recovery uses what remains in S3 even when the original site is offline. After an attack, choose a trusted initial capture (Baseline) and the changes to restore. Prepare administrator access and external service connections on the destination, and check it with public access restricted before reopening.
 
 1. Prepare a clean, dedicated destination with the same WordPress release line as the capture, at the same or a newer maintenance patch (for example, 7.1.2 to 7.1.3), the product ZIP, required plugins and a working administrator login. If WP-Members requires activation, activate the destination administrator separately; source administrator credentials are not restored. Do not use a live unrelated site as the destination.
@@ -87,13 +102,13 @@ Restore saved articles, images, inquiries and other supported content on a separ
 5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. If an error occurs, inspect the message and destination state, resolve the cause, then rerun.
 6. Re-login with the administrator prepared on the destination and inspect representative body, author display, images, links and relevant member/table/form behaviour. The site name may change to the source name; keep checking the destination URL. Saved `publish` state is reproduced. DNS/network exposure is a separate administrator decision. Mail replay is not a recovery function.
 
-[Detailed recovery](site-snapshot.md) · [Application rules and withheld information](application-rules.md)
+[Detailed recovery](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot.md) · [Application rules and withheld information](application-rules.md)
 
 ## 7. Help
 
 See the [README](../README.md#what-remains-and-what-you-can-recover) for saved and restored content, and [troubleshooting](#troubleshooting) for setup errors. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
-[Known operational limits](remaining-confirmations.md) and [candidate checks](wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
+[Known operational limits](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/remaining-confirmations.md) and [candidate checks](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
 
 ## ACF free
 

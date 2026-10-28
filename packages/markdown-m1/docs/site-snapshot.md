@@ -1,5 +1,7 @@
 # Complete site baseline and reconstruction
 
+This document includes historical candidate design and verification records. Follow the current [user guide](user-guide.md). Historical code-restoration results do not describe the current recovery feature.
+
 ## Baseline and Checkpoint operations
 
 This describes the current implementation; this documentation update does not replace published ZIPs or expand their verification scope.

@@ -474,12 +474,15 @@ final class Plugin
         $from=get_option('owr_site_origin_url');
         $to=esc_url_raw(home_url(),['http','https']);
         if(!is_string($from) || $from==='' || !$to || esc_url_raw($from,['http','https'])!==$from)return $html;
+        $fromUploads=get_option('ozeki_resilience_origin_upload_url');
+        if(!is_string($fromUploads)||esc_url_raw($fromUploads,['http','https'])!==$fromUploads)$fromUploads=null;
+        $toUploads=wp_upload_dir()['baseurl'];
         $processor=new \WP_HTML_Tag_Processor($html);
         while($processor->next_tag()){
             foreach(['href','src','action','poster','cite','data','srcset'] as $attribute){
                 $value=$processor->get_attribute($attribute);
                 if(!is_string($value))continue;
-                $rebased=SiteSnapshot::relocate($value,$from,$to);
+                $rebased=SiteSnapshot::relocate($value,$from,$to,$fromUploads,$toUploads);
                 if($rebased!==$value)$processor->set_attribute($attribute,$attribute==='srcset'?$rebased:esc_url_raw($rebased,['http','https']));
             }
         }
@@ -722,6 +725,7 @@ final class Plugin
         if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>'.esc_html(AdminText::text('WordPress applied; S3 formal history pending.')).'</strong> '.esc_html(AdminText::text('This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.')).'</p>';
         if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        echo '<p>'.esc_html(SetupReadiness::text('Prepare WordPress, themes and required plugins from trusted distributors. Recovery restores information assets, not software from S3; the destination theme and active plugins remain unchanged.','WordPress・テーマ・必要なプラグインは信頼できる配布元から準備してください。復旧するのは情報資産です。S3からソフトウェアを配置せず、復旧先のテーマと有効なプラグインを維持します。')).'</p>';
         echo '<h2>'.esc_html(AdminText::text('Site-wide recovery — primary workflow')).'</h2><p>'.esc_html(AdminText::text('Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.')).'</p><p>'.esc_html(AdminText::text('Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.')).'</p>';
         echo '<p>'.esc_html(AdminText::text('TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.')).'</p>';
         echo '<p>'.esc_html(AdminText::text('WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.')).'</p>';

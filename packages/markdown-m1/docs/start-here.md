@@ -1,5 +1,7 @@
 # Coverage and operations after changes
 
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
 For first-time setup, follow the [user guide](user-guide.md). This reference explains supported scope and what to do after theme or configuration changes.
 
 The 0.3.2 rc.1 update was accepted on October 28, 2026 and is awaiting review; it is not yet approved or published on WordPress.org. The original 0.3.1 rc.2 submission remains preserved.
@@ -12,14 +14,14 @@ Normal supported operations cover Posts/Pages, referenced local images, core com
 
 The administrator judges the initial site trustworthy. Later complete Checkpoints are built from S3's baseline and confirmed history; they do not import untracked live-site changes. Unconfirmed operations are excluded. Saved publish status is reproduced; server/network exposure and DNS are administrator responsibilities. Use [the stated verification boundaries](../README.md#what-the-product-checks) to choose the Baseline and history, then inspect the recovery result before returning to service.
 
-Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](site-snapshot.md#baseline-and-checkpoint-operations). The legacy Markdown asset-level path is separate.
+Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot.md#baseline-and-checkpoint-operations). The legacy Markdown asset-level path is separate.
 
 ## 2. Changes requiring administrator attention
 
 | Change | What to do |
 |---|---|
 | Supported article/image/comment/adapter operation | Use its normal editor. Check formal-history confirmation; resolve reported pending saves when the source survives. |
-| Theme/parent-theme files or selection; menus, templates, navigation, global styles; captured presentation settings | Pause editing and create a **new trusted complete initial snapshot** after the change. A regular S3-derived Checkpoint cannot capture it. |
+| Software names/versions; menus, templates, navigation and supported presentation settings | Pause editing and create a **new trusted complete initial snapshot** after the change. A regular S3-derived Checkpoint cannot capture it. |
 | Runtime plugin update or captured plugin settings outside adapter history; global taxonomy administration; live-file changes outside recorded uploads | Determine whether initial capture includes that resource, then create a new trusted initial snapshot if it does. A tested earlier version does not certify an updated plugin. |
 | Uncaptured plugin tables/settings, external/CDN files, external services or secrets | A new snapshot does not automatically add support. Keep an independent preservation/setup procedure or exclude this resource from the promised recovery scope. |
 

@@ -6,7 +6,18 @@ assert (vendor/'autoload.php').is_file()
 assert not output.exists(), 'Use a new output filename; preserve earlier evidence'
 files=[root/x for x in ['ozeki-wordpress-resilience.php','README.md','RAADME-jp.md','readme.txt','LICENSE','composer.json','composer.lock']]
 files+=list((root/'src').glob('*.php'))
-files+=sorted(f for f in (root/'docs').rglob('*') if f.is_file())
+# Only maintained user instructions belong in the installable package.
+USER_DOCS = ['user-guide','start-here','aws-setup','terms-of-use','setup-readiness','acf-free','gfs-checkpoints']
+USER_DOCS = [name+suffix+'.md' for name in USER_DOCS for suffix in ['', '-ja']]
+USER_DOCS += ['install-update.md','save-resume.md','application-rules.md','recovery-faq.md','recovery-faq-ja.md']
+files += [root/'docs'/name for name in USER_DOCS]
+files += sorted((root/'docs'/'aws-examples').glob('*.json'))
+def runtime_vendor(file):
+ rel=file.relative_to(vendor)
+ if any(part in ['bin','tests','test','.github','docs'] for part in rel.parts):return False
+ if ('LICENSE' in file.name.upper() or file.name.upper().startswith(('COPYING','NOTICE'))):return True
+ return file.suffix in ['.php','.json'] and file.name not in ['composer.json']
+
 output.parent.mkdir(parents=True,exist_ok=True)
 def add(z,file,name):
  info=zipfile.ZipInfo(name,(2026,1,1,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o100644<<16
@@ -14,7 +25,7 @@ def add(z,file,name):
 with zipfile.ZipFile(output,'x',zipfile.ZIP_DEFLATED) as z:
  for file in sorted(files):add(z,file,'ozeki-resilience/'+file.relative_to(root).as_posix())
  for file in sorted(vendor.rglob('*')):
-  if file.is_file():add(z,file,'ozeki-resilience/vendor/'+file.relative_to(vendor).as_posix())
+  if file.is_file() and runtime_vendor(file):add(z,file,'ozeki-resilience/vendor/'+file.relative_to(vendor).as_posix())
 with zipfile.ZipFile(output) as z:
  assert all('/tests/'not in p and '/lab/'not in p and '/tools/'not in p.replace('/vendor/','/vendor-ignore/') for p in z.namelist() if '/vendor/'not in p)
 manifest={'zip':output.name,'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),'bytes':output.stat().st_size,'product_files':{str(f.relative_to(root)):hashlib.sha256(f.read_bytes()).hexdigest() for f in files}}

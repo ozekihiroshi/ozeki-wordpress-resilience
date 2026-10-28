@@ -65,4 +65,4 @@ AWSコンソールでの手順：
 
 AccessDeniedなら操作・正確な範囲を記録し、実行主体、置換漏れ、明示的Deny、バケット／KMS条件、環境認証を確認します。AdministratorAccessを製品の回避策にしません。保持期限中・Legal Holdは削除保留の条件で、回避要求ではありません。通信不能・不明エラーを「ロック設定なし」とは扱いません。
 
-サンプルの確認範囲：2026年10月26日に `source-with-cleanup` と `recovery-read-only` を単独適用した実S3試験を実施しています。初回用の `source-no-delete` の単独適用は、その試験には含みません。[検証記録](recovery-readiness-ja.md)に詳細があります。設定表と復旧用の準備情報は元サーバ外にも控え、認証情報は文書や問い合わせへ載せないでください。
+サンプルの確認範囲：2026年10月26日に `source-with-cleanup` と `recovery-read-only` を単独適用した実S3試験を実施しています。初回用の `source-no-delete` の単独適用は、その試験には含みません。[検証記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/recovery-readiness-ja.md)に詳細があります。設定表と復旧用の準備情報は元サーバ外にも控え、認証情報は文書や問い合わせへ載せないでください。

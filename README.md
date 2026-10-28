@@ -1,9 +1,10 @@
 # Ozeki Resilience
 
-**WordPress.org update received: 0.3.3 (rc.3), October 28, 2026.** Our reply in the original review email thread has been sent. We are awaiting the reviewer's response; publication has not been approved. Submitted ZIPs and tags remain unchanged.
+**WordPress.org update received: 0.3.3 (rc.3), October 28, 2026.** Our reply in the original review email thread has been sent. An additional review requested changes; publication has not been approved. Submitted ZIPs and tags remain unchanged.
 
+Current source includes the next review-response changes for information-assets-only recovery. These changes have not been submitted. The submitted rc.3 ZIP and tag remain unchanged.
 
-[Submission and sent-reply record](docs/releases/wordpress-org-review-20261028.md). Recovery remains available; its policy treatment and legacy-identifier compatibility need reviewer clarification.
+[Submission and sent-reply record](docs/releases/wordpress-org-review-20261028.md). [Information-assets-only recovery changes](docs/releases/information-assets-only-20261028.md). Software is prepared separately on the destination.
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
@@ -19,6 +20,18 @@ Backup and restore prepare you to return a site to a captured state. Resilience 
 The scope balances the value of what is preserved with the work needed to handle and restore it safely. The tables below show what is saved and restored, and what you prepare separately on the destination.
 
 The underlying idea is to separate the lifespan of information from that of the system that created it. The aim is to preserve articles, images and other content as independent information assets that remain understandable and usable even if the original system is lost, and from which a needed system can be reconstructed. **Preserved originals have value independent of the recovery engine.**
+
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
+| Item | Handling |
+|---|---|
+| WordPress core | Install fresh |
+| Themes | Reinstall from trusted distributors |
+| Plugins | Reinstall from trusted distributors |
+| Posts and Pages | Recover from independent originals preserved in S3 |
+| Images and attachments | Recover saved supported formats from S3 originals |
+| Settings and metadata | Apply only recognized items selectively |
+| Members, inquiries and tables | Recover according to the supported adapter rules |
 
 ## Download and start
 
@@ -49,7 +62,7 @@ Restore successfully saved content through the recovery point you select. Integr
 | Member access | Core subscriber information and supported fields, settings and viewing restrictions. WP-Members 3.5.8.1 |
 | Tables | Table content, supported display settings and references. TablePress 3.4.1 |
 | ACF free basic fields | Values, definitions and field keys for 15 basic types on posts/pages. ACF free 6.8.10. Create a new trusted Baseline including ACF after updating |
-| Site appearance included in the initial capture | Selected themes and supported presentation settings. Capture a new initial state after later theme changes |
+| Site appearance included in the initial capture | Supported presentation settings for the separately prepared theme; software names and versions help reinstallation |
 
 Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images up to 32 MiB.
 

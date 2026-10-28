@@ -1,6 +1,8 @@
 # Frequently asked questions about reconstruction
 
-[日本語](recovery-faq-ja.md) · [User guide](user-guide.md) · [Recovery specification](site-snapshot.md)
+Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+
+[日本語](recovery-faq-ja.md) · [User guide](user-guide.md) · [Recovery specification](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot.md)
 
 Ozeki Resilience reconstructs a supported state from protected originals, a Baseline/Checkpoint and confirmed history. It is not a generic importer that merges arbitrary records into another live site. These answers distinguish **design**, **existing evidence** and **conditions**; first read [the purpose and verification boundaries](../README.md#keep-a-path-to-recovery-after-an-attack) for restarting service without reusing an attacked environment. No additional tests were performed to write this FAQ.
 
@@ -23,20 +25,10 @@ The primary subject is **complete-site recovery onto a dedicated destination**. 
 **Conditions.** This avoids the usual raw search-and-replace length error; it is not a promise to repair malformed source data or understand arbitrary plugin encodings. Invalid recognized serialization is rejected. Unknown captured fields remain in S3 rather than being blindly applied. Every combination of emoji, encodings, nested values and URL shapes has not been demonstrated. A reported serialization failure should be investigated, not bypassed by editing the protected original.
 
 ## 3. What if WordPress or plugin versions differ?
+Prepare the recorded WordPress release line and the required plugin versions. New Baselines record software names and versions for reinstallation. Existing saved assets remain readable, but their archived software is not used for recovery. Missing/inactive dependencies or mismatched recorded versions stop recovery with preparation instructions.
 
-**Design.** Recovery is not an automatic data-schema migration. WordPress must be in the recorded release line with the same or a newer maintenance patch. Captured themes and selected plugin files are pinned by hashes. Adapter checks differ: WP-Members checks the recorded installed version; form-history replay checks its recorded dependencies; TablePress history checks compatibility with the bundled version. There is no universal version-conversion mechanism for arbitrary plugins.
-
-**Existing evidence.** Acceptance records identify the actual WordPress/PHP and plugin versions used. Tests used prepared compatible runtimes; they do not establish arbitrary old-to-new version compatibility. See the [verification index](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/product-evidence-index.md) and the specific evidence linked from the [README](../README.md).
-
-**Conditions.** Record versions and prepare the required compatible plugins before recovery. Markdown recovery was tested with Markdown Documents 0.1.1 available and activated beforehand. Bundling code does not guarantee that a class already loaded in the running PHP request can be replaced by another version. Runtime changes outside tracked history require a new trusted Baseline; a normal Checkpoint does not capture new live code. On a dependency mismatch, stop and prepare the recorded environment instead of forcing an import. See [installation requirements](install-update.md).
-
-## 4. Will I recover data but lose the theme or custom behaviour?
-
-**Design.** The trusted Baseline includes the selected child/parent theme files and supported active dependency plugins in a hash-checked software archive, alongside content and uploads. Thus a captured theme's `functions.php` is not inherently omitted. Normal Checkpoints use the protected S3 set and confirmed history, not unrecorded live files.
-
-**Existing evidence.** Complete-site trials exercised content, images and supported plugin behaviour. The recent conditional-Markdown trial checked the bundled plugin and software hash; its destination already had identical software, so it was not an empty-disk installation test. See [that bounded evidence](optional-markdown-verification.md).
-
-**Conditions.** Root `.htaccess`, web-server/PHP configuration, DNS, external APIs, secrets and arbitrary excluded plugins are not a promise of complete environment recovery. The administrator prepares these dependencies separately. A theme's captured code may depend on such external services. Captured code is restored after checking it against its saved hash. This check does not detect or remove malicious code, so the administrator establishes trust in the code included in the initial Baseline. Changes outside tracked operations require a new trusted Baseline. See [Baseline and Checkpoint responsibilities](site-snapshot.md).
+## 4. How do I prepare themes and custom behaviour?
+Install themes and plugins from trusted distributors and select the destination theme yourself. PHP, JavaScript and CSS from S3 are not installed. Supported presentation settings are applied; settings for another theme and unknown settings are withheld. Prepare server configuration, external services and connection details separately.
 
 ## 5. What if WordPress saves but S3 history does not confirm?
 

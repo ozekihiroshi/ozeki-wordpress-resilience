@@ -72,6 +72,19 @@ final class RecoveryRules
             $d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta'],fn($m)=>!in_array((string)$m['post_id'],$removed,true)&&!isset($acf['keys'][(string)$m['post_id']][$m['meta_key']])));
             $d['acf_restore_groups']=$acf['groups'];
         }
+        $removed=[];
+        $d['tables']['posts']=array_values(array_filter($d['tables']['posts']??[],function($post)use($self,&$removed){
+            if(!in_array($post['post_type'],['post','page','attachment','revision','nav_menu_item','wp_block','wp_template','wp_template_part','wp_navigation','ozmd_document','wpcf7_contact_form','flamingo_inbound','tablepress_table'],true)){
+                $removed[]=(string)$post['ID'];$self->omit('posts.'.$post['ID'],'Post type has no information-asset recovery rule; software customization is prepared on the destination');return false;
+            }return true;
+        }));
+        $d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta']??[],fn($row)=>!in_array((string)$row['post_id'],$removed,true)));
+        $d['tables']['term_relationships']=array_values(array_filter($d['tables']['term_relationships']??[],fn($row)=>!in_array((string)$row['object_id'],$removed,true)));
+        $removedComments=[];
+        $d['tables']['comments']=array_values(array_filter($d['tables']['comments']??[],function($row)use($removed,&$removedComments){
+            if(in_array((string)$row['comment_post_ID'],$removed,true)){$removedComments[]=(string)$row['comment_ID'];return false;}return true;
+        }));
+        $d['tables']['commentmeta']=array_values(array_filter($d['tables']['commentmeta']??[],fn($row)=>!in_array((string)$row['comment_id'],$removedComments,true)));
         foreach($d['tables']['posts']??[] as $post)$types[(string)$post['ID']]=$post['post_type'];
         $base=['_owr_m1_asset'=>'text','_owr_m1_origin_url'=>'text','_owr_m1_origin'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
         $out=[];
