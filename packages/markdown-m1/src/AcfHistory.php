@@ -110,15 +110,20 @@ final class AcfHistory {
                 $field=$fields[$key]??null;
                 if(!$field||$field['name']!==$name){$omit($path,'No recognized matching field definition');continue;}
                 $values=$v['acf_values'][$name]??[];
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; recovery admin renderers escape it and REST responses encode it.
                 if(count($values)>1)throw new \RuntimeException('Ambiguous ACF value: '.$path);
                 foreach($values as $value){
                     $list=in_array($field['type'],['checkbox'],true)||($field['type']==='select'&&!empty($field['multiple']));
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; recovery admin renderers escape it and REST responses encode it.
                     if($list){if($value!==''&&$value!==false&&(!is_array($value)||array_filter($value,fn($x)=>!is_string($x))))throw new \RuntimeException('Invalid ACF selection: '.$path);}
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; recovery admin renderers escape it and REST responses encode it.
                     elseif(!is_scalar($value)&&$value!==null)throw new \RuntimeException('Invalid ACF scalar: '.$path);
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; recovery admin renderers escape it and REST responses encode it.
                     if(in_array($field['type'],['number','range'],true)&&$value!==''&&$value!==null&&!is_numeric($value))throw new \RuntimeException('Invalid ACF number: '.$path);
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; recovery admin renderers escape it and REST responses encode it.
                     if($field['type']==='true_false'&&!in_array($value,['0','1',0,1,false,true,''],true))throw new \RuntimeException('Invalid ACF boolean: '.$path);
                     // WordPress must decode exactly one storage layer; literal serialized text stays text.
-                $out['meta'][]=['post_id'=>(string)$id,'meta_key'=>$name,'meta_value'=>maybe_serialize(is_array($value)?$value:(string)$value)];
+                    $out['meta'][]=['post_id'=>(string)$id,'meta_key'=>$name,'meta_value'=>maybe_serialize(is_array($value)?$value:(string)$value)];
                 }
                 if($values)$out['meta'][]=['post_id'=>(string)$id,'meta_key'=>'_'.$name,'meta_value'=>$key];
             }

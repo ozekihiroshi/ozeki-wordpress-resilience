@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AcfHistory.php';
 
 /** Projection at the destination boundary only. Never use this to rewrite stored originals. */
