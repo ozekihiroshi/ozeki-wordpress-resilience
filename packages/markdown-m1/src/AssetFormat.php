@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 
 /** Lossless content/metadata separation. This is a storage codec, not a new trust policy. */
 final class AssetFormat

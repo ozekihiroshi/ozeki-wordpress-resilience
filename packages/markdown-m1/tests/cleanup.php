@@ -11,7 +11,7 @@ class CleanupS3 extends MemoryS3 {
  function deleteObject($a){ok(isset($a['VersionId'])&&!isset($a['BypassGovernanceRetention']),'exact version, no bypass');if($this->failAfter!==null&&count($this->deleted)>=$this->failAfter)throw new RuntimeException('simulated interruption');$this->getObject($a);unset($this->objects[$a['Key']]);$this->deleted[]=$a;if($this->loseDeleteResponse){$this->loseDeleteResponse=false;throw new RuntimeException('lost delete response');}return [];}
 }
 function cleanupFixture(){
- $s=new CleanupS3();$store=new Owr\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);
+ $s=new CleanupS3();$store=new OzekiResilience\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);
  $first=$store->createInitialSnapshot(['cleanup-a'=>material('A initial','cleanup-a'),'cleanup-b'=>material('B initial','cleanup-b')]);
  add($store,1,'cleanup-a','A checkpoint');$cp=$store->createCheckpoint();
  add($store,2,'cleanup-b','B tail');

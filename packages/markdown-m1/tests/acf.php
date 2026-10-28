@@ -7,7 +7,7 @@ require $argv[1].'/src/FormHistory.php';
 require $argv[1].'/src/MemberHistory.php';
 require $argv[1].'/src/TableHistory.php';
 require $argv[1].'/src/NativeHistory.php';
-use Owr\M1\{Store,SiteSnapshot,AcfHistory,RecoveryRules,AssetFormat};
+use OzekiResilience\M1\{Store,SiteSnapshot,AcfHistory,RecoveryRules,AssetFormat};
 function maybe_serialize($v){return is_array($v)||is_string($v)&&preg_match('/^(?:a|s|i|b|d|O):|^N;/',$v)?serialize($v):$v;}
 function ok($v,$m){if(!$v)throw new RuntimeException($m);}
 class AcfS3 {public array $objects=[];public bool $corrupt=false;

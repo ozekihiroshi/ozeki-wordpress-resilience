@@ -16,7 +16,7 @@ function ok($v,$m){if(!$v)throw new RuntimeException($m);}
 function rejects($fn){try{$fn();}catch(Throwable $e){return;}throw new RuntimeException('Expected rejection');}
 function material($text,$slug){return ['source'=>$text,'row'=>['schema'=>'owr-md-history-1','sequence'=>0,'attributes'=>['title'=>$slug,'slug'=>$slug,'status'=>'publish','date'=>'2026-10-24 01:00:00','date_gmt'=>'2026-10-24 01:00:00','origin_id'=>1,'origin_url'=>'https://lost.invalid/'.$slug.'/']]];}
 function add($store,$n,$asset,$text){$attrs=material($text,$asset)['row']['attributes'];$o=$store->prepare($asset,'operation-'.$n,$text,$attrs);$store->commit(['schema'=>'owr-md-history-1','sequence'=>$n,'original'=>$o,'attributes'=>$attrs]);}
-$s3=new MemoryS3();$store=new Owr\M1\Store($s3,['bucket'=>'test','prefix'=>'site/','retention_days'=>36]);
+$s3=new MemoryS3();$store=new OzekiResilience\M1\Store($s3,['bucket'=>'test','prefix'=>'site/','retention_days'=>36]);
 $initial=['a'=>material("# A\n```mermaid\ngraph LR; A-->B\n```\n$$ x^2 $$\n[B](https://lost.invalid/b/)",'a'),'b'=>material('[A](https://lost.invalid/a/)','b')];
 $first=$store->createInitialSnapshot($initial);ok($first['through']===0&&$first['assets']===2,'initial');ok($store->createInitialSnapshot($initial)['unchanged'],'initial resume');
 $changed=$initial;$changed['a']['source']='different';rejects(fn()=>$store->createInitialSnapshot($changed));

@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/checkpoint-lifecycle.php';
 require_once $argv[1].'/src/GfsPolicy.php';
-use Owr\M1\{GfsPolicy,Store,SiteSnapshot};
+use OzekiResilience\M1\{GfsPolicy,Store,SiteSnapshot};
 $zone=new DateTimeZone('Asia/Tokyo');
 $rules=['weekly'=>['enabled'=>1,'weekday'=>0,'time'=>'02:00','keep'=>2], 'monthly'=>['enabled'=>1,'day'=>1,'time'=>'02:00','keep'=>3], 'yearly'=>['enabled'=>1,'month'=>1,'day'=>1,'time'=>'02:00','keep'=>3]];
 $after=(new DateTimeImmutable('2022-12-31 23:00',$zone))->getTimestamp();

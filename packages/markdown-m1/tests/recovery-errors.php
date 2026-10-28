@@ -15,10 +15,10 @@ class ErrorDB {
 function ck($b,$m){if(!$b)throw new RuntimeException($m);}
 function rejects($f,$text){try{$f();}catch(RuntimeException $e){ck(str_contains($e->getMessage(),$text),'Cause retained');return;}throw new RuntimeException('Failure not detected');}
 $wpdb=new ErrorDB();
-Owr\M1\SiteSnapshot::writeOption('absent',false);ck(array_key_exists('absent',$wpdb->values)&&$wpdb->values['absent']==='','missing false option persisted');
-foreach(['value','',false,0,['nested'=>['value'=>1]]] as $v){Owr\M1\SiteSnapshot::writeOption('test',$v);Owr\M1\SiteSnapshot::writeOption('test',$v);}
-$wpdb->failWrite=true;rejects(fn()=>Owr\M1\SiteSnapshot::writeOption('test','new'),'Injected option write failure');$wpdb->failWrite=false;
-$wpdb->failRead=true;rejects(fn()=>Owr\M1\SiteSnapshot::writeOption('test','new'),'Cannot persist recovery option');$wpdb->failRead=false;$wpdb->last_error='';
-$m=new ReflectionMethod(Owr\M1\SiteSnapshot::class,'transaction');$m->setAccessible(true);
+OzekiResilience\M1\SiteSnapshot::writeOption('absent',false);ck(array_key_exists('absent',$wpdb->values)&&$wpdb->values['absent']==='','missing false option persisted');
+foreach(['value','',false,0,['nested'=>['value'=>1]]] as $v){OzekiResilience\M1\SiteSnapshot::writeOption('test',$v);OzekiResilience\M1\SiteSnapshot::writeOption('test',$v);}
+$wpdb->failWrite=true;rejects(fn()=>OzekiResilience\M1\SiteSnapshot::writeOption('test','new'),'Injected option write failure');$wpdb->failWrite=false;
+$wpdb->failRead=true;rejects(fn()=>OzekiResilience\M1\SiteSnapshot::writeOption('test','new'),'Cannot persist recovery option');$wpdb->failRead=false;$wpdb->last_error='';
+$m=new ReflectionMethod(OzekiResilience\M1\SiteSnapshot::class,'transaction');$m->setAccessible(true);
 foreach(['START TRANSACTION','COMMIT'] as $sql){$wpdb->failQuery=false;$m->invoke(null,$sql);$wpdb->failQuery=true;rejects(fn()=>$m->invoke(null,$sql),$sql.' failed');}
 echo "PASS unchanged/empty/false/zero/array options; failed write/read; failed START/COMMIT. Synthetic DB failures, not interruption/restart acceptance.\n";

@@ -1,0 +1,16 @@
+DRAFT — NOT SENT. Replace the upload status/link after the owner approves submission.
+Reply in the original “[WordPress Plugin Directory] Review in Progress: Ozeki Resilience” thread.
+
+Thank you for reviewing Ozeki Resilience. We have prepared a corrected 0.3.3 candidate and would appreciate clarification on two points.
+
+The recovery feature reconstructs a site from the administrator's own trusted Baseline, independently preserved content and confirmed history in their S3 storage. It is not a code-entry editor or a developer-hosted update channel. An administrator must explicitly request destination replacement. Fixed S3 versions, content hashes and destination paths are checked, and WordPress file-modification restrictions are respected. Hash checks establish integrity, not whether code is trustworthy. May this archived theme/plugin restoration remain as part of that recovery workflow?
+
+Declarations use the OzekiResilience\M1 namespace. Existing owr_ option/meta identifiers and hooks are retained for compatibility with saved state and integrations. Do you require their migration before approval, or may these existing identifiers remain?
+
+Markdown is preserved as archival source text after type, UTF-8, NUL and size checks; it is not executed or directly emitted as HTML. Rendering belongs to Ozeki Markdown Documents. Stripping markup from the original would also destroy legitimate code examples. Our rendered URL changes use WordPress's HTML Tag Processor to escape changed attributes without stripping unrelated shortcode output.
+
+Prepared source and validation: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases (0.3.3 rc.3 review-response candidate)
+The assigned slug remains ozeki-resilience.
+
+Regards,
+Hiroshi Ozeki

@@ -27,11 +27,13 @@ $_POST=['operation'=>'configure','confirm_terms'=>'1','bucket'=>'fixture-bucket'
  'monthly'=>['enabled'=>'on','day'=>'1','time'=>'02:00','keep'=>'3'],
  'yearly'=>['enabled'=>'on','month'=>'1','day'=>'1','time'=>'02:00','keep'=>'3'],
 ]];
-try{(new Owr\M1\Plugin())->action();}catch(GfsRedirect $e){}
+try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
 checkGfs(empty($options['owr_m1_error']),'Settings accepted');$saved=$options['owr_m1_config'];
 checkGfs(count($saved['gfs'])===3&&$saved['gfs']['monthly']['keep']===3&&$saved['retention_days']===0,'All form fields persisted');
 checkGfs($event->timestamp===$options['owr_gfs_due']['at'],'Next event and due slot registered');
 $_POST['gfs']['yearly']['time']='25:99';
-try{(new Owr\M1\Plugin())->action();}catch(GfsRedirect $e){}
+try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
 checkGfs($options['owr_m1_config']===$saved&&str_contains($options['owr_m1_error'],'Invalid GFS'),'Invalid settings do not replace config');
 echo "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n";
+
+function sanitize_key($v){return is_scalar($v)?preg_replace("/[^a-z0-9_-]/","",strtolower((string)$v)):"";}

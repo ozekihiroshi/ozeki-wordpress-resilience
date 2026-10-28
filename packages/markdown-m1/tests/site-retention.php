@@ -4,8 +4,8 @@ if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/cleanup.php';
 require_once $argv[1].'/src/SiteSnapshot.php';
 require_once $argv[1].'/src/Plugin.php';
-use Owr\M1\Store;
-use Owr\M1\SiteSnapshot;
+use OzekiResilience\M1\Store;
+use OzekiResilience\M1\SiteSnapshot;
 function get_option($key,$default=false){return $GLOBALS['test_options'][$key]??$default;}
 function update_option($key,$value,$autoload=false){$GLOBALS['test_options'][$key]=$value;}
 class PreviewDb {
@@ -39,8 +39,8 @@ $s->dates['site/'.$a['manifest']['key']]=time();$p=$store->siteCleanupPreview(ti
 $saved=$s->objects['site/history/00000000000000000001.json'];unset($s->objects['site/history/00000000000000000001.json']);rejects(fn()=>$store->siteCleanupPreview(time()-1));$s->objects['site/history/00000000000000000001.json']=$saved;
 $s->duplicate=true;rejects(fn()=>$store->siteCleanupPreview(time()));$s->duplicate=false;
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
-ob_start();Owr\M1\Plugin::renderSiteCleanup($p);$html=ob_get_clean();ok(str_contains($html,'Assets to retain')&&str_contains($html,'Deletion candidates')&&!str_contains($html,'cleanup_execute'),'read-only UI');
-ob_start();Owr\M1\Plugin::renderSiteCleanup(['error'=>'Pending <operation>']);$html=ob_get_clean();ok(str_contains($html,'Candidates not calculated')&&str_contains($html,'&lt;operation&gt;'),'failure is not zero candidates and escaped');
+ob_start();OzekiResilience\M1\Plugin::renderSiteCleanup($p);$html=ob_get_clean();ok(str_contains($html,'Assets to retain')&&str_contains($html,'Deletion candidates')&&!str_contains($html,'cleanup_execute'),'read-only UI');
+ob_start();OzekiResilience\M1\Plugin::renderSiteCleanup(['error'=>'Pending <operation>']);$html=ob_get_clean();ok(str_contains($html,'Candidates not calculated')&&str_contains($html,'&lt;operation&gt;'),'failure is not zero candidates and escaped');
 echo "PASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\n";
-$wpdb=new PreviewDb();foreach(['owr_m1_pending','owr_m1_comment_pending'] as $queue){$GLOBALS['test_options']=[$queue=>['operation'=>'pending']];$r=(new Owr\M1\Plugin())->previewSiteCleanup();ok(str_contains($r['error'],'pending'),'both pending queues stop before S3');}
+$wpdb=new PreviewDb();foreach(['owr_m1_pending','owr_m1_comment_pending'] as $queue){$GLOBALS['test_options']=[$queue=>['operation'=>'pending']];$r=(new OzekiResilience\M1\Plugin())->previewSiteCleanup();ok(str_contains($r['error'],'pending'),'both pending queues stop before S3');}
 echo "PASS both pending queues prevent calculation and replace stale preview.\n";

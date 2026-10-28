@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/checkpoint.php';
 require $argv[1].'/src/SiteSnapshot.php';
 require $argv[1].'/src/Plugin.php';
-use Owr\M1\{Store,SiteSnapshot,Plugin};
+use OzekiResilience\M1\{Store,SiteSnapshot,Plugin};
 class AdminCheckpointS3 extends MemoryS3 {
  public bool $corrupt=false;public array $writes=[];
  function putObject($a){$this->writes[]=$a['Key'];return parent::putObject($a);}
@@ -46,3 +46,5 @@ ok(str_contains($options['owr_m1_error'],'S3 content mismatch'),'Cause retained'
 ok($options['owr_site_snapshot_result']===$baseline,'No replacement success result');
 foreach($fixture->writes as $key)ok(!str_ends_with($key,'/manifest.json'),'No failed manifest');
 echo "PASS actual admin action with WordPress/S3 fixtures: verification failure recorded with cause, prior snapshot unchanged, no manifest or new success. No browser/real AWS claim.\n";
+
+function sanitize_key($v){return is_scalar($v)?preg_replace("/[^a-z0-9_-]/","",strtolower((string)$v)):"";}

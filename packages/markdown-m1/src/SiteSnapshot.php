@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/AcfHistory.php';
@@ -247,6 +247,7 @@ final class SiteSnapshot
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
+        if(function_exists('wp_is_file_mod_allowed') && !wp_is_file_mod_allowed('ozeki_resilience_recovery'))throw new \RuntimeException('This WordPress installation does not allow theme/plugin file changes.');
         if(!empty((new Plugin())->config()['protect'])||get_option('owr_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
         [$m,$files]=$this->load($ref);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');

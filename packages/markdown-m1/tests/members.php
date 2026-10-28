@@ -2,7 +2,7 @@
 // Standalone WordPress API fixture for guarded product includes.
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once __DIR__.'/../src/MemberHistory.php';
-use Owr\M1\MemberHistory;
+use OzekiResilience\M1\MemberHistory;
 function must($b,$m){if(!$b)throw new RuntimeException($m);}
 function reject($f){try{$f();}catch(RuntimeException $e){return;}throw new RuntimeException('Expected rejection');}
 $d=['membership'=>['users'=>[],'settings'=>[]],'tables'=>['postmeta'=>[]]];

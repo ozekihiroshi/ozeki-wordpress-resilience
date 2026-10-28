@@ -1,8 +1,8 @@
 <?php
 require '/var/www/html/wp-load.php';
 require_once $argv[1].'/src/SiteSnapshot.php';
-use Owr\M1\SiteSnapshot;
-use Owr\M1\Store;
+use OzekiResilience\M1\SiteSnapshot;
+use OzekiResilience\M1\Store;
 function must($v,$m){if(!$v)throw new RuntimeException($m);}
 function no($f){try{$f();}catch(Throwable $e){return;}throw new RuntimeException('Expected rejection');}
 foreach(['../a','a/../b','/root','C:/x','a\\b'] as $p)no(fn()=>SiteSnapshot::safePath($p));

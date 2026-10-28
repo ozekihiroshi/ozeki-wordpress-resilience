@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 
 /** Calendar scheduling and retention labels; contains no WordPress or storage effects. */
 final class GfsPolicy {

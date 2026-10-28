@@ -47,7 +47,7 @@ def main(out,live=False,plugin_zip=None):
    p=subprocess.run(['docker','exec','-e','M1_SOURCE=http://'+web,browser,'python3','/test/browser.py'],stdout=log,stderr=log,timeout=1800)
   if p.returncode:raise RuntimeError('Source browser failed; see '+str(out/'browser-source.log'))
   expected=json.loads((lab/'expected.json').read_text())
-  snapshot=json.loads(php("require '/var/www/html/wp-load.php';$p=new Owr\\M1\\Plugin();echo json_encode($p->store()->history());").stdout)
+  snapshot=json.loads(php("require '/var/www/html/wp-load.php';$p=new OzekiResilience\\M1\\Plugin();echo json_encode($p->store()->history());").stdout)
   assert len(snapshot)==7, len(snapshot)
   a_ids={r['original']['asset'] for r in snapshot if r['attributes']['title']=='M1 A'}
   b_ids={r['original']['asset'] for r in snapshot if r['attributes']['title']=='M1 B'}

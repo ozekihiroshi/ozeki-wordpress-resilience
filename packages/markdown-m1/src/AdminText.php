@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 
 /** Static UI text only. User content, storage keys and JSON are never translated. */

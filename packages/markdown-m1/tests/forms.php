@@ -13,31 +13,31 @@ class CommentMemoryS3 {
 }
 function ok($b,$m){if(!$b)throw new RuntimeException($m);}
 
-$s3=new CommentMemoryS3();$store=new Owr\M1\Store($s3,['bucket'=>'test','prefix'=>'forms/']);
+$s3=new CommentMemoryS3();$store=new OzekiResilience\M1\Store($s3,['bucket'=>'test','prefix'=>'forms/']);
 $d=['tables'=>['posts'=>[],'postmeta'=>[],'terms'=>[],'term_taxonomy'=>[],'term_relationships'=>[]]];
 $attrs=['post_type'=>'owr_form','content_format'=>'form-json','origin_id'=>17,'dependencies'=>[]];
 $item=['post'=>['ID'=>'17','post_type'=>'wpcf7_contact_form','post_title'=>'Form'],'meta'=>[['meta_key'=>'_form','meta_value'=>'[text* name]']],'channels'=>[]];
-$raw=Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]);
+$raw=OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]);
 $o=$store->prepare('form-17','op1',$raw,$attrs);ok(str_ends_with($o['source']['key'],'source.json'),'complete JSON');$store->commit(['schema'=>'owr-md-history-1','sequence'=>1,'original'=>$o,'attributes'=>$attrs]);
-Owr\M1\FormHistory::replay($d,$raw,$attrs);Owr\M1\FormHistory::replay($d,$raw,$attrs);ok(count($d['tables']['posts'])===1&&count($d['tables']['postmeta'])===1,'idempotent form replay');
+OzekiResilience\M1\FormHistory::replay($d,$raw,$attrs);OzekiResilience\M1\FormHistory::replay($d,$raw,$attrs);ok(count($d['tables']['posts'])===1&&count($d['tables']['postmeta'])===1,'idempotent form replay');
 $receipt=['post'=>['ID'=>'18','post_type'=>'flamingo_inbound','post_title'=>'Inquiry'],'meta'=>[['meta_key'=>'_field_message','meta_value'=>'Complete inquiry']],'channels'=>[['term_id'=>'3','name'=>'Form','slug'=>'form','term_group'=>'0','term_taxonomy_id'=>'4','taxonomy'=>'flamingo_inbound_channel','description'=>'','parent'=>'0']]];
-$attrs['origin_id']=18;$raw=Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item,$receipt]]);
-Owr\M1\FormHistory::replay($d,$raw,$attrs);Owr\M1\FormHistory::replay($d,$raw,$attrs);ok(count($d['tables']['posts'])===2&&count($d['tables']['term_relationships'])===1&&$d['tables']['term_taxonomy'][0]['count']==='1','receipt and channel stable');
-$bad=$attrs;$bad['origin_id']=19;try{Owr\M1\FormHistory::replay($d,$raw,$bad);throw new LogicException('accepted bad identity');}catch(RuntimeException $e){}
+$attrs['origin_id']=18;$raw=OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item,$receipt]]);
+OzekiResilience\M1\FormHistory::replay($d,$raw,$attrs);OzekiResilience\M1\FormHistory::replay($d,$raw,$attrs);ok(count($d['tables']['posts'])===2&&count($d['tables']['term_relationships'])===1&&$d['tables']['term_taxonomy'][0]['count']==='1','receipt and channel stable');
+$bad=$attrs;$bad['origin_id']=19;try{OzekiResilience\M1\FormHistory::replay($d,$raw,$bad);throw new LogicException('accepted bad identity');}catch(RuntimeException $e){}
 $s3->fail=true;try{$store->prepare('form-18','failure',$raw,$attrs);throw new LogicException('expected failure');}catch(RuntimeException $e){}ok(count($store->history())===1,'failure excluded');
 echo "PASS complete form/inquiry JSON, idempotent replay, channels, identity rejection, failed original exclusion.\n";
 
-$receipt['deleted']=true;$deleted=Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$receipt]]);
-Owr\M1\FormHistory::replay($d,$deleted,$attrs);Owr\M1\FormHistory::replay($d,$deleted,$attrs);
+$receipt['deleted']=true;$deleted=OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$receipt]]);
+OzekiResilience\M1\FormHistory::replay($d,$deleted,$attrs);OzekiResilience\M1\FormHistory::replay($d,$deleted,$attrs);
 ok(count($d['tables']['posts'])===1&&!$d['tables']['term_relationships']&&$d['tables']['term_taxonomy'][0]['count']==='0','receipt tombstone removes metadata and relationships idempotently');
-$item['deleted']=true;$attrs['origin_id']=17;Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
+$item['deleted']=true;$attrs['origin_id']=17;OzekiResilience\M1\FormHistory::replay($d,OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
 ok(!$d['tables']['posts']&&!$d['tables']['postmeta'],'form deletion');
 echo "PASS receipt/form tombstones and channel counts.\n";
 // Deleting a form must not cascade into retained inquiries.
 $d=['tables'=>['posts'=>[],'postmeta'=>[],'terms'=>[],'term_taxonomy'=>[],'term_relationships'=>[]]];
 unset($item['deleted'],$receipt['deleted']);$attrs['origin_id']=18;
-Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item,$receipt]]),$attrs);
+OzekiResilience\M1\FormHistory::replay($d,OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item,$receipt]]),$attrs);
 $item['deleted']=true;$attrs['origin_id']=17;
-Owr\M1\FormHistory::replay($d,Owr\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
+OzekiResilience\M1\FormHistory::replay($d,OzekiResilience\M1\Store::json(['schema'=>'owr-form-1','items'=>[$item]]),$attrs);
 ok(count($d['tables']['posts'])===1&&$d['tables']['posts'][0]['ID']==='18'&&count($d['tables']['term_relationships'])===1,'form deletion preserves inquiry');
 echo "PASS form deletion does not cascade to inquiry.\n";

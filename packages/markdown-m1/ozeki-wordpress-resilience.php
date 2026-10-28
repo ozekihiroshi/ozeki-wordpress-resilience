@@ -26,20 +26,20 @@ require_once __DIR__.'/src/Store.php';
 require_once __DIR__.'/src/SiteSnapshot.php';
 require_once __DIR__.'/src/Plugin.php';
 require_once __DIR__.'/src/CommentHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\CommentHistory())->boot(); });
-add_action('plugins_loaded',static function () { (new \Owr\M1\Plugin())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\CommentHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\Plugin())->boot(); });
 
 require_once __DIR__.'/src/FormHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\FormHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\FormHistory())->boot(); });
 
 require_once __DIR__.'/src/MemberHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\MemberHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\MemberHistory())->boot(); });
 
 require_once __DIR__.'/src/TableHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\TableHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\TableHistory())->boot(); });
 
 require_once __DIR__.'/src/NativeHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\NativeHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\NativeHistory())->boot(); });
 
 require_once __DIR__.'/src/AcfHistory.php';
-add_action('plugins_loaded',static function () { (new \Owr\M1\AcfHistory())->boot(); });
+add_action('plugins_loaded',static function () { (new \OzekiResilience\M1\AcfHistory())->boot(); });

@@ -37,7 +37,7 @@ add_filter('owr_m1_s3_options',function($options){
                 $r=['Contents'=>[]];
                 if (is_dir($root)) foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root,FilesystemIterator::SKIP_DOTS)) as $file) {
                     $k=substr($file->getPathname(),strlen($root));
-                    if (str_starts_with($k,$args['Prefix'])) $r['Contents'][]=['Key'=>$k];
+                    if (str_starts_with($k,$args['Prefix']) && (!isset($args['StartAfter']) || strcmp($k,$args['StartAfter'])>0)) $r['Contents'][]=['Key'=>$k];
                 }
             } else throw new RuntimeException('Unexpected SDK command: '.$name);
         }

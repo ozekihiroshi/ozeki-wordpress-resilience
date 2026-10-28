@@ -36,9 +36,9 @@ def main(out):
   def wp(code):return php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);"+code).stdout.decode()
   def action(data):
    payload=base64.b64encode(json.dumps(data).encode()).decode()
-   wp("$_POST=json_decode(base64_decode('"+payload+"'),true);$_REQUEST=$_POST;$_REQUEST['_wpnonce']=wp_create_nonce('owr_m1');(new Owr\\M1\\Plugin())->action();")
+   wp("$_POST=json_decode(base64_decode('"+payload+"'),true);$_REQUEST=$_POST;$_REQUEST['_wpnonce']=wp_create_nonce('owr_m1');(new OzekiResilience\\M1\\Plugin())->action();")
   def state():return json.loads(wp("echo json_encode(['config'=>get_option('owr_m1_config',[]),'error'=>get_option('owr_m1_error',''),'storage'=>get_option('owr_setup_storage',[]),'baseline'=>get_option('owr_setup_baseline',[])]);"))
-  def page():return wp("(new Owr\\M1\\Plugin())->page();")
+  def page():return wp("(new OzekiResilience\\M1\\Plugin())->page();")
   def control(v):(lab/'control.json').write_text(json.dumps(v))
   checks=[]
   html=page();assert 'Preparation for protection' in html and 'confirm_terms' in html
@@ -62,7 +62,7 @@ def main(out):
   action(dict(operation='whole_initial',trust_initial='1'));assert not state()['error'],state()['error'];assert state()['baseline']['manifest']
   action(settings|dict(protect='1'));assert not state()['error'] and state()['config']['protect']
   post=wp("echo wp_insert_post(['post_title'=>'Setup protected post','post_content'=>'Generated setup test','post_status'=>'publish']);")
-  assert 'Setup protected post' in wp("echo json_encode((new Owr\\M1\\Plugin())->store()->history());")
+  assert 'Setup protected post' in wp("echo json_encode((new OzekiResilience\\M1\\Plugin())->store()->history());")
   checks.append('Initial capture, fixed-version read-back, protection and confirmed post history')
   action(settings|dict(prefix='different/',protect='1'));assert 'initial snapshot' in state()['error'] and state()['config']['prefix']=='m1/'
   checks.append('Changing destination cannot reuse baseline or enable protection')
@@ -73,7 +73,7 @@ def main(out):
   checks.append('Recovery destination hides and rejects both initial capture paths')
   action(settings|dict(protect='1'));assert not state()['error']
   wp("update_option('WPLANG','ja');update_user_meta(1,'locale','ja');")
-  html=wp("add_filter('pre_determine_locale',static fn()=> 'ja');(new Owr\\M1\\Plugin())->page();");(out/'setup-ja.html').write_text(html)
+  html=wp("add_filter('pre_determine_locale',static fn()=> 'ja');(new OzekiResilience\\M1\\Plugin())->page();");(out/'setup-ja.html').write_text(html)
   assert '保護開始までの準備状況' in html and '了承しました' in html
   wp("update_option('WPLANG','en_US');update_user_meta(1,'locale','en_US');")
   (out/'setup-en.html').write_text(page())
@@ -81,7 +81,7 @@ def main(out):
   # Existing installations keep service access; confirmation is still required on settings save.
   wp("$c=get_option('owr_m1_config');unset($c['setup_version'],$c['terms_version']);update_option('owr_m1_config',$c);")
   assert 'Existing settings remain in use' in page()
-  wp("echo count((new Owr\\M1\\Plugin())->store()->history());")
+  wp("echo count((new OzekiResilience\\M1\\Plugin())->store()->history());")
   checks.append('Legacy configured installation retains authorized service access')
   browser=tag+'-browser';run('docker','run','-d','--name',browser,'--network',net,'--memory','2g','--shm-size','1g','-v',str(ROOT/'tests')+':/test:ro','-v',str(lab)+':/lab','--entrypoint','sleep','selenium/standalone-chrome:latest','infinity');created.append(('container',browser))
   result=run('docker','exec','-e','M1_SOURCE=http://'+web,browser,'python3','/test/setup-preflight-browser.py');(out/'browser.log').write_bytes(result.stdout+result.stderr)

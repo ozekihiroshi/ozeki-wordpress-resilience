@@ -1,0 +1,172 @@
+[
+  {
+    "command": "php packages/markdown-m1/tests/checkpoint.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/separated-assets.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/acf.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS ACF separated originals, comparison failure, history, projection, removed value, independent Checkpoint (simulated S3).\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/acf-readiness.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS unused/inactive/free, legacy marker, initial capture, changed version/destination and bilingual next steps.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/acf-readiness.php packages/markdown-m1 pro",
+    "exit": 0,
+    "output": "PASS ACF PRO exclusion, bilingual display and unchanged article eligibility.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/site-checkpoint-verification.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS initial common save and Checkpoint: data/metadata/image/software mismatches and unavailable versions stop before manifest; same fixed versions verified on retry; normal load/tail retained; existing objects unchanged\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/retention-extension.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS retention: new/reused/delayed confirmation, insufficient/read/extension failure, reread, same versions/modes, latest Checkpoint+tail renewal, no old content mutation or rollback; memory storage only.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/checkpoint-lifecycle.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/gfs.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\nPASS GFS: W/M/Y schedule collision, separate times, calendar month, validation, S3 labels, all-label retention, no archive history pin, independent manual point. Memory S3 only.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/gfs-admin.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/site-checkpoint-admin-failure.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS actual admin action with WordPress/S3 fixtures: verification failure recorded with cause, prior snapshot unchanged, no manifest or new success. No browser/real AWS claim.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/application-rules.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/capture-failure.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\nPASS prequeue failure, original exception, no synthetic pending payload, unrelated-success retention, status distinction and diagnostic-write failure\nResilience: capture failure diagnostic could not be persisted.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/commit-verification.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\nPASS source/metadata/split-part/media hash mismatch and read failure prevent history PUT; pending retained; same operation resumes after verification; fixed versions and originals preserved\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/recovery-result.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/site-point-time.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS exact boundaries, full update, deletion, Checkpoint-only, incompatible Checkpoint, missing end/gap/resource, later records excluded. Memory S3 only.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/recovery-errors.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS unchanged/empty/false/zero/array options; failed write/read; failed START/COMMIT. Synthetic DB failures, not interruption/restart acceptance.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/save-status.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/editor-save.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS confirmed-body and media/state equality; changed/unconfirmed data retained; editor error reason.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/comments.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS comment addition/edit/moderation/delete/reparent/count, complete JSON, failed original exclusion, independent checkpoint.\nPASS pending article/comment history prevents storage reconfiguration.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/forms.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS complete form/inquiry JSON, idempotent replay, channels, identity rejection, failed original exclusion.\nPASS receipt/form tombstones and channel counts.\nPASS form deletion does not cascade to inquiry.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/tablepress.php",
+    "exit": 0,
+    "output": "TablePress replay checks PASS\nTablePress unpersisted defaults check PASS\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/tablepress-capture.php",
+    "exit": 0,
+    "output": "TablePress queue identity and frozen settings checks PASS\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/upload-guard.php",
+    "exit": 0,
+    "output": "PASS CF7 deny-only upload guard and executable rejection\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/native-details.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS native state thumbnail removal, terms/counts, delete relations, unrelated records, repeat and identity\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/native-queue.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/members.php",
+    "exit": 0,
+    "output": "membership replay checks PASS\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/cleanup.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/site-retention.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/site-retention-fallback.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\nPASS missing version-list permission: fixed-version read fallback, retained assets, blocked reasons, no candidates or mutations.\n"
+  },
+  {
+    "command": "php -n packages/markdown-m1/tests/setup-readiness.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS local preparation: missing ZIP, InnoDB, Markdown dependency, pending work, Japanese guidance, confirmation and destination binding.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/setup-readiness-actions.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS recovery destination rejects primary and supplementary initial capture before S3 access.\n"
+  },
+  {
+    "command": "php packages/markdown-m1/tests/admin-language-unit.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS Japanese/English schedule fields, unchanged form parameters and cached result localization.\n"
+  },
+  {
+    "command": "php -d auto_prepend_file=/tmp/owr-review-deps/vendor/autoload.php packages/markdown-m1/tests/unset-object-lock.php packages/markdown-m1",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS unset-lock: retention/hold unset only; denial/network/missing/other404/head failure blocked; preview read-only.\n"
+  }
+]

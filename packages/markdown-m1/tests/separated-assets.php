@@ -6,7 +6,7 @@ require $argv[1].'/src/SiteSnapshot.php';
 require $argv[1].'/src/CommentHistory.php';
 require $argv[1].'/src/Plugin.php';
 function get_option($key,$default=false){return $default;}
-use Owr\M1\{AssetFormat,Store,SiteSnapshot};
+use OzekiResilience\M1\{AssetFormat,Store,SiteSnapshot};
 function check($v,$m){if(!$v)throw new RuntimeException($m);}
 function reject($f){try{$f();}catch(RuntimeException $e){return;}throw new RuntimeException('Expected failure');}
 class SeparateS3 {

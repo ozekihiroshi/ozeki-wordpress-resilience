@@ -1,7 +1,9 @@
 # Ozeki Resilience
 
-**Release candidate: 0.3.3 (rc.2), not submitted.** Adds ACF free basic-field preservation and recovery. WordPress.org is still reviewing the submitted 0.3.2 rc.1; earlier ZIPs and tags remain preserved.
+**Review-response candidate: 0.3.3 (rc.3), not submitted.** The submitted 0.3.2 rc.1 is under review and awaiting our response. Earlier ZIPs and tags remain preserved.
 
+
+[Review response record and unsent reply draft](docs/releases/wordpress-org-review-20261028.md). Recovery remains available; its policy treatment and legacy-identifier compatibility need reviewer clarification.
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
@@ -20,7 +22,7 @@ The underlying idea is to separate the lifespan of information from that of the 
 
 ## Download and start
 
-1. Download **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.2/ozeki-resilience-0.3.3.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.2).
+1. Use `ozeki-resilience-0.3.3.zip` attached to the **0.3.3 rc.3 review-response candidate**, and verify its `SHA256SUMS`. Candidate files and matching source are listed on [GitHub Releases](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases).
 2. Read the [first-time setup guide](packages/markdown-m1/docs/user-guide.md) and prepare [AWS access](packages/markdown-m1/docs/aws-setup.md).
 3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
@@ -88,7 +90,7 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 
 **Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
-After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is currently awaiting review. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
+After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is currently responding to review findings. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
 
 Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 

@@ -16,7 +16,7 @@ class UnsetLockS3 extends CleanupS3 {
  function getObjectLegalHold($a){return $this->lockRead('hold');}
 }
 foreach(['retention','hold'] as $op)foreach(['unset','denied','network','missing','other404','head-missing'] as $fault){
- $s=new UnsetLockS3();$st=new Owr\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);$site=new Owr\M1\SiteSnapshot($st);
+ $s=new UnsetLockS3();$st=new OzekiResilience\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);$site=new OzekiResilience\M1\SiteSnapshot($st);
  $base=$site->save(['content.json'=>'{}','markdown/a.md'=>'original'],['schema'=>'owr-site-snapshot-1','through'=>0,'origin'=>'administrator_initial']);
  $site->checkpoint($base['manifest']);
  $s->failOp=$op;$s->fault=$fault==='head-missing'?'unset':$fault;$s->missing=$fault==='head-missing';

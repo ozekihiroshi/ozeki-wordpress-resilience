@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/cleanup.php';
 require_once $argv[1].'/src/SiteSnapshot.php';
 require_once $argv[1].'/src/CheckpointSchedule.php';
-use Owr\M1\{Store,SiteSnapshot,CheckpointSchedule};
+use OzekiResilience\M1\{Store,SiteSnapshot,CheckpointSchedule};
 function lifecycleFixture(){
  $s=new CleanupS3();$st=new Store($s,['bucket'=>'fixture','prefix'=>'site/','retention_days'=>0]);$site=new SiteSnapshot($st);
  $files=['content.json'=>'{}','markdown/old.md'=>"# Unchanged since last year\n",'uploads/old.png'=>'old-image'];

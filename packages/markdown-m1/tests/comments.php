@@ -13,24 +13,24 @@ class CommentMemoryS3 {
  function listObjectsV2($a){$out=[];foreach($this->objects as $k=>$v)if(str_starts_with($k,$a['Prefix'])&&$k>($a['StartAfter']??''))$out[]=['Key'=>$k];return ['Contents'=>$out];}
 }
 function ok($b,$m){if(!$b)throw new RuntimeException($m);}
-$s3=new CommentMemoryS3();$store=new Owr\M1\Store($s3,['bucket'=>'test','prefix'=>'comments/']);
+$s3=new CommentMemoryS3();$store=new OzekiResilience\M1\Store($s3,['bucket'=>'test','prefix'=>'comments/']);
 $data=['tables'=>['posts'=>[['ID'=>'156','comment_count'=>'0']],'comments'=>[],'commentmeta'=>[]]];
 $c=['comment_ID'=>'30','comment_post_ID'=>'156','comment_content'=>'テストコメント：本文と記事の関連を保持する。','comment_approved'=>'0','comment_parent'=>'0'];
 $a=['post_type'=>'owr_comment','content_format'=>'comment-json','origin_id'=>30,'post_id'=>156,'title'=>'Comment test','status'=>'0'];
 foreach(['0','1','spam','trash','1'] as $i=>$status){
  $c['comment_approved']=$status;$c['comment_content'].="\n編集 ".$i;$a['status']=$status;
- $raw=Owr\M1\Store::json(['schema'=>'owr-comment-1','deleted'=>false,'comment'=>$c]);
+ $raw=OzekiResilience\M1\Store::json(['schema'=>'owr-comment-1','deleted'=>false,'comment'=>$c]);
  $o=$store->prepare('comment-30','op-'.$i,$raw,$a);ok(str_ends_with($o['source']['key'],'.json'),'complete JSON source');
  $store->commit(['schema'=>'owr-md-history-1','sequence'=>$i+1,'original'=>$o,'attributes'=>$a]);
- Owr\M1\CommentHistory::replay($data,$store->originalSource($o),$a);
+ OzekiResilience\M1\CommentHistory::replay($data,$store->originalSource($o),$a);
  ok(count($data['tables']['comments'])===1&&$data['tables']['comments'][0]===$c,'edit/moderation replay');
  ok($data['tables']['posts'][0]['comment_count']===($status==='1'?'1':'0'),'comment count');
 }
 $data['tables']['comments'][]=['comment_ID'=>'31','comment_post_ID'=>'156','comment_parent'=>'30','comment_approved'=>'1'];
 $data['tables']['commentmeta'][]=['comment_id'=>'30','meta_key'=>'test'];
-$a['status']='deleted';$raw=Owr\M1\Store::json(['schema'=>'owr-comment-1','deleted'=>true,'comment'=>$c]);
+$a['status']='deleted';$raw=OzekiResilience\M1\Store::json(['schema'=>'owr-comment-1','deleted'=>true,'comment'=>$c]);
 $o=$store->prepare('comment-30','delete',$raw,$a);$store->commit(['schema'=>'owr-md-history-1','sequence'=>6,'original'=>$o,'attributes'=>$a]);
-Owr\M1\CommentHistory::replay($data,$raw,$a);
+OzekiResilience\M1\CommentHistory::replay($data,$raw,$a);
 ok(count($data['tables']['comments'])===1&&$data['tables']['comments'][0]['comment_parent']==='0'&&!$data['tables']['commentmeta'],'delete tombstone/reparent');
 $s3->fail=true;try{$store->prepare('comment-30','failed',$raw,$a);throw new LogicException('should fail');}catch(RuntimeException $e){}
 ok(count($store->history())===6,'failure not formal');
@@ -50,9 +50,12 @@ function wp_safe_redirect($url){throw new CommentRedirect();}
 foreach(['owr_m1_pending','owr_m1_comment_pending'] as $pending){
  $options=['owr_m1_config'=>['bucket'=>'original','prefix'=>'existing/'],$pending=>['frozen'=>'payload']];
  $_POST=['operation'=>'configure','bucket'=>'different','prefix'=>'wrong/'];
- try{(new Owr\M1\Plugin())->action();}catch(CommentRedirect $e){}
+ try{(new OzekiResilience\M1\Plugin())->action();}catch(CommentRedirect $e){}
  ok($options['owr_m1_config']===['bucket'=>'original','prefix'=>'existing/'],'pending destination unchanged');
  ok($options[$pending]===['frozen'=>'payload'],'pending payload unchanged');
  ok($options['owr_m1_error']==='Resume pending history before changing storage.','pending configuration rejected');
 }
 echo "PASS pending article/comment history prevents storage reconfiguration.\n";
+
+function sanitize_key($v){return is_scalar($v)?preg_replace("/[^a-z0-9_-]/","",strtolower((string)$v)):"";}
+function wp_unslash($v){return is_array($v)?array_map("wp_unslash",$v):stripslashes($v);}

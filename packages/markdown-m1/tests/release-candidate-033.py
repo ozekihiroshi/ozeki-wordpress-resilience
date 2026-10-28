@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def run(*args,input=None,check=True):
  p=subprocess.run(args,input=input,capture_output=True,timeout=900)
- if check and p.returncode:raise RuntimeError(str(args[:4])+': '+p.stderr.decode(errors='replace')[-1800:]+p.stdout.decode(errors='replace')[-1500:])
+ if check and p.returncode:raise RuntimeError(str(args[:4])+': '+p.stderr.decode(errors='replace')[:1200]+p.stderr.decode(errors='replace')[-600:]+p.stdout.decode(errors='replace')[-1500:])
  return p
 def main(out, candidate, previous, wpcli, checker, acf=None):
  out.mkdir(parents=True,exist_ok=False);lab=out/'lab';lab.mkdir();os.chmod(lab,0o777);(lab/'control.json').write_text('{}');os.chmod(lab/'control.json',0o666);(lab/'ipc').mkdir();os.chmod(lab/'ipc',0o777)
@@ -39,29 +39,42 @@ def main(out, candidate, previous, wpcli, checker, acf=None):
   assert json.loads(wp(web,'eval',hashcode))==expected
 
   php("file_put_contents('/var/www/html/wp-content/mu-plugins/language.php',base64_decode('"+base64.b64encode(b"<?php add_filter('pre_determine_locale',static fn($v)=>($_COOKIE['owr_test_locale']??'')==='ja'?'ja':$v);").decode()+"'));")
-  wp(web,'eval',"wp_set_current_user(1);wp_mkdir_p(wp_upload_dir()['basedir']);update_option('owr_m1_config',['bucket'=>'m1-generated','region'=>'ap-northeast-1','prefix'=>'fresh/','retention_days'=>0,'protect'=>false]);$p=new Owr\\M1\\Plugin();$point=(new Owr\\M1\\SiteSnapshot($p->store()))->capture(true,[]);update_option('owr_site_initial',$point);$c=$p->config();update_option('owr_setup_baseline',['identity'=>Owr\\M1\\SetupReadiness::identity($c),'manifest'=>$point['manifest']]);Owr\\M1\\SetupReadiness::requireStart($c);$c['protect']=true;update_option('owr_m1_config',$c);")
+  wp(web,'eval',"wp_set_current_user(1);wp_mkdir_p(wp_upload_dir()['basedir']);update_option('owr_m1_config',['bucket'=>'m1-generated','region'=>'ap-northeast-1','prefix'=>'fresh/','retention_days'=>0,'protect'=>false]);$p=new OzekiResilience\\M1\\Plugin();$point=(new OzekiResilience\\M1\\SiteSnapshot($p->store()))->capture(true,[]);update_option('owr_site_initial',$point);$c=$p->config();update_option('owr_setup_baseline',['identity'=>OzekiResilience\\M1\\SetupReadiness::identity($c),'manifest'=>$point['manifest']]);OzekiResilience\\M1\\SetupReadiness::requireStart($c);$c['protect']=true;update_option('owr_m1_config',$c);")
   state=json.loads(php("require '/var/www/html/wp-load.php';echo json_encode(['config'=>get_option('owr_m1_config'),'baseline'=>get_option('owr_setup_baseline')]);").stdout)
   assert state['config']['protect'] and state['baseline']['manifest']
   php("require '/var/www/html/wp-load.php';wp_set_current_user(1);wp_insert_post(['post_title'=>'Save settings <b>Original</b>','post_content'=>'Generated language test','post_status'=>'publish']);")
-  html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new Owr\\M1\\Plugin())->page();").stdout.decode()
+  html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new OzekiResilience\\M1\\Plugin())->page();").stdout.decode()
   assert 'Save settings' in html and '&lt;b&gt;Original&lt;/b&gt;' in html,'User title must remain original and escaped'
   print('PASS fresh ZIP installation, initial capture and protected saving via CLI',flush=True)
+  print(wp(web,'eval-file','/test/review-inputs.php'),flush=True)
+  # A third disposable WordPress verifies restoration of generated native content and theme bytes.
+  native_point=json.loads(wp(web,'eval',"wp_set_current_user(1);$p=new OzekiResilience\\M1\\Plugin();echo wp_json_encode((new OzekiResilience\\M1\\SiteSnapshot($p->store()))->capture(true,[]));"))
+  source_style=wp(web,'eval',"echo hash_file('sha256',get_stylesheet_directory().'/style.css');").strip()
+  recovery,rdb,rphp=start('recovery')
+  print(wp(recovery,'plugin','install','/lab/candidate.zip','--activate'),flush=True)
+  wp(recovery,'eval',"wp_set_current_user(1);wp_mkdir_p(wp_upload_dir()['basedir']);update_option('owr_m1_config',['bucket'=>'m1-generated','region'=>'ap-northeast-1','prefix'=>'fresh/','retention_days'=>0,'protect'=>false]);file_put_contents(get_stylesheet_directory().'/style.css','generated damaged theme fixture');mkdir('/tmp/review-recovery',0700);")
+  encoded=base64.b64encode(json.dumps(native_point['manifest']).encode()).decode()
+  restored=json.loads(wp(recovery,'eval',"wp_set_current_user(1);$ref=json_decode(base64_decode('"+encoded+"'),true);echo wp_json_encode((new OzekiResilience\\M1\\SiteSnapshot((new OzekiResilience\\M1\\Plugin())->store()))->restore($ref,true,'/tmp/review-recovery'));"))
+  assert restored['posts']>0 and restored['files']>0
+  assert wp(recovery,'eval',"echo hash_file('sha256',get_stylesheet_directory().'/style.css');").strip()==source_style
+  assert 'Save settings <b>Original</b>' in wp(recovery,'post','list','--post_type=post','--field=post_title')
+  print('PASS isolated native recovery: archived theme file restored, saved article recovered',flush=True)
   if acf:
    shutil.copyfile(acf,lab/'acf.zip')
    print(wp(web,'plugin','install','/lab/acf.zip','--activate'),flush=True)
-   assert 'false'==wp(web,'eval',"echo json_encode(Owr\\M1\\SetupReadiness::acfReady((new Owr\\M1\\Plugin())->config()));").strip()
-   wp(web,'eval',"wp_set_current_user(1);acf_import_field_group(['key'=>'group_readiness','title'=>'Readiness fixture','location'=>[[['param'=>'post_type','operator'=>'==','value'=>'post']]],'fields'=>[['key'=>'field_readiness','name'=>'sub-title','label'=>'Fixture','type'=>'text']]]);$id=wp_insert_post(['post_title'=>'ACF readiness fixture','post_status'=>'publish']);update_field('field_readiness','a:0:{}',$id);$p=new Owr\\M1\\Plugin();$point=(new Owr\\M1\\SiteSnapshot($p->store()))->capture(true,[]);$c=$p->config();update_option('owr_setup_baseline',Owr\\M1\\SetupReadiness::baselineRecord($c,$point['manifest']));Owr\\M1\\SetupReadiness::requireStart($c);echo 'READY';")
-   assert 'true'==wp(web,'eval',"echo json_encode(Owr\\M1\\SetupReadiness::acfReady((new Owr\\M1\\Plugin())->config()));").strip()
+   assert 'false'==wp(web,'eval',"echo json_encode(OzekiResilience\\M1\\SetupReadiness::acfReady((new OzekiResilience\\M1\\Plugin())->config()));").strip()
+   wp(web,'eval',"wp_set_current_user(1);acf_import_field_group(['key'=>'group_readiness','title'=>'Readiness fixture','location'=>[[['param'=>'post_type','operator'=>'==','value'=>'post']]],'fields'=>[['key'=>'field_readiness','name'=>'sub-title','label'=>'Fixture','type'=>'text']]]);$id=wp_insert_post(['post_title'=>'ACF readiness fixture','post_status'=>'publish']);update_field('field_readiness','a:0:{}',$id);$p=new OzekiResilience\\M1\\Plugin();$point=(new OzekiResilience\\M1\\SiteSnapshot($p->store()))->capture(true,[]);$c=$p->config();update_option('owr_setup_baseline',OzekiResilience\\M1\\SetupReadiness::baselineRecord($c,$point['manifest']));OzekiResilience\\M1\\SetupReadiness::requireStart($c);echo 'READY';")
+   assert 'true'==wp(web,'eval',"echo json_encode(OzekiResilience\\M1\\SetupReadiness::acfReady((new OzekiResilience\\M1\\Plugin())->config()));").strip()
    for locale,message in [('ja','現在のACF無料版を含む初期保存を確認済み'),('en_US','Initial save includes this ACF free version')]:
-    rendered=wp(web,'eval',"add_filter('pre_determine_locale',static fn()=> '"+locale+"');Owr\\M1\\SetupReadiness::render((new Owr\\M1\\Plugin())->config());")
+    rendered=wp(web,'eval',"add_filter('pre_determine_locale',static fn()=> '"+locale+"');OzekiResilience\\M1\\SetupReadiness::render((new OzekiResilience\\M1\\Plugin())->config());")
     assert message in rendered
    print('PASS real ACF free: old capture unconfirmed, new captured version ready, Japanese/English display',flush=True)
   update,udb,uphp=start('upgrade')
   print(wp(update,'plugin','install','/lab/previous.zip','--activate'),flush=True)
   assert wp(update,'plugin','get','ozeki-resilience','--field=version').strip()=='0.3.2'
   wp(update,'eval',"wp_set_current_user(1);wp_mkdir_p(wp_upload_dir()['basedir']);update_option('owr_m1_config',['bucket'=>'m1-generated','region'=>'ap-northeast-1','prefix'=>'upgrade/','retention_days'=>0,'protect'=>false]);wp_insert_post(['post_title'=>'Before upgrade','post_content'=>'Preserved original content','post_status'=>'publish']);$p=new Owr\\M1\\Plugin();$point=(new Owr\\M1\\SiteSnapshot($p->store()))->capture(true,[]);update_option('owr_site_initial',$point);$c=$p->config();$c['protect']=true;update_option('owr_m1_config',$c);wp_insert_post(['post_title'=>'Tracked before upgrade','post_content'=>'Tracked original','post_status'=>'publish']);update_option('owr_site_restore_result',['through'=>7,'fixture'=>'preserve']);update_option('owr_m1_pending',['id'=>'generated-pending','payload'=>'preserve']);update_option('owr_m1_comment_pending',[['id'=>'generated-related']]);")
-  snapshot="global $wpdb;$keys=['owr_m1_config','owr_m1_pending','owr_m1_comment_pending','owr_site_restore_result','owr_site_initial'];$a=[];foreach($keys as $k)$a[$k]=get_option($k);$a['posts']=$wpdb->get_results(\"SELECT ID,post_title,post_content,post_status,post_type FROM {$wpdb->posts} ORDER BY ID\",ARRAY_A);$a['history']=(new Owr\\M1\\Plugin())->store()->history();echo json_encode($a);"
-  before=json.loads(wp(update,'eval',snapshot));assert before['history']
+  snapshot="global $wpdb;$keys=['owr_m1_config','owr_m1_pending','owr_m1_comment_pending','owr_site_restore_result','owr_site_initial'];$a=[];foreach($keys as $k)$a[$k]=get_option($k);$a['posts']=$wpdb->get_results(\"SELECT ID,post_title,post_content,post_status,post_type FROM {$wpdb->posts} ORDER BY ID\",ARRAY_A);$a['history']=(new OzekiResilience\\M1\\Plugin())->store()->history();echo json_encode($a);"
+  before=json.loads(wp(update,'eval',snapshot.replace('OzekiResilience', 'Owr')));assert before['history']
   print(wp(update,'plugin','install','/lab/candidate.zip','--force','--activate'),flush=True)
   assert before==json.loads(wp(update,'eval',snapshot)), 'Update changed settings/history/pending/posts/results'
   assert json.loads(wp(update,'eval',hashcode))==expected
@@ -82,7 +95,7 @@ def main(out, candidate, previous, wpcli, checker, acf=None):
   if not rows:raise RuntimeError('Plugin Check output was not recognized: '+raw[:2000]+check.stderr.decode()[:500])
   (out/'plugin-check.json').write_text(json.dumps(rows,indent=2))
   counts=collections.Counter(x['type'] for x in rows);print('Plugin Check '+check_version+': '+str(counts),flush=True)
-  result={'state':'PASS' if not counts['ERROR'] else 'CHECK_FAILED','scope':'Isolated WordPress / MariaDB / local S3 simulation; no live AWS','wordpress':wp(web,'core','version').strip(),'php':run('docker','exec',web,'php','-r','echo PHP_VERSION;').stdout.decode(),'plugin_check_version':check_version,'plugin_check_errors':counts['ERROR'],'plugin_check_warnings':counts['WARNING'],'installed_files':len(expected),'zip_sha256':__import__('hashlib').sha256(candidate.read_bytes()).hexdigest(),'checks':['Fresh install from candidate ZIP with all installed file hashes matching','CLI initial capture, readiness gate and enabled protection; not a browser test','Japanese rendering with untranslated escaped user content','Active replacement from submitted 0.3.2 rc.1 ZIP preserves config, posts, confirmed history, synthetic body/related pending records and recovery result','Legacy enabled protection continues saving after update without a new setup','Updated installed file hashes match candidate ZIP'],'acf_free_readiness_checked':bool(acf),'submitted':False}
+  result={'state':'PASS' if not counts['ERROR'] else 'CHECK_FAILED','scope':'Isolated WordPress / MariaDB / local S3 simulation; no live AWS','wordpress':wp(web,'core','version').strip(),'php':run('docker','exec',web,'php','-r','echo PHP_VERSION;').stdout.decode(),'plugin_check_version':check_version,'plugin_check_errors':counts['ERROR'],'plugin_check_warnings':counts['WARNING'],'installed_files':len(expected),'zip_sha256':__import__('hashlib').sha256(candidate.read_bytes()).hexdigest(),'checks':['Fresh install from candidate ZIP with all installed file hashes matching','CLI initial capture, readiness gate and enabled protection; not a browser test','Japanese rendering with untranslated escaped user content','Active replacement from submitted 0.3.2 rc.1 ZIP preserves config, posts, confirmed history, synthetic body/related pending records and recovery result','Legacy enabled protection continues saving after update without a new setup','Updated installed file hashes match candidate ZIP'],'review_regressions_checked':True,'native_recovery_checked':True,'acf_free_readiness_checked':bool(acf),'submitted':False}
   (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
   assert not counts['ERROR'],'Plugin Check errors require review'
 

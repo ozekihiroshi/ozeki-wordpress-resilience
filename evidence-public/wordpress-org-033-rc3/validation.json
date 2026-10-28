@@ -1,0 +1,23 @@
+{
+  "state": "PASS",
+  "scope": "Isolated WordPress / MariaDB / local S3 simulation; no live AWS",
+  "wordpress": "7.1.3",
+  "php": "8.3.35",
+  "plugin_check_version": "2.1.0",
+  "plugin_check_errors": 0,
+  "plugin_check_warnings": 104,
+  "installed_files": 3922,
+  "zip_sha256": "066c4ae4f47f943a8b7cb4fa31efd6e256ad47772bdb1f4bd99c22a39804973e",
+  "checks": [
+    "Fresh install from candidate ZIP with all installed file hashes matching",
+    "CLI initial capture, readiness gate and enabled protection; not a browser test",
+    "Japanese rendering with untranslated escaped user content",
+    "Active replacement from submitted 0.3.2 rc.1 ZIP preserves config, posts, confirmed history, synthetic body/related pending records and recovery result",
+    "Legacy enabled protection continues saving after update without a new setup",
+    "Updated installed file hashes match candidate ZIP"
+  ],
+  "review_regressions_checked": true,
+  "native_recovery_checked": true,
+  "acf_free_readiness_checked": true,
+  "submitted": false
+}

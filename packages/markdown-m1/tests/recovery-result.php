@@ -3,8 +3,8 @@
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/Plugin.php';
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
-eval('namespace Owr\\M1; class Store { public static function json($v){return json_encode($v);} }');
-function render($a,$s,$list=[]){ob_start();Owr\M1\Plugin::renderSiteResult($a,$s,[],$list);return ob_get_clean();}
+eval('namespace OzekiResilience\\M1; class Store { public static function json($v){return json_encode($v);} }');
+function render($a,$s,$list=[]){ob_start();OzekiResilience\M1\Plugin::renderSiteResult($a,$s,[],$list);return ob_get_clean();}
 function ok($v,$m){if(!$v)throw new Exception($m);}
 $ref=['key'=>'site-snapshots/test/manifest.json','version'=>'v1','sha256'=>'abc'];$s=['manifest'=>$ref,'through'=>56,'at'=>'2026-10-24T13:20:00Z','posts'=>22,'files'=>0];$list=[['ref'=>$ref,'through'=>33,'origin'=>'confirmed_s3']];
 $h=render([],$s,$list);ok(str_contains($h,'Success')&&str_contains($h,'34–56 (23 records)')&&str_contains($h,'>22<')&&str_contains($h,'Files written / replaced'),'Legacy success');

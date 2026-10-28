@@ -9,7 +9,7 @@ class ListDeniedS3 extends CleanupS3 {
  function listObjectVersions($a){throw new \Aws\Exception\AwsException('denied');}
  function headObject($a){$r=$this->getObject($a);return ['VersionId'=>$r['VersionId'],'LastModified'=>new \DateTimeImmutable('@'.$this->dates[$a['Key']])];}
 }
-$s=new ListDeniedS3();$store=new \Owr\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);$site=new \Owr\M1\SiteSnapshot($store);
+$s=new ListDeniedS3();$store=new \OzekiResilience\M1\Store($s,['bucket'=>'test','prefix'=>'site/']);$site=new \OzekiResilience\M1\SiteSnapshot($store);
 $GLOBALS['test_options']=[];
 $m=['schema'=>'owr-site-snapshot-1','through'=>0,'origin'=>'administrator_initial'];$site->save(['content.json'=>'{}'],$m);
 add($store,1,'a','changed');$m['through']=1;$site->save(['content.json'=>'{"new":true}'],$m);

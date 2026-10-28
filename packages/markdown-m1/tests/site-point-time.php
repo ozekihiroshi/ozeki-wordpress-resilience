@@ -12,13 +12,13 @@ class PointS3 {
  function getObject($a){$this->reads[]=$a['Key'];return $this->objects[$a['Key']]??throw new RuntimeException('Missing object');}
  function listObjectsV2($a){$out=[];foreach($this->objects as $k=>$v)if(str_starts_with($k,$a['Prefix'])&&strcmp($k,$a['StartAfter']??'')>0)$out[]=['Key'=>$k];return ['Contents'=>$out];}
 }
-$s=new PointS3();$store=new Owr\M1\Store($s,['bucket'=>'test','prefix'=>'test/']);$site=new Owr\M1\SiteSnapshot($store);
+$s=new PointS3();$store=new OzekiResilience\M1\Store($s,['bucket'=>'test','prefix'=>'test/']);$site=new OzekiResilience\M1\SiteSnapshot($store);
 $tables=array_fill_keys(['posts','postmeta','terms','term_taxonomy','term_relationships','termmeta','comments','commentmeta'],[]);
 $a=['origin_id'=>42,'post_type'=>'post','content_format'=>'wordpress-block-html','status'=>'publish','title'=>'Trial','slug'=>'trial','date'=>'2026-10-25 00:00:00','date_gmt'=>'2026-10-25 00:00:00','origin_url'=>'https://old.invalid/trial'];
 foreach([1=>'Old full body',2=>'New full body'] as $n=>$body){$o=$store->prepare('article','op-'.$n,$body,$a);$store->commit(['schema'=>'owr-md-history-1','sequence'=>$n,'original'=>$o,'attributes'=>$a]);}
-$da=['origin_id'=>42,'post_type'=>'owr_native','content_format'=>'native-state-json'];$raw=Owr\M1\Store::json(['schema'=>'owr-native-state-1','id'=>42,'type'=>'post','deleted'=>true,'terms'=>[],'assigned'=>[]]);
+$da=['origin_id'=>42,'post_type'=>'owr_native','content_format'=>'native-state-json'];$raw=OzekiResilience\M1\Store::json(['schema'=>'owr-native-state-1','id'=>42,'type'=>'post','deleted'=>true,'terms'=>[],'assigned'=>[]]);
 $o=$store->prepare('article','delete',$raw,$da);$store->commit(['schema'=>'owr-md-history-1','sequence'=>3,'original'=>$o,'attributes'=>$da]);
-$m=['through'=>0];$f=['content.json'=>Owr\M1\Store::json(['tables'=>$tables])];
+$m=['through'=>0];$f=['content.json'=>OzekiResilience\M1\Store::json(['tables'=>$tables])];
 $replay=new ReflectionMethod($site,'replay');$replay->setAccessible(true);
 foreach([0,1,2,3] as $n){[$actual,$files]=$replay->invoke($site,$m,$f,$n);$d=json_decode($files['content.json'],true);ok($actual['through']===$n,'Exact boundary');ok(count($d['tables']['posts'])===(in_array($n,[1,2])?1:0),'Creation/deletion boundary');if(in_array($n,[1,2]))ok($d['tables']['posts'][0]['post_content']===($n===1?'Old full body':'New full body'),'Full body at selected point');}
 reject(fn()=>$replay->invoke($site,['through'=>2],$f,1));reject(fn()=>$replay->invoke($site,$m,$f,4));

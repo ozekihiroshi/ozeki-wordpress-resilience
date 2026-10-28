@@ -2,7 +2,7 @@
 // Standalone WordPress API fixture; product includes reject direct access.
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/NativeHistory.php';
-use Owr\M1\NativeHistory;
+use OzekiResilience\M1\NativeHistory;
 function ok($v,$m){if(!$v)throw new RuntimeException($m);}
 $d=['tables'=>['posts'=>[['ID'=>'10','post_type'=>'post','post_status'=>'publish','post_parent'=>'0'],['ID'=>'11','post_type'=>'post','post_status'=>'publish','post_parent'=>'0'],['ID'=>'20','post_type'=>'attachment','post_status'=>'inherit','post_parent'=>'10','post_mime_type'=>'image/png']],'postmeta'=>[],'terms'=>[],'term_taxonomy'=>[],'term_relationships'=>[],'comments'=>[['comment_ID'=>'1','comment_post_ID'=>'10']],'commentmeta'=>[['comment_id'=>'1']]]];$files=['posts/10.html'=>'old'];
 $v=['schema'=>'owr-native-state-1','id'=>10,'type'=>'post','deleted'=>false,'thumbnail'=>20,'terms'=>[['term_id'=>'2','term_taxonomy_id'=>'2','taxonomy'=>'category','name'=>'Trial','slug'=>'trial','term_group'=>'0','description'=>'','parent'=>'0']],'assigned'=>['2']];

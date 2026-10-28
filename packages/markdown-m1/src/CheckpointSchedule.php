@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 
 final class CheckpointSchedule {
     public static function next(int $from,int $count,string $unit,\DateTimeZone $zone,int $anchorDay=0): int {

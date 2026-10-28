@@ -6,7 +6,7 @@ require_once $argv[1].'/src/CommentHistory.php';
 $options=[];$failWrite=false;
 function update_option($k,$v,$autoload=false){global $options,$failWrite;if($failWrite)return false;$options[$k]=$v;return true;}
 function get_option($k,$default=false){global $options;return $options[$k]??$default;}
-use Owr\M1\{SaveFailure,CommentHistory,Plugin};
+use OzekiResilience\M1\{SaveFailure,CommentHistory,Plugin};
 $failure=new RuntimeException('capture <failed>');
 try{SaveFailure::run('Test capture',fn()=>throw $failure);throw new Exception('not stopped');}catch(RuntimeException $e){ok($e===$failure,'original error preserved');}
 $record=get_option(SaveFailure::OPTION);ok($record['context']==='Test capture','failure retained');

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 
 /** Diagnostic only: never a recovery payload, confirmation or retry queue. */
 final class SaveFailure

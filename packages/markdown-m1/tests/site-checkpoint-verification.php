@@ -1,5 +1,5 @@
 <?php
-use Owr\M1\{Store,SiteSnapshot};
+use OzekiResilience\M1\{Store,SiteSnapshot};
 require __DIR__.'/separated-assets.php';
 class VerifiedCheckpointS3 extends SeparateS3 {
  public array $events=[],$written=[];public ?string $faultPath=null;public bool $missing=false;

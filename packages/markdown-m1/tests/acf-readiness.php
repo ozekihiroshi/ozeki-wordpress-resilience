@@ -4,7 +4,7 @@ define('ABSPATH',__DIR__.'/');
 if(!class_exists('ZipArchive')){class ZipArchive{}}
 if(($argv[2]??'')==='pro')define('ACF_PRO',true);
 require $argv[1].'/src/SetupReadiness.php';
-use Owr\M1\SetupReadiness as R;
+use OzekiResilience\M1\SetupReadiness as R;
 function determine_locale(){return $GLOBALS['locale']??'en_US';}
 function get_option($k,$default=false){return $GLOBALS['options'][$k]??$default;}
 function acf_get_field_groups(){return [];}

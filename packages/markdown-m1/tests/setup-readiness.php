@@ -2,7 +2,7 @@
 // Run with php -n: simulate a server without the ZIP extension. No WordPress or cloud writes.
 define('ABSPATH',__DIR__.'/');
 require $argv[1].'/src/SetupReadiness.php';
-use Owr\M1\SetupReadiness as R;
+use OzekiResilience\M1\SetupReadiness as R;
 function determine_locale(){return $GLOBALS['locale']??'en_US';}
 function get_option($key,$default=false){return $GLOBALS['options'][$key]??$default;}
 function check($ok,$why){if(!$ok)throw new RuntimeException($why);}

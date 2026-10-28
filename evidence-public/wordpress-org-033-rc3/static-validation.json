@@ -1,0 +1,14 @@
+{
+  "state": "PASS",
+  "zip_sha256": "066c4ae4f47f943a8b7cb4fa31efd6e256ad47772bdb1f4bd99c22a39804973e",
+  "bytes": 8590043,
+  "files": 3922,
+  "product_files_match_source": true,
+  "vendor_files_match_updated_composer_install": true,
+  "dependencies_changed_from_submitted_032": true,
+  "audit": {
+    "advisories": [],
+    "abandoned": []
+  },
+  "local_contract_checks": 34
+}

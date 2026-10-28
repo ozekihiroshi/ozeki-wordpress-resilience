@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Owr\M1;
+namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
 require_once __DIR__.'/CheckpointSchedule.php';
@@ -28,7 +28,7 @@ final class Plugin
         add_action('admin_post_owr_m1',[$this,'action']);
         add_action('admin_notices',[$this,'notice']);
         add_filter('the_content',[$this,'links'],100);
-        add_filter('the_content',static function($html){$from=get_option('owr_site_origin_url');return $from?SiteSnapshot::relocate($html,$from,home_url()):$html;},101);
+        add_filter('the_content',[$this,'relocateContent'],101);
         add_action('init',[$this,'scheduleCheckpoints']);
         add_action('owr_m1_checkpoint',[$this,'checkpointTick']);
         register_shutdown_function([$this,'release']);
@@ -337,15 +337,15 @@ final class Plugin
         try {
             // REST, classic editor and trash/untrash have already passed their core permission checks.
             if (($id && !current_user_can('edit_post',$id)) || (!$id && !current_user_can(get_post_type_object($data['post_type'])->cap->create_posts))) throw new \RuntimeException('Invalid save permission.');
-            if ($editor && !wp_verify_nonce(wp_unslash($_POST['ozmd_source_nonce']),'ozmd_save_markdown_source')) throw new \RuntimeException('Invalid Markdown save permission.');
+            if ($editor && !wp_verify_nonce(sanitize_text_field(wp_unslash(is_string($_POST['ozmd_source_nonce'])?$_POST['ozmd_source_nonce']:'')),'ozmd_save_markdown_source')) throw new \RuntimeException('Invalid Markdown save permission.');
             if ($this->active) throw new \RuntimeException('Nested protected saves are unsupported.');
             $this->lock();
             if (get_option(self::PENDING)) throw new \RuntimeException('A previous WordPress save is awaiting formal S3 history. Resume it in Tools → Resilience first.');
             if (get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending comment history in Tools → Resilience first.');
             clean_post_cache($id);
             $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
-            if ($wasProtected && $editor && (!isset($_POST['owr_m1_base']) || !hash_equals($this->fingerprint($id),(string)$_POST['owr_m1_base']))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
-            $source=$markdown?($editor?(string)wp_unslash($_POST['ozmd_source']):(string)get_post_meta($id,self::SOURCE,true)):(string)wp_unslash($data['post_content']);
+            if ($wasProtected && $editor && (!isset($_POST['owr_m1_base']) || !hash_equals($this->fingerprint($id),sanitize_text_field(wp_unslash($_POST['owr_m1_base']))))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
+            $source=$markdown?($editor?self::validatedMarkdown(wp_unslash($_POST['ozmd_source'])):(string)get_post_meta($id,self::SOURCE,true)):(string)wp_unslash($data['post_content']);
             if (strlen($source)>5*1024*1024 || str_contains($source,"\0") || !preg_match('//u',$source)) throw new \RuntimeException('Markdown must be UTF-8 without NUL, at most 5 MiB.');
             $asset=$wasProtected?(string)$wasProtected:wp_generate_uuid4();$operation=wp_generate_uuid4();
             $store=$this->store();$state=$store->latestState();$sequence=$state['through']+1;
@@ -355,7 +355,7 @@ final class Plugin
             foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)$attributes[$key]=wp_unslash($data[$key]);
             // Gutenberg separately posts legacy meta boxes after REST body saving.
             // Skip only a matching, already-confirmed body; metadata hooks still run.
-            if(!$markdown && isset($_GET['meta-box-loader']) && ($_POST['action']??'')==='editpost'
+            if(!$markdown && isset($_GET['meta-box-loader']) && sanitize_key(wp_unslash($_POST['action']??''))==='editpost'
                 && self::sameConfirmedArticle($state['assets'][$asset]??null,$source,$attributes)){
                 $this->release();return $data;
             }
@@ -452,6 +452,41 @@ final class Plugin
         } finally {$this->restoring=false;$this->release();}
         return $result;
     }
+    /** Reject malformed input without changing the bytes of the independent original. */
+    public static function validatedMarkdown(mixed $source): string {
+        if(!is_string($source) || strlen($source)>5*1024*1024 || str_contains($source,"\0") || !preg_match('//u',$source))throw new \RuntimeException('Markdown must be UTF-8 without NUL, at most 5 MiB.');
+        // Markdown is archival text, never evaluated or emitted here as HTML.
+        // Ozeki Markdown Documents renders it; our admin views escape their output.
+        return $source;
+    }
+    /** Validate the complete reference before recording it or reading from S3. */
+    public static function snapshotReference(mixed $json): array {
+        if(!is_string($json) || strlen($json)>4096)throw new \RuntimeException('Invalid snapshot reference.');
+        $ref=json_decode($json,true,8,JSON_THROW_ON_ERROR);
+        if(!is_array($ref) || count($ref)!==3 || !isset($ref['key'],$ref['version'],$ref['sha256'])
+            || !is_string($ref['key']) || !preg_match('~^site-snapshots/[a-f0-9]{64}/manifest\.json$~D',$ref['key'])
+            || !is_string($ref['version']) || $ref['version']==='null' || !preg_match('~^[A-Za-z0-9+/_=.-]{1,1024}$~D',$ref['version'])
+            || !is_string($ref['sha256']) || !preg_match('/^[a-f0-9]{64}$/D',$ref['sha256']))throw new \RuntimeException('Invalid snapshot reference.');
+        return ['key'=>$ref['key'],'version'=>$ref['version'],'sha256'=>$ref['sha256']];
+    }
+    /** Alter URL attributes only; preserve HTML already rendered by core/shortcodes. */
+    public function relocateContent(string $html): string {
+        $from=get_option('owr_site_origin_url');
+        $to=esc_url_raw(home_url(),['http','https']);
+        if(!is_string($from) || $from==='' || !$to || esc_url_raw($from,['http','https'])!==$from)return $html;
+        $processor=new \WP_HTML_Tag_Processor($html);
+        while($processor->next_tag()){
+            foreach(['href','src','action','poster','cite','data','srcset'] as $attribute){
+                $value=$processor->get_attribute($attribute);
+                if(!is_string($value))continue;
+                $rebased=SiteSnapshot::relocate($value,$from,$to);
+                if($rebased!==$value)$processor->set_attribute($attribute,$attribute==='srcset'?$rebased:esc_url_raw($rebased,['http','https']));
+            }
+        }
+        // WP_HTML_Tag_Processor escapes changed attribute values. Do not strip
+        // forms/embeds from unrelated HTML emitted by earlier content filters.
+        return $processor->get_updated_html();
+    }
     public function links(string $html): string {
         // Remap rendered links only. Canonical .md bytes are never rewritten.
         $posts=get_posts(['post_type'=>'ozmd_document','post_status'=>['publish','private','draft','pending'],'meta_key'=>'_owr_m1_origin_url','numberposts'=>-1]);
@@ -467,14 +502,19 @@ final class Plugin
     }
     public function notice(): void {
         if (!current_user_can('manage_options')) return;
-        self::renderCaptureFailure((array)get_option(SaveFailure::OPTION,[]));
+        $failure=(array)get_option(SaveFailure::OPTION,[]);
+        if($failure){
+            $screen=function_exists('get_current_screen')?get_current_screen():null;
+            if($screen && $screen->id==='tools_page_owr-m1')self::renderCaptureFailure($failure);
+            else echo '<div class="notice notice-error"><p>'.esc_html(SetupReadiness::text('Resilience: a content protection operation needs attention.','Resilience：保護処理で確認が必要な項目があります。')).' <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">'.esc_html(SetupReadiness::text('View details','詳細を確認')).'</a></p></div>';
+        }
         if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>'.esc_html(AdminText::text('Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. ')).'<a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">'.esc_html(AdminText::text('Resume history')).'</a>.</p></div>';
     }
     public function action(): void {
         if (!current_user_can('manage_options')) wp_die('Forbidden',403);
         check_admin_referer('owr_m1');
         try {
-            $action=(string)($_POST['operation']??'');
+            $action=sanitize_key(wp_unslash($_POST['operation']??''));
             if ($action==='configure') {
                 if (get_option(self::PENDING) || get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
                 $old=$this->config();
@@ -488,7 +528,7 @@ final class Plugin
                     'owner'=>['/^(|[0-9]{12})$/D',SetupReadiness::text('Enter the owner account ID as 12 digits, or leave it blank.','ownerには所有者の12桁のアカウントIDを入力するか、空欄にしてください。')],
                 ] as $key=>[$pattern,$message])if(!preg_match($pattern,$c[$key]))throw new \RuntimeException($message);
                 $c['setup_version']=1;
-                $c['setup_role']=($_POST['setup_role']??'source')==='recovery'?'recovery':'source';
+                $c['setup_role']=sanitize_key(wp_unslash($_POST['setup_role']??'source'))==='recovery'?'recovery':'source';
                 $c['terms_version']=SetupReadiness::TERMS;
                 $c['terms_confirmed_at']=gmdate('c');
                 $c['terms_confirmed_by']=get_current_user_id();
@@ -499,12 +539,12 @@ final class Plugin
                     SetupReadiness::requireStart($c);
                     $this->storeForSetup($c)->checkSetupStorage();
                 }
-                $c['retention_days']=max(0,min(3650,(int)($_POST['retention_days']??0)));
+                $c['retention_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['retention_days']??'0'))));
                 $gfs=wp_unslash($_POST['gfs']??[]);
                 if(!is_array($gfs))throw new \RuntimeException('Invalid GFS settings.');
                 $c['gfs']=GfsPolicy::normalize($gfs);$c['checkpoint_interval_days']=0;
                 $c['cleanup_enabled']=isset($_POST['cleanup_enabled']);
-                $c['cleanup_keep_days']=max(0,min(3650,(int)($_POST['cleanup_keep_days']??90)));
+                $c['cleanup_keep_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['cleanup_keep_days']??'90'))));
                 if ($c['cleanup_enabled'] && !$c['gfs']) throw new \RuntimeException('Set a Checkpoint interval before enabling automatic cleanup.');
                 update_option(self::CONFIG,$c,false);
                 delete_option('owr_m1_cleanup_preview');
@@ -524,7 +564,7 @@ final class Plugin
                 }
                 update_option('owr_setup_storage',$r,false);
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
-            elseif ($action==='restore') $this->restore(array_map('strval',(array)($_POST['sequences']??[])));
+            elseif ($action==='restore') $this->restore(array_map('sanitize_text_field',(array)wp_unslash($_POST['sequences']??[])));
             elseif ($action==='checkpoint') $this->checkpoint();
             elseif ($action==='site_cleanup_preview') $this->previewSiteCleanup();
             elseif ($action==='site_cleanup_execute') {
@@ -549,7 +589,7 @@ final class Plugin
                 update_option('owr_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {
-                $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
+                $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
                 $this->wholeCheckpoint($ref);
             }
             elseif ($action==='whole_restore') {
@@ -559,7 +599,7 @@ final class Plugin
                     $end=wp_unslash($_POST['site_through']??'');
                     if(!is_string($end)||!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
                     $target=(int)$end;$attempt['requested_through']=$target;
-                    $ref=json_decode(wp_unslash($_POST['site_ref']??''),true,512,JSON_THROW_ON_ERROR);
+                    $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
                     $attempt['manifest']=$ref;SiteSnapshot::writeOption('owr_site_restore_attempt',$attempt,false);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.

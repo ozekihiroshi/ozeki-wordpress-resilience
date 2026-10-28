@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require __DIR__.'/separated-assets.php';
 $s3->fail=null; // Previous contract deliberately leaves its write-failure switch enabled.
 foreach(['FormHistory','MemberHistory','TableHistory'] as $class)require_once $argv[1].'/src/'.$class.'.php';
-use Owr\M1\{RecoveryRules,FormHistory,Store};
+use OzekiResilience\M1\{RecoveryRules,FormHistory,Store};
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 $state=['tables'=>['posts'=>[['ID'=>'10','post_type'=>'wpcf7_contact_form','post_content'=>''],['ID'=>'11','post_type'=>'flamingo_inbound','post_content'=>'問い合わせ'],['ID'=>'12','post_type'=>'tablepress_table','post_content'=>'[["Item","Count"],["A",2]]'],['ID'=>'13','post_type'=>'ozmd_document','post_content'=>'generated']], 'postmeta'=>[], 'commentmeta'=>[['comment_id'=>'1','meta_key'=>'extension','meta_value'=>'private value']], 'termmeta'=>[],'term_relationships'=>[],'terms'=>[],'term_taxonomy'=>[]], 'options'=>['blogname'=>'Example','tablepress_tables'=>'{"table_post":{"1":12},"last_id":1}','tablepress_plugin_options'=>'{"tablepress_version":"3.4.1","custom_css":"private-style","modules":{"unknown":true}}','widget_unknown'=>['private'=>'do not apply']], 'membership'=>['version'=>'3.5.8.1','settings'=>['wpmembers_settings'=>['mod_reg'=>1,'block'=>['post'=>1,'page'=>0],'extension'=>'private-setting'],'wpmembers_fields'=>[[1,'Name','first_name','text','y','y','n','profile'=>1]],'wpmembers_dialogs'=>['success'=>'Welcome'],'wpmembers_tos'=>'Terms'], 'users'=>['3'=>['user'=>['ID'=>'3','user_pass'=>'private hash'],'meta'=>['first_name'=>['Alice'],'active'=>['1'],'session_tokens'=>['private token']]]]]];
 $add=function($id,$key,$value)use(&$state){$state['tables']['postmeta'][]=['meta_id'=>(string)(count($state['tables']['postmeta'])+1),'post_id'=>(string)$id,'meta_key'=>$key,'meta_value'=>$value];};
@@ -39,7 +39,7 @@ check($find($after,10,'unknown')==='private unknown','Replay retains unknown bef
 $savedObjects=$s3->objects;[$manifest,$stored]=$site->load($baseline['manifest']);RecoveryRules::project(json_decode($stored['content.json'],true),['blogname']);
 check($s3->objects===$savedObjects&&str_contains($stored['content.json'],'private unknown'),'No S3 mutation or unknown loss');
 $bad=$state;$bad['tables']['postmeta'][]=['post_id'=>'12','meta_key'=>'_tablepress_table_options','meta_value'=>'{"datatables_sort":{"code":"bad"}}'];reject(fn()=>RecoveryRules::project($bad,['blogname']));
-$success=['at'=>'now','through'=>1,'posts'=>4,'files'=>0,'application_report'=>$first['report']];ob_start();Owr\M1\Plugin::renderSiteResult(['status'=>'success']+$success,$success,[]);$html=ob_get_clean();
+$success=['at'=>'now','through'=>1,'posts'=>4,'files'=>0,'application_report'=>$first['report']];ob_start();OzekiResilience\M1\Plugin::renderSiteResult(['status'=>'success']+$success,$success,[]);$html=ob_get_clean();
 check(str_contains($html,'Preserved in S3')&&str_contains($html,'postmeta.10.unknown')&&!str_contains($html,'private unknown'),'Visible value-free reasons');
-ob_start();Owr\M1\Plugin::renderSiteResult(['status'=>'failed','error'=>'failure'],$success,[]);$html=ob_get_clean();check(!str_contains(explode('<details>',$html)[0],'Preserved in S3'),'Failure cannot show old projection as current');
+ob_start();OzekiResilience\M1\Plugin::renderSiteResult(['status'=>'failed','error'=>'failure'],$success,[]);$html=ob_get_clean();check(!str_contains(explode('<details>',$html)[0],'Preserved in S3'),'Failure cannot show old projection as current');
 echo "PASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\n";

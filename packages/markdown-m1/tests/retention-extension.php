@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require_once $argv[1].'/src/Store.php';require_once $argv[1].'/src/SiteSnapshot.php';
 require_once __DIR__.'/retention-memory.php';
-use Owr\M1\{Store,SiteSnapshot};
+use OzekiResilience\M1\{Store,SiteSnapshot};
 function checkRetention($v,$m){if(!$v)throw new RuntimeException($m);}
 function retentionFailure($f,$text){try{$f();}catch(RuntimeException $e){checkRetention(str_contains($e->getMessage(),$text),'Wrong failure: '.$e->getMessage());return;}throw new RuntimeException('Expected failure: '.$text);}
 class RetentionFixture {

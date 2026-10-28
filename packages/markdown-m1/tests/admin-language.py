@@ -38,7 +38,7 @@ def main(out):
   state=json.loads(php("require '/var/www/html/wp-load.php';echo json_encode(['config'=>get_option('owr_m1_config'),'baseline'=>get_option('owr_setup_baseline')]);").stdout)
   assert state['config']['protect'] and state['baseline']['manifest']
   php("require '/var/www/html/wp-load.php';wp_set_current_user(1);wp_insert_post(['post_title'=>'Save settings <b>Original</b>','post_content'=>'Generated language test','post_status'=>'publish']);")
-  html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new Owr\\M1\\Plugin())->page();").stdout.decode()
+  html=php("require '/var/www/html/wp-load.php';require_once ABSPATH.'wp-admin/includes/template.php';wp_set_current_user(1);add_filter('pre_determine_locale',static fn()=> 'ja');(new OzekiResilience\\M1\\Plugin())->page();").stdout.decode()
   assert 'Save settings' in html and '&lt;b&gt;Original&lt;/b&gt;' in html,'User title must remain original and escaped'
   (out/'result.json').write_text(json.dumps({'state':'PASS','scope':'Isolated WordPress / MariaDB / local S3 simulation','checks':['Japanese setup via real browser: configure, consent, storage check, initial capture, enable protection','Japanese and English buttons, labels, schedule details, recovery and status explanations','English environment contains no Japanese interface text','Same form field names and operation values in both languages','User titles remain untranslated and HTML-escaped','Protection enabled and subsequent post confirmed in history']},indent=2))
   print((out/'result.json').read_text())
