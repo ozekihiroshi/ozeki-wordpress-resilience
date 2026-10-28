@@ -13,7 +13,9 @@ final class AssetFormat
         $walk=function(array &$node,array $path=[]) use (&$walk,&$files,&$slots): void {
             foreach($node as $key=>&$v){
                 $p=[...$path,$key];$ext=null;$encoding='string';$body=null;
-                if(is_string($v)){
+                if(in_array($key,['acf_values','acf_definitions','acf_references'],true)&&is_array($v)){
+                    $ext='json';$encoding='json';$body=self::json($v);
+                }elseif(is_string($v)){
                     if($key==='post_content')$ext=($node['post_type']??'')==='tablepress_table'?'json':'html';
                     elseif($key==='post_excerpt'||$key==='comment_content')$ext='txt';
                     elseif($key==='meta_value'&&($node['meta_key']??'')==='_ozmd_source')$ext='md';
@@ -57,6 +59,10 @@ final class AssetFormat
             foreach($path as $key){if((!is_string($key)&&!is_int($key))||!is_array($target)||!array_key_exists($key,$target))throw new \RuntimeException('Invalid original mapping.');$target=&$target[$key];}
             if($target!==null)throw new \RuntimeException('Original mapping overwrites metadata.');
             if(($slot['encoding']??'')==='string')$target=$files[$file];
+            elseif(($slot['encoding']??'')==='json'){
+                $target=json_decode($files[$file],true,512,JSON_THROW_ON_ERROR);
+                if(!is_array($target))throw new \RuntimeException('Invalid separated JSON original.');
+            }
             elseif(($slot['encoding']??'')==='serialized'){
                 $data=json_decode($files[$file],true,512,JSON_THROW_ON_ERROR);
                 if(!is_array($data)||!self::plain($data))throw new \RuntimeException('Invalid submitted fields.');

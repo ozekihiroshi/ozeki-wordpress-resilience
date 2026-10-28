@@ -94,3 +94,5 @@ Existing verification records describe their specific builds and environments; t
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
 
 Setup assistance assessment: [current pre-setup checks](docs/setup-preflight-review.md) (includes proposals not yet implemented).
+
+[ACF free basic fields — proposed integration (not in published ZIPs)](docs/acf-free.md).

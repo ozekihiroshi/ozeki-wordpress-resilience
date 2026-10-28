@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-10-28T17:25:21.3658230+09:00",
+  "acf_free_version": "6.8.10",
+  "through": 10,
+  "checks": [
+    {
+      "post_id": "21",
+      "fields": 15,
+      "history_sequence": 5,
+      "source_s3_target_match": true,
+      "original_parts": 3,
+      "unknown_setting_retained": true
+    },
+    {
+      "post_id": "22",
+      "fields": 15,
+      "history_sequence": 10,
+      "source_s3_target_match": true,
+      "original_parts": 3,
+      "unknown_setting_retained": true
+    }
+  ],
+  "not_applied_count": 151,
+  "history_hashes_equal": true,
+  "scope": "Standard editor -> real S3 fixed-version originals and history -> dm admin site restore"
+}

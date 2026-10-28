@@ -22,7 +22,7 @@ final class CommentHistory
             unset($this->statusOperations[$id]);$this->capture((array)$comment);
         },PHP_INT_MIN,3);
         add_action('deleted_comment',fn($id,$old)=>$this->capture((array)$old,true),PHP_INT_MIN,2);
-        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form/member/table/article-detail changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
+        add_action('admin_notices',function(){if(current_user_can('manage_options')&&get_option(self::PENDING))echo '<div class="notice notice-warning"><p>Resilience: comment/form/member/table/article-detail/ACF changes are awaiting S3 formal history. They are not yet recovery candidates. Use Resume history in Tools → Resilience.</p></div>';});
     }
     private function lock(): string {
         global $wpdb;$name='owr-m1-'.$wpdb->prefix;
@@ -57,7 +57,7 @@ final class CommentHistory
             $queue=(array)get_option(self::PENDING,[]);
             // Native state can be emitted by both REST and legacy meta-box requests.
             // Compare against S3 authority under the writer lock, never a local cache.
-            if(!$queue && !get_option('owr_m1_pending') && ($attrs['post_type']??'')==='owr_native'){
+            if(!$queue && !get_option('owr_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf'],true)){
                 try {
                     $state=(new Plugin())->store()->latestState();
                     if(self::sameNativeState($state['assets'][$asset]??null,$source,$attrs,$resources))return;

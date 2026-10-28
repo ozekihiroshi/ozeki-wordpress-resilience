@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Owr\M1;
+require_once __DIR__.'/AcfHistory.php';
 
 /** Projection at the destination boundary only. Never use this to rewrite stored originals. */
 final class RecoveryRules
@@ -63,6 +64,13 @@ final class RecoveryRules
     }
     public static function project(array $data,array $coreOptions): array {
         $self=new self();$d=$data;$types=[];
+        $acf=AcfHistory::project($data);$self->skipped=$acf['skipped'];
+        if(isset($data['acf'])){
+            $removed=[];foreach($d['tables']['posts'] as $p)if(in_array($p['post_type'],['acf-field','acf-field-group'],true))$removed[]=(string)$p['ID'];
+            $d['tables']['posts']=array_values(array_filter($d['tables']['posts'],fn($p)=>!in_array((string)$p['ID'],$removed,true)));
+            $d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta'],fn($m)=>!in_array((string)$m['post_id'],$removed,true)&&!isset($acf['keys'][(string)$m['post_id']][$m['meta_key']])));
+            $d['acf_restore_groups']=$acf['groups'];
+        }
         foreach($d['tables']['posts']??[] as $post)$types[(string)$post['ID']]=$post['post_type'];
         $base=['_owr_m1_asset'=>'text','_owr_m1_origin_url'=>'text','_owr_m1_origin'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
         $out=[];
@@ -77,6 +85,8 @@ final class RecoveryRules
             if(!array_key_exists($key,$rules)){$self->omit($path,$key==='_ozmd_source_sha256'?'Derived from restored Markdown; regenerated, not imported':'No recognized application rule');continue;}
             $row['meta_value']=$self->metadata($row['meta_value'],$rules[$key],$path,$type==='tablepress_table'&&str_starts_with($key,'_tablepress_'));$out[]=$row;
         }
+        $next=max(array_merge([0],array_map('intval',array_column($out,'meta_id'))))+1;
+        foreach($acf['meta'] as $row){$row['meta_id']=(string)$next++;$out[]=$row;}
         $d['tables']['postmeta']=$out;
         foreach(['commentmeta','termmeta'] as $table){
             $kept=[];foreach($d['tables'][$table]??[] as $row){
