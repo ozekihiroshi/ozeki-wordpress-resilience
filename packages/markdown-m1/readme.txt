@@ -4,7 +4,7 @@ Tags: backup, recovery, amazon s3
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.3.2
+Stable tag: 0.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,9 @@ Start with a trusted initial capture (Baseline). Enable protection for supported
 
 = Supported content =
 
-Posts and Pages, supported local images and core comments are covered. Defined integrations support Ozeki Markdown Documents, Contact Form 7 / Flamingo, WP-Members core subscribers and TablePress core tables. See the included README.md for exact coverage and tested versions.
+Posts and Pages, supported local images and core comments are covered. Defined integrations support Ozeki Markdown Documents, Contact Form 7 / Flamingo, WP-Members core subscribers TablePress core tables and ACF free basic fields on posts/pages. See the included README.md for exact coverage and tested versions.
+
+ACF recovery uses the recorded free version (tested 6.8.10), database-defined groups and post/page location rules. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Create a new trusted Baseline when adding ACF or changing its version or definitions.
 
 Optional plugins are installed separately. Markdown Documents is needed only when Markdown content exists. Source text is limited to 5 MiB and supported image files to 32 MiB.
 
@@ -54,7 +56,7 @@ Support: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues
 == Installation ==
 
 1. Prepare a versioned S3 bucket, dedicated prefix and permissions using docs/aws-setup.md (Japanese: docs/aws-setup-ja.md). Provide standard SDK credentials to PHP.
-2. Upload ozeki-resilience-0.3.2.zip using Plugins > Add New Plugin > Upload Plugin and activate. For an old prerelease in ozeki-wordpress-resilience/, deactivate that copy first; do not activate both. Preserve settings and pending records; see docs/install-update.md.
+2. Upload ozeki-resilience-0.3.3.zip using Plugins > Add New Plugin > Upload Plugin and activate. For an old prerelease in ozeki-wordpress-resilience/, deactivate that copy first; do not activate both. Preserve settings and pending records; see docs/install-update.md.
 3. Open Tools > Resilience. Follow Preparation for protection, choose Protect this site, configure storage with protection and cleanup initially disabled, read the terms and select the confirmation checkbox. Save settings, then Check storage.
 4. Pause editing, judge the source trustworthy, and create a complete initial snapshot (Baseline). Confirm success before enabling protection and saving settings with the terms confirmation.
 5. Monitor confirmed history and pending saves. Follow docs/user-guide.md for Checkpoints, retention and recovery.
@@ -77,6 +79,11 @@ No. Saved publication state is restored. Use a designated destination with acces
 No. Prepare a compatible destination when recovery is needed. Python workers, SSH helpers and Docker are not product requirements.
 
 == Changelog ==
+
+= 0.3.3 =
+* Preserve and recover 15 basic ACF free field types on posts/pages, including values, definitions and field-key references.
+* Preserve literal text types and hyphenated field names during ACF recovery.
+* For ACF protection after updating, create a new trusted Baseline with the supported ACF free version active. See docs/acf-free.md.
 
 = 0.3.2 =
 * Setup readiness shows missing conditions and next actions; storage checks use read-only requests.

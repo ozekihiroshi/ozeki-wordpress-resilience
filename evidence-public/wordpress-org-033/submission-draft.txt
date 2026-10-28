@@ -1,0 +1,10 @@
+Please update the existing Ozeki Resilience application from 0.3.2 rc.1 to 0.3.3 rc.1. Keep the assigned slug ozeki-resilience and contributor ozekihiroshi.
+
+This update preserves and recovers 15 basic ACF free field types on posts/pages: values, definitions and field-key references. Database-defined groups with post/page location rules are supported. Recovery requires the recorded free version (tested 6.8.10). After updating, create a new trusted Baseline to add ACF coverage. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Literal serialization-shaped text and hyphenated names have regression coverage.
+
+ZIP: ozeki-resilience-0.3.3.zip
+SHA-256: 723a0e37316da77281d871dffeb0e5cb6a7f82c1e34017866d09f2455d43661e
+Matching source: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.1/packages/markdown-m1
+Release and checks: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.1
+
+Official Plugin Check 2.1.0: 0 errors / 117 documented warnings. The exact ZIP passed isolated fresh installation and update from submitted 0.3.2 rc.1, including state preservation and continued saving. These acceptance checks used CLI and simulated S3, not a new browser/live-AWS/full ACF recovery trial. Earlier ACF real-WordPress and real-S3 evidence is separately scoped in the repository. All vendor bytes are unchanged. No external runtime kit is needed. Previously submitted ZIPs and tags remain preserved.

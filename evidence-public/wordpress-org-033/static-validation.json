@@ -1,0 +1,10 @@
+{
+  "state": "PASS",
+  "version": "0.3.3",
+  "zip_sha256": "723a0e37316da77281d871dffeb0e5cb6a7f82c1e34017866d09f2455d43661e",
+  "bytes": 7466296,
+  "files": 3859,
+  "vendor_files_unchanged_from_032": 3785,
+  "product_manifest_matches_source": true,
+  "submitted": false
+}

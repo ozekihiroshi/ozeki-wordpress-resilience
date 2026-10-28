@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**Release candidate: 0.3.2 (rc.1).** Includes setup readiness, terms confirmation and Japanese/English admin screens. The update was accepted by WordPress.org on **October 28, 2026** and is **Awaiting Review — not yet approved or published in the Plugin Directory**. The previously submitted 0.3.1 rc.2 remains preserved.
+**Release candidate: 0.3.3 (rc.1), not submitted.** Adds ACF free basic-field preservation and recovery. WordPress.org is still reviewing the submitted 0.3.2 rc.1; earlier ZIPs and tags remain preserved.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
-The original application was submitted as **0.3.1 (rc.2) on October 26, 2026**, then updated to **0.3.2 (rc.1) on October 28, 2026**. [Submission record](packages/markdown-m1/docs/wordpress-org-candidate.md). It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
+The original application was submitted as **0.3.1 (rc.2) on October 26, 2026**, then updated to **0.3.2 (rc.1) on October 28, 2026**. [Submission record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md). It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
 
 ## Keep a path to recovery after an attack
 
@@ -20,7 +20,7 @@ The underlying idea is to separate the lifespan of information from that of the 
 
 ## Download and start
 
-1. Download **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1).
+1. Download **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.1/ozeki-resilience-0.3.3.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.1).
 2. Read the [first-time setup guide](packages/markdown-m1/docs/user-guide.md) and prepare [AWS access](packages/markdown-m1/docs/aws-setup.md).
 3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
@@ -46,6 +46,7 @@ Restore successfully saved content through the recovery point you select. Integr
 | Inquiry forms and received inquiries | Forms and the inquiries you received. Contact Form 7 6.2.3 / Flamingo 2.6.4 |
 | Member access | Core subscriber information and supported fields, settings and viewing restrictions. WP-Members 3.5.8.1 |
 | Tables | Table content, supported display settings and references. TablePress 3.4.1 |
+| ACF free basic fields | Values, definitions and field keys for 15 basic types on posts/pages. ACF free 6.8.10. Create a new trusted Baseline including ACF after updating |
 | Site appearance included in the initial capture | Selected themes and supported presentation settings. Capture a new initial state after later theme changes |
 
 Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images up to 32 MiB.
@@ -83,7 +84,7 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 - [Recovery procedure](packages/markdown-m1/docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](packages/markdown-m1/docs/recovery-faq.md)
 - [Application rules and withheld information](packages/markdown-m1/docs/application-rules.md)
 - [External-service and privacy disclosure](packages/markdown-m1/readme.txt)
-- [Candidate checks and build instructions](packages/markdown-m1/docs/wordpress-org-candidate.md)
+- [Candidate checks and build instructions](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)
 
 **Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
@@ -95,4 +96,4 @@ Existing verification records describe their specific builds and environments; t
 
 Setup assistance assessment: [current pre-setup checks](packages/markdown-m1/docs/setup-preflight-review.md) (includes proposals not yet implemented).
 
-[ACF free basic fields — proposed integration (not in published ZIPs)](packages/markdown-m1/docs/acf-free.md).
+[ACF free basic fields — 0.3.3 coverage](packages/markdown-m1/docs/acf-free.md).

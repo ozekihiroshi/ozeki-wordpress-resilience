@@ -7,7 +7,7 @@
  * Author URI: https://github.com/ozekihiroshi
  * Text Domain: ozeki-resilience
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Version: 0.3.2
+ * Version: 0.3.3
  * Requires PHP: 8.1
  * Requires at least: 6.4
  * License: GPL-2.0-or-later

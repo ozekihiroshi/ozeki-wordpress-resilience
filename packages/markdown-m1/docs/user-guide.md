@@ -94,3 +94,7 @@ Restore saved articles, images, inquiries and other supported content on a separ
 See the [README](../README.md#what-remains-and-what-you-can-recover) for saved and restored content, and [troubleshooting](#troubleshooting) for setup errors. For help, provide version/tag, operation, error, confirmed boundary and relevant runtime versions; redact credentials, tokens, personal data and private originals.
 
 [Known operational limits](remaining-confirmations.md) and [candidate checks](wordpress-org-candidate.md) distinguish existing evidence from the packaging checks for this ZIP. The later [readiness record](recovery-readiness.md) includes the sample-only IAM acceptance; it supersedes earlier notes that those templates were unverified.
+
+## ACF free
+
+0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing ACF version/field definitions, pause editing and create a new trusted Baseline. Prepare the recorded ACF free version on the recovery destination. See [coverage](acf-free.md).

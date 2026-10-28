@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**公開候補：0.3.2（rc.1）。** 準備状況の確認・利用条件の確認欄・日英の管理画面を含みます。**2026年10月28日にWordPress.orgで申請更新が受け付けられました。現在は審査待ち（Awaiting Review）で、公開承認・掲載はまだ行われていません。** 申請済み0.3.1 rc.2はそのまま保全しています。
+**公開候補：0.3.3（rc.1）、未送信。** ACF無料版の基本フィールド対応を追加しました。WordPress.orgには0.3.2 rc.1を提出済みで、現在も審査待ちです。以前のZIP・タグは保全しています。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
 [English](README.md) | 日本語
 
-2026年10月26日の0.3.1（rc.2）初回申請を、10月28日に **0.3.2（rc.1）へ更新** しました。[申請記録](docs/wordpress-org-candidate.md)。旧0.2.0申請候補を置き換えるもので、旧プラグインや外部処理キットは不要です。
+2026年10月26日の0.3.1（rc.2）初回申請を、10月28日に **0.3.2（rc.1）へ更新** しました。[申請記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)。旧0.2.0申請候補を置き換えるもので、旧プラグインや外部処理キットは不要です。
 
 ## 攻撃の後も、サイトを再開するために
 
@@ -20,7 +20,7 @@
 
 ## ダウンロードと導入
 
-1. **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
+1. **[ozeki-resilience-0.3.3.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.1/ozeki-resilience-0.3.3.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
 2. [初回導入ガイド（準備から保護開始まで）](docs/user-guide-ja.md)を読み、[AWS設定](docs/aws-setup-ja.md)を準備します。
 3. ZIPを導入し、**ツール → Resilience** で準備状況を確認し、保存先を確認、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
 
@@ -46,6 +46,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 | 問い合わせフォームと受信情報 | フォームと届いた問い合わせ。Contact Form 7 6.2.3 / Flamingo 2.6.4 |
 | 会員向けの情報提供 | 基本購読者の会員情報と、対応する項目・設定・閲覧制限。WP-Members 3.5.8.1 |
 | 表 | 表の内容、対応する表示設定と参照。TablePress 3.4.1 |
+| ACF無料版の基本フィールド | 投稿・固定ページの対応15型の値・定義・フィールドキー。ACF無料版6.8.10。更新後はACFを含む新しい信頼済みBaselineを作成 |
 | 初期保存に含まれるサイトの見た目 | 選択したテーマと対応する表示設定。後からテーマなどを変更した場合は、新しい初期保存へ取り込みます |
 
 連携プラグインは必要なものを別途導入します。上記は確認済みの版です。Contact Form 7 6.2.3はPHP 8.3以上が必要です。原文は5 MiB、対応画像は32 MiBまでです。
@@ -83,7 +84,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 - [復旧手順](docs/user-guide-ja.md#6-別のwordpressへ復旧する)・[よくある疑問](docs/recovery-faq-ja.md)
 - [反映規則と反映しない情報](docs/application-rules.md)
 - [外部送信とプライバシー](readme.txt)
-- [申請候補の確認・構築手順](docs/wordpress-org-candidate.md)
+- [申請候補の確認・構築手順](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)
 
 **不具合・使い方の質問は[GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)へ。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
 
@@ -95,4 +96,4 @@ WordPress.orgでの公開後は、プラグインページの **Support（サポ
 
 セットアップ支援の検討資料：[条件判定の現状整理](docs/setup-preflight-review-ja.md)（未実装の追加案を含む）。
 
-[ACF無料版の基本フィールド — 統合候補（公開済みZIPには未収録）](docs/acf-free-ja.md).
+[ACF無料版の基本フィールド — 0.3.3の対応範囲](docs/acf-free-ja.md).
