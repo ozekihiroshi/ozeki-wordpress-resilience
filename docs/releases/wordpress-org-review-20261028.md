@@ -1,7 +1,7 @@
 # WordPress.org 初期レビューへの対応 / Initial review response
 
-審査対象は2026-10-28提出の **0.3.2 rc.1**。0.3.3 rc.2は未提出です。WordPress.orgの状態は **Being Reviewed / applicant action required**。公開承認ではありません。
-The review concerns submitted **0.3.2 rc.1**, not the unsubmitted 0.3.3 rc.2. Publication has not been approved.
+初期指摘の対象は2026-10-28提出の **0.3.2 rc.1**。対応版 **0.3.3 rc.3の更新受付と元の審査メールへの返信が完了**し、審査担当者の回答待ちです。公開承認済みではありません。0.3.3 rc.1・rc.2は未提出の記録として残しています。
+The initial findings concerned **0.3.2 rc.1**. The **0.3.3 rc.3 update was received and our reply was sent in the original review thread**. We are awaiting the reviewer's response; publication has not been approved.
 
 ## 指摘との照合 / Disposition
 
@@ -16,16 +16,28 @@ The review concerns submitted **0.3.2 rc.1**, not the unsubmitted 0.3.3 rc.2. Pu
 | AWS SDK | 3.401.5へ更新。依存lockを更新しComposer auditを実施。Updated to 3.401.5 with dependency audit. |
 | Admin notices | 長い障害詳細はプラグイン画面へ限定。他画面では管理者への短い対処リンク。販促・評価依頼・リダイレクトなし。Detailed notices confined to the plugin screen; concise actionable status elsewhere. |
 
-## 送信前の判断 / Before resubmission
+## 更新受付と返信 / Update receipt and reply
 
-復旧機能の適否と既存識別名の互換性は、技術試験の成功だけでは解消しない審査上の確認事項です。「全指摘解消済み」とは扱いません。ZIPの送信と元の審査メールへの返信は、利用者による確認後に行います。再申請は作成しません。
-Recovery-policy and legacy-identifier questions remain for the reviewer. Tests do not establish policy approval. Upload and reply to the original email thread only after the owner's review; do not create a duplicate application.
+2026-10-28 JST。利用者の確認・送信指示に基づき既存申請を更新しました。別の申請は作成していません。
 
-[English reply draft](wordpress-org-review-reply-20261028.txt). The draft is unsent.
+- WordPress.org画面で「New version of Ozeki Resilience uploaded for review.」を確認。
+- 同日20:44 JSTの自動受付メールでversion 0.3.3、rc.3の説明と下記SHA-256の一致を確認。
+- 元の「[WordPress Plugin Directory] Review in Progress: Ozeki Resilience」スレッドでplugins@wordpress.orgへ返信し、Gmailの「メッセージを送信しました」を確認。
+- 復旧機能の趣旨、保存済みデータや連携との互換性のため既存の保存名・hookを維持する理由、Markdown原本とHTML出力の扱いを説明。
+
+Following the owner's approval, the existing application was updated on October 28, 2026. The upload success page and the 20:44 JST automated receipt confirm version 0.3.3 with the rc.3 description and SHA-256 below. Gmail confirmed sending the reply to plugins@wordpress.org in the original review thread. No duplicate application was created.
+
+復旧機能の審査上の扱いと既存識別名の維持については、審査担当者の判断待ちです。受領・送信の確認は、全指摘の解消や公開承認を意味しません。
+Recovery-policy and legacy-identifier questions remain for the reviewer. Receipt and sending confirmations do not establish that all findings are cleared or that publication is approved.
+
+[送信済み返信本文 / Sent reply](wordpress-org-review-reply-20261028.txt).
+
+提出済みZIP・タグは変更していません。対応する製品ソースはタグ [wporg-0.3.3-rc.3](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.3)、commit 2ff4306a0c8715467100866b1aa9185d708e3402です。
+The submitted ZIP and tags remain unchanged. The matching product source remains at that tag and commit; this documentation-only update records submission status.
 
 ## 確認結果 / Candidate validation
 
-2026-10-28 JST。**0.3.3 rc.3、未送信 / not submitted**。
+2026-10-28 JST。**0.3.3 rc.3、更新受付・返信完了 / update received and reply sent**。
 
 - ZIP: `ozeki-resilience-0.3.3.zip` / 8,590,043 bytes / 3,922 files.
 - SHA-256: `066c4ae4f47f943a8b7cb4fa31efd6e256ad47772bdb1f4bd99c22a39804973e`.

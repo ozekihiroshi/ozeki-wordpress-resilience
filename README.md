@@ -1,9 +1,9 @@
 # Ozeki Resilience
 
-**Review-response candidate: 0.3.3 (rc.3), not submitted.** The submitted 0.3.2 rc.1 is under review and awaiting our response. Earlier ZIPs and tags remain preserved.
+**WordPress.org update received: 0.3.3 (rc.3), October 28, 2026.** Our reply in the original review email thread has been sent. We are awaiting the reviewer's response; publication has not been approved. Submitted ZIPs and tags remain unchanged.
 
 
-[Review response record and unsent reply draft](docs/releases/wordpress-org-review-20261028.md). Recovery remains available; its policy treatment and legacy-identifier compatibility need reviewer clarification.
+[Submission and sent-reply record](docs/releases/wordpress-org-review-20261028.md). Recovery remains available; its policy treatment and legacy-identifier compatibility need reviewer clarification.
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
@@ -90,7 +90,7 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 
 **Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
-After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is currently responding to review findings. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
+After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is awaiting the reviewer's response after submitting the update and replying to the review email. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
 
 Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 
