@@ -6,6 +6,7 @@ require_once __DIR__.'/SaveFailure.php';
 require_once __DIR__.'/CheckpointSchedule.php';
 require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/SetupReadiness.php';
+require_once __DIR__.'/AdminText.php';
 
 final class Plugin
 {
@@ -34,22 +35,22 @@ final class Plugin
     }
     public function config(): array { return (array)get_option(self::CONFIG,[]); }
     public static function renderGfsSettings(array $c): void {
-        echo '<h3>Weekly / monthly / yearly Checkpoints</h3><p>Timezone: '.esc_html(wp_timezone()->getName()).'. Select each schedule independently. Coincident times create one complete Checkpoint with all matching retention labels. Unchanged content is still copied independently.</p>';
-        if(!array_key_exists('gfs',$c)&&!empty($c['checkpoint_interval_days']))echo '<p>Legacy interval remains active until these settings are saved. Select GFS schedules before saving to replace it.</p>';
-        foreach(['weekly'=>'Weekly','monthly'=>'Monthly','yearly'=>'Yearly'] as $kind=>$label){
+        echo '<h3>'.esc_html(AdminText::text('Weekly / monthly / yearly Checkpoints')).'</h3><p>'.esc_html(AdminText::text('Timezone:')).' '.esc_html(wp_timezone()->getName()).''.esc_html(AdminText::text('. Select each schedule independently. Coincident times create one complete Checkpoint with all matching retention labels. Unchanged content is still copied independently.')).'</p>';
+        if(!array_key_exists('gfs',$c)&&!empty($c['checkpoint_interval_days']))echo '<p>'.esc_html(AdminText::text('Legacy interval remains active until these settings are saved. Select GFS schedules before saving to replace it.')).'</p>';
+        foreach(['weekly'=>AdminText::text('Weekly'),'monthly'=>AdminText::text('Monthly'),'yearly'=>AdminText::text('Yearly')] as $kind=>$label){
             $r=$c['gfs'][$kind]??[];$name='gfs['.$kind.']';
-            echo '<fieldset><legend>'.esc_html($label).'</legend><label><input type="checkbox" name="'.esc_attr($name).'[enabled]" '.checked(!empty($r['enabled']),true,false).'>Enabled</label> ';
+            echo '<fieldset><legend>'.esc_html($label).'</legend><label><input type="checkbox" name="'.esc_attr($name).'[enabled]" '.checked(!empty($r['enabled']),true,false).'>'.esc_html(AdminText::text('Enabled')).'</label> ';
             if($kind==='weekly'){
-                echo '<label>Weekday <select name="'.esc_attr($name).'[weekday]">';
-                foreach(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $i=>$day)echo '<option value="'.(int)$i.'" '.selected($r['weekday']??0,$i,false).'>'.esc_html($day).'</option>';
+                echo '<label>'.esc_html(AdminText::text('Weekday')).' <select name="'.esc_attr($name).'[weekday]">';
+                foreach([AdminText::text('Sunday'),AdminText::text('Monday'),AdminText::text('Tuesday'),AdminText::text('Wednesday'),AdminText::text('Thursday'),AdminText::text('Friday'),AdminText::text('Saturday')] as $i=>$day)echo '<option value="'.(int)$i.'" '.selected($r['weekday']??0,$i,false).'>'.esc_html($day).'</option>';
                 echo '</select></label> ';
             }else{
-                if($kind==='yearly')echo '<label>Month <input type="number" min="1" max="12" name="'.esc_attr($name).'[month]" value="'.(int)($r['month']??1).'"></label> ';
-                echo '<label>Day'.($kind==='monthly'?' (0 = month end)':'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.esc_attr($name).'[day]" value="'.(int)($r['day']??1).'"></label> ';
+                if($kind==='yearly')echo '<label>'.esc_html(AdminText::text('Month')).' <input type="number" min="1" max="12" name="'.esc_attr($name).'[month]" value="'.(int)($r['month']??1).'"></label> ';
+                echo '<label>'.esc_html(AdminText::text('Day')).''.($kind==='monthly'?AdminText::text(' (0 = month end)'):'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.esc_attr($name).'[day]" value="'.(int)($r['day']??1).'"></label> ';
             }
-            echo '<label>Start time <input type="time" name="'.esc_attr($name).'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>Keep for <input type="number" min="1" max="100" name="'.esc_attr($name).'[keep]" value="'.(int)($r['keep']??1).'"> '.esc_html(['weekly'=>'weeks','monthly'=>'calendar months','yearly'=>'calendar years'][$kind]).'</label></fieldset>';
+            echo '<label>'.esc_html(AdminText::text('Start time')).' <input type="time" name="'.esc_attr($name).'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>'.esc_html(AdminText::text('Keep for')).' <input type="number" min="1" max="100" name="'.esc_attr($name).'[keep]" value="'.(int)($r['keep']??1).'"> '.esc_html(['weekly'=>AdminText::text('weeks'),'monthly'=>AdminText::text('calendar months'),'yearly'=>AdminText::text('calendar years')][$kind]).'</label></fieldset>';
         }
-        echo '<p>Missing calendar dates use month end. Retention starts at actual confirmation; an older point keeps its recorded labels when settings change. WP-Cron needs traffic or an existing server cron runner. Late runs show their planned time separately and do not invent missed historical snapshots. Optional S3 deletion protection is separate.</p>';
+        echo '<p>'.esc_html(AdminText::text('Missing calendar dates use month end. Retention starts at actual confirmation; an older point keeps its recorded labels when settings change. WP-Cron needs traffic or an existing server cron runner. Late runs show their planned time separately and do not invent missed historical snapshots. Optional S3 deletion protection is separate.')).'</p>';
     }
     /** The temporary original is durable before WordPress moves/registers an image. */
     public function protectUpload(array $file): array {
@@ -200,21 +201,21 @@ final class Plugin
         }finally{$this->release();}
     }
     public static function renderSiteCleanup(array $plan): void {
-        echo '<h2>Complete-site Checkpoint retention preview</h2><p>The retention window applies to recovery points, not the age of articles or images. Keeps the latest Checkpoint, the baseline at the window boundary, and required history and resources. Unknown resources are retained. S3-locked resources wait until protection expires. Preview itself does not delete anything.</p>';
+        echo '<h2>'.esc_html(AdminText::text('Complete-site Checkpoint retention preview')).'</h2><p>'.esc_html(AdminText::text('The retention window applies to recovery points, not the age of articles or images. Keeps the latest Checkpoint, the baseline at the window boundary, and required history and resources. Unknown resources are retained. S3-locked resources wait until protection expires. Preview itself does not delete anything.')).'</p>';
         if(!$plan)return;
-        if(isset($plan['error']))echo '<p><strong>Candidates not calculated:</strong> '.esc_html($plan['error']).'</p>';
+        if(isset($plan['error']))echo '<p><strong>'.esc_html(AdminText::text('Candidates not calculated:')).'</strong> '.esc_html($plan['error']).'</p>';
         else {
-            echo '<p>'.esc_html('History '.$plan['from'].' → '.$plan['through'].'; subsequent records: '.$plan['tail_count'].'; cutoff: '.$plan['cutoff']).'</p>';
+            echo '<p>'.esc_html(AdminText::text('History ').$plan['from'].' → '.$plan['through'].AdminText::text('; subsequent records: ').$plan['tail_count'].AdminText::text('; cutoff: ').$plan['cutoff']).'</p>';
             echo '<p>'.esc_html($plan['limitation']).'</p>';
             echo '<p>'.esc_html($plan['inventory_note']).'</p>';
-            echo '<details><summary>Retained Checkpoints ('.count($plan['keep']).')</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan['keep'])).'</pre></details>';
-            foreach(['retained'=>'Assets to retain','candidates'=>'Deletion candidates (not executed)','blocked'=>'Deletion not established / retained'] as $key=>$label){
-                echo '<details><summary>'.esc_html($label).' ('.count($plan[$key]).')</summary><table class="widefat" style="table-layout:fixed;overflow-wrap:anywhere"><thead><tr><th>S3 key / version</th><th>Reason</th></tr></thead><tbody>';
+            echo '<details><summary>'.esc_html(AdminText::text('Retained Checkpoints (')).''.count($plan['keep']).')</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan['keep'])).'</pre></details>';
+            foreach(['retained'=>AdminText::text('Assets to retain'),'candidates'=>AdminText::text('Deletion candidates (not executed)'),'blocked'=>AdminText::text('Deletion not established / retained')] as $key=>$label){
+                echo '<details><summary>'.esc_html($label).' ('.count($plan[$key]).')</summary><table class="widefat" style="table-layout:fixed;overflow-wrap:anywhere"><thead><tr><th>'.esc_html(AdminText::text('S3 key / version')).'</th><th>'.esc_html(AdminText::text('Reason')).'</th></tr></thead><tbody>';
                 foreach($plan[$key] as $v)echo '<tr><td>'.esc_html($v['key']).'<br>'.esc_html($v['version']).'</td><td>'.esc_html($v['reason']).'</td></tr>';
                 echo '</tbody></table></details>';
             }
         }
-        echo '<details><summary>Detailed retention preview JSON</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan)).'</pre></details>';
+        echo '<details><summary>'.esc_html(AdminText::text('Detailed retention preview JSON')).'</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'.esc_html(Store::json($plan)).'</pre></details>';
     }
     public function previewCleanup(): array {
         try {
@@ -461,12 +462,12 @@ final class Plugin
     }
     public static function renderCaptureFailure(array $error): void {
         if(!$error)return;
-        echo '<div class="notice notice-error"><p><strong>Last recorded capture / queue-registration failure</strong> — '.esc_html((string)($error['at']??'')).' / '.esc_html((string)($error['context']??'')).': '.esc_html((string)($error['reason']??'')).'</p><p>This is a diagnostic, not a saved recovery payload or proof of a currently pending operation. Queue count zero does not resolve it. Inspect the affected operation and S3 history. Resume history applies only to existing queued payloads; otherwise correct the cause and save the affected data again. Later unrelated saves do not clear this historical notice. If the database cannot record the error, this notice may be unavailable.</p></div>';
+        echo '<div class="notice notice-error"><p><strong>'.esc_html(AdminText::text('Last recorded capture / queue-registration failure')).'</strong> — '.esc_html((string)($error['at']??'')).' / '.esc_html((string)($error['context']??'')).': '.esc_html((string)($error['reason']??'')).'</p><p>'.esc_html(AdminText::text('This is a diagnostic, not a saved recovery payload or proof of a currently pending operation. Queue count zero does not resolve it. Inspect the affected operation and S3 history. Resume history applies only to existing queued payloads; otherwise correct the cause and save the affected data again. Later unrelated saves do not clear this historical notice. If the database cannot record the error, this notice may be unavailable.')).'</p></div>';
     }
     public function notice(): void {
         if (!current_user_can('manage_options')) return;
         self::renderCaptureFailure((array)get_option(SaveFailure::OPTION,[]));
-        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. <a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">Resume history</a>.</p></div>';
+        if (get_option(self::PENDING)) echo '<div class="notice notice-warning"><p>'.esc_html(AdminText::text('Resilience: WordPress saved, S3 formal history pending. This operation is not yet included in recovery. ')).'<a href="'.esc_url(admin_url('tools.php?page=owr-m1')).'">'.esc_html(AdminText::text('Resume history')).'</a>.</p></div>';
     }
     public function action(): void {
         if (!current_user_can('manage_options')) wp_die('Forbidden',403);
@@ -581,164 +582,165 @@ final class Plugin
     }
     /** Render only recorded facts; a failed/latest attempt never inherits old success counts. */
     public static function renderSiteResult(array $attempt,array $success,array $snapshot,array $snapshots=[]): void {
-        echo '<h3>Last site-wide recovery result</h3>';
+        echo '<h3>'.esc_html(AdminText::text('Last site-wide recovery result')).'</h3>';
         $r=$attempt?:$success;
-        if(!$r){echo '<p>No site-wide recovery recorded.</p>';}
+        if(!$r){echo '<p>'.esc_html(AdminText::text('No site-wide recovery recorded.')).'</p>';}
         else {
             $status=$attempt?($attempt['status']??'unknown'):(isset($success['at'],$success['posts'])?'success':'unknown');
-            $labels=['success'=>'Success','failed'=>'Failed','running'=>'Started — completion not confirmed','unknown'=>'Status unknown'];
+            $labels=['success'=>AdminText::text('Success'),'failed'=>AdminText::text('Failed'),'running'=>AdminText::text('Started — completion not confirmed'),'unknown'=>AdminText::text('Status unknown')];
             echo '<p role="status"><strong>'.esc_html($labels[$status]??$labels['unknown']).'</strong></p>';
-            $rows=['Recorded at (UTC)'=>$r['at']??'Not recorded','Checkpoint / snapshot key'=>$r['manifest']['key']??'Not recorded','S3 Version ID'=>$r['manifest']['version']??'Not recorded'];
+            $rows=[AdminText::text('Recorded at (UTC)')=>$r['at']??AdminText::text('Not recorded'),AdminText::text('Checkpoint / snapshot key')=>$r['manifest']['key']??AdminText::text('Not recorded'),AdminText::text('S3 Version ID')=>$r['manifest']['version']??AdminText::text('Not recorded')];
             $base=isset($r['checkpoint_through'])?(int)$r['checkpoint_through']:null;
-            foreach($snapshots as $item)if(($item['ref']??null)===($r['manifest']??null)){$base=(int)$item['through'];$rows['Recovery point type']=$item['origin'];break;}
-            $rows['Checkpoint includes history through']=$base===null?'Not available':(string)$base;
-            $rows['Requested formal history end']=isset($r['requested_through'])?(string)$r['requested_through']:'Not recorded (older result)';
+            foreach($snapshots as $item)if(($item['ref']??null)===($r['manifest']??null)){$base=(int)$item['through'];$rows[AdminText::text('Recovery point type')]=$item['origin'];break;}
+            $rows[AdminText::text('Checkpoint includes history through')]=$base===null?AdminText::text('Not available'):(string)$base;
+            $rows[AdminText::text('Requested formal history end')]=isset($r['requested_through'])?(string)$r['requested_through']:AdminText::text('Not recorded (older result)');
             if($status==='success'){
                 $end=isset($r['through'])?(int)$r['through']:null;
-                $rows['Applied formal history through']=$end===null?'Not recorded':(string)$end;
-                $rows['Subsequent history records']=$base===null||$end===null||$end<$base?'Not available':($end===$base?'None':($base+1).'–'.$end.' ('.($end-$base).' records)');
-                $rows['Restored post records (all post types)']=isset($r['posts'])?(string)$r['posts']:'Not recorded';
-                $rows['Files written / replaced']=isset($r['files'])?(string)$r['files']:'Not recorded';
+                $rows[AdminText::text('Applied formal history through')]=$end===null?AdminText::text('Not recorded'):(string)$end;
+                $rows[AdminText::text('Subsequent history records')]=$base===null||$end===null||$end<$base?AdminText::text('Not available'):($end===$base?AdminText::text('None'):($base+1).'–'.$end.' ('.($end-$base).AdminText::text(' records)'));
+                $rows[AdminText::text('Restored post records (all post types)')]=isset($r['posts'])?(string)$r['posts']:AdminText::text('Not recorded');
+                $rows[AdminText::text('Files written / replaced')]=isset($r['files'])?(string)$r['files']:AdminText::text('Not recorded');
             }else{
-                $rows['Applied history / recovery counts']='Not confirmed; do not infer zero changes or completed rollback.';
-                if(isset($r['error']))$rows['Failure reason']=$r['error'];
+                $rows[AdminText::text('Applied history / recovery counts')]=AdminText::text('Not confirmed; do not infer zero changes or completed rollback.');
+                if(isset($r['error']))$rows[AdminText::text('Failure reason')]=$r['error'];
             }
             echo '<table class="widefat striped"><tbody>';
             foreach($rows as $label=>$value)echo '<tr><th scope="row">'.esc_html($label).'</th><td style="overflow-wrap:anywhere">'.esc_html($value).'</td></tr>';
-            echo '</tbody></table><p>Post records include pages, attachments, revisions and plugin post types; this is not a count of public articles. Matching existing files are reused, so zero files written does not mean no files were recovered. History records are not unique user edits.</p>';
+            echo '</tbody></table><p>'.esc_html(AdminText::text('Post records include pages, attachments, revisions and plugin post types; this is not a count of public articles. Matching existing files are reused, so zero files written does not mean no files were recovered. History records are not unique user edits.')).'</p>';
         }
         if(($attempt['status']??(isset($success['at'])?'success':''))==='success' && isset($r['application_report'])){
             $report=$r['application_report'];
-            echo '<h4>Preserved in S3 — not automatically applied</h4><p>'.esc_html((string)$report['count']).' item(s). Rules: '.esc_html($report['rules']).'. Original resources remain unchanged; omission is not data deletion.</p><ul>';
+            echo '<h4>'.esc_html(AdminText::text('Preserved in S3 — not automatically applied')).'</h4><p>'.esc_html((string)$report['count']).AdminText::text(' item(s). Rules: ').esc_html($report['rules']).''.esc_html(AdminText::text('. Original resources remain unchanged; omission is not data deletion.')).'</p><ul>';
             foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html($item['reason']).'</li>';
             echo '</ul>';
         }
-        echo '<details><summary>Detailed JSON — latest attempt, last successful recovery and snapshot</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto">'.esc_html(Store::json(['latest_attempt'=>$attempt,'last_successful_recovery'=>$success,'last_snapshot'=>$snapshot])).'</pre></details>';
+        echo '<details><summary>'.esc_html(AdminText::text('Detailed JSON — latest attempt, last successful recovery and snapshot')).'</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto">'.esc_html(Store::json(['latest_attempt'=>$attempt,'last_successful_recovery'=>$success,'last_snapshot'=>$snapshot])).'</pre></details>';
     }
     private function form(string $operation): void {
-        echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
+        echo '<form id="owr-action-'.esc_attr($operation).'" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="owr_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('owr_m1');
     }
     /** Read-only summary: local pending data is never treated as S3 confirmation. */
     public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect, array $captureError=[]): void {
-        echo '<h2>Save protection status</h2><p>Protection setting: '.($protect?'Enabled':'Disabled').'. This setting alone does not prove that all site changes are protected.</p>';
-        if($history===null)echo '<p role="alert">S3 formal history could not be read. Last confirmation is unknown: '.esc_html($readError).'</p>';
-        elseif(!$history)echo '<p>No confirmed formal history in this prefix. This does not mean no snapshot exists.</p>';
+        echo '<h2>'.esc_html(AdminText::text('Save protection status')).'</h2><p>'.esc_html(AdminText::text('Protection setting:')).' '.($protect?AdminText::text('Enabled'):AdminText::text('Disabled')).''.esc_html(AdminText::text('. This setting alone does not prove that all site changes are protected.')).'</p>';
+        if($history===null)echo '<p role="alert">'.esc_html(AdminText::text('S3 formal history could not be read. Last confirmation is unknown:')).' '.esc_html($readError).'</p>';
+        elseif(!$history)echo '<p>'.esc_html(AdminText::text('No confirmed formal history in this prefix. This does not mean no snapshot exists.')).'</p>';
         else {
             $last=$history[count($history)-1];
             echo '<table class="widefat striped"><tbody>';
-            foreach(['Last confirmed sequence'=>$last['sequence']??'Unknown','Confirmed at (UTC)'=>$last['confirmed_at']??'Not recorded','Asset'=>$last['original']['asset']??'Not recorded','Title'=>$last['attributes']['title']??'Not recorded','Recorded state'=>$last['attributes']['status']??'Not recorded'] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
+            foreach([AdminText::text('Last confirmed sequence')=>$last['sequence']??AdminText::text('Unknown'),AdminText::text('Confirmed at (UTC)')=>$last['confirmed_at']??AdminText::text('Not recorded'),AdminText::text('Asset')=>$last['original']['asset']??AdminText::text('Not recorded'),AdminText::text('Title')=>$last['attributes']['title']??AdminText::text('Not recorded'),AdminText::text('Recorded state')=>$last['attributes']['status']??AdminText::text('Not recorded')] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
             echo '</tbody></table>';
         }
-        echo '<p>Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.</p>';
+        echo '<p>'.esc_html(AdminText::text('Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.')).'</p>';
         $details=0;foreach($queue as $entry)if(($entry['attributes']['post_type']??$entry['record']['attributes']['post_type']??'')==='owr_native')$details++;
-        echo '<p>Pending article body: '.($pending?1:0).'; pending article details (images/categories/tags/deletion): '.(int)$details.'; other shared operations: '.(count($queue)-$details).'. Body confirmation does not confirm the entire editing session or its related operations.</p>';
+        echo '<p>'.esc_html(AdminText::text('Pending article body:')).' '.($pending?1:0).AdminText::text('; pending article details (images/categories/tags/deletion): ').(int)$details.AdminText::text('; other shared operations: ').(count($queue)-$details).''.esc_html(AdminText::text('. Body confirmation does not confirm the entire editing session or its related operations.')).'</p>';
         self::renderCaptureFailure($captureError);
         $count=($pending?1:0)+count($queue);
-        echo '<p>Locally pending operations: '.(int)$count.'</p>';
+        echo '<p>'.esc_html(AdminText::text('Locally pending operations:')).' '.(int)$count.'</p>';
         if($count){
-            echo '<p role="alert"><strong>Resume history required.</strong> These operations are not confirmed for recovery. Resume uses the existing saved payload and article-state checks; do not create a replacement operation to bypass a failure.</p><table class="widefat striped"><tr><th>Operation / asset</th><th>Type</th><th>Title / state</th></tr>';
+            echo '<p role="alert"><strong>'.esc_html(AdminText::text('Resume history required.')).'</strong> '.esc_html(AdminText::text('These operations are not confirmed for recovery. Resume uses the existing saved payload and article-state checks; do not create a replacement operation to bypass a failure.')).'</p><table class="widefat striped"><tr><th>'.esc_html(AdminText::text('Operation / asset')).'</th><th>'.esc_html(AdminText::text('Type')).'</th><th>'.esc_html(AdminText::text('Title / state')).'</th></tr>';
             $entries=$queue;if($pending)$entries=['article'=>$pending['record']??[]]+$entries;
-            foreach($entries as $key=>$entry){$a=$entry['attributes']??[];$o=$entry['original']??[];echo '<tr><td>'.esc_html((string)($entry['operation']??$o['operation']??$key)).' / '.esc_html((string)($entry['asset']??$o['asset']??'Not recorded')).'</td><td>'.esc_html((string)($a['post_type']??'Not recorded')).'</td><td>'.esc_html((string)($a['title']??'Not recorded')).' / '.esc_html((string)($a['status']??'Not recorded')).'</td></tr>';}
+            foreach($entries as $key=>$entry){$a=$entry['attributes']??[];$o=$entry['original']??[];echo '<tr><td>'.esc_html((string)($entry['operation']??$o['operation']??$key)).' / '.esc_html((string)($entry['asset']??$o['asset']??AdminText::text('Not recorded'))).'</td><td>'.esc_html((string)($a['post_type']??AdminText::text('Not recorded'))).'</td><td>'.esc_html((string)($a['title']??AdminText::text('Not recorded'))).' / '.esc_html((string)($a['status']??AdminText::text('Not recorded'))).'</td></tr>';}
             echo '</table>';
-        }else echo '<p>No locally pending operations. This is not a guarantee of unsupported changes or operations lost before local capture.</p>';
-        foreach(['Last recorded article/image save notice'=>$notice,'Shared adapter queue: last recorded error'=>$queueError] as $label=>$value)if($value!=='')echo '<p role="alert">'.esc_html($label).': '.esc_html($value).'</p>';
-        if($count && $notice==='' && $queueError==='')echo '<p>No failure reason was recorded; pending state still requires inspection and resume.</p>';
-        echo '<p>Recovery adopts only confirmed S3 history. If the source is lost before confirmation, omit that operation. An old error alone does not establish a current pending operation. Checkpoint, recovery and other administration errors are shown separately below.</p>';
+        }else echo '<p>'.esc_html(AdminText::text('No locally pending operations. This is not a guarantee of unsupported changes or operations lost before local capture.')).'</p>';
+        foreach([AdminText::text('Last recorded article/image save notice')=>$notice,AdminText::text('Shared adapter queue: last recorded error')=>$queueError] as $label=>$value)if($value!=='')echo '<p role="alert">'.esc_html($label).': '.esc_html($value).'</p>';
+        if($count && $notice==='' && $queueError==='')echo '<p>'.esc_html(AdminText::text('No failure reason was recorded; pending state still requires inspection and resume.')).'</p>';
+        echo '<p>'.esc_html(AdminText::text('Recovery adopts only confirmed S3 history. If the source is lost before confirmation, omit that operation. An old error alone does not establish a current pending operation. Checkpoint, recovery and other administration errors are shown separately below.')).'</p>';
     }
     private function setupSettings(): void {
-        echo '<h2 id="owr-storage">Storage and optional scheduling settings / 保存先の設定</h2>';
+        echo '<h2 id="owr-storage">'.esc_html(AdminText::text('Storage and optional scheduling settings')).'</h2>';
         $c=$this->config();$this->form('configure');
         echo '<p><label>'.esc_html(SetupReadiness::text('Use this site to: ','このサイトの用途：')).'<select name="setup_role"><option value="source" '.selected($c['setup_role']??'source','source',false).'>'.esc_html(SetupReadiness::text('Protect this site','このサイトを保護')).'</option><option value="recovery" '.selected($c['setup_role']??'source','recovery',false).'>'.esc_html(SetupReadiness::text('Recover another site','別サイトを復旧')).'</option></select></label></p>';
-        foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html($key).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
-        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>Protect supported operations (one writer per prefix)</label></p>';
+        foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html(SetupReadiness::text($key,['bucket'=>'バケット名（bucket）','region'=>'リージョン（region）','prefix'=>'サイト専用の保存先（prefix）','owner'=>'所有者のアカウントID（owner）'][$key])).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
+        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>'.esc_html(AdminText::text('Protect supported operations (one writer per prefix)')).'</label></p>';
         $terms='https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/terms-of-use'.(str_starts_with(determine_locale(),'ja')?'-ja':'').'.md';
         echo '<p><a href="'.esc_url($terms).'">'.esc_html(SetupReadiness::text('Terms of use and saved content','利用条件と保存対象')).'</a></p><p>'.esc_html(SetupReadiness::text('Supported site content is sent to your specified Amazon S3 storage. Your AWS contract and storage charges apply. Recovery reads from that storage.','保存対象のサイト情報を、指定したAmazon S3へ送信します。AWSの契約・利用料金は利用者の負担です。復旧時は同じ保存先から読み取ります。')).'</p>';
         echo '<p><label><input type="checkbox" name="confirm_terms" required>'.esc_html(SetupReadiness::text('I have reviewed the terms and saved content, and approve access to the specified Amazon S3 storage for saving or recovery.','利用条件と保存対象を確認し、保存・復旧のために指定したAmazon S3へ接続することを了承しました。')).'</label></p>';
+        echo '<details><summary>'.esc_html(SetupReadiness::text('Optional: schedules, retention and cleanup','任意：定期保存・保持期間・自動整理')).'</summary>';
         self::renderGfsSettings($c);
-        echo '<p><label>Optional S3 deletion protection in days (0 = do not request a lock) <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.</p>';
-        echo '<p><label>Detailed history recovery window in days (0 = latest Checkpoint and required tail) <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>Automatically clean expired versions after successful scheduled Checkpoint checks</label></p>';submit_button('Save settings');echo '</form>';
+        echo '<p><label>'.esc_html(AdminText::text('Optional S3 deletion protection in days (0 = do not request a lock)')).' <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>'.esc_html(AdminText::text('Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.')).'</p>';
+        echo '<p><label>'.esc_html(AdminText::text('Detailed history recovery window in days (0 = latest Checkpoint and required tail)')).' <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>'.esc_html(AdminText::text('Automatically clean expired versions after successful scheduled Checkpoint checks')).'</label></p>';echo '</details>';submit_button(AdminText::text('Save settings'));echo '</form>';
         $this->form('setup_check');submit_button(SetupReadiness::text('Check storage','保存先を確認'));echo '</form>';
-        $check=(array)get_option('owr_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html($check['message']??'').'</p>';
+        $check=(array)get_option('owr_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html(AdminText::message((string)($check['message']??''))).'</p>';
     }
     public function page(): void {
         if (!current_user_can('manage_options')) return;
-        echo '<div class="wrap"><h1>Resilience — Site recovery</h1><p>Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.</p>';
+        echo '<div class="wrap"><h1>'.esc_html(AdminText::text('Resilience — Site recovery')).'</h1><p>'.esc_html(AdminText::text('Normal Markdown, Page and Post editing → complete S3 originals → formal history → WordPress reconstruction.')).'</p>';
         SetupReadiness::render($this->config());
         $this->setupSettings();
-        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';
+        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         if(!SetupReadiness::accepted($this->config())){echo '</div>';return;}
-        echo '<h2>Recovery boundary</h2><p>Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.</p><p>Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.</p>';
+        echo '<h2>'.esc_html(AdminText::text('Recovery boundary')).'</h2><p>'.esc_html(AdminText::text('Recovery uses a trusted snapshot / Checkpoint and only operations confirmed in S3 formal history. An original saved to S3 or a successful WordPress write alone does not confirm an operation. If history remains pending when the source is lost, omit that operation: an unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version. Do not infer success from prepared originals.')).'</p><p>'.esc_html(AdminText::text('Prepare the destination WordPress, required plugins and S3 access as administrator tasks. Recovery runs when requested; continuous replication is not required. Recorded publication status is preserved. Network exposure and DNS remain the administrator’s responsibility.')).'</p>';
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
         self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('owr_m1_comment_pending',[]),(string)get_option('owr_m1_notice',''),(string)get_option('owr_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
-        if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button('Resume history');echo '</form>';}
-        if (get_option(self::PENDING)) echo '<p role="alert"><strong>WordPress applied; S3 formal history pending.</strong> This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.</p>';
-        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html($error).'</p>';
-        echo '<h2>Site-wide recovery — primary workflow</h2><p>Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.</p><p>Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.</p>';
-        echo '<p>TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.</p>';
-        echo '<p>WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.</p>';
-        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>I trust the whole current site and have paused editing.</label>';submit_button('Create complete initial snapshot');echo '</form>'; }
+        if(get_option(self::PENDING)||get_option('owr_m1_comment_pending')){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if (get_option(self::PENDING)) echo '<p role="alert"><strong>'.esc_html(AdminText::text('WordPress applied; S3 formal history pending.')).'</strong> '.esc_html(AdminText::text('This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.')).'</p>';
+        if ($error=get_option('owr_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        echo '<h2>'.esc_html(AdminText::text('Site-wide recovery — primary workflow')).'</h2><p>'.esc_html(AdminText::text('Select a complete site snapshot / Checkpoint; recovery includes its subsequent formal history. This replaces destination content, including supported articles, media and site relationships, while preserving destination administrator credentials and infrastructure. Initial capture requires a trusted source and paused editing.')).'</p><p>'.esc_html(AdminText::text('Later Checkpoints use the S3 baseline and confirmed Markdown, Page and Post changes, including supported referenced images and trash/untrash operations. Later theme, menu, template and arbitrary plugin changes are not captured by these save adapters; they require a new trusted baseline. Mail transport and administrative plugin settings are not copied.')).'</p>';
+        echo '<p>'.esc_html(AdminText::text('TablePress: include the active plugin in an initial snapshot. Complete-site recovery preserves table IDs, cells, display settings and confirmed add/update/delete operations. Pending S3 history is not a recovery candidate; use Resume history after a storage failure.')).'</p>';
+        echo '<p>'.esc_html(AdminText::text('WP-Members core subscribers: create an initial snapshot with WP-Members active. Complete-site recovery restores confirmed member profiles, password hashes and restrictions; it does not overwrite unrelated destination accounts or send mail. Privileged/custom roles and paid extensions are excluded.')).'</p>';
+        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>'.esc_html(AdminText::text('I trust the whole current site and have paused editing.')).'</label>';submit_button(AdminText::text('Create complete initial snapshot'));echo '</form>'; }
         try{
             $siteSnapshots=$this->store()->siteSnapshots();
-            $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]='Checkpoint boundary';
+            $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]=AdminText::text('Checkpoint boundary');
             if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.($row['attributes']['title']??$row['original']['asset']??'').' / '.($row['attributes']['status']??'');
             ksort($ends);
-            foreach(['whole_checkpoint'=>'Create complete Checkpoint','whole_restore'=>'Restore complete site'] as $op=>$label){
-                $this->form($op);echo '<label>Checkpoint <select name="site_ref" required>';
-                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).' / history '.$item['through'].' / '.$item['ref']['key']).'</option>';
+            foreach(['whole_checkpoint'=>AdminText::text('Create complete Checkpoint'),'whole_restore'=>AdminText::text('Restore complete site')] as $op=>$label){
+                $this->form($op);echo '<label>'.esc_html(AdminText::text('Checkpoint')).' <select name="site_ref" required>';
+                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).AdminText::text(' / history ').$item['through'].' / '.$item['ref']['key']).'</option>';
                 echo '</select></label>';
                 if($op==='whole_restore'){
-                    echo '<label>Formal history end <select name="site_through" required>';
+                    echo '<label>'.esc_html(AdminText::text('Formal history end')).' <select name="site_through" required>';
                     foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===array_key_last($ends)?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
-                    echo '</select></label><p>Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.</p><label><input type="checkbox" name="replace_site" required>Replace all destination content with this site (a private local rollback copy is retained).</label>';
+                    echo '</select></label><p>'.esc_html(AdminText::text('Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.')).'</p><label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace all destination content with this site (a private local rollback copy is retained).')).'</label>';
                 }
                 submit_button($label);echo '</form>';
             }
         }catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
         self::renderSiteResult((array)get_option('owr_site_restore_attempt',[]),(array)get_option('owr_site_restore_result',[]),(array)get_option('owr_site_snapshot_result',[]),$siteSnapshots??[]);
         $next=wp_next_scheduled('owr_m1_checkpoint');
-        echo '<p>Next complete-site Checkpoint (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
+        echo '<p>'.esc_html(AdminText::text('Next complete-site Checkpoint (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
         self::renderSiteCleanup((array)get_option('owr_site_cleanup_preview',[]));
-        $this->form('site_cleanup_preview');submit_button('Preview complete-site retention');echo '</form>';
+        $this->form('site_cleanup_preview');submit_button(AdminText::text('Preview complete-site retention'));echo '</form>';
         $sitePlan=(array)get_option('owr_site_cleanup_preview',[]);
         if(!empty($sitePlan['hash'])&&!empty($sitePlan['inventory_complete'])&&!empty($sitePlan['candidates'])){
             $this->form('site_cleanup_execute');
-            echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($sitePlan['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">Delete only the previewed expired Checkpoints and resources, preserving retained recovery points</label>';
-            submit_button('Delete expired complete-site resources');echo '</form>';
+            echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($sitePlan['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">'.esc_html(AdminText::text('Delete only the previewed expired Checkpoints and resources, preserving retained recovery points')).'</label>';
+            submit_button(AdminText::text('Delete expired complete-site resources'));echo '</form>';
         }
         echo '<pre>'.esc_html(Store::json((array)get_option('owr_site_cleanup_status',[]))).'</pre>';
 
-        echo '<h2>Legacy asset-only cleanup — not complete-site cleanup</h2><p>This separate earlier path uses asset snapshots. It does not implement complete-site retention. Do not use it to clean a complete-site stream.</p>';
-        $this->form('cleanup_preview');submit_button('Preview expired versions');echo '</form>';
+        echo '<h2>'.esc_html(AdminText::text('Legacy asset-only cleanup — not complete-site cleanup')).'</h2><p>'.esc_html(AdminText::text('This separate earlier path uses asset snapshots. It does not implement complete-site retention. Do not use it to clean a complete-site stream.')).'</p>';
+        $this->form('cleanup_preview');submit_button(AdminText::text('Preview expired versions'));echo '</form>';
         $preview=(array)get_option('owr_m1_cleanup_preview',[]);
         if ($preview) {
             echo '<pre>'.esc_html(Store::json($preview)).'</pre>';
-            $this->form('cleanup_execute');echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($preview['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">Permanently delete only the previewed eligible versions</label>';submit_button('Delete previewed versions');echo '</form>';
+            $this->form('cleanup_execute');echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($preview['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">'.esc_html(AdminText::text('Permanently delete only the previewed eligible versions')).'</label>';submit_button(AdminText::text('Delete previewed versions'));echo '</form>';
         }
         echo '<pre>'.esc_html(Store::json((array)get_option('owr_m1_cleanup_status',[]))).'</pre>';
-        echo '<details><summary>Supplementary asset snapshots and recovery — not site-wide recovery</summary><p>This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.</p>';
-        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.</label></p>';submit_button('Create initial snapshot');echo '</form>'; }
+        echo '<details><summary>'.esc_html(AdminText::text('Supplementary asset snapshots and recovery — not site-wide recovery')).'</summary><p>'.esc_html(AdminText::text('This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.')).'</p>';
+        if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">'.esc_html(AdminText::text('I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.')).'</label></p>';submit_button(AdminText::text('Create initial snapshot'));echo '</form>'; }
         $next=wp_next_scheduled('owr_m1_checkpoint');
-        echo '<p>Next scheduled check (UTC): '.esc_html($next?gmdate('c',$next):'Disabled').'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
-        $this->form('checkpoint');submit_button('Create Checkpoint now');echo '</form>';
+        echo '<p>'.esc_html(AdminText::text('Next scheduled check (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('owr_m1_checkpoint_status',[]))).'</pre>';
+        $this->form('checkpoint');submit_button(AdminText::text('Create Checkpoint now'));echo '</form>';
         try {
             $keys=$this->store()->checkpoints();$this->form('restore_site');
-            echo '<select name="checkpoint"><option value="">All formal history (no Checkpoint)</option>';
+            echo '<select name="checkpoint"><option value="">'.esc_html(AdminText::text('All formal history (no Checkpoint)')).'</option>';
             foreach (array_reverse($keys) as $i=>$key) echo '<option value="'.esc_attr($key).'" '.selected($i,0,false).'>'.esc_html($key).'</option>';
-            echo '</select>';submit_button('Restore assets from Checkpoint + later history');echo '</form>';
+            echo '</select>';submit_button(AdminText::text('Restore assets from Checkpoint + later history'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
-        if (get_option(self::PENDING)||get_option('owr_m1_comment_pending')) {$this->form('resume');submit_button('Resume history');echo '</form>';}
-        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.</p>';
-        if($error=get_option('owr_m1_comment_error'))echo '<p role="alert">'.esc_html($error).'</p>';
-        echo '<p>Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.</p>';
-        echo '<h2>Contact Form 7 and Flamingo</h2><p>Completed form definitions and received Flamingo messages use independent JSON originals and the shared pending-history queue. Use complete site recovery with the recorded versions of both plugins installed. Message storage and mail delivery are separate; recovery imports records without sending mail. Received-message edits, spam/ham, trash/restore and permanent deletion, and form deletion are recorded. Received-message changes are captured at request completion. Attachments and address-book entries are outside this adapter.</p>';
-        echo '<h2>Confirmed formal history / Individual recovery</h2><p>This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.</p>';
+        if (get_option(self::PENDING)||get_option('owr_m1_comment_pending')) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(get_option('owr_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
+        if($error=get_option('owr_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
+        echo '<p>'.esc_html(AdminText::text('Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.')).'</p>';
+        echo '<h2>'.esc_html(AdminText::text('Contact Form 7 and Flamingo')).'</h2><p>'.esc_html(AdminText::text('Completed form definitions and received Flamingo messages use independent JSON originals and the shared pending-history queue. Use complete site recovery with the recorded versions of both plugins installed. Message storage and mail delivery are separate; recovery imports records without sending mail. Received-message edits, spam/ham, trash/restore and permanent deletion, and form deletion are recorded. Received-message changes are captured at request completion. Attachments and address-book entries are outside this adapter.')).'</p>';
+        echo '<h2>'.esc_html(AdminText::text('Confirmed formal history / Individual recovery')).'</h2><p>'.esc_html(AdminText::text('This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.')).'</p>';
         try {
-            if($history===null)throw new \RuntimeException($historyReadError);$this->form('restore');echo '<table class="widefat"><tr><th>Select</th><th>Order</th><th>Document</th><th>Status</th><th>Raw S3 original</th></tr>';
+            if($history===null)throw new \RuntimeException($historyReadError);$this->form('restore');echo '<table class="widefat"><tr><th>'.esc_html(AdminText::text('Select')).'</th><th>'.esc_html(AdminText::text('Order')).'</th><th>'.esc_html(AdminText::text('Document')).'</th><th>'.esc_html(AdminText::text('Status')).'</th><th>'.esc_html(AdminText::text('Raw S3 original')).'</th></tr>';
             foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html($row['attributes']['title']).'</td><td>'.esc_html($row['attributes']['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
-            echo '</table>';submit_button('Restore selected assets (text and attributes)');echo '</form>';
+            echo '</table>';submit_button(AdminText::text('Restore selected assets (text and attributes)'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
-        echo '<h2>Last asset recovery result</h2><pre>'.esc_html(Store::json((array)get_option('owr_m1_restore_result',[]))).'</pre></div>';
+        echo '<h2>'.esc_html(AdminText::text('Last asset recovery result')).'</h2><pre>'.esc_html(Store::json((array)get_option('owr_m1_restore_result',[]))).'</pre></div>';
     }
 }

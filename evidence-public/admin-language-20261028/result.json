@@ -1,0 +1,12 @@
+{
+  "state": "PASS",
+  "scope": "Isolated WordPress / MariaDB / local S3 simulation",
+  "checks": [
+    "Japanese setup via real browser: configure, consent, storage check, initial capture, enable protection",
+    "Japanese and English buttons, labels, schedule details, recovery and status explanations",
+    "English environment contains no Japanese interface text",
+    "Same form field names and operation values in both languages",
+    "User titles remain untranslated and HTML-escaped",
+    "Protection enabled and subsequent post confirmed in history"
+  ]
+}

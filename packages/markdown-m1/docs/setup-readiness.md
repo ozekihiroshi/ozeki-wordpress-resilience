@@ -4,6 +4,8 @@
 
 This screen is in the GitHub development version. It is **not included in the submitted 0.3.1 rc.2 ZIP**. The submitted ZIP is unchanged.
 
+The screen follows the WordPress admin language: Japanese for Japanese locales, English otherwise. Expand **Optional: schedules, retention and cleanup** when needed.
+
 ## Start protection for the first time
 
 1. Open **Tools → Resilience** and inspect **Preparation for protection** at the top. Each **Action needed** row names the missing condition, the person responsible and the next action.
