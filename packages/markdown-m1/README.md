@@ -85,7 +85,11 @@ The [user guide](docs/user-guide.md) covers schedules, retention and cleanup. Se
 - [External-service and privacy disclosure](readme.txt)
 - [Candidate checks and build instructions](docs/wordpress-org-candidate.md)
 
-[Report an issue](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues) with the exact ZIP/hash, operation, error and runtime versions. Remove credentials and private content. Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
+**Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
+
+After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. Ozeki Resilience is currently awaiting review. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
+
+Existing verification records describe their specific builds and environments; they are linked from the candidate record, not additional installation requirements.
 
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
 

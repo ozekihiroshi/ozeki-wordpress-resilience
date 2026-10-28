@@ -85,7 +85,11 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 - [外部送信とプライバシー](readme.txt)
 - [申請候補の確認・構築手順](docs/wordpress-org-candidate.md)
 
-[Issue](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)にはZIP名・ハッシュ・操作・エラー・環境の版を記載し、認証情報や私有データを除いてください。既存の検証記録は、それぞれの版と環境についての証拠であり、追加の導入条件ではありません。
+**不具合・使い方の質問は[GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)へ。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
+
+WordPress.orgでの公開後は、プラグインページの **Support（サポート）** からも質問・不具合を受け付けます。現在は審査待ちです。修正作業はGitHub Issuesで管理し、両方に投稿する場合は既存の投稿へリンクしてください。公開審査のメールは、利用者向けの問い合わせとは別の連絡経路です。
+
+既存の検証記録は、それぞれの版と環境についての証拠であり、追加の導入条件ではありません。
 
 [ライセンス](LICENSE)。Ozeki Database Backup for S3とは独立した製品です。
 
