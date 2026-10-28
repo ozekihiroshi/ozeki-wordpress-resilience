@@ -1,27 +1,25 @@
-# WordPress.org candidate 0.3.1
+# WordPress.org candidate 0.3.2 (rc.1)
 
-The submission candidate is based on main commit `b2968c7fd0fa45bc77a0f82dbfda8c1cbc6628f1`. The earlier 0.2.0 submission candidate was based on the wrong product generation and is superseded. Its source/tag/artifacts remain historical; they are not this submission's evidence or runtime dependencies.
+This candidate adds setup readiness, explicit storage-access confirmation and Japanese/English administration screens to the previously submitted 0.3.1 product. It is prepared for updating the existing application and has not been sent. The submitted 0.3.1 rc.2 ZIP and tag remain unchanged.
 
-Public name: **Ozeki Resilience**. Directory: `ozeki-resilience`. Version: **0.3.1**. Contributor: **ozekihiroshi**. Main PHP filename and existing option/queue keys remain unchanged.
+Public name: **Ozeki Resilience**. Directory: `ozeki-resilience`. Version: **0.3.2**. Contributor: **ozekihiroshi**. Existing option and history keys are retained. No external runtime kit is required.
 
 ## Build
 
-From the repository root, install the dependencies locked in `packages/markdown-m1/composer.lock` into that package using Composer (`composer install --no-dev --prefer-dist --optimize-autoloader`). Then run:
+The product source is exclusively `packages/markdown-m1/`. Install the locked Composer dependencies (`composer install --no-dev --prefer-dist --optimize-autoloader`), then from the repository root:
 
 ```sh
-python3 packages/markdown-m1/tools/build.py packages/markdown-m1/vendor dist/ozeki-resilience-0.3.1.zip
+python3 packages/markdown-m1/tools/build.py packages/markdown-m1/vendor dist/ozeki-resilience-0.3.2.zip
 ```
 
-Use a new output filename. The WordPress.org build contains this package and its vendor libraries, not the legacy root plugin or Python/SSH tools. AWS SDK libraries and dependency licenses are included. This candidate reuses byte-identical vendor files from the checked-in recovery-readiness ZIP; no dependency upgrade is included.
+Use a new output filename. This candidate preserves the submitted rc.2 vendor bytes, without dependency upgrades. The published manifest records every product-file hash. The ZIP includes AWS SDK dependencies and licenses, not repository research tools.
 
-## Evidence boundaries
+## Candidate checks
 
-Existing behavior evidence is recorded in [recovery readiness](recovery-readiness.md), [optional Markdown verification](optional-markdown-verification.md), [Checkpoint verification](site-checkpoint-verification.md), and the linked per-feature records. These describe their frozen builds. Historical research goals and unperformed long-term trials are not new submission requirements.
-
-The submission preparation checks are limited to packaging, PHP syntax, Plugin Check, affected output, activation and preservation when changing plugin directory. Their final results and exact ZIP hash are recorded in the repository's `docs/releases/wordpress-org-submission.md` and release assets. They do not imply new AWS end-to-end acceptance or every plugin/version combination.
+See the repository's `docs/releases/wordpress-org-032-candidate.md` and release assets for the exact ZIP hash, official Plugin Check results and isolated installation/update checks. Existing recovery evidence remains in [recovery readiness](recovery-readiness.md); it is not represented as a new cloud trial.
 
 ## Review notes
 
-The current code uses the AWS SDK credential chain and a user-controlled S3 bucket. There is no external worker kit. Read `readme.txt` for data/service disclosures and the user guide for setup. Recovery can restore selected theme/plugin files from the administrator's own captured backup, alongside content. It is a user-initiated backup/recovery workflow, not a developer-hosted code-update channel. Restored code is not guaranteed malware-free.
+AWS credentials use the standard SDK credential chain and a user-controlled S3 bucket. Read `readme.txt` for service/data disclosures and [the guide](user-guide.md) for setup. Recovery can restore selected theme/plugin files from the administrator's trusted capture; this is a user-initiated recovery workflow, not a developer-hosted update channel.
 
-The repository root contains retained historical implementation and research tools. The current product source is exclusively `packages/markdown-m1/`. Existing pre.1/pre.2 and 0.2.0 release archives are not overwritten.
+Historical research assets and previous releases remain available but are not additional setup requirements.

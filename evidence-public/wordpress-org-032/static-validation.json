@@ -1,0 +1,14 @@
+{
+  "php_lint": "PASS",
+  "relative_links": "PASS",
+  "vendor_matches_submitted_rc2": true,
+  "packaged_source_matches": true,
+  "focused_tests": {
+    "admin-language-unit": "PASS Japanese/English schedule fields, unchanged form parameters and cached result localization.",
+    "gfs-admin": "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.",
+    "save-status": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body",
+    "recovery-result": "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON",
+    "setup-readiness-actions": "PASS recovery destination rejects primary and supplementary initial capture before S3 access.",
+    "setup-readiness": "PASS local preparation: missing ZIP, InnoDB, Markdown dependency, pending work, Japanese guidance, confirmation and destination binding."
+  }
+}

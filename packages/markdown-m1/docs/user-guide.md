@@ -1,6 +1,6 @@
 # First-time setup — from preparation to protection
 
-**Version note:** The following describes the submitted 0.3.1 setup workflow. Development version 0.3.2-dev adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
+**Version: 0.3.2 release candidate.** Includes the [preparation checklist and terms confirmation](setup-readiness.md).
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
@@ -21,9 +21,9 @@ The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whe
 ## 2. Prepare AWS, then install
 
 1. Complete [AWS setup](aws-setup.md). Start with the `source-no-delete` policy and cleanup disabled.
-2. Download **ozeki-resilience-0.3.1.zip** from the [rc.2 release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2). `Source code (zip)` is not installable. `SHA256SUMS` is available there for verification.
+2. Download **ozeki-resilience-0.3.2.zip** from the [0.3.2 rc.1 release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1). `Source code (zip)` is not installable. `SHA256SUMS` is available there for verification.
 3. In WordPress, use **Plugins → Add New Plugin → Upload Plugin**, install the ZIP and activate it. If an older version is installed, follow [update instructions](install-update.md).
-4. Open **Tools → Resilience**, then scroll down to **Storage and optional scheduling settings**. The status and recovery controls above are used after storage setup. If the unconfigured screen reports an S3 history read error, first configure the following fields.
+4. Open **Tools → Resilience**. Check **Preparation for protection**, then select **Protect this site** in storage settings. Each action-needed row identifies the missing condition and next action.
 5. Enter these four values.
 
 | Field | Value |
@@ -33,16 +33,15 @@ The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whe
 | prefix | Dedicated site prefix, for example `sites/my-site/`, including the trailing `/` |
 | owner | Bucket owner's 12-digit AWS account ID |
 
-6. Leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. If your setup does not request product-level deletion locks, set **Optional S3 deletion protection in days** to `0`. Click **Save settings**.
-
-Next, verify actual storage access by creating a Baseline.
+6. Leave **Protect supported operations**, GFS **Enabled** boxes and automatic cleanup off. If your setup does not request product-level deletion locks, set **Optional S3 deletion protection in days** to `0`. Read **Terms of use and saved content**, select the confirmation checkbox and click **Save settings**.
+7. Click **Check storage**. Resolve any action-needed conditions shown above before creating a Baseline. This check reads the connection and bucket versioning; the first capture checks saving and read-back.
 
 ## 3. Create the first Baseline
 
 1. Confirm that the source is trustworthy and pause editing. If Markdown documents are used, activate the compatible Markdown Documents plugin first.
 2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Click **Create complete initial snapshot**.
 3. In the **Checkpoint** selector, find `administrator_initial` with the time of this capture. This is your first Baseline (`history 0` for a new prefix). For an error, record its message and use [troubleshooting](#troubleshooting) below.
-4. Scroll down, enable **Protect supported operations (one writer per prefix)** and click **Save settings**. Resume editing.
+4. Confirm **First save and verified read-back** is confirmed in the preparation checklist. In storage settings, enable **Protect supported operations (one writer per prefix)**, select the terms confirmation again and click **Save settings**. Resume editing.
 
 A Baseline initially captures current supported state. Later Checkpoints use saved resources and confirmed history. For untracked changes such as themes, consult the [changes table](start-here.md).
 
@@ -69,7 +68,7 @@ Only confirmed history is available after source loss. If an original save faile
 
 ## 5. Checkpoint schedules and retention
 
-In Tools → Resilience, check the displayed timezone. For example, enable weekly Sunday 02:00 / keep 2 weeks, monthly day 1 at 02:00 / keep 3 months, yearly January 1 at 02:00 / keep 1 year. Choose settings to suit the period you want to preserve and your storage usage. Coincident dates **and times** produce one set with all labels. A still-active label preserves the whole point. Unchanged content is copied into every new independent point. Stagger sites on a shared server.
+In Tools → Resilience, expand **Optional: schedules, retention and cleanup** and check the displayed timezone. For example, enable weekly Sunday 02:00 / keep 2 weeks, monthly day 1 at 02:00 / keep 3 months, yearly January 1 at 02:00 / keep 1 year. Choose settings to suit the period you want to preserve and your storage usage. Coincident dates **and times** produce one set with all labels. A still-active label preserves the whole point. Unchanged content is copied into every new independent point. Stagger sites on a shared server.
 
 **Detailed history recovery window in days** controls how far detailed history is kept with its boundary point; `0` retains the latest Checkpoint and necessary tail, not zero resources. Historical GFS points can remain without all intervening history. **Optional S3 deletion protection** is a separate AWS lock request; `0` does not remove existing locks. [GFS details](gfs-checkpoints.md).
 
@@ -82,7 +81,7 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 Restore saved articles, images, inquiries and other supported content on a separate WordPress to resume publishing and serving users. Recovery uses what remains in S3 even when the original site is offline. After an attack, choose a trusted initial capture (Baseline) and the changes to restore. Prepare administrator access and external service connections on the destination, and check it with public access restricted before reopening.
 
 1. Prepare a clean, dedicated destination with the same WordPress release line as the capture, at the same or a newer maintenance patch (for example, 7.1.2 to 7.1.3), the product ZIP, required plugins and a working administrator login. If WP-Members requires activation, activate the destination administrator separately; source administrator credentials are not restored. Do not use a live unrelated site as the destination.
-2. Apply the **recovery-read-only** policy to its AWS identity. Enter the same bucket/region/prefix/owner under **Storage and optional scheduling settings** and click **Save settings**. Leave protection, schedules and cleanup **off**; do not create a Baseline on the destination. Keep unresolved local pending work out of the recovery environment.
+2. Apply the **recovery-read-only** policy to its AWS identity. Select **Recover another site**, enter the same bucket/region/prefix/owner under **Storage and optional scheduling settings**, confirm the terms and click **Save settings**, then **Check storage**. Leave protection, schedules and cleanup **off**; do not create a Baseline on the destination. Keep unresolved local pending work out of the recovery environment.
 3. Under **Site-wide recovery — primary workflow**, use the **Checkpoint** selector below **Create complete Checkpoint**, next to **Formal history end**, to choose the Baseline (`administrator_initial`) or a Checkpoint and **Formal history end**. The end is inclusive: selecting the point's own `through` restores that point alone; a later end needs all necessary subsequent confirmed records/resources. It is not necessarily a complete editing-session boundary. For example, if body history is 1 and related information is 2, select through 2 to adopt both.
 4. Confirm replacement and use **Restore complete site**. It replaces destination content. Keep source S3 resources intact.
 5. Under **Last site-wide recovery result**, check success/failure, the used Checkpoint and requested/applied history boundary. Review **Preserved in S3 — not automatically applied** too. Post counts include revisions and other post types; zero files written can mean identical existing files were reused. Also keep detailed JSON if investigating. If an error occurs, inspect the message and destination state, resolve the cause, then rerun.

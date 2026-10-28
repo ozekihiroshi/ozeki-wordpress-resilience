@@ -20,6 +20,12 @@ Where possible, resolve pending operations before updating. Otherwise preserve t
 
 未確定操作は可能なら更新前に解消します。残す場合は保全して更新後に照合し、更新の都合でキューを消しません。プラグイン更新の確認のためにサイト復旧を行う必要はありません。必要時は[保存再開手順](save-resume.md)を参照してください。
 
+## Updating from 0.3.1 / 0.3.1からの更新
+
+Existing storage settings and enabled protection are retained. Older initial saves may show **Not checked** in the new checklist; this does not mean they were lost. Confirm the terms when next saving settings. If you turn protection off and restart it, first create a trusted initial save with 0.3.2 for that storage destination. See [preparation](setup-readiness.md).
+
+保存先設定と有効な保護は引き継ぎます。過去の初期保存が新しい準備画面で「未確認」でも、消失した意味ではありません。次に設定を保存するときに利用条件を確認してください。保護を停止して再開する場合は、その保存先へ0.3.2で信頼できる初期保存を作成します。[準備状況の案内](setup-readiness-ja.md)も参照してください。
+
 ## Verification records / 検証記録
 
 Past checks describe their specific builds and environments; they are not extra installation steps. 過去の確認範囲は以下に分けて記録しています。

@@ -1,8 +1,8 @@
-# Preparation for protection (0.3.2-dev)
+# Preparation for protection (0.3.2)
 
 [日本語](setup-readiness-ja.md) · [Setup and recovery guide](user-guide.md) · [Terms of use](terms-of-use.md)
 
-This screen is in the GitHub development version. It is **not included in the submitted 0.3.1 rc.2 ZIP**. The submitted ZIP is unchanged.
+This guide applies to the 0.3.2 release candidate. The previously submitted 0.3.1 rc.2 ZIP remains unchanged.
 
 The screen follows the WordPress admin language: Japanese for Japanese locales, English otherwise. Expand **Optional: schedules, retention and cleanup** when needed.
 

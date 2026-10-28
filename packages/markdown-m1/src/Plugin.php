@@ -46,7 +46,7 @@ final class Plugin
                 echo '</select></label> ';
             }else{
                 if($kind==='yearly')echo '<label>'.esc_html(AdminText::text('Month')).' <input type="number" min="1" max="12" name="'.esc_attr($name).'[month]" value="'.(int)($r['month']??1).'"></label> ';
-                echo '<label>'.esc_html(AdminText::text('Day')).''.($kind==='monthly'?AdminText::text(' (0 = month end)'):'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.esc_attr($name).'[day]" value="'.(int)($r['day']??1).'"></label> ';
+                echo '<label>'.esc_html(AdminText::text('Day')).''.esc_html($kind==='monthly'?AdminText::text(' (0 = month end)'):'').' <input type="number" min="'.($kind==='monthly'?0:1).'" max="31" name="'.esc_attr($name).'[day]" value="'.(int)($r['day']??1).'"></label> ';
             }
             echo '<label>'.esc_html(AdminText::text('Start time')).' <input type="time" name="'.esc_attr($name).'[time]" value="'.esc_attr($r['time']??'02:00').'"></label> <label>'.esc_html(AdminText::text('Keep for')).' <input type="number" min="1" max="100" name="'.esc_attr($name).'[keep]" value="'.(int)($r['keep']??1).'"> '.esc_html(['weekly'=>AdminText::text('weeks'),'monthly'=>AdminText::text('calendar months'),'yearly'=>AdminText::text('calendar years')][$kind]).'</label></fieldset>';
         }
@@ -272,6 +272,7 @@ final class Plugin
     }
     public function store(): Store {
         $c=$this->config();
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         if (!SetupReadiness::accepted($c)) throw new \RuntimeException(SetupReadiness::text('Save storage settings and confirm the terms before connecting.','接続する前に、保存先の設定と利用条件の確認を保存してください。'));
         if (empty($c['bucket']) || empty($c['prefix']) || empty($c['region'])) throw new \RuntimeException('Configure the S3 bucket, region and dedicated prefix first.');
         return $this->storeForSetup($c);
@@ -477,6 +478,7 @@ final class Plugin
             if ($action==='configure') {
                 if (get_option(self::PENDING) || get_option('owr_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
                 $old=$this->config();
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if(!isset($_POST['confirm_terms']))throw new \RuntimeException(SetupReadiness::text('Review the terms and select the confirmation checkbox before saving settings.','利用条件を読み、確認欄にチェックしてから設定を保存してください。'));
                 $c=[];foreach (['bucket','region','prefix','owner'] as $key) $c[$key]=sanitize_text_field(wp_unslash($_POST[$key]??''));
                 foreach([
@@ -491,6 +493,7 @@ final class Plugin
                 $c['terms_confirmed_at']=gmdate('c');
                 $c['terms_confirmed_by']=get_current_user_id();
                 $c['protect']=isset($_POST['protect']);
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if($c['protect'] && $c['setup_role']==='recovery')throw new \RuntimeException(SetupReadiness::text('Keep protection disabled on a recovery destination.','復旧先では保護を無効にしてください。'));
                 if($c['protect'] && (empty($old['protect']) || SetupReadiness::identity($c)!==SetupReadiness::identity($old))){
                     SetupReadiness::requireStart($c);
@@ -510,6 +513,7 @@ final class Plugin
                 $this->scheduleCheckpoints();
             } elseif ($action==='setup_check') {
                 $c=$this->config();
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if(!SetupReadiness::accepted($c))throw new \RuntimeException(SetupReadiness::text('Save storage settings and confirm the terms first.','先に保存先の設定と利用条件の確認を保存してください。'));
                 $r=['identity'=>SetupReadiness::identity($c),'at'=>gmdate('c'),'ok'=>false];
                 try {
@@ -529,11 +533,13 @@ final class Plugin
             }
             elseif ($action==='site_retention_renew') $this->renewSiteRetention();
             elseif ($action==='initial_snapshot') {
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if(($this->config()['setup_role']??'source')==='recovery')throw new \RuntimeException(SetupReadiness::text('This is a recovery destination. Select an existing Checkpoint instead.','このサイトは復旧先です。既存のCheckpointを選択してください。'));
                 $this->initialSnapshot(isset($_POST['trust_initial']));
             }
             elseif ($action==='whole_initial') {
                 $c=$this->config();
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if(($c['setup_role']??'source')==='recovery')throw new \RuntimeException(SetupReadiness::text('This is a recovery destination. Select an existing Checkpoint instead.','このサイトは復旧先です。既存のCheckpointを選択してください。'));
                 SetupReadiness::requireLocal();
                 // Repeat the read-only check; cached UI results never authorize a write.
@@ -610,7 +616,7 @@ final class Plugin
         }
         if(($attempt['status']??(isset($success['at'])?'success':''))==='success' && isset($r['application_report'])){
             $report=$r['application_report'];
-            echo '<h4>'.esc_html(AdminText::text('Preserved in S3 — not automatically applied')).'</h4><p>'.esc_html((string)$report['count']).AdminText::text(' item(s). Rules: ').esc_html($report['rules']).''.esc_html(AdminText::text('. Original resources remain unchanged; omission is not data deletion.')).'</p><ul>';
+            echo '<h4>'.esc_html(AdminText::text('Preserved in S3 — not automatically applied')).'</h4><p>'.esc_html((string)$report['count']).esc_html(AdminText::text(' item(s). Rules: ')).esc_html($report['rules']).''.esc_html(AdminText::text('. Original resources remain unchanged; omission is not data deletion.')).'</p><ul>';
             foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html($item['reason']).'</li>';
             echo '</ul>';
         }
@@ -621,7 +627,7 @@ final class Plugin
     }
     /** Read-only summary: local pending data is never treated as S3 confirmation. */
     public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect, array $captureError=[]): void {
-        echo '<h2>'.esc_html(AdminText::text('Save protection status')).'</h2><p>'.esc_html(AdminText::text('Protection setting:')).' '.($protect?AdminText::text('Enabled'):AdminText::text('Disabled')).''.esc_html(AdminText::text('. This setting alone does not prove that all site changes are protected.')).'</p>';
+        echo '<h2>'.esc_html(AdminText::text('Save protection status')).'</h2><p>'.esc_html(AdminText::text('Protection setting:')).' '.esc_html($protect?AdminText::text('Enabled'):AdminText::text('Disabled')).''.esc_html(AdminText::text('. This setting alone does not prove that all site changes are protected.')).'</p>';
         if($history===null)echo '<p role="alert">'.esc_html(AdminText::text('S3 formal history could not be read. Last confirmation is unknown:')).' '.esc_html($readError).'</p>';
         elseif(!$history)echo '<p>'.esc_html(AdminText::text('No confirmed formal history in this prefix. This does not mean no snapshot exists.')).'</p>';
         else {
@@ -632,7 +638,7 @@ final class Plugin
         }
         echo '<p>'.esc_html(AdminText::text('Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.')).'</p>';
         $details=0;foreach($queue as $entry)if(($entry['attributes']['post_type']??$entry['record']['attributes']['post_type']??'')==='owr_native')$details++;
-        echo '<p>'.esc_html(AdminText::text('Pending article body:')).' '.($pending?1:0).AdminText::text('; pending article details (images/categories/tags/deletion): ').(int)$details.AdminText::text('; other shared operations: ').(count($queue)-$details).''.esc_html(AdminText::text('. Body confirmation does not confirm the entire editing session or its related operations.')).'</p>';
+        echo '<p>'.esc_html(AdminText::text('Pending article body:')).' '.($pending?1:0).esc_html(AdminText::text('; pending article details (images/categories/tags/deletion): ')).(int)$details.esc_html(AdminText::text('; other shared operations: ')).(count($queue)-$details).''.esc_html(AdminText::text('. Body confirmation does not confirm the entire editing session or its related operations.')).'</p>';
         self::renderCaptureFailure($captureError);
         $count=($pending?1:0)+count($queue);
         echo '<p>'.esc_html(AdminText::text('Locally pending operations:')).' '.(int)$count.'</p>';

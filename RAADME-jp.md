@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**開発版について：** 現在のソースは `0.3.2-dev` です。[セットアップ前の確認画面と利用条件の確認欄](packages/markdown-m1/docs/setup-readiness-ja.md)を追加しています。管理画面は日本語・英語の利用言語に合わせて表示します。申請済みの `0.3.1 rc.2` ZIPは変更していません。
+**公開候補：0.3.2（rc.1）。** 準備状況の確認・利用条件の確認欄・日英の管理画面を含みます。この候補は **WordPress.orgへ未送信** です。申請済み0.3.1 rc.2はそのまま保全しています。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
@@ -18,15 +18,15 @@
 
 ## ダウンロードと導入
 
-1. **[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.1-rc.2/ozeki-resilience-0.3.1.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
+1. **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** を取得し、[リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1)の `SHA256SUMS` と照合します。対応ソースも同じリリースから取得できます。
 2. [初回導入ガイド（準備から保護開始まで）](packages/markdown-m1/docs/user-guide-ja.md)を読み、[AWS設定](packages/markdown-m1/docs/aws-setup-ja.md)を準備します。
-3. ZIPを導入し、**ツール → Resilience** で設定、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
+3. ZIPを導入し、**ツール → Resilience** で準備状況を確認し、保存先を確認、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
 
 GitHubのソースアーカイブではなく、上記のインストール用ZIPを使います。実行時ライブラリは同梱しています。**Pythonワーカー、SSHヘルパー、外部処理キット、Docker、常時稼働する復旧サーバは不要です。** PHPからAWS SDK標準認証を使える環境が必要で、ガイドはEC2ロールを例にしています。AWSの利用料金は別途必要です。
 
 ## 必要環境と対応範囲
 
-WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な領域が必要です。バージョニング有効なS3バケット、専用prefix、必要なIAM権限を用意し、1つのprefixへ書き込むサイトは1つにします。復旧先には互換性のあるWordPress系列、記録された依存プラグイン、Web公開領域外の非公開一時領域が必要です。現在の操作画面は英語です。
+WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な領域が必要です。バージョニング有効なS3バケット、専用prefix、必要なIAM権限を用意し、1つのprefixへ書き込むサイトは1つにします。復旧先には互換性のあるWordPress系列、記録された依存プラグイン、Web公開領域外の非公開一時領域が必要です。操作画面はWordPressの利用言語に合わせて日本語・英語で表示します。
 
 **Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
 

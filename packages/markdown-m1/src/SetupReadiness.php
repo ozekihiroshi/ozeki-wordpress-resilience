@@ -28,6 +28,7 @@ final class SetupReadiness
         $add('runtime',version_compare($wp_version,'6.4','>=')&&version_compare(PHP_VERSION,'8.1','>='), 'WordPress '.$wp_version.' / PHP '.PHP_VERSION,
             self::text('Server administrator: update to WordPress 6.4+ and PHP 8.1+.','サーバー管理者：WordPress 6.4以上・PHP 8.1以上へ更新してください。'));
         $add('zip',class_exists('ZipArchive'),self::text('ZIP support','ZIPを扱う機能'),self::text('Server administrator: enable the PHP zip extension.','サーバー管理者：PHPのzip拡張を有効にしてください。'));
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Check the local PHP process access used by capture; a remote WP_Filesystem transport cannot establish this prerequisite.
         $add('temporary',is_dir(sys_get_temp_dir())&&is_writable(sys_get_temp_dir()),self::text('Temporary save directory','保存用の一時作業場所'),self::text('Server administrator: allow web PHP to write to its temporary directory.','サーバー管理者：PHPの一時フォルダーへの書き込みを許可してください。'));
         $bad=[];
         foreach([$wpdb->posts,$wpdb->postmeta,$wpdb->options] as $table){
@@ -43,6 +44,7 @@ final class SetupReadiness
         return $rows;
     }
     public static function requireLocal(): void {
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         foreach(self::local() as $row)if(!$row['ok'])throw new \RuntimeException($row['next']);
     }
     public static function baseline(array $c): bool {
@@ -51,7 +53,9 @@ final class SetupReadiness
     }
     public static function requireStart(array $c): void {
         self::requireLocal();
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         if(($c['setup_role']??'source')!=='source')throw new \RuntimeException(self::text('Choose Protect this site before starting protection.','保護を開始する場合は「このサイトを保護」を選択してください。'));
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
         if(!self::baseline($c))throw new \RuntimeException(self::text('Create a complete initial snapshot for this storage destination before starting protection.','この保存先への最初の保存を完了してから、保護を開始してください。'));
     }
     public static function storageNext(array $c): string {

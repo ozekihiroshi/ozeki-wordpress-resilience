@@ -1,0 +1,15 @@
+Update to the existing Ozeki Resilience application (slug: ozeki-resilience).
+
+Please review version 0.3.2 in place of the 0.3.1 rc.2 submitted on October 26, 2026. This candidate adds a setup readiness checklist, read-only storage checks, terms/storage-access confirmation, a first-capture prerequisite for starting new protection, and Japanese/English administration screens. Existing enabled protection and stored settings remain in use after updating. The setup and recovery documentation is aligned with the controls.
+
+Plugin: Ozeki Resilience
+Version: 0.3.2
+ZIP: ozeki-resilience-0.3.2.zip
+SHA-256: 09fc645f156b1c3a887e189a506b0fdc632776ac12c3e570690279bac6cf25c2
+Release and ZIP: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1
+Matching source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.2-rc.1/packages/markdown-m1
+Candidate checks: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/wporg-0.3.2-rc.1/docs/releases/wordpress-org-032-candidate.md
+
+The plugin includes its AWS SDK dependencies. No external Python/SSH worker or runtime kit is needed. Dependency files are byte-identical to the previously submitted ZIP. Recovery remains a user-initiated reconstruction from the administrator's saved resources; this update does not expand the supported content scope.
+
+The previous 0.3.1 rc.2 source, ZIP and application record remain available for comparison. This text is prepared for submission; its presence in GitHub does not indicate that the update has been sent or approved.

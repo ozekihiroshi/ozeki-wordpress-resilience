@@ -1,6 +1,6 @@
 # Pre-setup checks — current implementation review
 
-**Version note:** The following describes the submitted 0.3.1 assessment. Development version 0.3.2-dev adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
+**Version note:** The following describes the submitted 0.3.1 assessment. Release candidate 0.3.2 adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
 
 [日本語](setup-preflight-review-ja.md) · [Setup guide](user-guide.md)
 

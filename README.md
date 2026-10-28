@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**Development version:** Current source is `0.3.2-dev`, with a [setup readiness screen and terms confirmation](packages/markdown-m1/docs/setup-readiness.md). The admin screen follows the Japanese or English user language. The submitted `0.3.1 rc.2` ZIP is unchanged.
+**Release candidate: 0.3.2 (rc.1).** Includes setup readiness, terms confirmation and Japanese/English admin screens. This candidate has **not been submitted to WordPress.org**. The previously submitted 0.3.1 rc.2 remains preserved.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
@@ -18,15 +18,15 @@ The scope balances the value of what is preserved with the work needed to handle
 
 ## Download and start
 
-1. Download **[ozeki-resilience-0.3.1.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.1-rc.2/ozeki-resilience-0.3.1.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.1-rc.2).
+1. Download **[ozeki-resilience-0.3.2.zip](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.2-rc.1/ozeki-resilience-0.3.2.zip)** and verify it against the release's `SHA256SUMS`. [Release files and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1).
 2. Read the [first-time setup guide](packages/markdown-m1/docs/user-guide.md) and prepare [AWS access](packages/markdown-m1/docs/aws-setup.md).
-3. Install the ZIP, configure **Tools → Resilience**, create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
+3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
 Use the installable ZIP, not GitHub's source archive. Runtime libraries are bundled. **No Python worker, SSH helper, external runtime kit, Docker or continuously running recovery server is required.** Standard AWS SDK credentials must be available to PHP; the guide uses an EC2 instance role. AWS charges are separate.
 
 ## Requirements and supported content
 
-WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The current controls are English.
+WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The controls follow your WordPress admin language: Japanese or English.
 
 **Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
 

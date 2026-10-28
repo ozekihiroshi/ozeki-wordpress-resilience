@@ -4,7 +4,7 @@ Tags: backup, recovery, amazon s3
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,22 +41,22 @@ Installation alone does not enable protection: create and confirm a trusted Base
 
 This plugin connects to Amazon Web Services (AWS), primarily Amazon S3, using your configured account/bucket/region/prefix and the bundled AWS SDK. AWS may charge for storage and requests. Terms: https://aws.amazon.com/service-terms/ ; privacy: https://aws.amazon.com/privacy/ .
 
-When you configure storage and request capture, enable protection for supported edits, request recovery/preview/cleanup, or enable scheduled Checkpoints/cleanup, the plugin sends the corresponding requests to AWS. Saved resources can include article text, images, comments, form submissions, subscriber personal data, recognized settings, selected theme/plugin files and reconstruction metadata. Configure access and retention appropriately and inform your site's users. Cleanup can send deletion requests. Displaying configured storage/history can make read requests. Credential providers may contact AWS instance metadata or STS as required by your server's standard SDK configuration. No AWS keys are entered in this plugin's settings screen.
+After storage settings and the terms confirmation are saved, checking storage reads bucket versioning and the dedicated prefix. The terms version, time and administrator ID are recorded locally. When you request capture, enable protection for supported edits, request recovery/preview/cleanup, or enable scheduled Checkpoints/cleanup, the plugin sends the corresponding requests to AWS. Saved resources can include article text, images, comments, form submissions, subscriber personal data, recognized settings, selected theme/plugin files and reconstruction metadata. Configure access and retention appropriately and inform your site's users. Cleanup can send deletion requests. Displaying configured storage/history can make read requests. Credential providers may contact AWS instance metadata or STS as required by your server's standard SDK configuration. No AWS keys are entered in this plugin's settings screen.
 
 No analytics or telemetry is sent to the developer. AWS access and credentials are provided by your administrator. There is no separate developer-operated storage service.
 
 = Documentation and source =
 
-User guide, AWS policies and installation/update instructions are included in docs/.
+User guide, AWS policies, terms of use (docs/terms-of-use.md; Japanese: docs/terms-of-use-ja.md) and installation/update instructions are included in docs/.
 Source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/release/wordpress-org/packages/markdown-m1
 Support: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues
 
 == Installation ==
 
 1. Prepare a versioned S3 bucket, dedicated prefix and permissions using docs/aws-setup.md (Japanese: docs/aws-setup-ja.md). Provide standard SDK credentials to PHP.
-2. Upload ozeki-resilience-0.3.1.zip using Plugins > Add New Plugin > Upload Plugin and activate. For an old prerelease in ozeki-wordpress-resilience/, deactivate that copy first; do not activate both. Preserve settings and pending records; see docs/install-update.md.
-3. Open Tools > Resilience and configure storage with protection and cleanup initially disabled.
-4. Pause editing, judge the source trustworthy, and create a complete initial snapshot (Baseline). Confirm success before enabling protection.
+2. Upload ozeki-resilience-0.3.2.zip using Plugins > Add New Plugin > Upload Plugin and activate. For an old prerelease in ozeki-wordpress-resilience/, deactivate that copy first; do not activate both. Preserve settings and pending records; see docs/install-update.md.
+3. Open Tools > Resilience. Follow Preparation for protection, choose Protect this site, configure storage with protection and cleanup initially disabled, read the terms and select the confirmation checkbox. Save settings, then Check storage.
+4. Pause editing, judge the source trustworthy, and create a complete initial snapshot (Baseline). Confirm success before enabling protection and saving settings with the terms confirmation.
 5. Monitor confirmed history and pending saves. Follow docs/user-guide.md for Checkpoints, retention and recovery.
 
 == Frequently Asked Questions ==
@@ -77,6 +77,12 @@ No. Saved publication state is restored. Use a designated destination with acces
 No. Prepare a compatible destination when recovery is needed. Python workers, SSH helpers and Docker are not product requirements.
 
 == Changelog ==
+
+= 0.3.2 =
+* Setup readiness shows missing conditions and next actions; storage checks use read-only requests.
+* Terms confirmation and a completed first capture guide starting protection.
+* Japanese/English administration screens and updated setup/recovery guides.
+* Existing settings and protection are retained when updating from 0.3.1.
 
 = 0.3.1 =
 * Initial WordPress.org submission candidate based on the current 0.3.1 implementation.
