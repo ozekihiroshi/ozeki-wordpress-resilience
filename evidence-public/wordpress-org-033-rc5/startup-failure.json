@@ -1,0 +1,12 @@
+{
+  "actual_wp_load_failure_contained": true,
+  "lock_contention_contained": true,
+  "public_http_200": true,
+  "admin_login_and_retry_page": true,
+  "ja_en_notice": true,
+  "post_ajax_rest_comments_cf7_http_503": true,
+  "rest_method_override_blocked": true,
+  "cli_post_write_blocked": true,
+  "content_settings_queue_unchanged": true,
+  "retry_resumes_confirmed_saving": true
+}

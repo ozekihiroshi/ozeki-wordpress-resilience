@@ -49,3 +49,7 @@ Updating from 0.3.2 retains existing settings, history and pending saves. Existi
 Settings, pending saves, recovery mappings and scheduled Checkpoints are carried over automatically. Open **Tools → Resilience** after updating and confirm the settings and protection status. Existing S3 originals and history are not rewritten; a new initial save is not required solely for this update.
 
 設定・未完了の保存・復旧用の対応情報・Checkpointの予約は自動で引き継ぎます。更新後は **ツール → Resilience** から設定と保護状態を確認してください。S3の既存原本と履歴は書き換えず、この更新だけを理由に初期保存をやり直す必要はありません。
+
+If the settings update cannot finish, public pages and administrator sign-in remain available, while saving is paused. Open **Tools → Resilience**, ask your hosting administrator to check database write access and locks, then select **Retry**. Do not delete pending saves or recreate the Baseline.
+
+設定の引き継ぎに失敗した場合も、公開ページの閲覧と管理者ログインは利用できますが、保存は一時停止します。**ツール → Resilience** の案内に従い、サーバー管理者にDBの書込みとロックを確認してもらい、**再試行**を押してください。未完了の保存の削除やBaselineの作り直しは不要です。

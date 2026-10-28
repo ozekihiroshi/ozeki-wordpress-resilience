@@ -36,7 +36,7 @@ final class Identifiers
         global $wpdb;
         $lock='ozeki-resilience-identifiers-'.substr(hash('sha256',$wpdb->prefix),0,24);
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Serialize the one-time migration across requests.
-        if((string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 10)',$lock))!=='1')throw new \RuntimeException('Ozeki Resilience: identifier update is busy. Retry this request.');
+        if((string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 0)',$lock))!=='1')throw new \RuntimeException('Ozeki Resilience: identifier update is busy. Retry this request.');
         try {
             wp_cache_delete(self::DONE,'options');
             if(get_option(self::DONE))return;

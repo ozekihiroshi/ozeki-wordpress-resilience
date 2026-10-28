@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**Review-response candidate: 0.3.3 (rc.4), not submitted.** This candidate addresses the additional review of submitted rc.3. WordPress.org publication has not been approved. Previously submitted ZIPs and tags remain unchanged.
+**Review-response candidate: 0.3.3 (rc.5), not submitted.** This candidate addresses the additional review of submitted rc.3. WordPress.org publication has not been approved. Previously submitted ZIPs and tags remain unchanged.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 

@@ -1,6 +1,6 @@
 # WordPress.org 0.3.3 rc.4 — review-response candidate
 
-Status: prepared, **not submitted**. Publication has not been approved. The submitted rc.3 ZIP and all existing tags remain unchanged. ZIP upload and reply in the original review thread require the user's final go-ahead.
+Status: **superseded, not submitted; do not submit this candidate**. The startup-failure handling was incomplete. Use the [rc.5 candidate](wordpress-org-033-rc5.md). Publication has not been approved. The submitted rc.3 ZIP and all existing tags remain unchanged. ZIP upload and reply in the original review thread require the user's final go-ahead.
 
 ## 審査指摘への対応
 

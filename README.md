@@ -2,7 +2,7 @@
 
 **WordPress.org update received: 0.3.3 (rc.3), October 28, 2026.** Our reply in the original review email thread has been sent. An additional review requested changes; publication has not been approved. Submitted ZIPs and tags remain unchanged.
 
-Current source prepares **0.3.3 rc.4** with information-assets-only recovery and migration to distinct WordPress identifiers. This candidate has not been submitted. The submitted rc.3 ZIP and tag remain unchanged. [Checks and reply draft](docs/releases/wordpress-org-033-rc4.md).
+Current source prepares **0.3.3 rc.5** with information-assets-only recovery, distinct WordPress identifiers and safe handling of a failed settings migration. This candidate has not been submitted. The submitted rc.3 ZIP and tag remain unchanged. [Checks and reply draft](docs/releases/wordpress-org-033-rc5.md).
 
 [Submission and sent-reply record](docs/releases/wordpress-org-review-20261028.md). [Information-assets-only recovery changes](docs/releases/information-assets-only-20261028.md). Software is prepared separately on the destination.
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
