@@ -6,7 +6,7 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 Ozeki Resilience reconstructs a supported state from protected originals, a Baseline/Checkpoint and confirmed history. It is not a generic importer that merges arbitrary records into another live site. These answers distinguish **design**, **existing evidence** and **conditions**; first read [the purpose and verification boundaries](../README.md#keep-a-path-to-recovery-after-an-attack) for restarting service without reusing an attacked environment. No additional tests were performed to write this FAQ.
 
-The primary subject is **complete-site recovery onto a dedicated destination**. The legacy individual-Markdown recovery path is a different operation and does not inherit the complete-site relationship guarantees. For this 0.3.1 submission candidate, native-only sites do not require Markdown Documents; see the user guide for conditions when Markdown content exists.
+The primary subject is **complete-site recovery onto a dedicated destination**. The legacy individual-Markdown recovery path is a different operation and does not inherit the complete-site relationship guarantees. For the current 0.3.3 series, native-only sites do not require Markdown Documents; see the user guide for conditions when Markdown content exists.
 
 ## 1. Can automatic numbering change IDs and break relationships?
 

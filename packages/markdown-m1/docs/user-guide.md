@@ -13,7 +13,7 @@ Install WordPress, themes and required plugins separately from trusted distribut
 | Members, inquiries and tables | Recover according to the supported adapter rules |
 
 
-**Version: 0.3.2 release candidate.** Includes the [preparation checklist and terms confirmation](setup-readiness.md).
+**Version: current GitHub 0.3.3 series. Check [package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).** Includes the [preparation checklist and terms confirmation](setup-readiness.md).
 
 [日本語](user-guide-ja.md) · [Updating an existing installation](install-update.md) · [Recovery](#6-recover-onto-a-separate-wordpress)
 
@@ -27,14 +27,14 @@ Start by identifying what you need to resume service: Posts, Pages, images and c
 |---|---|
 | WordPress administrator | Administrator login, supported content/plugins, and a pause in editing for the initial capture |
 | AWS administrator | Versioned S3 bucket, dedicated site prefix and source permissions; provide bucket, region, prefix and the owner's 12-digit account ID |
-| Server administrator | WordPress 6.4+, PHP 8.1+, InnoDB, ZipArchive, writable paths, standard AWS SDK credentials usable by web PHP, and upload limits allowing the approximately 7.5 MB ZIP |
+| Server administrator | WordPress 6.4+, PHP 8.1+, InnoDB, ZipArchive, writable paths, standard AWS SDK credentials usable by web PHP, and upload limits allowing the approximately 8.4 MB ZIP |
 
 The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whether standard credentials can be provided to web PHP. This plugin has no access-key input field. Integration requirements also apply (tested CF7 6.2.3 needs PHP 8.3+).
 
 ## 2. Prepare AWS, then install
 
 1. Complete [AWS setup](aws-setup.md). Start with the `source-no-delete` policy and cleanup disabled.
-2. Download **ozeki-resilience-0.3.2.zip** from the [0.3.2 rc.1 release](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1). `Source code (zip)` is not installable. `SHA256SUMS` is available there for verification.
+2. Check [current package availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and use the installable ZIP and SHA-256 listed there. If no package is listed yet, wait for distribution preparation to finish. Earlier review ZIPs and `Source code (zip)` are not the installable package for these instructions.
 3. In WordPress, use **Plugins → Add New Plugin → Upload Plugin**, install the ZIP and activate it. If an older version is installed, follow [update instructions](install-update.md).
 4. Open **Tools → Resilience**. Check **Preparation for protection**, then select **Protect this site** in storage settings. Each action-needed row identifies the missing condition and next action.
 5. Enter these four values.

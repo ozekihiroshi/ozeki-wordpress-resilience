@@ -2,7 +2,7 @@
 
 [English](terms-of-use.md) · [README](../RAADME-jp.md) · [導入・復旧ガイド](user-guide-ja.md)
 
-更新：2026年10月28日。対象：Ozeki Resilience 0.3.1。
+更新：2026年10月28日。対象：Ozeki Resilience 0.3.3。
 
 この文書は、利用にあたっての役割と、ライセンス上の保証・責任の扱いをまとめたものです。製品が残すもの・復旧するものは[READMEの対応範囲](../RAADME-jp.md#残るもの復旧できるもの)に記載しています。
 

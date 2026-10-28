@@ -1,5 +1,7 @@
 # サイト素材からの再構築（開発中）
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 > 以下はv1実装時点の記録です。標準画面の転送・保存元への下書き限定という制約は、[今回の標準編集画面接続](native-wordpress-editor.md)で更新しました。復旧先は引き続き非公開の下書きです。
 
 ResilienceはBackup for S3を必要としません。投稿内容をWordPressへ反映する前にS3へ保存し、その原本から再構築します。DBダンプは再構築の入力にしません。Gitは例えであり、互換実装ではありません。

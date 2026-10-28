@@ -1,5 +1,7 @@
 # Separated recovery originals / 原本と付随情報の分離
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 Status: included in the 0.3.1 separated-assets-final candidate, verified with the limits below; absent from the earlier recovery-errors-final ZIP. No release or existing S3 migration.
 
 ## English

@@ -8,6 +8,6 @@ ACFの対応は無料版だけに限定し、PROは対応予定に含めませ�
 
 ## 検証記録
 
-[研究試験と統合時の検証範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-verification-ja.md)。提出済み0.3.2 rc.1には、この対応は含まれません。
+[研究試験と統合時の検証範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-verification-ja.md)。0.3.2には、この対応は含まれません。現行の[配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。
 
 準備画面は無料版・PRO・未使用を区別します。無料版は現在の版を含む初期保存が確認できない場合、作成を案内します。ACF PROのフィールドは保護対象外ですが、記事などの保護は継続できます。既存のACF定義があり無料版が無効の場合も、対象外と次の操作を表示します。

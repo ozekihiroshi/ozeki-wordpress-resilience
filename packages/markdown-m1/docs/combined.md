@@ -1,5 +1,7 @@
 # Combined recovery scope — 0.3.1
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 The combined final ZIP contains the CF7 upload-guard correction. One real-S3 complete Checkpoint through 21 and formal history through 29 recovered Posts/Pages, images, comments, CF7 definitions, Flamingo receipts, WP-Members and TablePress together. Bodies, links, image bytes, moderation, fields, member login/access restriction and table rendering were compared. This was PHP API integration; separate TablePress browser acceptance covered add/update/delete, search, sorting and pagination. Optional plugins are installed separately.
 
 Only the exact CF7 uploads/wpcf7_uploads/.htaccess deny-all content is accepted (LF or CRLF). Other control/executable files remain rejected. No protection file is removed or weakened.

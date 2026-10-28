@@ -1,5 +1,7 @@
 # Contact Form 7 / Flamingo recovery
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 This adapter protects completed Contact Form 7 definition saves/deletion and Flamingo
 inbound messages, including subsequent changes and deletion. Tested
 versions: Contact Form 7 6.2.3 and Flamingo 2.6.4; these are optional dependencies

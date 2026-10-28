@@ -1,5 +1,7 @@
 # Site-wide snapshot verification before confirmation
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 This change is in the development tree after PR #45. It is not included in the published v0.3.1-pre.1 ZIP.
 
 Initial site snapshots and site-wide Checkpoints share `SiteSnapshot::save`. After writing their resources, that method now retrieves every resource using the returned VersionId and checks its SHA-256 through the existing `Store::get`. Only after all checks succeed does it write the manifest. It reuses the same Store and S3 client, without changing the storage format.

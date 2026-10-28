@@ -1,12 +1,11 @@
 # Ozeki Resilience
 
-**Review-response candidate: 0.3.3 (rc.5), not submitted.** This candidate addresses the additional review of submitted rc.3. WordPress.org publication has not been approved. Previously submitted ZIPs and tags remain unchanged.
+**The 0.3.3 series is being prepared for publication; WordPress.org approval is pending.** [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
-The original application was submitted as **0.3.1 (rc.2) on October 26, 2026**, then updated to **0.3.2 (rc.1) on October 28, 2026**. [Submission record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md). It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
 
 ## Keep a path to recovery after an attack
 
@@ -33,7 +32,7 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## Download and start
 
-1. Use `ozeki-resilience-0.3.3.zip` attached to the **0.3.3 rc.3 review-response candidate**, and verify its `SHA256SUMS`. Candidate files and matching source are listed on [GitHub Releases](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases).
+1. Check [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) for installable ZIP availability. Once listed, use the ZIP and SHA-256 on that page; do not select an earlier review package or `Source code (zip)`.
 2. Read the [first-time setup guide](docs/user-guide.md) and prepare [AWS access](docs/aws-setup.md).
 3. Install the ZIP, open **Tools → Resilience**, follow the preparation checklist, confirm storage access and create a trusted initial Baseline, then enable protection. Installing or activating alone does not protect a site.
 
@@ -97,7 +96,7 @@ The [user guide](docs/user-guide.md) covers schedules, retention and cleanup. Se
 - [Recovery procedure](docs/user-guide.md#6-recover-onto-a-separate-wordpress) and [recovery FAQ](docs/recovery-faq.md)
 - [Application rules and withheld information](docs/application-rules.md)
 - [External-service and privacy disclosure](readme.txt)
-- [Candidate checks and build instructions](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)
+- [Current distribution status and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
 **Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
@@ -107,6 +106,6 @@ Existing verification records describe their specific builds and environments; t
 
 [License](LICENSE). Ozeki Database Backup for S3 is an independent product.
 
-Setup assistance assessment: [current pre-setup checks](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-preflight-review.md) (includes proposals not yet implemented).
+Preparation: [current setup checklist](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness.md).
 
 [ACF free basic fields — 0.3.3 coverage](docs/acf-free.md).

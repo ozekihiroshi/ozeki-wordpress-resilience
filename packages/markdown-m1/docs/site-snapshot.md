@@ -1,5 +1,7 @@
 # Complete site baseline and reconstruction
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 This document includes historical candidate design and verification records. Follow the current [user guide](user-guide.md). Historical code-restoration results do not describe the current recovery feature.
 
 ## Baseline and Checkpoint operations

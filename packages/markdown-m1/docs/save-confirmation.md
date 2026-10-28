@@ -1,5 +1,7 @@
 # Save confirmation and capture failures
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 Included in save-verification-final candidate after PR #42; absent from the older application-rules-final ZIP. No publication.
 
 - **Formal history confirmed** means that the S3 history record was read. The status display does not re-fetch every referenced original. Saving uses checksums/fixed versions; retrieval checks hashes through the existing reader. These are distinct checks.

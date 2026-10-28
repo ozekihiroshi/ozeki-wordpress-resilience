@@ -1,5 +1,7 @@
 # M1 minimal contract — 2026-10-24
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 Authority: completion charter v2.0, corrected D2 responsibility boundary, D3 independent product path, D4 asset-level full history, and the latest explicit M1 scope (which overrides D4 scheduling/Checkpoint requirements for this milestone).
 
 `originals/<asset UUID>/<operation UUID>/source.md` is the full submitted UTF-8 source. `metadata.json` contains requested title, slug, status, dates and origin identifier/URL. A source reference is `{key,version,sha256}`. These are relative to the administrator's configured S3 prefix, never local files.

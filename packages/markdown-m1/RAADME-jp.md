@@ -1,12 +1,11 @@
 # Ozeki Resilience
 
-**審査対応候補：0.3.3（rc.5）、未提出。** 提出済みrc.3への追加指摘に対応した候補です。WordPress.orgの公開承認はまだ得ていません。提出済みZIP・タグは変更していません。
+**0.3.3系の公開準備中です。WordPress.orgの公開承認はまだ得ていません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
 [English](README.md) | 日本語
 
-2026年10月26日の0.3.1（rc.2）初回申請を、10月28日に **0.3.2（rc.1）へ更新** しました。[申請記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)。旧0.2.0申請候補を置き換えるもので、旧プラグインや外部処理キットは不要です。
 
 ## 攻撃の後も、サイトを再開するために
 
@@ -33,7 +32,7 @@
 
 ## ダウンロードと導入
 
-1. **0.3.3 rc.3 審査対応候補**に添付された `ozeki-resilience-0.3.3.zip` を使い、`SHA256SUMS` と照合します。候補ZIPと対応ソースは[GitHub Releases](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases)で案内します。
+1. [現行版の配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)で導入用ZIPの掲載状況を確認してください。掲載後は、そのページのZIPとSHA-256を使用します。過去の申請ZIPや `Source code (zip)` は選びません。
 2. [初回導入ガイド（準備から保護開始まで）](docs/user-guide-ja.md)を読み、[AWS設定](docs/aws-setup-ja.md)を準備します。
 3. ZIPを導入し、**ツール → Resilience** で準備状況を確認し、保存先を確認、信頼できる初期Baselineを作成してから保護を有効にします。インストール・有効化だけでは保護は始まりません。
 
@@ -97,7 +96,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 - [復旧手順](docs/user-guide-ja.md#6-別のwordpressへ復旧する)・[よくある疑問](docs/recovery-faq-ja.md)
 - [反映規則と反映しない情報](docs/application-rules.md)
 - [外部送信とプライバシー](readme.txt)
-- [申請候補の確認・構築手順](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md)
+- [現行版の配布状況・対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
 **不具合・使い方の質問は[GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)へ。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
 
@@ -107,6 +106,6 @@ WordPress.orgでの公開後は、プラグインページの **Support（サポ
 
 [ライセンス](LICENSE)。Ozeki Database Backup for S3とは独立した製品です。
 
-セットアップ支援の検討資料：[条件判定の現状整理](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-preflight-review-ja.md)（未実装の追加案を含む）。
+準備状況の説明：[セットアップ前の確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/setup-readiness-ja.md)。
 
 [ACF無料版の基本フィールド — 0.3.3の対応範囲](docs/acf-free-ja.md).

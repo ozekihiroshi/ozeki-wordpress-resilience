@@ -1,5 +1,7 @@
 # セットアップ前の条件判定 — 現状整理
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 **版の区別：** 以下は申請済み0.3.1の事前調査記録です。公開候補0.3.2では[準備状況と利用条件の確認](setup-readiness-ja.md)を追加しています。申請済みZIPは変更していません。
 
 [English](setup-preflight-review.md) · [導入ガイド](user-guide-ja.md)

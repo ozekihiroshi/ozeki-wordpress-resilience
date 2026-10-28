@@ -1,5 +1,7 @@
 # 配布整理と削除途中失敗の検証
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 [English](recovery-readiness.md)
 
 2026-10-26。作業：既存機能の検証・配布整理・エビデンス整理。状態：以下の範囲で検証済み・制限あり。製品コードの変更とリリース公開は行っていません。

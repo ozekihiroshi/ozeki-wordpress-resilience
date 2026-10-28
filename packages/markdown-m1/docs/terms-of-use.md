@@ -2,7 +2,7 @@
 
 [日本語](terms-of-use-ja.md) · [README](../README.md) · [Setup and recovery guide](user-guide.md)
 
-Updated October 28, 2026. Applies to Ozeki Resilience 0.3.1.
+Updated October 28, 2026. Applies to Ozeki Resilience 0.3.3.
 
 This document summarizes operational roles and the license provisions on warranty and liability. The [README coverage table](../README.md#what-remains-and-what-you-can-recover) describes what the product preserves and restores.
 

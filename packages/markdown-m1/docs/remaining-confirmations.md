@@ -1,5 +1,7 @@
 # Remaining confirmations / 残る確認事項
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 2026-10-26. This is a tracked boundary, not a request to add features or rerun completed tests. 確認済みと未確認の境界を記録する。
 
 | Item / 項目 | Type and state / 種類・状態 | Next distinct confirmation / 次の差分と完了条件 |

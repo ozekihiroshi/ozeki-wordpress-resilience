@@ -13,7 +13,7 @@
 | 会員・問い合わせ・表 | 対応するアダプターの規則に従って復旧 |
 
 
-**対象：0.3.2公開候補。** [準備状況と利用条件の確認](setup-readiness-ja.md)を含む手順です。
+**対象：GitHubの現行0.3.3系。配布状況は[こちら](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。** [準備状況と利用条件の確認](setup-readiness-ja.md)を含む手順です。
 
 [English](user-guide.md) · [更新する場合](install-update.md) · [復旧手順](#6-別のwordpressへ復旧する)
 
@@ -27,14 +27,14 @@
 |---|---|
 | WordPress管理者 | 管理者ログイン、対応するコンテンツ・プラグインの確認、初期保存時に編集を止められる時間 |
 | AWS担当者 | バージョニング有効のS3バケット、サイト専用prefix、保存用の権限。bucket・region・prefix・所有者の12桁アカウントIDを管理者へ渡す |
-| サーバ担当者 | WordPress 6.4以上・PHP 8.1以上、InnoDB・ZipArchive・書込み可能な領域、WebのPHPから使えるAWS SDK標準認証、約7.5MBのZIPをアップロードできる設定 |
+| サーバ担当者 | WordPress 6.4以上・PHP 8.1以上、InnoDB・ZipArchive・書込み可能な領域、WebのPHPから使えるAWS SDK標準認証、約8.4MBのZIPをアップロードできる設定 |
 
 [具体的なAWS設定](aws-setup-ja.md)はEC2ロール構成を例にしています。EC2以外では、WebのPHPに標準認証を用意できるかサーバ担当者へ確認してください。プラグインにアクセスキーを入力する欄はありません。連携プラグインの要件も適用されます（確認済みCF7 6.2.3はPHP 8.3以上）。
 
 ## 2. AWSを準備し、プラグインを導入する
 
 1. AWS担当者が[AWS設定](aws-setup-ja.md)に従って準備します。保存側は `source-no-delete` を選び、自動削除を使わずに始めます。
-2. [0.3.2 rc.1リリース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.2-rc.1)から **ozeki-resilience-0.3.2.zip** を取得します。`Source code (zip)` は導入用ではありません。照合用の `SHA256SUMS` も同じ場所にあります。
+2. [現行版の配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認し、掲載された導入用ZIPとSHA-256を使用します。まだZIPが掲載されていない場合は、配布準備の完了を待ってください。過去の申請ZIPや `Source code (zip)` は、この手順の導入用ZIPではありません。
 3. WordPressの **プラグイン → 新規プラグインを追加 → プラグインのアップロード** でZIPを選び、インストール・有効化します。旧版が入っている場合は[更新手順](install-update.md)へ進みます。
 4. **ツール → Resilience** を開き、上部の **保護開始までの準備状況** を確認します。保存先設定の用途は **このサイトを保護** を選びます。「対応が必要」の行で不足条件と次の操作を確認できます。
 5. 次の4項目を入力します。

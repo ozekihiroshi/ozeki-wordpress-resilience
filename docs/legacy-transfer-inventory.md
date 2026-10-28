@@ -1,5 +1,7 @@
 # Legacy paths and transfer candidates
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 Status: inventory, **no transfer completed and no historical evidence deleted**.
 
 The two products are independent. Resilience reconstructs from pre-projection originals. Backup for S3 captures and restores an existing site's DB/files. Neither product is a mandatory dependency of the other.

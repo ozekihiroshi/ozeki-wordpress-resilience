@@ -1,5 +1,7 @@
 # M1 completion report — 2026-10-24
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 **Decision: the twelve specified M1 acceptance cases passed in the dedicated generated-data environment. This is M1 completion, not completion of the entire charter or a production deployment.**
 
 Product ZIP: `ozeki-wordpress-resilience-0.3.0-m1.zip` (byte-identical to tested candidate3), SHA-256 `73d71109c8a3b41c637f460937a4f7079108e40c473dc152a102042f7d4c0dba`, 7,298,852 bytes.

@@ -1,5 +1,7 @@
 # Original read-back before formal-history confirmation
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 Included in save-verification-final candidate after PR #42; absent from the older application-rules-final ZIP. No publication.
 
 `Store::commit()` now uses its existing S3 client to read the operation's original through fixed Version IDs. The existing original reader checks source, metadata, split parts and the reassembled digest. Referenced media are also read and hash-checked; repeated identical media references within the operation are checked once. Only after all reads and checks succeed does it PUT formal history. No history listing or site-wide resource scan was added.

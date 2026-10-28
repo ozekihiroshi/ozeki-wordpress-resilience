@@ -1,29 +1,35 @@
-# WordPress.org candidate 0.3.3 (rc.3)
+# Current distribution status / 現行版の配布状況
 
-This candidate adds ACF free basic-field preservation and recovery to 0.3.2. **0.3.3 rc.3 is prepared but not submitted.** The existing WordPress.org application has requested changes to 0.3.2 rc.1, accepted on October 28, 2026. No version is yet approved or published in the Plugin Directory. Earlier submitted ZIPs and tags remain unchanged.
+## 日本語
 
-Public name: **Ozeki Resilience**. Directory: `ozeki-resilience`. Version: **0.3.3**. Contributor: **ozekihiroshi**. Existing option and history keys are retained. No external runtime kit is required.
+現在のソースは **0.3.3 rc.5の修正を含む0.3.3系**です。WordPress.orgは追加審査への対応中で、公開承認はまだ得ていません。
 
-## Build
+**現在の案内に対応する導入用ZIPは、GitHub Releasesにまだ掲載していません。** 過去のリリースにある0.3.2 rc.1や0.3.3 rc.3を、このガイドに対応する現行版としてダウンロードしないでください。GitHubの `Source code (zip)` も導入用ZIPではありません。
 
-The product source is exclusively `packages/markdown-m1/`. Install the locked Composer dependencies (`composer install --no-dev --prefer-dist --optimize-autoloader`), then from the repository root:
+| 区分 | 状況 |
+|---|---|
+| GitHubの現行ソース・利用ガイド | 0.3.3系。旧版への誘導を修正済み |
+| 手元の0.3.3 rc.5 ZIP | 未提出・GitHub未掲載。同梱文書に旧案内があるため、この文書整理を取り込んだ再梱包が必要 |
+| WordPress.orgへ提出済み | 0.3.3 rc.3。追加指摘への対応後、再提出待ち |
+| 過去のZIP・タグ・申請記録 | 履歴として保全。新規導入の推奨先ではない |
 
-```sh
-python3 packages/markdown-m1/tools/build.py packages/markdown-m1/vendor dist/ozeki-resilience-0.3.3.zip
-```
+配布準備が完了したら、**このページに導入用ZIPの直接リンク・SHA-256・対応ソース**を揃えて掲載します。それまでは[導入ガイド](user-guide-ja.md)で準備内容を確認してください。
 
-Use a new output filename. This review-response candidate updates AWS SDK to 3.401.5 and its locked dependencies. Earlier submitted ZIPs remain unchanged. The published manifest records every product-file hash. The ZIP includes AWS SDK dependencies and licenses, not repository research tools.
+[rc.5の検証・返信案](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc5.md)。今回の文書整理では、コード・既存ZIP・タグは変更していません。
 
-## Candidate checks
+## English
 
-See the repository's `docs/releases/wordpress-org-review-20261028.md` and release assets for the exact ZIP hash, official Plugin Check results and isolated installation/update checks. Existing recovery evidence remains in [recovery readiness](recovery-readiness.md); it is not represented as a new cloud trial.
+Current source is the **0.3.3 series including the rc.5 fixes**. WordPress.org publication has not been approved; we are preparing the response to the additional review.
 
-## Review notes
+**An installable ZIP matching the current guidance is not yet listed on GitHub Releases.** Do not use the historical 0.3.2 rc.1 or 0.3.3 rc.3 release as the current package for these instructions. GitHub's `Source code (zip)` is not an installable plugin package.
 
-AWS credentials use the standard SDK credential chain and a user-controlled S3 bucket. Read `readme.txt` for service/data disclosures and [the guide](user-guide.md) for setup. Recovery can restore selected theme/plugin files from the administrator's trusted capture; this is a user-initiated recovery workflow, not a developer-hosted update channel.
+| Item | Status |
+|---|---|
+| Current GitHub source and user guides | 0.3.3 series; outdated download directions corrected |
+| Locally prepared 0.3.3 rc.5 ZIP | Not submitted or listed on GitHub; its bundled documents still contain old directions and need repackaging with these corrections |
+| Submitted WordPress.org package | 0.3.3 rc.3; a further response and replacement are pending |
+| Earlier ZIPs, tags and review records | Preserved as history, not recommended for a new installation |
 
-Historical research assets and previous releases remain available but are not additional setup requirements.
+When ready, this page will list the **direct installable ZIP link, SHA-256 and matching source** together. Until then, use the [setup guide](user-guide.md) to review the prerequisites.
 
-The previous submitted 0.3.2 rc.1 source is `54663f9f8376ec9c90d67fa573997dbbce8421e4`; its ZIP and tag are unchanged. See the [0.3.3 preparation record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-review-20261028.md). The ACF integration scope and prior evidence are described in [ACF free](acf-free.md).
-
-PHP classes use `OzekiResilience\M1`; existing stored identifiers and hooks remain compatible. Recovery-policy and legacy-identifier questions are recorded in the repository review response. This is not a claim that all review findings have been cleared.
+[rc.5 validation and reply draft](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc5.md). This documentation cleanup does not change code, existing ZIPs or tags.

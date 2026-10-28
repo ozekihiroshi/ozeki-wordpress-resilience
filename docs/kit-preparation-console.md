@@ -1,5 +1,7 @@
 # Approval-pending kit preparation (opt-in prototype)
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 Tools → 復旧キットの準備 lists the applied generations from the protected editor. Select **承認待ちキットを準備**. The server derives an applied receipt from saved history; the browser cannot supply commands, paths, generation locators, Q or profiles. The external worker runs the existing `rbr-generation-kit.py` CLI and reports running, failed, interrupted, blocked, or stored-awaiting-independent-approval. No signature, approval renewal, reconstruction or publication is performed here.
 
 ## Explicit configuration

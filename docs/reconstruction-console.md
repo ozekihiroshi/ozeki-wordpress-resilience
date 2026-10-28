@@ -1,5 +1,7 @@
 # Reconstruction console (generated-data prototype)
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 The opt-in external kit now provides `RbrReconstructionConsole`. It does not change the published alpha.4 ZIP or automatically enable reconstruction on a production site.
 
 ## Screen workflow

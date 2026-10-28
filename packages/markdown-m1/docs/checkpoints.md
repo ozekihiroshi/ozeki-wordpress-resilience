@@ -1,5 +1,7 @@
 # Independent Markdown snapshots and Checkpoints
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 This guide covers the supplementary asset-level path, not complete site recovery. For articles with images, themes, menus and site relationships, use [site-wide recovery](site-snapshot.md), the primary workflow. The asset restore button is **Restore assets from Checkpoint + later history**. A trusted baseline plus confirmed S3 formal history defines the recovery state; pending operations are excluded if the source is lost. An unconfirmed new article is absent; an unconfirmed update leaves the previous confirmed version.
 
 Initial snapshots and subsequent Checkpoints use the same builder, complete-file format and restore path. Initial capture uses published Markdown documents explicitly trusted by the administrator; pause editing during capture. Later Checkpoints use the previous snapshot and confirmed S3 history, never the live WordPress contents. Coverage is M1 Markdown documents and their attributes/links, not every WordPress asset.

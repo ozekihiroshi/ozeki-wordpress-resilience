@@ -1,5 +1,7 @@
 # Multi-material reconstruction console
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 This console belongs to `owr-site-materials-v1`, separately from the retained three-page signed console. It reuses fixed-version receive, request-derived Q and the shared WordPress projection CLI. No old three-page receipt, fixture generation, source database or signature approval is substituted for the selected material generation.
 
 ## Setup and operation

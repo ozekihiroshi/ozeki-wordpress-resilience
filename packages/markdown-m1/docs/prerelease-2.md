@@ -1,5 +1,7 @@
 # GitHub Pre-release v0.3.1-pre.2 — prepared, not published
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 [日本語](prerelease-2-ja.md)
 
 Trial distribution for technical WordPress maintainers; not a stable release or WordPress.org submission. Proposed tag: `v0.3.1-pre.2`. Installable filename: `ozeki-wordpress-resilience-0.3.1-pre.2.zip`; plugin display version remains 0.3.1. Identify by filename and the accompanying SHA-256. No release/tag is created by this preparation.

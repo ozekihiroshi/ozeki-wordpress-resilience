@@ -1,5 +1,7 @@
 # Native article details and deletion
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 Included in the 0.3.1 native-details-final candidate. Prior combined-final ZIP remains unchanged.
 
 For published or already-protected standard Posts/Pages, successful permanent deletion and the final request state of featured-image selection/removal and category/tag assignment/removal are recorded as complete `native-state-json` originals in the shared S3 formal history. Standard post/body saving retains its existing S3-first behavior. These additional operations are post-success capture, not pre-write interception. New category definitions and their ancestors needed by an assignment are included.

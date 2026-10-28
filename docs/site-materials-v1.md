@@ -1,5 +1,7 @@
 # Site materials reconstruction (development)
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 > Historical v1 implementation record. Native block-editor saving and source publication semantics now supersede the redirect/draft-only restrictions below. See [current native editor scope](native-wordpress-editor.md). Recovery targets remain private drafts.
 
 Resilience is independent of Ozeki Database Backup for S3. Its source of truth is submitted content stored in S3 before WordPress projection. A database dump is not a reconstruction input. Git is an analogy, not a protocol or dependency.

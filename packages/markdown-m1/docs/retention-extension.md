@@ -1,5 +1,7 @@
 # Fixed-version retention checks and manual renewal
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 > Historical development note: the lifecycle design below was superseded by [GFS Checkpoints](gfs-checkpoints.md). Current `retention_days` is independent of `cleanup_keep_days`; the normal screen no longer offers manual renewal. Its backend remains, but it is not the scheduled lifecycle. The earlier fixture evidence below is not evidence of the current GFS screen or real AWS extension. Real AWS retention inspection subsequently encountered missing `s3:GetObjectRetention` permission. See the GFS document for current behavior and test boundaries.
 
 Development change after PR #46; not included in any published ZIP or the checkpoint-verification candidate. Storage payload schemas are unchanged.

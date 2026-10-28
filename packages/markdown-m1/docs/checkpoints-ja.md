@@ -1,5 +1,7 @@
 # 独立した初期スナップショットとCheckpoint
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 この文書は補助的な資産単位の経路です。本文・画像・テーマ・メニュー・関連情報を含む復旧には、基本操作の[サイト全体の復旧](site-snapshot-ja.md)を使用してください。資産単位のボタン名は Restore assets from Checkpoint + later history です。信頼済み基準状態とS3正式履歴の確定操作までを復旧対象とし、元サーバ喪失時の未確定操作は採用しません。新規記事なら含めず、更新なら前の確定版を復旧します。
 
 初期スナップショットとCheckpointは、同じ生成処理・完全ファイル形式・復旧処理を使います。初期だけは管理者が信頼すると判断した公開済みMarkdown文書を入力とし、取得中は編集を止めます。以後は前のスナップショットとS3の正式履歴を入力とし、稼働中WordPressから再採取しません。対象はM1のMarkdown文書・属性・文書間リンクであり、WordPressの全機能ではありません。

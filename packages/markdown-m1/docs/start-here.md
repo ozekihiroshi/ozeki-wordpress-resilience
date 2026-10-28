@@ -4,7 +4,7 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 For first-time setup, follow the [user guide](user-guide.md). This reference explains supported scope and what to do after theme or configuration changes.
 
-The 0.3.2 rc.1 update was accepted on October 28, 2026 and is awaiting review; it is not yet approved or published on WordPress.org. The original 0.3.1 rc.2 submission remains preserved.
+This reference covers the current 0.3.3 series. Before installation, check [distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md); WordPress.org approval is pending.
 
 ## 1. What is protected
 
@@ -14,7 +14,7 @@ Normal supported operations cover Posts/Pages, referenced local images, core com
 
 The administrator judges the initial site trustworthy. Later complete Checkpoints are built from S3's baseline and confirmed history; they do not import untracked live-site changes. Unconfirmed operations are excluded. Saved publish status is reproduced; server/network exposure and DNS are administrator responsibilities. Use [the stated verification boundaries](../README.md#what-the-product-checks) to choose the Baseline and history, then inspect the recovery result before returning to service.
 
-Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/site-snapshot.md#baseline-and-checkpoint-operations). The legacy Markdown asset-level path is separate.
+Baseline is the first independent complete recovery point. A normal Checkpoint uses only S3 assets and confirmed history; current WordPress recapture is a separate new Baseline. See [operations and dependencies](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md). The legacy Markdown asset-level path is separate.
 
 ## 2. Changes requiring administrator attention
 

@@ -1,5 +1,7 @@
 ## 検証範囲と公開ラインへの統合
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 2026-10-28、ACF無料版6.8.10・隔離WordPress7.1.3で、Gutenbergから試験投稿・固定ページを編集し、実S3の固定版原本照合・正式履歴確定、dm管理画面からのサイト全体復旧まで確認しました。基本15型の値・フィールドキー参照・get_field()の結果、および本文・タイトル・公開状態が保存元・S3原本・復旧先で一致しました。全型をブラウザで変更したわけではなく、初期値を維持した型も比較しています。最新ACF履歴は5と10で、Baseline through 0＋履歴10までを復旧しました。本文・記事付随情報・ACFは別履歴で、途中状態のACF履歴も生じます。画面保存1回＝履歴1件ではありません。
 
 値・定義・参照は3つの独立したJSON原本です。未知設定は原本に残っています。未適用151項目には対象外ACF設定・型と試験WordPressのウィジェット等を含み、対応値の喪失件数ではありません。復旧先には同じソフトウェアを事前配置しており、ファイル書込み0件でした。プラグイン本体の新規配置試験ではありません。復旧入力はS3で元DBを参照しませんが、元サーバ自体は停止していません。

@@ -1,5 +1,7 @@
 # サイト全体の初期スナップショットと再構築
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 この文書には旧候補の設計・検証記録が含まれます。現行の復旧手順は[利用ガイド](user-guide-ja.md)を参照してください。旧コード復元の記録は現行機能ではありません。
 
 ## BaselineとCheckpointの操作

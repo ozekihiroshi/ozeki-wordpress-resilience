@@ -1,5 +1,7 @@
 # Pre-setup checks — current implementation review
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 **Version note:** The following describes the submitted 0.3.1 assessment. Release candidate 0.3.2 adds [readiness and terms confirmation](setup-readiness.md). The submitted ZIP is unchanged.
 
 [日本語](setup-preflight-review-ja.md) · [Setup guide](user-guide.md)

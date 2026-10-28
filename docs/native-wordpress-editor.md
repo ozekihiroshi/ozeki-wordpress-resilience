@@ -1,5 +1,7 @@
 # Native WordPress editing — implementation scope
 
+> **研究・旧構成の資料 / Research and legacy reference.** 現行製品の導入手順ではありません。See [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md) and [導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md).
+
 The enrolled **dedicated environment** can use WordPress's standard block editor
 for posts and pages. This change is not a production rollout or an automatic
 conversion of an existing site. Administrators only; other editorial roles are

@@ -1,5 +1,7 @@
 # M1 完了報告（2026-10-24）
 
+> **設計・検証資料（過去の版を含みます） / Technical and historical reference.** 現行の導入案内ではありません。Use the [current user guide](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide.md) / [現行導入ガイド](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/user-guide-ja.md) and [配布状況 / distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+
 **指定されたM1受入12項目は、専用環境と試験用データで成功しました。M1として完了と判定します。完成憲章全体の完成・正式公開・本番導入とは区別します。**
 
 ## 利用者ができること

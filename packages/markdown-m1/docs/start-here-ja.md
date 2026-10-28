@@ -4,7 +4,7 @@
 
 初回導入は[利用ガイド](user-guide-ja.md)から進めてください。このページは対応範囲と、テーマ・設定変更後の操作を確認するための補足です。
 
-0.3.2 rc.1への申請更新は2026年10月28日に受け付けられ、審査待ちです。WordPress.orgでの公開承認・掲載はまだ行われていません。初回の0.3.1 rc.2も記録として保全しています。
+対象は現行0.3.3系です。公開承認前のため、導入前に[配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。
 
 ## 1. 保護するもの
 
