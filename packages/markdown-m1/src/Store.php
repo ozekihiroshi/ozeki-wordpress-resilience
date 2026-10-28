@@ -8,8 +8,8 @@ require_once __DIR__.'/GfsPolicy.php';
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
 {
-    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
-    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
+    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
+    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
     private function args(string $key = ''): array {
         $a = ['Bucket'=>$this->config['bucket']];

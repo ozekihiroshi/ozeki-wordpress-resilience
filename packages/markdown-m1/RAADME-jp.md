@@ -94,3 +94,5 @@ WordPress.orgでの公開後は、プラグインページの **Support（サポ
 [ライセンス](LICENSE)。Ozeki Database Backup for S3とは独立した製品です。
 
 セットアップ支援の検討資料：[条件判定の現状整理](docs/setup-preflight-review-ja.md)（未実装の追加案を含む）。
+
+[ACF無料版の基本フィールド — 統合候補（公開済みZIPには未収録）](docs/acf-free-ja.md).

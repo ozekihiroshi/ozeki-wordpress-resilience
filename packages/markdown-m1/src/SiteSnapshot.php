@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Owr\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AssetFormat.php';
+require_once __DIR__.'/AcfHistory.php';
 require_once __DIR__.'/RecoveryRules.php';
 require_once __DIR__.'/GfsPolicy.php';
 
@@ -39,6 +40,7 @@ final class SiteSnapshot
         foreach(array_unique(array_column($data['tables']['posts'],'post_author')) as $id){$u=get_userdata((int)$id);if($u)$data['authors'][(string)$id]=['display_name'=>$u->display_name,'user_nicename'=>$u->user_nicename];}
         if(TableHistory::enabled())TableHistory::baseline($data);
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
+        AcfHistory::baseline($data);
         return $data;
     }
     private function files(string $root,string $prefix,array &$out): void {
@@ -65,7 +67,7 @@ final class SiteSnapshot
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('owr_m1_pending')||get_option('owr_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         // Include active supported runtimes; native-only sites do not require Markdown Documents.
-        foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
+        foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN,AcfHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=[];
         $hasMarkdown=(bool)array_filter($data['tables']['posts'],fn($p)=>$p['post_type']==='ozmd_document')
             ||(bool)array_filter($data['tables']['postmeta'],fn($m)=>$m['meta_key']==='_ozmd_source');
@@ -154,6 +156,10 @@ final class SiteSnapshot
         $target??=$rows?(int)$rows[count($rows)-1]['sequence']:$through;
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_acf'){
+                $this->store->get($r['original']['metadata']);
+                AcfHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_native'){
                 $this->store->get($r['original']['metadata']);
                 self::applyMedia($d,$files,$r['attributes']['media']??[],$this->store);
@@ -253,6 +259,7 @@ final class SiteSnapshot
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        AcfHistory::check($d);
         $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
@@ -264,6 +271,11 @@ final class SiteSnapshot
             if(!preg_match('/Version:\s*([^\s]+)/',$code,$version)||$version[1]!==$m['required_tablepress_version'])throw new \RuntimeException('Create a new trusted baseline after changing TablePress version.');
         }
         if(count($program)!==count($m['software_hashes']))throw new \RuntimeException('Incomplete software bundle.');
+        if(isset($d['acf'])){
+            $code=$program['plugins/'.AcfHistory::PLUGIN]??'';
+            if(!in_array(AcfHistory::PLUGIN,$m['plugins'],true)||!preg_match('/Version:\s*([^\s]+)/',$code,$version)||$version[1]!==$d['acf']['version'])
+                throw new \RuntimeException('Create a new trusted Baseline after installing or changing ACF version.');
+        }
         $install=$program;foreach($files as $p=>$body)if(str_starts_with($p,'uploads/'))$install[$p]=$body;
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         file_put_contents($work.'/before-content.json',Store::json($this->data()));chmod($work.'/before-content.json',0600);
@@ -290,6 +302,7 @@ final class SiteSnapshot
                 foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
+            AcfHistory::install($d['acf_restore_groups']??[]);
             foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}self::writeOption($k,self::relocate($v,$from,$to));}
             $active=array_values(array_unique(array_merge([plugin_basename(dirname(__DIR__).'/ozeki-wordpress-resilience.php')],$m['plugins'])));self::writeOption('active_plugins',$active);
             // Re-render sources with the recorded installed Markdown implementation.

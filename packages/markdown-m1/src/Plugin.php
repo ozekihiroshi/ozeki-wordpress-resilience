@@ -400,7 +400,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables and article relationships.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->originalSource($row['original']);
@@ -414,7 +414,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
             $source=$store->originalSource($row['original']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];

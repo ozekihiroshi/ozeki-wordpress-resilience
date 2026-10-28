@@ -40,3 +40,6 @@ add_action('plugins_loaded',static function () { (new \Owr\M1\TableHistory())->b
 
 require_once __DIR__.'/src/NativeHistory.php';
 add_action('plugins_loaded',static function () { (new \Owr\M1\NativeHistory())->boot(); });
+
+require_once __DIR__.'/src/AcfHistory.php';
+add_action('plugins_loaded',static function () { (new \Owr\M1\AcfHistory())->boot(); });
