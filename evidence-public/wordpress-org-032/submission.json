@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-28",
+  "action": "updated existing application",
+  "product": "Ozeki Resilience",
+  "slug": "ozeki-resilience",
+  "version": "0.3.2",
+  "release_tag": "wporg-0.3.2-rc.1",
+  "source_commit": "54663f9f8376ec9c90d67fa573997dbbce8421e4",
+  "file": "ozeki-resilience-0.3.2.zip",
+  "sha256": "09fc645f156b1c3a887e189a506b0fdc632776ac12c3e570690279bac6cf25c2",
+  "receipt_message": "New version of Ozeki Resilience uploaded for review.",
+  "review_status": "Awaiting Review — This plugin has not yet been reviewed.",
+  "previous_submission_visible": true,
+  "approved": false,
+  "published_on_wordpress_org": false,
+  "verification": "Submission page after Upload; file/version, supplied hash/source URL, receipt message and previous submission row observed. Email not checked."
+}

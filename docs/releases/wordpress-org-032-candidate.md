@@ -1,6 +1,6 @@
-# WordPress.org更新候補 — Ozeki Resilience 0.3.2 rc.1
+# WordPress.org申請更新記録 — Ozeki Resilience 0.3.2 rc.1
 
-**未送信。** 2026年10月26日に受け付けられた0.3.1 rc.2の申請を更新するための候補です。受付済み版・タグ・ZIPは変更していません。WordPress.orgでの公開承認を意味しません。
+**2026年10月28日、0.3.2 rc.1への申請更新が受け付けられました。状態はAwaiting Review（審査待ち）で、公開承認・掲載はまだ行われていません。** 10月26日の既存申請を更新し、0.3.1 rc.2も提出履歴として残っています。提出済みZIPとタグは変更していません。
 
 ## 更新内容
 
@@ -11,7 +11,7 @@
 
 保存・復旧の対象拡大や依存ライブラリ更新はありません。
 
-## 送信する内容
+## 送信した内容
 
 | 項目 | 内容 |
 |---|---|
@@ -61,3 +61,14 @@ S3は模擬実装、データは生成データです。実AWS・既存サイト
 ## 再現用の確認手順
 
 `packages/markdown-m1/tests/release-candidate.py` に、出力ディレクトリ、新ZIP、提出済みZIP、WP-CLI phar、公式Plugin Check ZIPをこの順で渡します。Dockerは隔離試験のためのもので、製品利用時の要件ではありません。
+
+## 更新受付の確認（2026年10月28日）
+
+- [申請画面](https://wordpress.org/plugins/developers/add/)に「New version of Ozeki Resilience uploaded for review.」と表示。
+- 新しい提出行のUpload DateはOctober 28, 2026、Fileは`ozeki-resilience-0.3.2.zip`、Versionは`0.3.2`。
+- 補足説明の0.3.2 rc.1ソースURLとSHA-256が送信内容に一致。
+- Review statusは**Awaiting Review — This plugin has not yet been reviewed.**。slugは`ozeki-resilience`のまま。
+- 0.3.1の提出行と従来の補足説明も画面に残っていることを確認。
+- [機械可読の受付記録](../../evidence-public/wordpress-org-032/submission.json)。メールの到着確認や手動審査の合格を示す記録ではありません。
+
+今回の変更は受付状態を反映する文書更新だけです。固定タグ`wporg-0.3.2-rc.1`の対応ソースは`54663f9f8376ec9c90d67fa573997dbbce8421e4`、提出済みZIPのSHA-256は上記のままです。タグやZIP内の「未送信」は作成時点の記録として保持します。送信した補足説明の原文も書き換えません。

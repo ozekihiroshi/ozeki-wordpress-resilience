@@ -1,6 +1,6 @@
 # WordPress.org candidate 0.3.2 (rc.1)
 
-This candidate adds setup readiness, explicit storage-access confirmation and Japanese/English administration screens to the previously submitted 0.3.1 product. It is prepared for updating the existing application and has not been sent. The submitted 0.3.1 rc.2 ZIP and tag remain unchanged.
+This candidate adds setup readiness, explicit storage-access confirmation and Japanese/English administration screens to the previously submitted 0.3.1 product. The update to the existing application was accepted on October 28, 2026. Status: **Awaiting Review — not yet approved or published in the WordPress.org Plugin Directory**. The submitted 0.3.1 rc.2 ZIP and tag remain unchanged.
 
 Public name: **Ozeki Resilience**. Directory: `ozeki-resilience`. Version: **0.3.2**. Contributor: **ozekihiroshi**. Existing option and history keys are retained. No external runtime kit is required.
 
@@ -23,3 +23,5 @@ See the repository's `docs/releases/wordpress-org-032-candidate.md` and release 
 AWS credentials use the standard SDK credential chain and a user-controlled S3 bucket. Read `readme.txt` for service/data disclosures and [the guide](user-guide.md) for setup. Recovery can restore selected theme/plugin files from the administrator's trusted capture; this is a user-initiated recovery workflow, not a developer-hosted update channel.
 
 Historical research assets and previous releases remain available but are not additional setup requirements.
+
+The submitted ZIP and tag remain fixed at source commit `54663f9f8376ec9c90d67fa573997dbbce8421e4`. Documentation on main now records receipt; the tagged documentation retains its preparation-time status. See the current [submission record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-032-candidate.md).

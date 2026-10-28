@@ -2,7 +2,7 @@
 
 For first-time setup, follow the [user guide](user-guide.md). This reference explains supported scope and what to do after theme or configuration changes.
 
-This guide accompanies the 0.3.2 candidate (not yet submitted). 0.3.1 rc.2 was submitted on October 26, 2026 and is awaiting review; it is not yet approved on WordPress.org.
+The 0.3.2 rc.1 update was accepted on October 28, 2026 and is awaiting review; it is not yet approved or published on WordPress.org. The original 0.3.1 rc.2 submission remains preserved.
 
 ## 1. What is protected
 

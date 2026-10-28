@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**Release candidate: 0.3.2 (rc.1).** Includes setup readiness, terms confirmation and Japanese/English admin screens. This candidate has **not been submitted to WordPress.org**. The previously submitted 0.3.1 rc.2 remains preserved.
+**Release candidate: 0.3.2 (rc.1).** Includes setup readiness, terms confirmation and Japanese/English admin screens. The update was accepted by WordPress.org on **October 28, 2026** and is **Awaiting Review — not yet approved or published in the Plugin Directory**. The previously submitted 0.3.1 rc.2 remains preserved.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
-Ozeki Resilience **0.3.1 (rc.2) was submitted to WordPress.org on October 26, 2026**. Status: **Awaiting Review — not yet approved or published in the WordPress.org Plugin Directory**. It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
+The original application was submitted as **0.3.1 (rc.2) on October 26, 2026**, then updated to **0.3.2 (rc.1) on October 28, 2026**. [Submission record](packages/markdown-m1/docs/wordpress-org-candidate.md). It supersedes the obsolete 0.2.0 submission candidate; neither the old plugin ZIP nor its external runtime kit is required.
 
 ## Keep a path to recovery after an attack
 
