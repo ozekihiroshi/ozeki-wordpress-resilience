@@ -29,7 +29,11 @@ try{
     verify(str_contains(OzekiResilience\M1\AdminText::recoveryNext('Cannot create private staging directory.'),'サーバー管理者'),'Directory next action');
     ob_start();$p->page();$ja=ob_get_clean();
     verify(str_contains($ja,'復旧先に用意するもの'),'Japanese requirements missing');
+    ob_start();OzekiResilience\M1\Plugin::renderSiteResult(['status'=>'running'],[],[]);$interrupted=ob_get_clean();
+    verify(str_contains($interrupted,'同じ復旧ポイント・履歴番号'),'Japanese interrupted recovery next action missing');
     remove_filter('pre_determine_locale',$labLocaleFilter);
+    ob_start();OzekiResilience\M1\Plugin::renderSiteResult(['status'=>'running'],[],[]);$interrupted=ob_get_clean();
+    verify(str_contains($interrupted,'previous recovery is still running'),'English interrupted recovery next action missing');
     $points=$p->store()->siteSnapshots();
     verify(count($points)>0,'Real S3 points unavailable');
     $before=$GLOBALS['wp_version'];$GLOBALS['wp_version']='0.0.1';

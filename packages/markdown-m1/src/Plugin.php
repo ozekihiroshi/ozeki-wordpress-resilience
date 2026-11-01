@@ -664,6 +664,8 @@ final class Plugin
                 if(isset($r['error'])){
                     $rows[AdminText::text('Failure reason')]=AdminText::message($r['error']);
                     $rows[SetupReadiness::text('Next action','次の操作')]=AdminText::recoveryNext($r['error']);
+                }else{
+                    $rows[SetupReadiness::text('Next action','次の操作')]=SetupReadiness::text('Keep the destination private. Check whether the previous recovery is still running. Once it has stopped, retry the same recovery point and history end, then confirm success before opening the site.','復旧先は非公開のままにします。前の復旧処理がまだ動いていないか確認し、終了後に同じ復旧ポイント・履歴番号で再実行してください。成功を確認してからサイトを公開します。');
                 }
             }
             echo '<table class="widefat striped"><tbody>';

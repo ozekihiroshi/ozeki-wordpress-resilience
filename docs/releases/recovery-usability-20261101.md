@@ -55,6 +55,28 @@ Local evidence: `D:/workspace/wp-rescue/release-readiness/usability-20261101/` c
 
 ## Still separate / 今回の完了とは区別する項目
 
-This run verifies the existing configured environment, not a first-time AWS deployment or a new user's independent completion. It does not establish the `source-no-delete` sample policy alone, large-site capacity, long-term scheduling, abrupt process-kill recovery, a full integration/version matrix or a new official Plugin Check result. These remain explicit follow-up checks before promoting a new release. The previous submitted Plugin Check result is not represented as a check of this candidate.
+This run verifies the existing configured environment, not a first-time AWS deployment or a new user's independent completion. It does not establish the `source-no-delete` sample policy alone, capacity beyond the bounded tests below, elapsed long-term scheduling or a full integration/version matrix. These remain explicit follow-up checks before promoting a new release. The current candidate Plugin Check is recorded below separately from the submitted result.
 
 Submitted rc.6 SHA-256 remains `e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3`.
+
+## Additional operations checks / 規模・途中中断・定期運用
+
+Executed on the same community/dm fixtures on November 1. Synthetic posts were inserted into the dedicated source tables; this tests Baseline capacity, not 256 ordinary editor saves. One inert TXT attachment was enlarged between stages. Real S3 reads/writes used the existing configuration. No object/version deletion or IAM edits were performed.
+
+| Added posts / attachment | Capture | Restore | Capture / restore PHP peak |
+|---|---:|---:|---:|
+| 32 / 1 MiB | 5.628 s | 2.569 s | 62.5 / 60.5 MiB |
+| 128 / 8 MiB | 17.073 s | 7.682 s | 78.5 / 76.5 MiB |
+| 256 / 24 MiB | 33.767 s | 16.547 s | 117.4 / 118.7 MiB |
+
+All three stages matched the ordered test-post title/body/status digest and attachment SHA-256 between source and destination. The largest point contained 529 resources. Existing original posts, histories and earlier S3 points were retained. Capture used the source's 256 MiB PHP limit; restore used the destination's existing 128 MiB limit. These are CLI core-operation timings, excluding WordPress bootstrap, not browser/proxy timeout tests. The last stage has little headroom at 128 MiB and does not establish an unlimited or production capacity claim.
+
+**Forced interruption:** only the dedicated PHP process received SIGKILL. On dm, the trigger was the first post INSERT after the transactional DELETE statements. The 32-post database rolled back unchanged, while the attachment had already become the new 8 MiB file. A retry of the same point restored all 128 posts and matched both digests. An interrupted destination must remain private until a successful retry and content check. The UI previously lacked a next action for a running/unconfirmed attempt; it now explains checking that the previous process has stopped and retrying the same point/history boundary. The Japanese and English guides agree. The kill test invokes the core restore method; the admin status renderer is checked separately by regression assertions.
+
+On community, a delegating test SDK wrapper killed only its PHP process after the third real S3 PutObject, before manifest publication. The discoverable point references stayed exactly unchanged; a fresh capture then succeeded in 35.816 seconds with 529 resources. Partial resource objects are left in the test prefix; this test deliberately does not delete them.
+
+**Scheduled operation:** a due weekly slot was set in the isolated fixture and executed through its actual `wp-cron.php`. A complete independent point was created, the next slot was reserved, and replaying the same slot returned `already_confirmed: true`. A second due run with synthetic pending history stopped with the expected pending-operation error, created no new point and reserved the next slot. Original config, pending state and cron option were restored. Automatic cleanup stayed disabled. This is an accelerated dispatch/retry check, not weeks/months of elapsed operation or deletion testing.
+
+**Plugin Check 2.1.0:** final candidate runtime and maintained package documents checked on community: **0 errors, 107 warnings**, unchanged in count from the prior submitted check. Categories: direct database queries 34, uncached queries 32, metadata query performance 30, input sanitization heuristics 5, nonce heuristics 3, error logging 2, Japanese root Markdown filename 1. These warnings remain; a zero-error result does not mean warning-free or WordPress.org approval. No blanket suppression was added. The tool was deactivated after checking.
+
+Focused regression passed on dm, including new Japanese/English unconfirmed-attempt instructions, existing recovery-only write guards and real S3 listing. PHP syntax and diff whitespace checks passed. Evidence and isolated harnesses: `D:/workspace/wp-rescue/release-readiness/operations-20261101/`. Submitted rc.6, tags and main remain unchanged; these are working-branch results.
