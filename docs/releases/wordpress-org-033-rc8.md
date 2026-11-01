@@ -27,6 +27,12 @@ The WordPress readme now explains why the plugin exists before describing its me
 
 rc.6 SHA-256 remains `e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3`; rc.7 remains `b8e2d8d8961463da42f223990461f29ff7a3546212f459983ec1ebec0d307b58`.
 
+## CI fixture correction after packaging
+
+The main-branch Actions run exposed a missing `determine_locale()` stub in standalone recovery-result tests, introduced when the UI began rendering next-action text. WordPress supplies this function in the installed plugin environment. The test fixtures now supply the locale, and assert English/Japanese interruption guidance without weakening the existing result checks. The full independent M1 package contract step passed locally on PHP 8.3 after correction. [Latest main-branch CI results](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/actions/workflows/contracts.yml?query=branch%3Amain) include the PHP 8.1/8.3 jobs and remaining repository checks.
+
+This correction changes tests only, not packaged runtime or documents. The rc.8 tag/ZIP remain unchanged; the corrected standalone tests are on main. Historical failed runs remain visible. Plugin Check and ZIP validation above are separate from Actions results.
+
 ## Submission explanation draft — not sent
 
 Ozeki Resilience provides a recovery path when the original WordPress environment can no longer be trusted. Alongside existing backups, it preserves supported information as independent originals so publishing and service can resume on a fresh WordPress.

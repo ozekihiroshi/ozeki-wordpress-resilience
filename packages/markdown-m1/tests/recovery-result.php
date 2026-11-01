@@ -3,6 +3,8 @@
 if (!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');
 require $argv[1].'/src/Plugin.php';
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
+$testLocale='en_US';
+function determine_locale(){global $testLocale;return $testLocale;}
 eval('namespace OzekiResilience\\M1; class Store { public static function json($v){return json_encode($v);} }');
 function render($a,$s,$list=[]){ob_start();OzekiResilience\M1\Plugin::renderSiteResult($a,$s,[],$list);return ob_get_clean();}
 function ok($v,$m){if(!$v)throw new Exception($m);}
@@ -10,6 +12,8 @@ $ref=['key'=>'site-snapshots/test/manifest.json','version'=>'v1','sha256'=>'abc'
 $h=render([],$s,$list);ok(str_contains($h,'Success')&&str_contains($h,'34–56 (23 records)')&&str_contains($h,'>22<')&&str_contains($h,'Files written / replaced'),'Legacy success');
 $h=render(['status'=>'failed','manifest'=>$ref,'at'=>'now','error'=>'<script>alert(1)</script>'],$s,$list);$summary=explode('<details>',$h)[0];ok(str_contains($summary,'Failed')&&!str_contains($summary,'>22<')&&!str_contains($summary,'Applied formal history through'),'Failure cannot claim old success');ok(!str_contains($h,'<script>')&&str_contains($h,'&lt;script&gt;'),'Escape');ok(str_contains($h,'last_successful_recovery'),'Preserve JSON');
 $h=render(['status'=>'running','at'=>'now'],$s);ok(str_contains($h,'completion not confirmed'),'Interrupted');
+ok(str_contains($h,'previous recovery is still running'),'Interrupted next action');
+$testLocale='ja';$h=render(['status'=>'running','at'=>'now'],$s);ok(str_contains($h,'同じ復旧ポイント・履歴番号'),'Japanese interrupted next action');$testLocale='en_US';
 $h=render([],[]);ok(str_contains($h,'No site-wide recovery recorded'),'Empty');
 $h=render([],$s);ok(str_contains($h,'Not available'),'Missing checkpoint does not invent range');
 $s['through']=33;$h=render(['status'=>'success']+$s,$s,$list);ok(str_contains($h,'>None<'),'No tail');
