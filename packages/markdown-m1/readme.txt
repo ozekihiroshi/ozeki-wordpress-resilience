@@ -83,6 +83,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Recovery destinations reject S3 writes and deletion; show recorded software requirements and practical retry guidance in Japanese and English.
 * Validate recovery references before storage, sanitize nonces, and escape rendered URL attribute changes with the WordPress HTML API.
 * Update AWS SDK; respect host file-modification restrictions during recovery; limit detailed notices to the plugin screen.
 * Preparation distinguishes ACF free, PRO and unused ACF; guides creating an initial save for the current free version. ACF PRO fields are outside protection.
