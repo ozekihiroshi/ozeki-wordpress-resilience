@@ -2,7 +2,7 @@
 
 ## 日本語
 
-現在の公開候補は **0.3.3 rc.7** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**rc.7はWordPress.orgへ未提出です。****2026年10月28日にrc.6の更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。**
+現在の公開候補は **0.3.3 rc.7** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**rc.7はWordPress.orgへ未提出です。** **2026年10月28日にrc.6の更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。**
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.7/ozeki-resilience-0.3.3.zip)（8,282,477 bytes）
 - [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.7) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.7)
