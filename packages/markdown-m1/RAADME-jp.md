@@ -42,7 +42,7 @@ GitHubのソースアーカイブではなく、上記のインストール用ZI
 
 WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な領域が必要です。バージョニング有効なS3バケット、専用prefix、必要なIAM権限を用意し、1つのprefixへ書き込むサイトは1つにします。復旧先には互換性のあるWordPress系列、記録された依存プラグイン、Web公開領域外の非公開一時領域が必要です。操作画面はWordPressの利用言語に合わせて日本語・英語で表示します。
 
-**新しい公開候補は0.3.3 rc.7です。WordPress.orgへは未提出です。提出済みrc.6は審査担当者の回答待ちで、公開承認はまだ得ていません。** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
+**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
 
 <a id="supported-content-and-plugins"></a>
 
@@ -98,7 +98,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 - [外部送信とプライバシー](readme.txt)
 - [現行版の配布状況・対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
-**新しい公開候補は0.3.3 rc.7です。WordPress.orgへは未提出です。提出済みrc.6は審査担当者の回答待ちで、公開承認はまだ得ていません。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
+**不具合・使い方の質問は[GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)へ。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
 
 WordPress.orgでの公開後は、プラグインページの **Support（サポート）** からも質問・不具合を受け付けます。rc.6の更新受付と返信は完了し、現在は審査担当者の回答待ちです。修正作業はGitHub Issuesで管理し、両方に投稿する場合は既存の投稿へリンクしてください。公開審査のメールは、利用者向けの問い合わせとは別の連絡経路です。
 

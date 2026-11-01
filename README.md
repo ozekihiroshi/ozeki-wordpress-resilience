@@ -42,7 +42,7 @@ Use the installable ZIP, not GitHub's source archive. Runtime libraries are bund
 
 WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The controls follow your WordPress admin language: Japanese or English.
 
-**0.3.3 rc.7 is the new release candidate, not yet submitted to WordPress.org. Submitted rc.6 remains awaiting a response from the reviewer; publication is not approved.** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
+**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
 
 <a id="supported-content-and-plugins"></a>
 
@@ -98,7 +98,7 @@ The [user guide](packages/markdown-m1/docs/user-guide.md) covers schedules, rete
 - [External-service and privacy disclosure](packages/markdown-m1/readme.txt)
 - [Current distribution status and matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)
 
-**0.3.3 rc.7 is the new release candidate, not yet submitted to WordPress.org. Submitted rc.6 remains awaiting a response from the reviewer; publication is not approved.** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
+**Problems or questions?** Use [GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues). For a bug, choose the [English or Japanese report template](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose) and describe the operation, expected result, actual result and versions as far as you know. Questions can use a blank issue. Reports are public; omit credentials and private content.
 
 After publication on WordPress.org, the plugin page's **Support** tab will also accept questions and bug reports. The rc.6 review response has been sent; we are awaiting the reviewer’s response. We track fixes in GitHub Issues; if a report is already on one service, link it from the other instead of repeating the details. WordPress.org review emails are separate from user support.
 
