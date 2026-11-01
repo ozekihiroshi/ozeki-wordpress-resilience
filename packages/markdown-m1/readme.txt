@@ -12,26 +12,32 @@ Preserve supported site content and confirmed history in Amazon S3, then reconst
 
 == Description ==
 
-= From originals and history to reconstruction =
+= Keep information usable after an attack =
 
-Ozeki Resilience preserves supported content as independent originals and confirmed history in your S3 bucket. It reconstructs that supported state on a prepared WordPress, rather than copying a whole server or database image.
+Ozeki Resilience helps you resume publishing and serving users when an attack leaves the original site untrustworthy. Keep your backup and restore arrangements; this plugin provides a path to recovering supported information without bringing back the old environment as it stood.
+
+Its design starts with independent originals: articles, images and other supported information remain assets separate from the system that created them. Prepare a fresh WordPress and install the necessary themes/plugins from trusted distributors. Recovery does not deploy or execute archived theme/plugin code; it restores supported information and relationships, applies only recognized settings and reports items not applied. It keeps the destination theme selection.
+
+The aim is preparedness, not minimum storage or the fastest restoration. Independent originals and additional recovery points provide reserves for recovery. Storage, transfers and read-back time are part of maintaining that reserve.
+
+= From originals and history to recovery =
 
 Start with a trusted initial capture (Baseline). Enable protection for supported edits, then create Checkpoints from the saved resources and confirmed history. When needed, prepare a compatible destination and recover a selected point plus confirmed history. Checkpoints use what has been saved; untracked live changes may require a new trusted Baseline.
 
 = Supported content =
 
-Posts and Pages, supported local images and core comments are covered. Defined integrations support Ozeki Markdown Documents, Contact Form 7 / Flamingo, WP-Members core subscribers TablePress core tables and ACF free basic fields on posts/pages. See the included README.md for exact coverage and tested versions.
+Posts and Pages, supported local images and core comments are covered. Defined integrations support Ozeki Markdown Documents, Contact Form 7 / Flamingo, WP-Members core subscribers, TablePress core tables and ACF free basic fields on posts/pages. See the included README.md for exact coverage and tested versions.
 
 ACF recovery uses the recorded free version (tested 6.8.10), database-defined groups and post/page location rules. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Create a new trusted Baseline when adding ACF or changing its version or definitions.
 
-Optional plugins are installed separately. Markdown Documents is needed only when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
+Standard WordPress Posts and Pages need no additional plugin. For integration-specific content, install the compatible plugin separately before recovery. Markdown Documents is needed when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
 
 = Scope and responsibilities =
 
 * Protection covers documented content and operations, not arbitrary plugins, all settings or external/CDN resources. Keep separate protection for resources outside this scope.
 * After source loss, recovery uses confirmed history. A visible edit can still be pending, and body and related operations may confirm separately. Monitor the save status.
 * Recovery replaces supported destination state and restores saved publication status. Prepare a compatible dedicated destination and control its public access.
-* This product reconstructs saved state; malware removal, server provisioning and continuous replication are outside its role. Recovery depends on the required saved resources and a suitable environment.
+* Recovery takes place on a separately prepared destination, not by repairing the compromised server. The administrator prepares trusted software and decides when to open the recovered site.
 
 = Getting ready =
 
@@ -50,10 +56,8 @@ No analytics or telemetry is sent to the developer. AWS access and credentials a
 = Documentation and source =
 
 User guide, AWS policies, terms of use (docs/terms-of-use.md; Japanese: docs/terms-of-use-ja.md) and installation/update instructions are included in docs/.
-Source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/release/wordpress-org/packages/markdown-m1
+Source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/main/packages/markdown-m1
 Support: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues
-
-Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
 
 == Installation ==
 

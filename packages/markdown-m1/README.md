@@ -9,15 +9,15 @@ English | [日本語](RAADME-jp.md)
 
 ## Keep a path to recovery after an attack
 
-Losing a site should not mean losing the information and relationships built through it. Ozeki Resilience preserves articles, images, comments and supported inquiry and member information, then restores them on a separate WordPress so you can resume publishing and serving users.
+Ozeki Resilience helps you resume your work with accumulated articles, images and supported inquiry and member information when a cyberattack or other incident leaves the original site untrustworthy. Keep your backup and restore arrangements; **Resilience provides a path to recovering information when bringing back the original environment as it stood is not an option.**
 
-Backup and restore prepare you to return a site to a captured state. Resilience prepares you to **bring back the content needed to continue your work when restoring the attacked site as it stood is not an option**. Its priority is preserving valuable content and making it usable again, rather than carrying over the entire original environment.
+This purpose leads to a design principle: preserve information as independent originals, separate from the system that created it. **Preserved originals have value independent of the recovery engine.** Coverage balances the value of the information with the work needed to recover it safely.
 
-The scope balances the value of what is preserved with the work needed to handle and restore it safely. The tables below show what is saved and restored, and what you prepare separately on the destination.
+Prepare a fresh WordPress destination, then separately install and activate the necessary trusted software. S3 supplies supported information assets and their required relationships. **Recovery does not deploy or execute archived theme/plugin code, and applies only recognized settings.** It keeps the destination theme selection and reports items it did not apply.
 
-The underlying idea is to separate the lifespan of information from that of the system that created it. The aim is to preserve articles, images and other content as independent information assets that remain understandable and usable even if the original system is lost, and from which a needed system can be reconstructed. **Preserved originals have value independent of the recovery engine.**
+The aim is not to minimize storage or make restoration as fast as possible. Independent originals and additional recovery points provide reserves and room to recover when needed, so information can remain usable. Storage, transfers and read-back time are part of maintaining that reserve.
 
-Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
+Protecting standard WordPress Posts and Pages requires no additional plugin. Recovering information specific to an integration requires its compatible plugin version, installed separately. The table below distinguishes recovered content from software you prepare.
 
 | Item | Handling |
 |---|---|

@@ -2,6 +2,8 @@
 
 ## 日本語
 
+2026年11月2日、mainのREADME・導入説明に目的と設計原則を追記しました。この説明修正は下記rc.7 ZIPには未反映です。提出前に説明を含む新候補を作成します。コード・既存ZIP・タグは変更していません。
+
 現在の公開候補は **0.3.3 rc.7** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**rc.7はWordPress.orgへ未提出です。** **2026年10月28日にrc.6の更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。**
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.7/ozeki-resilience-0.3.3.zip)（8,282,477 bytes）
@@ -12,6 +14,8 @@
 [導入・復旧ガイド](user-guide-ja.md)に従って準備してください。GitHubの `Source code (zip)` は導入用ZIPではありません。旧ZIP・タグは履歴として残していますが、新規導入の案内先は上記候補です。
 
 ## English
+
+On November 2, the main-branch README and guides were clarified to explain purpose and design principles. These wording changes are not in the rc.7 ZIP below; a new candidate incorporating them is needed before submission. Runtime code and existing ZIPs/tags are unchanged.
 
 The current release candidate is **0.3.3 rc.7**. It improves recovery-only operation guards, recorded software requirements and interruption/failure guidance. **rc.7 has not been submitted to WordPress.org.** **The rc.6 update was accepted for review and the review-email reply was sent on October 28, 2026. We are awaiting the reviewer’s response; WordPress.org publication is not approved.**
 

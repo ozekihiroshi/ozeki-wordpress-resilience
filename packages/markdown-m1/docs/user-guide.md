@@ -1,5 +1,7 @@
 # First-time setup — from preparation to protection
 
+Prepare to recover the information needed to resume work even when the original site can no longer be trusted. Continue your backup arrangements while maintaining independent originals and recovery points. This reserve prioritizes preparedness over storage savings.
+
 Install WordPress, themes and required plugins separately from trusted distributors before recovery, and activate the required plugins. Resilience restores information assets and their supported relationships; it does not install or activate software from S3. It keeps the destination theme selection. Unknown settings are reported without being applied.
 
 | Item | Handling |
