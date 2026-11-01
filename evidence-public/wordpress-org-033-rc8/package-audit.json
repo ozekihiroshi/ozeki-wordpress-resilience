@@ -1,0 +1,17 @@
+{
+  "sha256": "1f826c27aebb28e81b726ac71f0c58a4d5f8400afe09a4d33a3c68b80c79118b",
+  "bytes": 8283015,
+  "files": 3813,
+  "runtime_files_identical_to_rc7": 3796,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md",
+    "ozeki-resilience/readme.txt"
+  ],
+  "product_source_matches": true,
+  "bundled_guides": 8,
+  "relative_links_resolve": 78,
+  "development_artifacts": 0
+}
