@@ -1,0 +1,9 @@
+{
+  "sha256": "b8e2d8d8961463da42f223990461f29ff7a3546212f459983ec1ebec0d307b58",
+  "bytes": 8282477,
+  "files": 3813,
+  "vendor_identical_to_rc6": 3776,
+  "product_source_matches": true,
+  "development_artifacts": 0,
+  "bundled_guides": 8
+}
