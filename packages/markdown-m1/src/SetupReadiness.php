@@ -95,8 +95,9 @@ final class SetupReadiness
     }
     public static function render(array $c): void {
         $t=[self::class,'text'];
-        echo '<section id="owr-setup"><h2>'.esc_html($t('Preparation for protection','保護開始までの準備状況')).'</h2>';
-        echo '<p>'.esc_html($t('Check environment → save storage settings → check storage → create initial snapshot → start protection.','環境を確認 → 保存先を設定 → 保存先を確認 → 最初の保存 → 保護を開始')).'</p>';
+        $recovery=($c['setup_role']??'source')==='recovery';
+        echo '<section id="owr-setup"><h2>'.esc_html($recovery?$t('Preparation for recovery','復旧までの準備'):$t('Preparation for protection','保護開始までの準備状況')).'</h2>';
+        echo '<p>'.esc_html($recovery?$t('Save storage settings → check storage → prepare recorded software → select recovery point and history → recover.','保存先を設定 → 接続を確認 → 必要なソフトウェアを用意 → 復旧ポイントと履歴を選択 → 復旧'):$t('Check environment → save storage settings → check storage → create initial snapshot → start protection.','環境を確認 → 保存先を設定 → 保存先を確認 → 最初の保存 → 保護を開始')).'</p>';
         if(($c['setup_role']??'source')==='recovery'){
             echo '<p>'.esc_html($t('Recovery destination: keep protection off. Choose an existing Checkpoint under Site-wide recovery; do not create an initial snapshot here.','復旧先：保護は無効のまま、「初期保存とサイト全体の復旧」で既存の復旧ポイントを選択してください。ここで最初の保存は作成しません。')).'</p></section>';return;
         }

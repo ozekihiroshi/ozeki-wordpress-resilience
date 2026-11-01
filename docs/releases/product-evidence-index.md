@@ -4,7 +4,9 @@ This index keeps the README focused on purpose and architecture while preserving
 
 READMEは目的と構成を説明し、詳細な実証はこの索引から参照します。新たな受入を宣言する文書ではありません。記録ごとに対象候補・環境・検証範囲が異なります。
 
-## Current package / 現在の配布物
+Current distribution / 現行の配布状況: [release candidate record](../../packages/markdown-m1/docs/wordpress-org-candidate.md). The records below refer to their dated candidates.
+
+## Historical package records / 過去の配布記録
 
 [pre.2 package record / pre.2配布記録](prerelease-2-package.md): pre.2 packages the tested executable files with current documentation through PR52. [pre.2 is published](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/v0.3.1-pre.2); the existing pre.1 below remains unchanged. 検証済みコードと最新文書を収録し、公開済みpre.1は不変です。
 

@@ -11,6 +11,12 @@ final class Store
     private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
     private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
+    private function requireWriter(): void {
+        if (($this->config['setup_role']??'source')==='recovery') {
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Localized diagnostic; escaped by admin renderers.
+            throw new \RuntimeException(SetupReadiness::text('This recovery destination only reads S3. Create or manage recovery points on the source site.','復旧先ではS3を読み取るだけです。復旧ポイントの作成・管理は保存元で行ってください。'));
+        }
+    }
     private function args(string $key = ''): array {
         $a = ['Bucket'=>$this->config['bucket']];
         if ($key !== '') $a['Key']=$this->config['prefix'].$key;
@@ -58,6 +64,7 @@ final class Store
     /** Extend only this fixed version; never shorten, change an existing mode or bypass Governance. */
     public function ensureRetention(array $ref,?string $until): void {
         if($until===null)return;
+        $this->requireWriter();
         if(empty($ref['key'])||empty($ref['version'])||$ref['version']==='null'||str_contains($ref['key'],'..')||str_starts_with($ref['key'],'/'))throw new \RuntimeException('Invalid retention reference.');
         $target=strtotime($until);if($target===false||$target<=time())throw new \RuntimeException('Invalid required retention deadline.');
         $args=$this->args($ref['key'])+['VersionId'=>$ref['version']];
@@ -87,6 +94,7 @@ final class Store
         foreach($value as $child)if(is_array($child))$this->retainReferences($child,$until,$seen);
     }
     public function put(string $key, string $body, string $type, ?string $until=null): array {
+        $this->requireWriter();
         $args=$this->args($key)+['Body'=>$body,'ContentType'=>$type,'IfNoneMatch'=>'*',
             'ServerSideEncryption'=>'AES256','ChecksumSHA256'=>base64_encode(hash('sha256',$body,true))];
         if (!empty($this->config['retention_days'])) {
@@ -146,7 +154,7 @@ final class Store
                 if(($m['schema']??'')!=='owr-site-snapshot-1'||empty($r['VersionId']))throw new \RuntimeException('Invalid site snapshot.');
                 $created=$r['LastModified']??($m['created_at']??'1970-01-01T00:00:00Z');
                 $created=$created instanceof \DateTimeInterface?$created->getTimestamp():strtotime((string)$created);
-                $out[]=['ref'=>['key'=>$key,'version'=>$r['VersionId'],'sha256'=>hash('sha256',$body)],'through'=>$m['through'],'origin'=>$m['origin'],'created'=>$created?:0,'gfs'=>$m['gfs']??[],'scheduled_at'=>$m['scheduled_at']??null];
+                $out[]=['ref'=>['key'=>$key,'version'=>$r['VersionId'],'sha256'=>hash('sha256',$body)],'through'=>$m['through'],'origin'=>$m['origin'],'created'=>$created?:0,'gfs'=>$m['gfs']??[],'scheduled_at'=>$m['scheduled_at']??null,'preparation'=>array_intersect_key($m,array_flip(['wordpress','plugins','software_inventory','source_url']))];
             }$token=$list['NextContinuationToken']??null;
         }while($token);usort($out,fn($a,$b)=>[$a['through'],$a['created'],$a['ref']['key']]<=>[$b['through'],$b['created'],$b['ref']['key']]);return $out;
     }
@@ -411,6 +419,7 @@ final class Store
     }
     /** Same policy for scheduled and administrator-requested deletion. Never bypass a lock. */
     public function siteCleanup(int $cutoff,string $expectedHash): array {
+        $this->requireWriter();
         $plan=$this->siteCleanupPreview($cutoff);
         if(!$plan['inventory_complete']||!hash_equals($plan['hash'],$expectedHash))throw new \RuntimeException('Storage changed or version inventory incomplete; preview again.');
         $delete=$plan['candidates'];
@@ -513,6 +522,7 @@ final class Store
     }
     /** Caller must hold the same single-writer lock as publication/Checkpoint. */
     public function cleanup(int $cutoff,string $expectedHash): array {
+        $this->requireWriter();
         $plan=$this->cleanupPlan($cutoff);
         if (!hash_equals($plan['hash'],$expectedHash)) throw new \RuntimeException('Storage changed; preview cleanup again.');
         if ($plan['blocked']) throw new \RuntimeException('Object Lock or Legal Hold blocks cleanup; nothing deleted.');

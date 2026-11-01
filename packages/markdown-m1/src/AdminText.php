@@ -11,10 +11,33 @@ final class AdminText
         return self::JA[$english] ?? $english;
     }
     public static function message(string $message): string {
+        if(function_exists('determine_locale')&&str_starts_with(determine_locale(),'ja')){
+            foreach([
+                'Install and activate the recorded dependency from a trusted source before recovery: '=>'信頼できる配布元から次のプラグインを導入し、有効化してください：',
+                'Install the recorded dependency version before recovery: '=>'次のプラグインを記録された版に揃えてください：',
+                'Resource exceeds 32 MiB: '=>'ファイルが32 MiBを超えています：',
+                'Destination resource directory is not writable: '=>'次の保存先に書き込めません：',
+            ] as $prefix=>$translated)if(str_starts_with($message,$prefix))return $translated.substr($message,strlen($prefix));
+        }
         $english=array_search($message,self::JA,true);
         return self::text($english===false?$message:$english);
     }
+    public static function recoveryNext(string $message): string {
+        if(preg_match('/dependency|recorded.*version|release line|TablePress|ACF|WP-Members/i',$message))return SetupReadiness::text('Check the recorded software list, install and activate the required versions, then retry the same recovery point.','保存時のソフトウェア一覧を確認し、必要な版を導入・有効化してから、同じ復旧ポイントで再実行してください。');
+        if(str_contains($message,'source site'))return SetupReadiness::text('Use a different URL for the dedicated recovery site. Switch the original domain only after checking the result.','専用の復旧先には別のURLを用意してください。元のドメインへの切替は結果の確認後に行います。');
+        if(preg_match('/staging|directory|writable|space|memory|Resource installation/i',$message))return SetupReadiness::text('Ask the server administrator to check temporary/uploads directory permissions, free disk space and PHP limits. Keep this destination private until recovery completes.','サーバー管理者に一時領域・アップロード先の権限、空き容量、PHPの制限を確認してもらってください。復旧完了まで、この復旧先は非公開のままにします。');
+        return SetupReadiness::text('Keep the destination private and record the recovery point, history end and error. Check storage access and the destination state before retrying. For an interrupted or repeated failure, send the redacted details to support.','復旧先を非公開のままにし、復旧ポイント・履歴番号・エラーを記録してください。保存先への接続と復旧先の状態を確認してから再実行します。途中中断や失敗が続く場合は、秘密情報を除いた記録を不具合受付へ送ってください。');
+    }
     private const JA = [
+        'Site recovery failed' => 'サイトの復旧を完了できませんでした',
+        'Use the recorded WordPress release line with the same or a newer maintenance patch.' => '保存時と同じWordPress系列の、同じか新しい修正版を用意してください。',
+        'Refusing to replace the source site.' => '保存元と同じURLには復旧できません。',
+        'Private writable staging directory outside web root required.' => 'Web公開領域の外に、PHPが書き込める一時作業場所が必要です。',
+        'Cannot create private staging directory.' => '非公開の一時作業場所を作成できません。',
+        'Destination uploads directory is unavailable.' => '復旧先のアップロード先を使用できません。',
+        'Transactional tables required.' => '復旧に使うデータベースのテーブルをInnoDBに揃えてください。',
+        'Select a valid formal history end number.' => '復旧に含める履歴の最終番号を選択してください。',
+        'Activate the recorded TablePress version before recovery.' => '保存時の版のTablePressを有効化してから復旧してください。',
         'Save storage settings and confirm the terms before connecting.' => '接続する前に、保存先の設定と利用条件の確認を保存してください。',
         'Review the terms and select the confirmation checkbox before saving settings.' => '利用条件を読み、確認欄にチェックしてから設定を保存してください。',
         'Enter the S3 bucket name without s3://.' => 'bucketにS3バケット名を入力してください。s3://は付けません。',

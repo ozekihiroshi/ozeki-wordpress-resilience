@@ -7,6 +7,7 @@ require_once __DIR__.'/CheckpointSchedule.php';
 require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/SetupReadiness.php';
 require_once __DIR__.'/AdminText.php';
+require_once __DIR__.'/RecoveryPreparation.php';
 
 final class Plugin
 {
@@ -518,6 +519,10 @@ final class Plugin
         check_admin_referer('ozeki_resilience_m1');
         try {
             $action=sanitize_key(wp_unslash($_POST['operation']??''));
+            if (($this->config()['setup_role']??'source')==='recovery' && in_array($action,['resume','checkpoint','whole_checkpoint','initial_snapshot','whole_initial','site_cleanup_preview','site_cleanup_execute','site_retention_renew','cleanup_preview','cleanup_execute'],true)) {
+                // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Localized diagnostic escaped by the action handler.
+                throw new \RuntimeException(SetupReadiness::text('This recovery destination only reads S3. Create or manage recovery points on the source site.','復旧先ではS3を読み取るだけです。復旧ポイントの作成・管理は保存元で行ってください。'));
+            }
             if ($action==='configure') {
                 if (get_option(self::PENDING) || get_option('ozeki_resilience_m1_comment_pending')) throw new \RuntimeException('Resume pending history before changing storage.');
                 $old=$this->config();
@@ -548,6 +553,11 @@ final class Plugin
                 $c['gfs']=GfsPolicy::normalize($gfs);$c['checkpoint_interval_days']=0;
                 $c['cleanup_enabled']=isset($_POST['cleanup_enabled']);
                 $c['cleanup_keep_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['cleanup_keep_days']??'90'))));
+                if($c['setup_role']==='recovery'){
+                    $c['gfs']=GfsPolicy::normalize([]);
+                    $c['cleanup_enabled']=false;
+                    $c['retention_days']=0;
+                }
                 if ($c['cleanup_enabled'] && !$c['gfs']) throw new \RuntimeException('Set a Checkpoint interval before enabling automatic cleanup.');
                 update_option(self::CONFIG,$c,false);
                 delete_option('ozeki_resilience_m1_cleanup_preview');
@@ -614,7 +624,7 @@ final class Plugin
                     try { SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',array_merge($attempt,['status'=>'failed','at'=>gmdate('c'),'error'=>$message]),false); }
                     catch (\Throwable $recordError) { $message.=' | Failure record could not be saved: '.$recordError->getMessage().'. Stored results may belong to an earlier attempt.'; }
                     // The current response remains authoritative even if the database cannot store the failure.
-                    wp_die(esc_html('Site recovery failed: '.$message),'Site recovery failed',['response'=>500,'back_link'=>true]);
+                    wp_die(esc_html(AdminText::text('Site recovery failed').': '.AdminText::message($message).' '.AdminText::recoveryNext($message)),esc_html(AdminText::text('Site recovery failed')),['response'=>500,'back_link'=>true]);
                     return;
                 }
             }
@@ -651,7 +661,10 @@ final class Plugin
                 $rows[AdminText::text('Files written / replaced')]=isset($r['files'])?(string)$r['files']:AdminText::text('Not recorded');
             }else{
                 $rows[AdminText::text('Applied history / recovery counts')]=AdminText::text('Not confirmed; do not infer zero changes or completed rollback.');
-                if(isset($r['error']))$rows[AdminText::text('Failure reason')]=$r['error'];
+                if(isset($r['error'])){
+                    $rows[AdminText::text('Failure reason')]=AdminText::message($r['error']);
+                    $rows[SetupReadiness::text('Next action','次の操作')]=AdminText::recoveryNext($r['error']);
+                }
             }
             echo '<table class="widefat striped"><tbody>';
             foreach($rows as $label=>$value)echo '<tr><th scope="row">'.esc_html($label).'</th><td style="overflow-wrap:anywhere">'.esc_html($value).'</td></tr>';
@@ -700,14 +713,15 @@ final class Plugin
         $c=$this->config();$this->form('configure');
         echo '<p><label>'.esc_html(SetupReadiness::text('Use this site to: ','このサイトの用途：')).'<select name="setup_role"><option value="source" '.selected($c['setup_role']??'source','source',false).'>'.esc_html(SetupReadiness::text('Protect this site','このサイトを保護')).'</option><option value="recovery" '.selected($c['setup_role']??'source','recovery',false).'>'.esc_html(SetupReadiness::text('Recover another site','別サイトを復旧')).'</option></select></label></p>';
         foreach (['bucket','region','prefix','owner'] as $key) echo '<p><label>'.esc_html(SetupReadiness::text($key,['bucket'=>'バケット名（bucket）','region'=>'リージョン（region）','prefix'=>'サイト専用の保存先（prefix）','owner'=>'所有者のアカウントID（owner）'][$key])).' <input name="'.esc_attr($key).'" value="'.esc_attr((string)($c[$key]??'')).'"></label></p>';
-        echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>'.esc_html(AdminText::text('Protect supported operations (one writer per prefix)')).'</label></p>';
+        if(($c['setup_role']??'source')!=='recovery')echo '<p><label><input type="checkbox" name="protect" '.checked(!empty($c['protect']),true,false).'>'.esc_html(AdminText::text('Protect supported operations (one writer per prefix)')).'</label></p>';
         $terms='https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/terms-of-use'.(str_starts_with(determine_locale(),'ja')?'-ja':'').'.md';
         echo '<p><a href="'.esc_url($terms).'">'.esc_html(SetupReadiness::text('Terms of use and saved content','利用条件と保存対象')).'</a></p><p>'.esc_html(SetupReadiness::text('Supported site content is sent to your specified Amazon S3 storage. Your AWS contract and storage charges apply. Recovery reads from that storage.','保存対象のサイト情報を、指定したAmazon S3へ送信します。AWSの契約・利用料金は利用者の負担です。復旧時は同じ保存先から読み取ります。')).'</p>';
         echo '<p><label><input type="checkbox" name="confirm_terms" required>'.esc_html(SetupReadiness::text('I have reviewed the terms and saved content, and approve access to the specified Amazon S3 storage for saving or recovery.','利用条件と保存対象を確認し、保存・復旧のために指定したAmazon S3へ接続することを了承しました。')).'</label></p>';
+        if(($c['setup_role']??'source')!=='recovery'){
         echo '<details><summary>'.esc_html(SetupReadiness::text('Optional: schedules, retention and cleanup','任意：定期保存・保持期間・自動整理')).'</summary>';
         self::renderGfsSettings($c);
         echo '<p><label>'.esc_html(AdminText::text('Optional S3 deletion protection in days (0 = do not request a lock)')).' <input type="number" min="0" max="3650" name="retention_days" value="'.(int)($c['retention_days']??0).'"></label></p><p>'.esc_html(AdminText::text('Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.')).'</p>';
-        echo '<p><label>'.esc_html(AdminText::text('Detailed history recovery window in days (0 = latest Checkpoint and required tail)')).' <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>'.esc_html(AdminText::text('Automatically clean expired versions after successful scheduled Checkpoint checks')).'</label></p>';echo '</details>';submit_button(AdminText::text('Save settings'));echo '</form>';
+        echo '<p><label>'.esc_html(AdminText::text('Detailed history recovery window in days (0 = latest Checkpoint and required tail)')).' <input type="number" name="cleanup_keep_days" min="0" max="3650" value="'.(int)($c['cleanup_keep_days']??90).'"></label></p><p><label><input type="checkbox" name="cleanup_enabled" '.checked(!empty($c['cleanup_enabled']),true,false).'>'.esc_html(AdminText::text('Automatically clean expired versions after successful scheduled Checkpoint checks')).'</label></p>';echo '</details>';}submit_button(AdminText::text('Save settings'));echo '</form>';
         $this->form('setup_check');submit_button(SetupReadiness::text('Check storage','保存先を確認'));echo '</form>';
         $check=(array)get_option('ozeki_resilience_setup_storage',[]);if(($check['identity']??'')===SetupReadiness::identity($c))echo '<p role="status">'.esc_html(AdminText::message((string)($check['message']??''))).'</p>';
     }
@@ -722,7 +736,7 @@ final class Plugin
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
         self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('ozeki_resilience_m1_comment_pending',[]),(string)get_option('ozeki_resilience_m1_notice',''),(string)get_option('ozeki_resilience_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
-        if(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>'.esc_html(AdminText::text('WordPress applied; S3 formal history pending.')).'</strong> '.esc_html(AdminText::text('This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.')).'</p>';
         if ($error=get_option('ozeki_resilience_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(SetupReadiness::text('Prepare WordPress, themes and required plugins from trusted distributors. Recovery restores information assets, not software from S3; the destination theme and active plugins remain unchanged.','WordPress・テーマ・必要なプラグインは信頼できる配布元から準備してください。復旧するのは情報資産です。S3からソフトウェアを配置せず、復旧先のテーマと有効なプラグインを維持します。')).'</p>';
@@ -732,22 +746,29 @@ final class Plugin
         if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('whole_initial');echo '<label><input type="checkbox" name="trust_initial" required>'.esc_html(AdminText::text('I trust the whole current site and have paused editing.')).'</label>';submit_button(AdminText::text('Create complete initial snapshot'));echo '</form>'; }
         try{
             $siteSnapshots=$this->store()->siteSnapshots();
+            RecoveryPreparation::render($siteSnapshots);
             $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]=AdminText::text('Checkpoint boundary');
             if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.($row['attributes']['title']??$row['original']['asset']??'').' / '.($row['attributes']['status']??'');
             ksort($ends);
+            $lastAttempt=(array)get_option('ozeki_resilience_site_restore_attempt',[]);
+            $selectedRef=$lastAttempt['manifest']??null;
+            $selectedEnd=$lastAttempt['requested_through']??array_key_last($ends);
+            if(!in_array($selectedRef,array_column($siteSnapshots,'ref'),true)||!array_key_exists($selectedEnd,$ends))$selectedEnd=array_key_last($ends);
             foreach(['whole_checkpoint'=>AdminText::text('Create complete Checkpoint'),'whole_restore'=>AdminText::text('Restore complete site')] as $op=>$label){
+                if($op==='whole_checkpoint'&&($this->config()['setup_role']??'source')==='recovery')continue;
                 $this->form($op);echo '<label>'.esc_html(AdminText::text('Checkpoint')).' <select name="site_ref" required>';
-                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'">'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).AdminText::text(' / history ').$item['through'].' / '.$item['ref']['key']).'</option>';
+                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'"'.($op==='whole_restore'&&$item['ref']===$selectedRef?' selected':'').'>'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).AdminText::text(' / history ').$item['through'].' / '.$item['ref']['key']).'</option>';
                 echo '</select></label>';
                 if($op==='whole_restore'){
                     echo '<label>'.esc_html(AdminText::text('Formal history end')).' <select name="site_through" required>';
-                    foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===array_key_last($ends)?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
+                    foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===$selectedEnd?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
                     echo '</select></label><p>'.esc_html(AdminText::text('Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.')).'</p><label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace all destination content with this site (a private local rollback copy is retained).')).'</label>';
                 }
                 submit_button($label);echo '</form>';
             }
         }catch(\Throwable $e){echo '<p>'.esc_html($e->getMessage()).'</p>';}
         self::renderSiteResult((array)get_option('ozeki_resilience_site_restore_attempt',[]),(array)get_option('ozeki_resilience_site_restore_result',[]),(array)get_option('ozeki_resilience_site_snapshot_result',[]),$siteSnapshots??[]);
+        if(($this->config()['setup_role']??'source')!=='recovery'){
         $next=wp_next_scheduled('ozeki_resilience_m1_checkpoint');
         echo '<p>'.esc_html(AdminText::text('Next complete-site Checkpoint (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_checkpoint_status',[]))).'</pre>';
         self::renderSiteCleanup((array)get_option('ozeki_resilience_site_cleanup_preview',[]));
@@ -768,11 +789,12 @@ final class Plugin
             $this->form('cleanup_execute');echo '<input type="hidden" name="cleanup_hash" value="'.esc_attr($preview['hash']).'"><label><input type="checkbox" required name="confirm_cleanup">'.esc_html(AdminText::text('Permanently delete only the previewed eligible versions')).'</label>';submit_button(AdminText::text('Delete previewed versions'));echo '</form>';
         }
         echo '<pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_cleanup_status',[]))).'</pre>';
+        }
         echo '<details><summary>'.esc_html(AdminText::text('Supplementary asset snapshots and recovery — not site-wide recovery')).'</summary><p>'.esc_html(AdminText::text('This earlier asset-level path restores recorded text and attributes from an asset snapshot and later formal history. It does not restore media files, themes, menus or all site relationships. It updates matching asset identities or creates missing records; unrelated destination content remains. Use the site-wide workflow above for a complete site recovery within supported coverage.')).'</p>';
         if(($this->config()['setup_role']??'source')!=='recovery') { $this->form('initial_snapshot');echo '<p><label><input type="checkbox" required name="trust_initial">'.esc_html(AdminText::text('I accept the current published Markdown documents as the trusted initial state and have paused editing during capture. Use an unused history stream.')).'</label></p>';submit_button(AdminText::text('Create initial snapshot'));echo '</form>'; }
         $next=wp_next_scheduled('ozeki_resilience_m1_checkpoint');
         echo '<p>'.esc_html(AdminText::text('Next scheduled check (UTC):')).' '.esc_html($next?gmdate('c',$next):AdminText::text('Disabled')).'</p><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_checkpoint_status',[]))).'</pre>';
-        $this->form('checkpoint');submit_button(AdminText::text('Create Checkpoint now'));echo '</form>';
+        if(($this->config()['setup_role']??'source')!=='recovery'){$this->form('checkpoint');submit_button(AdminText::text('Create Checkpoint now'));echo '</form>';}
         try {
             $keys=$this->store()->checkpoints();$this->form('restore_site');
             echo '<select name="checkpoint"><option value="">'.esc_html(AdminText::text('All formal history (no Checkpoint)')).'</option>';
@@ -780,7 +802,7 @@ final class Plugin
             echo '</select>';submit_button(AdminText::text('Restore assets from Checkpoint + later history'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
-        if (get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if (($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if(get_option('ozeki_resilience_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
         if($error=get_option('ozeki_resilience_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(AdminText::text('Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.')).'</p>';

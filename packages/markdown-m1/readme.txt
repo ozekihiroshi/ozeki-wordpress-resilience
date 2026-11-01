@@ -24,7 +24,7 @@ Posts and Pages, supported local images and core comments are covered. Defined i
 
 ACF recovery uses the recorded free version (tested 6.8.10), database-defined groups and post/page location rules. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Create a new trusted Baseline when adding ACF or changing its version or definitions.
 
-Optional plugins are installed separately. Markdown Documents is needed only when Markdown content exists. Source text is limited to 5 MiB and supported image files to 32 MiB.
+Optional plugins are installed separately. Markdown Documents is needed only when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
 
 = Scope and responsibilities =
 

@@ -61,7 +61,7 @@ Restore successfully saved content through the recovery point you select. Integr
 | ACF free basic fields | Values, definitions and field keys for 15 basic types on posts/pages. ACF free 6.8.10. Create a new trusted Baseline including ACF after updating |
 | Site appearance included in the initial capture | Supported presentation settings for the separately prepared theme; software names and versions help reinstallation |
 
-Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images up to 32 MiB.
+Install the integration plugins you need separately. Versions above are the tested versions. Contact Form 7 6.2.3 requires PHP 8.3+. Source text can be up to 5 MiB and supported images and attachments up to 32 MiB per file.
 
 <a id="what-the-product-checks"></a>
 
