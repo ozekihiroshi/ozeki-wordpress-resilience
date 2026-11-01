@@ -1,6 +1,15 @@
 # WordPress.org 0.3.3 rc.6 — publication documentation
 
-**Prepared, not submitted. WordPress.org publication is not approved.** The submitted rc.3 and all earlier ZIPs/tags remain unchanged. rc.6 replaces unsubmitted rc.5 as the candidate for the next review response.
+**Submitted and reply sent on October 28, 2026. Awaiting the reviewer’s response; WordPress.org publication is not approved.** rc.6 updates the existing application after the rc.3 review. All submitted ZIPs and tags remain unchanged.
+
+## 更新受付・返信記録 / Submission and reply
+
+- 2026年10月28日、既存申請（ozeki-resilience）へrc.6をアップロードし、「New version of Ozeki Resilience uploaded for review.」の受付表示を確認しました。提出ファイル欄にはrc.6の補足説明と下記SHA-256が表示されました。
+- 同日の追加審査メール（21:04 JST）へ返信し、Gmailの「メッセージを送信しました」を確認しました。実行コードは別途準備する復旧方針、識別子の移行、配布物の整理、配置先の修正、確認結果を説明しています。
+- 受付は公開承認ではありません。現在は審査担当者の回答待ちです。
+- The upload was accepted and the reply was sent in the original additional-review email thread to plugins@wordpress.org. The WordPress.org screen still showed “Being Reviewed”; successful upload and email sending do not establish approval.
+- This status-only documentation update was recorded on November 1, 2026. The ZIP and tag retain the documentation as it stood at submission; use this record for subsequent status.
+
 
 ## 文書の整理 / Documentation scope
 
@@ -22,17 +31,35 @@ The ZIP contains eight maintained operational/terms documents rather than ninete
 - Installation/update/recovery/startup-failure behavior retains the [rc.5 validation](wordpress-org-033-rc5.md); those full functional tests were not repeated for this documentation-only repackaging.
 - Submitted rc.3 SHA-256 remains `066c4ae4f47f943a8b7cb4fa31efd6e256ad47772bdb1f4bd99c22a39804973e`.
 
-## Upload note draft — not sent
+## Pre-submission upload-note draft (historical)
 
 0.3.3 rc.6 addresses the additional rc.3 review: archived software installation is removed, active WordPress identifiers use ozeki_resilience with migration, custom upload locations are supported, and development artifacts are excluded. Failed settings migration preserves viewing and administrator sign-in while pausing saves with retry guidance. The bundled documentation now contains only maintained user instructions. Plugin Check: 0 errors / 107 recorded warnings. SHA-256: e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3.
 
-## Reply draft — not sent
+## Pre-submission reply draft (historical)
 
 Thank you for the additional review. The revised package removes archived theme/plugin code installation. Recovery imports information assets into WordPress with trusted software installed separately by the administrator.
 
 Active WordPress identifiers now use the ozeki_resilience prefix. Old names are retained only for compatibility migration and archived data, not active registrations. Directory-location findings are addressed, and development and historical test documents are excluded from the ZIP. Installation, update, recovery and startup-failure handling were verified; the final documentation repack was also installed and checked with Plugin Check.
 
 Package and verification: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc6.md
+
+Regards,
+Hiroshi Ozeki
+
+## Reply sent / 送信した返信
+
+Thank you for the additional review. I have uploaded 0.3.3 rc.6 and addressed the reported issues.
+
+Recovery no longer installs archived theme/plugin code. Administrators prepare a separate WordPress environment with compatible themes and plugins from trusted distributors; Resilience restores independent information assets and recognized relationships/settings.
+
+Active WordPress identifiers now use the ozeki_resilience prefix. Legacy names remain only for compatibility migration and archived data, not active registrations. Development files and historical test notes are excluded from the ZIP, and restoration uses the configured uploads location.
+
+Installation, update, recovery and startup-failure handling were checked. Plugin Check 2.1.0 reports 0 errors and 107 documented warnings.
+
+Package and validation:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.6
+
+ZIP SHA-256: e7ca01f16903945bbf67d6e6254f5e2f6a8e28afa7fced586675df55556e22b3
 
 Regards,
 Hiroshi Ozeki

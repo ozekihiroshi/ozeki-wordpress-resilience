@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3系の公開準備中です。WordPress.orgの公開承認はまだ得ていません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
+**2026年10月28日に0.3.3 rc.6の更新が受け付けられ、審査メールへの返信も完了しました。現在は審査担当者の回答待ちで、WordPress.orgの公開承認はまだ得ていません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
@@ -100,7 +100,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 
 **不具合・使い方の質問は[GitHub Issues](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues)へ。** 不具合は[日本語・英語の報告テンプレート](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues/new/choose)を選び、操作・期待した結果・実際の結果・使用バージョンを分かる範囲で記入してください。質問は空のIssueから投稿できます。投稿は公開されるため、認証情報や非公開コンテンツは載せないでください。
 
-WordPress.orgでの公開後は、プラグインページの **Support（サポート）** からも質問・不具合を受け付けます。現在は審査指摘への対応中です。修正作業はGitHub Issuesで管理し、両方に投稿する場合は既存の投稿へリンクしてください。公開審査のメールは、利用者向けの問い合わせとは別の連絡経路です。
+WordPress.orgでの公開後は、プラグインページの **Support（サポート）** からも質問・不具合を受け付けます。rc.6の更新受付と返信は完了し、現在は審査担当者の回答待ちです。修正作業はGitHub Issuesで管理し、両方に投稿する場合は既存の投稿へリンクしてください。公開審査のメールは、利用者向けの問い合わせとは別の連絡経路です。
 
 既存の検証記録は、それぞれの版と環境についての証拠であり、追加の導入条件ではありません。
 
