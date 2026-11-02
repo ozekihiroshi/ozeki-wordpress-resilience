@@ -1,6 +1,18 @@
 # WordPress.org 0.3.3 rc.8 — purpose and recovery principles
 
-**Prepared November 2, 2026; not submitted to WordPress.org.** Submitted rc.6 remains awaiting the reviewer response; publication is not approved. Existing ZIPs and tags, including rc.7, are unchanged.
+**Submitted to the existing WordPress.org application on November 2, 2026 (JST); upload accepted and reply in the original review-email thread sent. We are awaiting the reviewer’s response; publication is not approved.** Earlier submissions, including rc.6, and all existing ZIPs/tags are preserved.
+
+## 更新受付・返信記録 / Submission and reply
+
+- 2026年11月2日（日本時間）、既存申請（ozeki-resilience）へのrc.8アップロード受付を確認。WordPress.orgは「New version of Ozeki Resilience uploaded for review.」と表示し、同日04:21に更新受付メールも届きました。
+- 同日12:04、元の追加審査メールへrc.8への更新を返信し、Gmailの送信完了表示と送信済みメールを確認しました。宛先はWordPress Plugins Team（plugins@wordpress.org）です。
+- 公開承認済みではありません。審査担当者の回答待ちです。rc.6の過去の提出記録は保全しています。
+- The rc.8 upload was accepted; its automated receipt arrived at 04:21 JST on November 2. At 12:04 JST we replied to the original additional-review email, confirming the update, information-assets-only recovery principles and bounded validation results. Gmail confirmed sending. This is not approval or a reviewer response.
+- The submitted ZIP and tag remain immutable. Their bundled status text records preparation time; current status is maintained here and in the main-branch distribution-status page. Main now differs from the tag in standalone test fixtures and submission-status documents only.
+
+## 説明の整合確認 / Consistency review
+
+Reviewed the Japanese/English README, bundled readme.txt and setup/recovery guides against the rc.8 submission explanation and existing validation record. The scope remains supported information assets, separately prepared trusted software, recognized settings and optional integrations (ACF free only). No new runtime behavior or expanded guarantee was added. Plugin Check remains 0 errors / 107 recorded warnings; real-S3 functional checks apply to the identical rc.7 runtime. Corrected stale rc.8-not-submitted / rc.6-current-status text; older records are identified as historical. ZIP SHA-256 and existing tags remain unchanged.
 
 ## Explanation changes / 説明の修正
 
@@ -33,7 +45,7 @@ The main-branch Actions run exposed a missing `determine_locale()` stub in stand
 
 This correction changes tests only, not packaged runtime or documents. The rc.8 tag/ZIP remain unchanged; the corrected standalone tests are on main. Historical failed runs remain visible. Plugin Check and ZIP validation above are separate from Actions results.
 
-## Submission explanation draft — not sent
+## Purpose and validation summary accompanying the submission
 
 Ozeki Resilience provides a recovery path when the original WordPress environment can no longer be trusted. Alongside existing backups, it preserves supported information as independent originals so publishing and service can resume on a fresh WordPress.
 

@@ -4,7 +4,7 @@
 
 2026年11月2日、readme.txt・日英README・導入ガイドの説明修正をrc.8 ZIPへ反映しました。目的、設計原則、復旧のための冗長性、標準機能と任意連携の関係を明確にしています。実行コードはrc.7と同一です。
 
-現在の公開候補は **0.3.3 rc.8** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**rc.8はWordPress.orgへ未提出です。** **2026年10月28日にrc.6の更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。**
+現在の公開候補は **0.3.3 rc.8** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**2026年11月2日（日本時間）にrc.8を既存申請へ提出し、更新受付と元の審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。** rc.6は過去の提出記録として保全しています。
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.8/ozeki-resilience-0.3.3.zip)（8,283,015 bytes）
 - [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.8) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.8)
@@ -17,7 +17,7 @@
 
 On November 2, rc.8 incorporated the clarified readme.txt, Japanese/English READMEs and guides: purpose, design principles, recovery reserves and optional integrations. Runtime files are identical to rc.7.
 
-The current release candidate is **0.3.3 rc.8**. It improves recovery-only operation guards, recorded software requirements and interruption/failure guidance. **rc.8 has not been submitted to WordPress.org.** **The rc.6 update was accepted for review and the review-email reply was sent on October 28, 2026. We are awaiting the reviewer’s response; WordPress.org publication is not approved.**
+The current release candidate is **0.3.3 rc.8**. It improves recovery-only operation guards, recorded software requirements and interruption/failure guidance. **The rc.8 update was accepted for review and the reply in the original review-email thread was sent on November 2, 2026 (JST). We are awaiting the reviewer’s response; WordPress.org publication is not approved.** rc.6 remains preserved as an earlier submission.
 
 - [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.8/ozeki-resilience-0.3.3.zip) (8,283,015 bytes)
 - [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.8) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.8)
