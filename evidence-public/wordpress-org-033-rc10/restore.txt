@@ -1,0 +1,28 @@
+{
+    "member_restored": true,
+    "member_roles": [
+        "subscriber"
+    ],
+    "password_hash_preserved": true,
+    "session_tokens_absent": true,
+    "db_version": "2.4.3",
+    "table_cell": "safe",
+    "receipt_count": 1
+}
+{
+    "restored_through": 22,
+    "posts": 8,
+    "article_title": "Audit ACF valid",
+    "invalid_value_absent": true,
+    "invalid_reference_absent": true,
+    "not_applied": [
+        {
+            "item": "acf.post.9.audit_text",
+            "reason": "Invalid ACF scalar; original retained, value not applied"
+        }
+    ],
+    "s3_history_and_original_hashes_unchanged": true,
+    "history_entries": 22,
+    "form_count": 2,
+    "table_count": 1
+}

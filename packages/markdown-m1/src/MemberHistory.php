@@ -115,7 +115,17 @@ final class MemberHistory
             if($u->roles!==['subscriber']||array_diff_key($u->caps,['subscriber'=>true]))throw new \RuntimeException('Removed member has privileged destination role.');
             if($wpdb->delete($wpdb->usermeta,['user_id'=>$u->ID])===false||$wpdb->delete($wpdb->users,['ID'=>$u->ID])===false)throw new \RuntimeException('Cannot remove recovered member.');
         }
-        foreach($state['settings'] as $k=>$value)SiteSnapshot::writeOption($k,SiteSnapshot::relocate($value,$from,$to));
+        foreach($state['settings'] as $k=>$value){
+            if($k==='wpmembers_settings'){
+                // The trusted installed version supplies operational defaults. Only recognized
+                // archived settings override them; unknown archived settings are never imported.
+                require_once WP_PLUGIN_DIR.'/'.dirname(self::PLUGIN).'/includes/install.php';
+                $defaults=wpmem_install_settings();
+                if(!is_array($defaults)||!is_array($value))throw new \RuntimeException('Invalid membership defaults.');
+                $value=array_replace_recursive($defaults,$value);
+            }
+            SiteSnapshot::writeOption($k,SiteSnapshot::relocate($value,$from,$to));
+        }
         return $map;
     }
 }

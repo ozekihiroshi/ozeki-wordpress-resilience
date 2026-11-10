@@ -1,0 +1,18 @@
+{
+    "zip_sha256": "a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf",
+    "installed_files_match": 3813,
+    "active": true,
+    "fresh": true,
+    "config_present": false,
+    "state_hashes": {
+        "ozeki_resilience_m1_config": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+    },
+    "admin_render": true,
+    "posts": 3,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+}

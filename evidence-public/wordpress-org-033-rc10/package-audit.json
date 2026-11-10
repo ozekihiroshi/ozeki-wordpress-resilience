@@ -1,0 +1,18 @@
+{
+  "sha256": "a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf",
+  "bytes": 8283977,
+  "files": 3813,
+  "runtime_files_identical_to_rc9": 3793,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/AcfHistory.php",
+    "ozeki-resilience/src/MemberHistory.php",
+    "ozeki-resilience/src/RecoveryRules.php"
+  ],
+  "product_source_matches": true,
+  "bundled_guides": 8,
+  "relative_links_resolve": 78,
+  "development_artifacts": 0
+}
