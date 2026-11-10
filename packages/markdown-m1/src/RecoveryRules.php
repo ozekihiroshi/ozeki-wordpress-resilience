@@ -25,6 +25,10 @@ final class RecoveryRules
         }
         if($rule==='plain'&&self::plain($v))return $v;
         if($rule==='text'&&is_string($v))return $v;
+        // WP-Members stores a selected page ID or a custom URL (and an empty unset value).
+        if($rule==='page-reference'&&(is_string($v)||(is_int($v)&&$v>=0)))return $v;
+        // Version identifiers are not decimal numbers; preserve legacy numeric encodings too.
+        if($rule==='version'&&(is_string($v)||is_int($v)||is_float($v))&&preg_match('/^[0-9]+(?:\.[0-9]+)*$/D',(string)$v))return $v;
         if($rule==='number'&&(is_int($v)||is_float($v)||(is_string($v)&&is_numeric($v))))return $v;
         if($rule==='number-or-empty'&&($v===''||is_int($v)||(is_string($v)&&is_numeric($v))))return $v;
         if($rule==='bool'&&in_array($v,[true,false,0,1,'0','1'],true))return $v;

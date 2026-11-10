@@ -6,6 +6,8 @@
 
 ACFの対応は無料版だけに限定し、PROは対応予定に含めません。画像・投稿・ユーザー・分類を参照する型、入れ子の型、カスタム投稿タイプ、Options・ユーザー・ターム・コメントのフィールド、PHP・Local JSONによる定義、保護対象記事のフィールド保存を伴わない定義単独の編集は、今回の受入範囲外です。定義単独の変更には新しい信頼済みBaselineを使用します。復旧は記録したACF版と上記の対応型を対象に行います。他の型には、それぞれに対応した復旧規則が必要です。この対応は0.3.3候補から含まれます。
 
+欄の種類に合わない値（文字列欄に配列が保存されている場合など）は、原本に残したまま復旧先への適用から外し、未適用一覧に理由を表示します。他の正常な値や記事の復旧は続行します。
+
 ## 検証記録
 
 [研究試験と統合時の検証範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-verification-ja.md)。0.3.2には、この対応は含まれません。現行の[配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)を確認してください。

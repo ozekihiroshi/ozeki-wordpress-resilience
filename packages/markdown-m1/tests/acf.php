@@ -58,7 +58,20 @@ ok(AcfHistory::project($d)['meta'][0]['meta_value']==='updated','Complete latest
 unset($v['acf_values']['caption']);AcfHistory::replay($d,Store::json($v),$a);
 ok(!in_array('caption',array_column(AcfHistory::project($d)['meta'],'meta_key'),true),'Removed value not resurrected');
 $v['acf_values']['caption']=[['invalid'=>'scalar']];AcfHistory::replay($d,Store::json($v),$a);
-try{AcfHistory::project($d);throw new LogicException('invalid scalar accepted');}catch(RuntimeException $e){}
+foreach([['text',['one','two']],['number','not-a-number'],['range',[]],['true_false','yes'],['checkbox',[['nested']]],['select',[12]]] as [$type,$invalid]){
+ $case=json_decode($raw,true);$case['acf_definitions'][0]['fields'][0]['type']=$type;
+ if($type==='select')$case['acf_definitions'][0]['fields'][0]['multiple']=true;
+ $case['acf_values']['caption']=[$invalid];
+ AcfHistory::replay($d,Store::json($case),$a);
+ $d['tables']['postmeta']=[['meta_id'=>'1','post_id'=>'10','meta_key'=>'caption','meta_value'=>serialize($invalid)],['meta_id'=>'2','post_id'=>'10','meta_key'=>'_caption','meta_value'=>'field_caption']];
+ $before=Store::json($d);$objects=$s3->objects;$project=RecoveryRules::project($d,[]);
+ $meta=array_column($project['data']['tables']['postmeta'],'meta_value','meta_key');
+ ok(!isset($meta['caption'])&&!isset($meta['_caption']),'Invalid field and reference withheld: '.$type);
+ ok(unserialize($meta['choices'])===['one','two'],'Other valid field restored: '.$type);
+ ok(count(array_filter($project['report']['not_applied'],fn($r)=>$r['item']==='acf.post.10.caption'&&str_contains($r['reason'],'original retained')))===1,'Invalid value reason reported: '.$type);
+ ok(Store::json($d)===$before&&$s3->objects===$objects,'No mutation of original or S3: '.$type);
+}
+$d['tables']['postmeta']=[];
 unset($v['acf_values']['caption']);AcfHistory::replay($d,Store::json($v),$a);
 $site=new SiteSnapshot($s);$base=$site->save(['content.json'=>Store::json($d)],['schema'=>'owr-site-snapshot-1','through'=>1]);$cp=$site->checkpoint($base['manifest']);
 $prefix='acf/'.dirname($cp['manifest']['key']).'/';foreach(array_keys($s3->objects) as $key)if(!str_starts_with($key,$prefix))unset($s3->objects[$key]);

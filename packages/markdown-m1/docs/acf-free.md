@@ -6,6 +6,8 @@ Automatic application is limited to database-defined groups with post/page post-
 
 ACF PRO is not supported or planned. Media/post/user/taxonomy reference fields, nested fields, custom post types, options/user/term/comment fields, PHP/Local JSON definitions, and definition-only edits without a subsequent protected post/page field save are outside this first adapter's acceptance scope. Use a new trusted Baseline for standalone definition changes. Recovery uses the recorded ACF version and the field types listed above. Other field types need their own recovery rules. This integration starts with the 0.3.3 candidate.
 
+Values that do not match their field type (such as an array in a text field) remain in the original and are withheld from the destination, with a reason in the not-applied report. Recovery continues for other valid values and articles.
+
 ## Verification records
 
 [Research trial and integration boundaries](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free-verification.md). This integration is not available in 0.3.2. Check [current distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).

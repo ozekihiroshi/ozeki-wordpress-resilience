@@ -47,7 +47,7 @@ Before submission, related request paths were reviewed again: shared administrat
 
 GitHub Actions PHP 8.1 and 8.3 passed: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/actions/runs/42917044052
 
-Only current documentation and release notes were updated after submission. The rc.9 source tag and ZIP remain immutable; the ZIP retains the pre-submission status wording present when built. Current status is recorded here and in the main-branch READMEs.
+When recording submission acceptance, only current documentation and release notes were updated. The rc.9 source tag and ZIP remain immutable; the ZIP retains the pre-submission status wording present when built. Current status is recorded here and in the main-branch READMEs.
 
 ## Sent reply to plugins@wordpress.org
 
@@ -62,3 +62,16 @@ ZIP SHA-256: be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69
 
 Regards,
 Hiroshi Ozeki
+## Post-submission integration corrections — 2026-11-11 (not in rc.9)
+
+These source changes are on `codex/wordpress-org-rc9-input-review`. They are not a new WordPress.org submission or an approval. The submitted ZIP and tag above are unchanged.
+
+- ACF: preserve mismatched field values in originals/history, but withhold the value and field-key reference from application, with an explicit not-applied reason. Other valid fields and articles continue to recover. No archive schema or stored original is rewritten.
+- WP-Members: treat `db_version` as a dotted version identifier, retaining supported legacy numeric representations without conversion. Accept the plugin's integer page IDs as well as textual page/URL references. Arrays and invalid types remain rejected.
+- Added regression cases for ACF value types, raw-metadata bypass prevention, version representations and page references. ACF, application rules and membership replay checks passed on PHP 8.3.36.
+- Actual recovery on a separate WordPress database prefix restored the original real-S3 history through sequence 22: 8 content posts, 2 contact forms, 1 inquiry receipt, 1 table and the subscriber account. Member password hash was preserved; roles remained subscriber; session tokens were absent. The ACF array in a text field was withheld with its reason. All 22 formal-history records and their original-content SHA-256 hashes matched before and after recovery.
+- Earlier ACF-only recovery separately verified a valid Japanese text field alongside the withheld invalid field. The combined run uses the older unchanged history, which does not contain that added test field.
+- Environment: WordPress 7.1.3, PHP 8.3.36, CF7 6.2.3, Flamingo 2.6.4, TablePress 3.4.1, WP-Members 3.5.8.1, ACF free 6.8.10. External mail and scheduled jobs were disabled in the isolated fixtures. Existing sites and research working changes were not modified.
+- TablePress: malformed row data with valid editor authorization can fail inside TablePress 3.4.1 before saving. No DB/history change was observed. Keep the upstream reproduction for reporting and verify an upstream fix separately; do not patch bundled third-party code or treat this failure as a completed save. No upstream report has been sent.
+
+日本語要約: ACFの不適合値は原本に残したまま理由付きで未適用にし、他の復旧を継続します。WP-Membersの版情報とページIDの型を実際の保存内容に合わせました。元の正式履歴22件から会員・問い合わせ・表・記事を隔離環境へ復旧し、原本・履歴のハッシュ不変も確認しました。提出済みrc.9にはこの修正を加えていません。新しいZIPの作成・申請更新は未実施です。

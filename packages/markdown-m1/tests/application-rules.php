@@ -28,6 +28,26 @@ check($find($first['data'],10,'_additional_settings')==='skip_mail: on','Known a
 $opts=json_decode($find($first['data'],12,'_tablepress_table_options'),true);check($opts['datatables_sort']&&$opts['datatables_paginate']&&!isset($opts['datatables_custom_commands']),'Table controls kept, commands withheld');
 check($first['data']['membership']['settings']['wpmembers_settings']['mod_reg']===1&&$first['data']['membership']['users']['3']['meta']['active']===['1'],'Approval retained');
 check(!isset($first['data']['membership']['users']['3']['meta']['session_tokens']),'Sessions withheld');
+foreach(['2.4.3','2.4',243,2.4] as $version){
+ $case=$state;$case['membership']['settings']['wpmembers_settings']['db_version']=$version;
+ $original=Store::json($case);$result=RecoveryRules::project($case,['blogname']);
+ check($result['data']['membership']['settings']['wpmembers_settings']['db_version']===$version,'Member DB version preserved without conversion');
+ check(Store::json($case)===$original,'Member version original unchanged');
+}
+foreach([['2.4.3'],true,null,'2..4','<script>'] as $version){
+ $case=$state;$case['membership']['settings']['wpmembers_settings']['db_version']=$version;
+ reject(fn()=>RecoveryRules::project($case,['blogname']));
+}
+foreach([0,2,'2','','https://example.org/profile'] as $page){
+ $case=$state;$case['membership']['settings']['wpmembers_settings']['user_pages']=['profile'=>$page,'register'=>$page,'login'=>$page];
+ $original=Store::json($case);$result=RecoveryRules::project($case,['blogname']);
+ check($result['data']['membership']['settings']['wpmembers_settings']['user_pages']['profile']===$page,'Member page ID or URL retained');
+ check(Store::json($case)===$original,'Member page original unchanged');
+}
+foreach([[],true,-1,2.5] as $page){
+ $case=$state;$case['membership']['settings']['wpmembers_settings']['user_pages']=['profile'=>$page];
+ reject(fn()=>RecoveryRules::project($case,['blogname']));
+}
 check(!str_contains(Store::json($first['report']),'private-')&&!str_contains(Store::json($first['report']),'private token'),'Report does not expose values');
 check(count($first['data']['tables']['commentmeta'])===1&&$first['data']['tables']['commentmeta'][0]['meta_key']==='_wp_trash_meta_status','Core comment trash state retained');
 // Both baseline and confirmed-history overlay arrive at the same projection boundary.
