@@ -1,6 +1,6 @@
 # WordPress.org 0.3.3 rc.9 — November 10 review response
 
-**Prepared November 11, 2026; NOT submitted to WordPress.org. No review-email reply has been sent for rc.9. Publication is not approved.** The reviewer requested changes to submitted rc.8 on November 10. Its ZIP/tag and earlier artifacts remain preserved.
+**Submitted November 11, 2026 (JST): update accepted and review-email reply sent. Awaiting the reviewer response; publication is NOT approved.** The reviewer requested changes to rc.8 on November 10. All submitted ZIPs/tags remain preserved.
 
 ## 今回の修正 / Changes
 
@@ -37,17 +37,28 @@ All product POST/GET/REQUEST occurrences were reviewed, including configuration,
 
 See [sanitized verification summary](../../evidence-public/wordpress-org-033-rc9/validation.json) and [Plugin Check results](../../evidence-public/wordpress-org-033-rc9/plugin-check.json). Production sites were not used; the existing dedicated S3 test prefix and isolated database tables were reused. No saved S3 assets were deleted or reformatted.
 
-## Reply draft — NOT SENT
+## Submission and reply / 更新受付と返信
 
-Thank you for the additional review. I have uploaded 0.3.3 rc.9 with the requested input and nonce corrections.
+2026年11月11日（日本時間）、既存申請へrc.9をアップロードし、画面の「New version of Ozeki Resilience uploaded for review.」を確認しました。07:53の自動受付メールでもrc.9の補足説明とファイル受領を確認しています。元の11月10日審査メールへ返信し、Gmailの送信完了を確認しました。現在は審査担当者の回答待ちであり、公開承認済みではありません。
 
-Submitting a Markdown original now requires a valid nonce; missing or malformed editor fields are rejected before saving. Recovery and schedule form values are sanitized and validated before use. Markdown originals remain validated archival text so their content is preserved; they are not executed or directly emitted as HTML.
+The upload page lists November 10, 2026 (site date); the receipt email is November 11 at 07:53 JST. The site still displayed “Being Reviewed — waiting on action from you” immediately after upload. The waiting-for-reviewer description records our completed upload/reply, not an observed approval or a claim that the portal label changed.
 
-The exact ZIP passed Plugin Check 2.1.0 (0 errors, 99 documented warnings), isolated installation/update checks, and real-S3 save/recovery checks. Source and validation: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9
+Before submission, related request paths were reviewed again: shared administrator capability/nonce checks, partial editor submissions, malformed recovery references/numbers and GFS input, and archival originals versus escaped display. No additional submission blocker was identified in that bounded review. This is not a new end-to-end test of every integration or content format.
 
+GitHub Actions PHP 8.1 and 8.3 passed: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/actions/runs/42917044052
+
+Only current documentation and release notes were updated after submission. The rc.9 source tag and ZIP remain immutable; the ZIP retains the pre-submission status wording present when built. Current status is recorded here and in the main-branch READMEs.
+
+## Sent reply to plugins@wordpress.org
+
+Thank you for the additional review. I have uploaded 0.3.3 rc.9 to the existing ozeki-resilience application and confirmed its acceptance.
+
+The reported nonce/input issues and related request paths have been reviewed and corrected. Plugin Check 2.1.0 reports 0 errors and 99 documented warnings; isolated clean installation, updates, real-S3 save/recovery, and PHP 8.1/8.3 CI checks passed.
+
+One clarification: Markdown originals are authenticated, strictly validated archival text, retained without stripping their contents; they are not executed or directly emitted as HTML. Recovery restores supported information assets, not archived theme/plugin code. Administrators install trusted software separately.
+
+Source, exact ZIP and validation: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9
 ZIP SHA-256: be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69
 
 Regards,
 Hiroshi Ozeki
-
-The draft above is for use only after the rc.9 upload is authorized and its acceptance confirmed.

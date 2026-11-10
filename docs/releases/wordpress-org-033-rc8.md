@@ -1,6 +1,6 @@
 # WordPress.org 0.3.3 rc.8 — purpose and recovery principles
 
-> 2026年11月10日に追加審査が届きました。現在は指摘修正済みの[rc.9候補](wordpress-org-033-rc9.md)を準備しています（未提出・公開未承認）。The reviewer requested changes to rc.8; rc.9 is the unsubmitted response candidate. The submission/reply chronology below is retained.
+> 2026年11月10日に追加審査が届きました。2026年11月11日（日本時間）に[rc.9](wordpress-org-033-rc9.md)の更新受付と返信が完了し、現在は審査担当者の回答待ちです（公開未承認）。The rc.9 update and reply are complete; we await the reviewer response. The submission/reply chronology below is retained.
 
 **Submitted to the existing WordPress.org application on November 2, 2026 (JST); upload accepted and reply in the original review-email thread sent. We are awaiting the reviewer’s response; publication is not approved.** Earlier submissions, including rc.6, and all existing ZIPs/tags are preserved.
 

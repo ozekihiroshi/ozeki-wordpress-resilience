@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**新しい公開候補は0.3.3 rc.9です。11月10日の追加審査への対応版で、WordPress.orgへは未提出です。提出済みrc.8への指摘対応を進めており、公開承認はまだ得ていません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
+**0.3.3 rc.9は2026年11月11日（日本時間）にWordPress.orgの既存申請への更新が受け付けられ、審査メールへの返信も完了しました。現在は審査担当者の回答待ちで、公開承認済みではありません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 

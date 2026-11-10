@@ -4,7 +4,7 @@
 
 現在の公開候補は **0.3.3 rc.9** です。2026年11月10日のrc.8への追加審査に対応し、Markdown保存時のnonce確認と、復旧番号・復旧ポイント・保持設定の入力処理を修正しました。利用手順・対応範囲・保存形式は変わりません。
 
-**rc.9はWordPress.orgへ未提出です。** rc.8は提出済みですが、追加修正を求められており、公開承認はまだ得ていません。rc.9のZIP送信と審査メールへの返信は、確認後に行います。
+**rc.9は2026年11月11日（日本時間）に更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。** 提出済みZIPと対応タグ、以前のrc.8はそのまま保全しています。
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.9/ozeki-resilience-0.3.3.zip)（8,283,466 bytes）
 - [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.9)
@@ -17,7 +17,7 @@
 
 The current candidate is **0.3.3 rc.9**, addressing the November 10 review of rc.8: mandatory nonce checks for submitted Markdown originals and sanitized, validated recovery/schedule inputs. Setup steps, supported scope and stored data formats are unchanged.
 
-**rc.9 has not been submitted to WordPress.org.** rc.8 remains the submitted version with changes requested; publication is not approved. The rc.9 upload and review-email reply await final confirmation.
+**The rc.9 update was accepted and the review-email reply was sent on November 11, 2026 (JST). We await the reviewer response; publication is not approved.** Submitted ZIPs and matching tags, including rc.8, remain unchanged.
 
 - [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.9/ozeki-resilience-0.3.3.zip) (8,283,466 bytes)
 - [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.9)
