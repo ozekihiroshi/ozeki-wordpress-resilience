@@ -64,7 +64,7 @@ Regards,
 Hiroshi Ozeki
 ## Post-submission integration corrections — 2026-11-11 (not in rc.9)
 
-These source changes were reviewed on `codex/wordpress-org-rc9-input-review` and merged into main for rc.10. They are not a new WordPress.org submission or an approval. The submitted ZIP and tag above are unchanged.
+These source changes were reviewed on `codex/wordpress-org-rc9-input-review` and merged into main for rc.10. The merge itself was not a submission or approval; rc.10 was subsequently submitted as recorded below. The submitted ZIP and tag above are unchanged.
 
 - ACF: preserve mismatched field values in originals/history, but withhold the value and field-key reference from application, with an explicit not-applied reason. Other valid fields and articles continue to recover. No archive schema or stored original is rewritten.
 - WP-Members: treat `db_version` as a dotted version identifier, retaining supported legacy numeric representations without conversion. Accept the plugin's integer page IDs as well as textual page/URL references. Arrays and invalid types remain rejected.
@@ -74,19 +74,29 @@ These source changes were reviewed on `codex/wordpress-org-rc9-input-review` and
 - Environment: WordPress 7.1.3, PHP 8.3.36, CF7 6.2.3, Flamingo 2.6.4, TablePress 3.4.1, WP-Members 3.5.8.1, ACF free 6.8.10. External mail and scheduled jobs were disabled in the isolated fixtures. Existing sites and research working changes were not modified.
 - TablePress: malformed row data with valid editor authorization can fail inside TablePress 3.4.1 before saving. No DB/history change was observed. Keep the upstream reproduction for reporting and verify an upstream fix separately; do not patch bundled third-party code or treat this failure as a completed save. No upstream report has been sent.
 
-日本語要約: ACFの不適合値は原本に残したまま理由付きで未適用にし、他の復旧を継続します。WP-Membersの版情報とページIDの型を実際の保存内容に合わせました。元の正式履歴22件から会員・問い合わせ・表・記事を隔離環境へ復旧し、原本・履歴のハッシュ不変も確認しました。提出済みrc.9にはこの修正を加えていません。新しいZIPの作成・申請更新は未実施です。
+日本語要約: ACFの不適合値は原本に残したまま理由付きで未適用にし、他の復旧を継続します。WP-Membersの版情報とページIDの型を実際の保存内容に合わせました。元の正式履歴22件から会員・問い合わせ・表・記事を隔離環境へ復旧し、原本・履歴のハッシュ不変も確認しました。提出済みrc.9にはこの修正を加えていません。この確認時点では新しいZIPの作成・申請更新は未実施でした。その後のrc.10の作成・提出結果は以下に記録しています。
 
-## rc.10 follow-up candidate — not submitted
+## rc.10 follow-up candidate — submitted
 
 The installation/update check additionally found that restoring only recognized WP-Members settings left out operational defaults required on the next request. Recovery now obtains defaults from the trusted installed WP-Members version and overlays only recognized archived settings. Unknown archive settings remain unapplied. The same original history was restored again, followed by a separate WordPress bootstrap and management-screen render; these passed. This supersedes the earlier process-completion-only check.
 
-- Candidate: **0.3.3 rc.10**, [release and ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10), **not yet submitted to WordPress.org**. rc.9 remains the submitted version awaiting review.
+- Candidate: **0.3.3 rc.10**, [release and ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10), **submitted to WordPress.org on November 11, 2026 (JST)**. The update was accepted and the original review-email reply was sent; awaiting the reviewer response, not approved.
 - ZIP: 8,283,977 bytes, 3,813 files; SHA-256 `a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf`.
 - [Package audit](../../evidence-public/wordpress-org-033-rc10/package-audit.json): all product source hashes match; vendor unchanged; 8 maintained bundled guides, 78 valid relative links, no development artifacts.
 - Exact-ZIP fresh installation/activation and rc.9 → rc.10 update passed in isolated WordPress. Configuration, pending-state/result hashes, content count and activation remained identical across the update. Queues were empty; this does not establish an update with queued work.
 - Exact-ZIP recovery through the existing history sequence 22 passed with members, inquiries, table and articles, then a new process successfully bootstrapped and rendered the admin screen. S3 original/history hashes remained unchanged. These were real WordPress CLI/API checks, not a new browser timeout test.
 - Plugin Check 2.1.0: **0 errors, 99 warnings**, same categories as rc.9. [Results](../../evidence-public/wordpress-org-033-rc10/plugin-check.json).
 - ACF, application-rule and member replay regression checks passed against code installed from the exact ZIP.
-- Existing submitted ZIPs/tags, original/history formats and research working changes are preserved. No WordPress.org upload or review-email reply has been sent for rc.10.
+- Existing submitted ZIPs/tags, original/history formats and research working changes are preserved. The rc.10 upload and original review-email reply are complete; see the receipt below.
 
-日本語: 版情報・ページIDの修正に加え、復旧後の起動に必要なWP-Members標準設定を信頼済み導入版から補う修正も含めました。最終ZIPで新規導入・更新・会員連携を含む復旧と次のリクエストまで確認済みです。rc.10は未提出、rc.9は引き続き審査回答待ちです。
+日本語: 版情報・ページIDの修正に加え、復旧後の起動に必要なWP-Members標準設定を信頼済み導入版から補う修正も含めました。最終ZIPで新規導入・更新・会員連携を含む復旧と次のリクエストまで確認済みです。rc.10は更新受付・元の審査メールへの返信が完了し、審査担当者の回答待ちです。公開承認済みではありません。
+
+## rc.10 submission receipt — November 11, 2026 (JST)
+
+- The existing ozeki-resilience application accepted the rc.10 ZIP. The page displayed **“New version of Ozeki Resilience uploaded for review.”** and listed the rc.10 comment and SHA-256 above. WordPress.org displays the upload date as November 10, 2026 (UTC).
+- A reply was sent to the original November 10 review email at plugins@wordpress.org, under **“Re: [WordPress Plugin Directory] Review in Progress: Ozeki Resilience”**. Gmail displayed **“メッセージを送信しました”**.
+- The reply identifies rc.10, confirms the retained nonce/input-validation fixes and follow-up ACF/WP-Members recovery checks, and links the matching source and validation.
+- **Awaiting the reviewer response. Publication is not approved.** The application displays **“Being Reviewed — We've got your email. This plugin is currently waiting on action from our plugins team.”**
+- Submitted ZIPs and tags, including rc.9 and rc.10, remain unchanged. This record update changes documentation only; it does not rebuild the submitted ZIP.
+
+日本語: rc.10の更新受付と元の審査メールへの返信送信を確認しました。現在は審査担当者の回答待ちで、公開承認済みではありません。提出済みZIP・タグは変更していません。
