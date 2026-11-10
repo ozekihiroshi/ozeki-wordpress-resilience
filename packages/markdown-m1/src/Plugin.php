@@ -330,7 +330,8 @@ final class Plugin
         $id=(int)($postarr['ID']??0);
         $old=$id?get_post($id):null;
         $markdown=$data['post_type']==='ozmd_document';
-        $editor=$markdown && isset($_POST['ozmd_source'],$_POST['ozmd_source_nonce']);
+        // A partial editor submission must not fall back to the stored original.
+        $editor=$markdown && (array_key_exists('ozmd_source',$_POST) || array_key_exists('ozmd_source_nonce',$_POST));
         $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
         if ($data['post_status']!=='publish' && !$wasProtected && $old?->post_status!=='publish') return $data;
         // Scheduling remains a normal WordPress operation, outside automatic M1 protection.
@@ -338,7 +339,11 @@ final class Plugin
         try {
             // REST, classic editor and trash/untrash have already passed their core permission checks.
             if (($id && !current_user_can('edit_post',$id)) || (!$id && !current_user_can(get_post_type_object($data['post_type'])->cap->create_posts))) throw new \RuntimeException('Invalid save permission.');
-            if ($editor && !wp_verify_nonce(sanitize_text_field(wp_unslash(is_string($_POST['ozmd_source_nonce'])?$_POST['ozmd_source_nonce']:'')),'ozmd_save_markdown_source')) throw new \RuntimeException('Invalid Markdown save permission.');
+            if ($editor) {
+                if (!isset($_POST['ozmd_source_nonce']) || !is_string($_POST['ozmd_source_nonce'])) throw new \RuntimeException('Invalid Markdown save permission.');
+                if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ozmd_source_nonce'])),'ozmd_save_markdown_source')) throw new \RuntimeException('Invalid Markdown save permission.');
+                if (!isset($_POST['ozmd_source']) || !is_string($_POST['ozmd_source'])) throw new \RuntimeException('Invalid Markdown source.');
+            }
             if ($this->active) throw new \RuntimeException('Nested protected saves are unsupported.');
             $this->lock();
             if (get_option(self::PENDING)) throw new \RuntimeException('A previous WordPress save is awaiting formal S3 history. Resume it in Tools → Resilience first.');
@@ -346,6 +351,7 @@ final class Plugin
             clean_post_cache($id);
             $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
             if ($wasProtected && $editor && (!isset($_POST['ozeki_resilience_m1_base']) || !hash_equals($this->fingerprint($id),sanitize_text_field(wp_unslash($_POST['ozeki_resilience_m1_base']))))) throw new \RuntimeException('The document changed since this editor was opened. Reload before saving.');
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Authenticated Markdown original is strictly validated as bounded UTF-8 archival text by validatedMarkdown(); stripping markup would corrupt the original. Never executed or directly echoed.
             $source=$markdown?($editor?self::validatedMarkdown(wp_unslash($_POST['ozmd_source'])):(string)get_post_meta($id,self::SOURCE,true)):(string)wp_unslash($data['post_content']);
             if (strlen($source)>5*1024*1024 || str_contains($source,"\0") || !preg_match('//u',$source)) throw new \RuntimeException('Markdown must be UTF-8 without NUL, at most 5 MiB.');
             $asset=$wasProtected?(string)$wasProtected:wp_generate_uuid4();$operation=wp_generate_uuid4();
@@ -548,8 +554,8 @@ final class Plugin
                     $this->storeForSetup($c)->checkSetupStorage();
                 }
                 $c['retention_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['retention_days']??'0'))));
-                $gfs=wp_unslash($_POST['gfs']??[]);
-                if(!is_array($gfs))throw new \RuntimeException('Invalid GFS settings.');
+                if(isset($_POST['gfs']) && !is_array($_POST['gfs']))throw new \RuntimeException('Invalid GFS settings.');
+                $gfs=map_deep(wp_unslash($_POST['gfs']??[]),'sanitize_text_field');
                 $c['gfs']=GfsPolicy::normalize($gfs);$c['checkpoint_interval_days']=0;
                 $c['cleanup_enabled']=isset($_POST['cleanup_enabled']);
                 $c['cleanup_keep_days']=max(0,min(3650,(int)sanitize_text_field(wp_unslash($_POST['cleanup_keep_days']??'90'))));
@@ -577,7 +583,12 @@ final class Plugin
                 }
                 update_option('ozeki_resilience_setup_storage',$r,false);
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
-            elseif ($action==='restore') $this->restore(array_map('sanitize_text_field',(array)wp_unslash($_POST['sequences']??[])));
+            elseif ($action==='restore') {
+                if(!isset($_POST['sequences']) || !is_array($_POST['sequences']))throw new \RuntimeException('Select valid history numbers.');
+                $sequences=array_map('sanitize_text_field',wp_unslash($_POST['sequences']));
+                foreach($sequences as $sequence)if(!preg_match('/^[1-9][0-9]*$/D',$sequence) || filter_var($sequence,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select valid history numbers.');
+                $this->restore($sequences);
+            }
             elseif ($action==='checkpoint') $this->checkpoint();
             elseif ($action==='site_cleanup_preview') $this->previewSiteCleanup();
             elseif ($action==='site_cleanup_execute') {
@@ -602,17 +613,20 @@ final class Plugin
                 update_option('ozeki_resilience_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {
-                $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
+                if(!isset($_POST['site_ref']) || !is_string($_POST['site_ref']))throw new \RuntimeException('Invalid snapshot reference.');
+                $ref=self::snapshotReference(sanitize_text_field(wp_unslash($_POST['site_ref'])));
                 $this->wholeCheckpoint($ref);
             }
             elseif ($action==='whole_restore') {
                 $attempt=['status'=>'running','at'=>gmdate('c')];
                 try {
                     SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',$attempt,false);
-                    $end=wp_unslash($_POST['site_through']??'');
-                    if(!is_string($end)||!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
+                    if(!isset($_POST['site_through']) || !is_string($_POST['site_through']))throw new \RuntimeException('Select a valid formal history end number.');
+                    $end=sanitize_text_field(wp_unslash($_POST['site_through']));
+                    if(!preg_match('/^(0|[1-9][0-9]*)$/D',$end) || filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
                     $target=(int)$end;$attempt['requested_through']=$target;
-                    $ref=self::snapshotReference(wp_unslash($_POST['site_ref']??''));
+                    if(!isset($_POST['site_ref']) || !is_string($_POST['site_ref']))throw new \RuntimeException('Invalid snapshot reference.');
+                    $ref=self::snapshotReference(sanitize_text_field(wp_unslash($_POST['site_ref'])));
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
                     $attempt['manifest']=$ref;SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',$attempt,false);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.

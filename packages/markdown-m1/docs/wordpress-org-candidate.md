@@ -2,26 +2,26 @@
 
 ## 日本語
 
-2026年11月2日、readme.txt・日英README・導入ガイドの説明修正をrc.8 ZIPへ反映しました。目的、設計原則、復旧のための冗長性、標準機能と任意連携の関係を明確にしています。実行コードはrc.7と同一です。
+現在の公開候補は **0.3.3 rc.9** です。2026年11月10日のrc.8への追加審査に対応し、Markdown保存時のnonce確認と、復旧番号・復旧ポイント・保持設定の入力処理を修正しました。利用手順・対応範囲・保存形式は変わりません。
 
-現在の公開候補は **0.3.3 rc.8** です。復旧先の誤操作防止、必要なソフトウェアの版の表示、中断・失敗後の案内を改善しました。**2026年11月2日（日本時間）にrc.8を既存申請へ提出し、更新受付と元の審査メールへの返信が完了しました。審査担当者の回答待ちで、WordPress.org公開承認はまだ得ていません。** rc.6は過去の提出記録として保全しています。
+**rc.9はWordPress.orgへ未提出です。** rc.8は提出済みですが、追加修正を求められており、公開承認はまだ得ていません。rc.9のZIP送信と審査メールへの返信は、確認後に行います。
 
-- [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.8/ozeki-resilience-0.3.3.zip)（8,283,015 bytes）
-- [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.8) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.8)
-- SHA-256: `1f826c27aebb28e81b726ac71f0c58a4d5f8400afe09a4d33a3c68b80c79118b`
-- [確認結果・申請記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc8.md)
+- [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.9/ozeki-resilience-0.3.3.zip)（8,283,466 bytes）
+- [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.9)
+- SHA-256: `be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69`
+- [確認結果・返信案](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc9.md)
 
-[導入・復旧ガイド](user-guide-ja.md)に従って準備してください。GitHubの `Source code (zip)` は導入用ZIPではありません。旧ZIP・タグは履歴として残していますが、新規導入の案内先は上記候補です。
+[導入・復旧ガイド](user-guide-ja.md)に従って準備してください。GitHubの `Source code (zip)` は導入用ZIPではありません。提出済みrc.8を含む旧ZIP・タグは保全しています。
 
 ## English
 
-On November 2, rc.8 incorporated the clarified readme.txt, Japanese/English READMEs and guides: purpose, design principles, recovery reserves and optional integrations. Runtime files are identical to rc.7.
+The current candidate is **0.3.3 rc.9**, addressing the November 10 review of rc.8: mandatory nonce checks for submitted Markdown originals and sanitized, validated recovery/schedule inputs. Setup steps, supported scope and stored data formats are unchanged.
 
-The current release candidate is **0.3.3 rc.8**. It improves recovery-only operation guards, recorded software requirements and interruption/failure guidance. **The rc.8 update was accepted for review and the reply in the original review-email thread was sent on November 2, 2026 (JST). We are awaiting the reviewer’s response; WordPress.org publication is not approved.** rc.6 remains preserved as an earlier submission.
+**rc.9 has not been submitted to WordPress.org.** rc.8 remains the submitted version with changes requested; publication is not approved. The rc.9 upload and review-email reply await final confirmation.
 
-- [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.8/ozeki-resilience-0.3.3.zip) (8,283,015 bytes)
-- [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.8) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.8)
-- SHA-256: `1f826c27aebb28e81b726ac71f0c58a4d5f8400afe09a4d33a3c68b80c79118b`
-- [Validation and submission record](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc8.md)
+- [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.9/ozeki-resilience-0.3.3.zip) (8,283,466 bytes)
+- [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.9) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.9)
+- SHA-256: `be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69`
+- [Validation and reply draft](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc9.md)
 
-Follow the [setup and recovery guide](user-guide.md). GitHub's `Source code (zip)` is not the installable plugin ZIP. Earlier ZIPs and tags remain historical records; use the candidate above for these instructions.
+Follow the [setup and recovery guide](user-guide.md). Use the installable ZIP, not GitHub's source archive. Previous ZIPs and tags, including submitted rc.8, remain preserved.

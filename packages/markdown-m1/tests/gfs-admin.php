@@ -12,6 +12,7 @@ function current_user_can($c){return true;}
 function check_admin_referer($n){}
 function sanitize_text_field($s){return trim((string)$s);}
 function wp_unslash($s){return $s;}
+function map_deep($value,$callback){return is_array($value)?array_map(fn($v)=>map_deep($v,$callback),$value):$callback($value);}
 function wp_timezone(){return new DateTimeZone('Asia/Tokyo');}
 function wp_date($f){return (new DateTimeImmutable('now',wp_timezone()))->format($f);}
 function wp_clear_scheduled_hook($h){if($h==='ozeki_resilience_m1_checkpoint')$GLOBALS['event']=false;}
@@ -34,6 +35,11 @@ checkGfs($event->timestamp===$options['ozeki_resilience_gfs_due']['at'],'Next ev
 $_POST['gfs']['yearly']['time']='25:99';
 try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
 checkGfs($options['ozeki_resilience_m1_config']===$saved&&str_contains($options['ozeki_resilience_m1_error'],'Invalid GFS'),'Invalid settings do not replace config');
+foreach(['not-an-array',['weekly'=>'invalid'],['weekly'=>['enabled'=>'on','time'=>['02:00'],'keep'=>'2','weekday'=>'0']]] as $bad){
+ $_POST['gfs']=$bad;
+ try{(new OzekiResilience\M1\Plugin())->action();}catch(GfsRedirect $e){}
+ checkGfs($options['ozeki_resilience_m1_config']===$saved&&str_contains($options['ozeki_resilience_m1_error'],'Invalid GFS'),'Malformed GFS preserves previous config');
+}
 echo "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n";
 
 function sanitize_key($v){return is_scalar($v)?preg_replace("/[^a-z0-9_-]/","",strtolower((string)$v)):"";}

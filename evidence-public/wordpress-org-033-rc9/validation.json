@@ -1,0 +1,72 @@
+{
+  "candidate": "0.3.3 rc.9",
+  "date": "2026-11-11",
+  "submitted": false,
+  "zip_sha256": "be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69",
+  "fresh": {
+    "zip_sha256": "be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69",
+    "installed_files_match": 3813,
+    "active": true,
+    "fresh": true,
+    "config_present": false,
+    "state_hashes": {
+      "ozeki_resilience_m1_config": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_attempt": "afbb27081f8fdc77822cf7d46689ecacf4a76957aaf845b5115999094b4c206e",
+      "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+    },
+    "admin_render": true,
+    "posts": 3,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+  },
+  "source": {
+    "zip_sha256": "be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69",
+    "installed_files_match": 3813,
+    "active": true,
+    "fresh": false,
+    "config_present": true,
+    "state_hashes": {
+      "ozeki_resilience_m1_config": "adb374e570d62bfd76f7c8c32ef3efc81dace2d6ee6dd306a4123d8e6def3092",
+      "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+    },
+    "admin_render": true,
+    "posts": 267,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+  },
+  "target": {
+    "zip_sha256": "be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69",
+    "installed_files_match": 3813,
+    "active": true,
+    "fresh": false,
+    "config_present": true,
+    "state_hashes": {
+      "ozeki_resilience_m1_config": "6c76f091ea14f2ca5bf6c0a3b92327be38401915b9be37ffd6ac351fed5f9895",
+      "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_attempt": "d6a252477cd60e88375ed1d6bc146fe6f8eb19a43815c84954834f7a36e2b99d",
+      "ozeki_resilience_site_restore_result": "be1b5d1c18b8eb16b5e04b754fcd16bca37b73021c3609c2181657d164e4f630"
+    },
+    "admin_render": true,
+    "posts": 266,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+  },
+  "plugin_check": {
+    "warnings": 99,
+    "version": "2.1.0",
+    "errors": 0
+  },
+  "form_rejections": 24,
+  "editor_rejections": 6,
+  "roundtrip_asset_sha256": "a094acd84a1c30d2e5456742e1006c2bcb96ea8d714ac1c24475f5e5dbf1a5ec",
+  "recovery_through": 8,
+  "recovered_post_records": 266,
+  "pending": false,
+  "test_surface": "WordPress APIs/hooks and admin-action handlers via PHP CLI; real S3; isolated sites"
+}

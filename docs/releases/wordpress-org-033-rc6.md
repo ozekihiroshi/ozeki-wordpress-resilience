@@ -1,7 +1,7 @@
 # WordPress.org 0.3.3 rc.6 — publication documentation
 
 
-> 過去の記録 / Historical record. 現在はrc.8の更新受付・返信済みで、審査担当者の回答待ちです（公開未承認）。[Current rc.8 submission status](wordpress-org-033-rc8.md).
+> 過去の記録 / Historical record. 現在の状況は[現行版の配布状況](../../packages/markdown-m1/docs/wordpress-org-candidate.md)を参照してください。See that page for current submission status.
 
 **Submitted and reply sent on October 28, 2026. Awaiting the reviewer’s response; WordPress.org publication is not approved.** rc.6 updates the existing application after the rc.3 review. All submitted ZIPs and tags remain unchanged.
 

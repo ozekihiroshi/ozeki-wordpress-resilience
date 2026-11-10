@@ -19,6 +19,7 @@ function apply_filters($name,$value){return $value;}
 function current_user_can($cap){return true;}
 function check_admin_referer($name){}
 function wp_unslash($v){return $v;}
+function sanitize_text_field($v){return is_string($v)?trim(strip_tags($v)):'';}
 function admin_url($v){return $v;}
 class CheckpointAdminDb {
  public string $prefix='fixture_',$posts='posts',$postmeta='postmeta',$options='options';

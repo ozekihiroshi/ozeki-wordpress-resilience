@@ -8,6 +8,8 @@ final class GfsPolicy {
         $out=[];
         foreach(['weekly','monthly','yearly'] as $kind){
             $r=$input[$kind]??[];
+            if(!is_array($r))throw new \RuntimeException('Invalid GFS settings.');
+            foreach($r as $value)if(!is_scalar($value))throw new \RuntimeException('Invalid GFS settings.');
             if(empty($r['enabled']))continue;
             $time=$r['time']??'';$keep=filter_var($r['keep']??null,FILTER_VALIDATE_INT);
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.

@@ -87,6 +87,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Require a valid nonce for submitted Markdown originals; sanitize and validate recovery and schedule form inputs before use.
 * Recovery destinations reject S3 writes and deletion; show recorded software requirements and practical retry guidance in Japanese and English.
 * Validate recovery references before storage, sanitize nonces, and escape rendered URL attribute changes with the WordPress HTML API.
 * Update AWS SDK; respect host file-modification restrictions during recovery; limit detailed notices to the plugin screen.

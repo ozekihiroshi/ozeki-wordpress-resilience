@@ -48,6 +48,7 @@ final class Startup
         if(defined('WP_CLI')&&WP_CLI)return; // Content API guards still apply to CLI writes.
         global $pagenow;
         // Keep administrator sign-in available. Core validates credentials and login CSRF separately.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only fail-closed routing guard during failed startup; no request action is executed here. Login/logout retain core nonce/authentication checks.
         $action=isset($_REQUEST['action'])&&is_string($_REQUEST['action'])?sanitize_key(wp_unslash($_REQUEST['action'])):'';
         if($pagenow==='wp-login.php'&&in_array($action,['','login','logout'],true))return;
         $method=isset($_SERVER['REQUEST_METHOD'])&&is_string($_SERVER['REQUEST_METHOD'])?strtoupper(sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD']))):'GET';

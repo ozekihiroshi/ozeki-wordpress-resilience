@@ -1,0 +1,18 @@
+{
+  "sha256": "be152094f4c67affba938fc19e202d1ee61dba9179a5c4c313c12c7715ed5d69",
+  "bytes": 8283466,
+  "files": 3813,
+  "runtime_files_identical_to_rc8": 3793,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/GfsPolicy.php",
+    "ozeki-resilience/src/Plugin.php",
+    "ozeki-resilience/src/Startup.php"
+  ],
+  "product_source_matches": true,
+  "bundled_guides": 8,
+  "relative_links_resolve": 78,
+  "development_artifacts": 0
+}

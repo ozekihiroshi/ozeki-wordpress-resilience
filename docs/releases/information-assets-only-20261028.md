@@ -1,7 +1,7 @@
 # 情報資産を中心とした復旧への修正
 
 
-> 過去の記録 / Historical record. 現在はrc.8の更新受付・返信済みで、審査担当者の回答待ちです（公開未承認）。[Current rc.8 submission status](wordpress-org-033-rc8.md).
+> 過去の記録 / Historical record. 現在の状況は[現行版の配布状況](../../packages/markdown-m1/docs/wordpress-org-candidate.md)を参照してください。See that page for current submission status.
 
 追記：この記録で残件とした接頭辞の移行は、[rc.4候補](wordpress-org-033-rc4.md)で対応・確認済みです。以下は当時の検証記録です。
 

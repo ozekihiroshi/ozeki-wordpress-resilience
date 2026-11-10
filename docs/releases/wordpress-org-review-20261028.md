@@ -1,7 +1,7 @@
 # WordPress.org 初期レビューへの対応 / Initial review response
 
 
-> 過去の記録 / Historical record. 現在はrc.8の更新受付・返信済みで、審査担当者の回答待ちです（公開未承認）。[Current rc.8 submission status](wordpress-org-033-rc8.md).
+> 過去の記録 / Historical record. 現在の状況は[現行版の配布状況](../../packages/markdown-m1/docs/wordpress-org-candidate.md)を参照してください。See that page for current submission status.
 
 初期指摘の対象は2026-10-28提出の **0.3.2 rc.1**。対応版 **0.3.3 rc.3の更新受付と元の審査メールへの返信が完了**し、審査担当者の回答待ちです。公開承認済みではありません。0.3.3 rc.1・rc.2は未提出の記録として残しています。
 The initial findings concerned **0.3.2 rc.1**. The **0.3.3 rc.3 update was received and our reply was sent in the original review thread**. We are awaiting the reviewer's response; publication has not been approved.
