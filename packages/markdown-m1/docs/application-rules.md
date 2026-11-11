@@ -21,4 +21,6 @@ Definitions are in FormHistory, MemberHistory and TableHistory; common core meta
 
 ## Preparing software
 
+For the Flamingo declared-field correction, its missed-check cause, compatibility and full recovery-cycle results, see [Flamingo recovery fix and verification](flamingo-recovery-fix.md). This main-branch correction is not part of submitted rc.12.
+
 Install WordPress, themes and required plugins from trusted distributors. Recovery does not install archived program files or change the destination theme and active-plugin selection. Theme settings are applied only for the selected theme. Saved custom CSS, global-style records and post types without a supported recovery rule are withheld. Use the recovery result to inspect withheld items; their source originals remain in S3.
