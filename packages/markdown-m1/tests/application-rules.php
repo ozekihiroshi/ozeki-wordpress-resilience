@@ -25,7 +25,14 @@ check($find($first['data'],11,'_fields')===$find($state,11,'_fields'),'Submitted
 check($find($first['data'],10,'unknown')===null&&$find($first['data'],11,'_recaptcha')===null,'Unrecognized metadata not applied');
 check(unserialize($find($first['data'],10,'_mail'))===['subject'=>'Question','body'=>'[your-name]','active'=>true],'CF7 nested recognized attributes');
 check($find($first['data'],10,'_additional_settings')==='skip_mail: on','Known additional directive only');
-$opts=json_decode($find($first['data'],12,'_tablepress_table_options'),true);check($opts['datatables_sort']&&$opts['datatables_paginate']&&!isset($opts['datatables_custom_commands']),'Table controls kept, commands withheld');
+$opts=json_decode($find($first['data'],12,'_tablepress_table_options'),true);check($opts['datatables_sort']&&$opts['datatables_paginate']&&($opts['datatables_custom_commands']??null)==='','Table controls kept; executable source withheld; safe empty runtime value required');
+foreach(['',null,[], 'initComplete: function(){window.__owrArchivedExecuted=true;}'] as $commands){
+ $case=$state;foreach($case['tables']['postmeta'] as &$row)if($row['post_id']==='12'&&$row['meta_key']==='_tablepress_table_options')$row['meta_value']=Store::json(['table_head'=>0,'datatables_sort'=>false,'datatables_paginate'=>false,'extra_css_classes'=>'','datatables_custom_commands'=>$commands]);unset($row);
+ $frozen=Store::json($case);$applied=RecoveryRules::project($case,['blogname']);$options=json_decode($find($applied['data'],12,'_tablepress_table_options'),true);
+ check($options===['table_head'=>0,'datatables_sort'=>false,'datatables_paginate'=>false,'extra_css_classes'=>'','datatables_custom_commands'=>''],'Independent exact runtime expectation; preserve zero/false/empty and neutralize executable setting');
+ check(Store::json($case)===$frozen,'Complete original unchanged including excluded setting');
+ $missing=$options;unset($missing['datatables_custom_commands']);check(($missing['datatables_custom_commands']??null)!=='','Removing runtime default must fail the acceptance predicate');
+}
 check($first['data']['membership']['settings']['wpmembers_settings']['mod_reg']===1&&$first['data']['membership']['users']['3']['meta']['active']===['1'],'Approval retained');
 check(!isset($first['data']['membership']['users']['3']['meta']['session_tokens']),'Sessions withheld');
 foreach(['2.4.3','2.4',243,2.4] as $version){

@@ -6,6 +6,7 @@ require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/AcfHistory.php';
 require_once __DIR__.'/RecoveryRules.php';
 require_once __DIR__.'/GfsPolicy.php';
+require_once __DIR__.'/ReferenceContext.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -100,6 +101,8 @@ final class SiteSnapshot
             'wordpress'=>$GLOBALS['wp_version'],'php'=>PHP_VERSION,'through'=>$state['through'],'plugins'=>$plugins,
             'software_inventory'=>$software,'recovery_mode'=>'information-assets-only','excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
             'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
+        $origins=ReferenceContext::capture();
+        if($origins)$manifest['reference_origins']=ReferenceContext::merge($origins,[['site'=>home_url(),'uploads'=>$upload['baseurl']]]);
         return $this->save($files,$manifest);
     }
     public function save(array $files,array $manifest,?array $slot=null): array {
@@ -111,6 +114,11 @@ final class SiteSnapshot
         $files['assets/metadata.json']=Store::json($layout);
         // Older readers must reject independent-definition checkpoints, not use stale embedded definitions.
         $manifest['asset_format']=isset($content['acf']['definitions_schema'])?AcfHistory::SNAPSHOT_FORMAT:AssetFormat::SCHEMA;
+        if(isset($manifest['reference_origins'])){
+            $manifest['reference_origins']=ReferenceContext::merge($manifest['reference_origins']);
+            if(!$manifest['reference_origins'])throw new \RuntimeException('Empty required snapshot reference context.');
+            $manifest['asset_format']=ReferenceContext::SNAPSHOT_FORMAT;
+        }
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -141,7 +149,9 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
+            if(isset($m['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']);
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
@@ -190,6 +200,7 @@ final class SiteSnapshot
                 CommentHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
             }
             $a=$r['attributes'];$id=(string)$a['origin_id'];$type=$a['post_type']??'ozmd_document';$found=false;
+            if(isset($a['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']??[],$a['reference_origins']);
             if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
             $raw=$this->store->originalSource($r['original']);$this->store->get($r['original']['metadata']);
             self::applyMedia($d,$files,$a['media']??[],$this->store);
@@ -265,6 +276,7 @@ final class SiteSnapshot
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        $origins=ReferenceContext::merge($m['reference_origins']??[],[['site'=>$from,'uploads'=>$m['source_upload_url']??$from.'/wp-content/uploads']]);
         AcfHistory::check($d);
         $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
@@ -328,6 +340,7 @@ final class SiteSnapshot
                 (new \OzekiMarkdownDocuments\Content\MarkdownSource())->store((int)$match[1],$raw);
                 self::writeMeta((int)$match[1],'_ozeki_resilience_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
             }
+            self::writeOption(ReferenceContext::OPTION,$origins,false);
             self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}

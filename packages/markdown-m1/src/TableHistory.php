@@ -7,6 +7,11 @@ require_once __DIR__.'/SaveFailure.php';
 /** TablePress completed operations, complete table originals, shared S3 history. */
 final class TableHistory
 {
+    /** Destination runtime state, never values imported from archived executable settings. */
+    public static function runtimeOptions(array $recognized): array {
+        $recognized['datatables_custom_commands']='';
+        return $recognized;
+    }
     public static function recoveryMeta(): array {
         return ['_tablepress_table_options'=>['last_editor'=>'number','table_head'=>'number','table_foot'=>'number','alternating_row_colors'=>'bool','row_hover'=>'bool','print_name'=>'bool','print_name_position'=>'text','print_description'=>'bool','print_description_position'=>'text','extra_css_classes'=>'text','use_datatables'=>'bool','datatables_sort'=>'bool','datatables_filter'=>'bool','datatables_paginate'=>'bool','datatables_lengthchange'=>'bool','datatables_paginate_entries'=>'number','datatables_info'=>'bool','datatables_scrollx'=>'bool'], '_tablepress_table_visibility'=>['rows'=>'number-map','columns'=>'number-map']];
     }

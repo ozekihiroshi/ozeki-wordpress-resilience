@@ -109,3 +109,42 @@ WP-Membersの今回の証拠は、WordPress 7.1.3 / PHP 8.3.36 / WP-Members 3.5.
 - 詳細な試験記録は運用作業領域の `release-readiness/member-field-fix-20261111/REPORT-ja.txt` と同ディレクトリの比較結果に保全している。利用者向けの配布文書には試験環境の操作手順を混在させない。
 
 本書は今回の方針を定めるものであり、すべてのアダプターが既にこの基準で確認済みであるとは宣言しない。
+
+## rc.11後の修正：復旧先の動作条件と参照の継承（未提出）
+
+mainへの取り込み対象と[今回の確認結果・互換性・残る公開確認](recovery-runtime-results-20261111.md)を別記した。以下の追記より前はrc.10時点の記録であり、現在の提出済み候補はrc.11である。
+
+2026年11月11日の追加確認では、TablePressの表データが一致しても表示がHTTP 500になり、未編集Markdownは二度目のサイト全体復旧で最初のサイトを参照した。これは確認の量だけの問題ではない。従来の適用規則は「保存された項目のどれを通すか」を中心にしており、復旧先で必要な状態を作る責務と、次の保全に引き継ぐ情報の責務が不足していた。
+
+保存原本は完全に残す。復旧先の構築は、次の三つを区別する。
+
+- 対応する保存値：型・意味・参照関係を保って適用する。
+- 実行環境が必要とする安全な値：復旧先で明示的に用意する。TablePressの `datatables_custom_commands` は元の内容を適用せず、空文字を用意する。「キーがない」と「安全な空の値がある」は同じではない。
+- 元の内容を自動適用しない項目：原本には残し、理由を記録する。実行コードや不明な設定を通すために許可範囲を広げない。
+
+TablePressの信頼できる導入済み版のテンプレートと、別の要求で読み出した復旧先の設定キーを照合する。セルや設定値の一致に加え、実ブラウザで検索・並べ替え・ページ送りを検査する。除外設定を空文字・null・配列・スクリプト文字列にした試験でも、原本が変わらず、適用後は安全な空文字になることを確認する。正常な0・false・空欄は上書きしない。
+
+Markdown原文は書き換えない。サイト全体復旧で確認した元サイトと画像保存先の対応を、復旧先の記録、次のBaseline、正式なMarkdown履歴、Checkpointに引き継ぐ。本文に含まれるURLから元サイトを推測しない。表示中のURLは構文・ホスト・ポート・パス境界を確認し、最も具体的な対応を一度だけ適用する。関係情報は最大32組とし、超過・不正な情報は切り捨てず停止する。旧Markdown個別復旧を画像・サイト関係の自動再構築に拡張する変更ではない。
+
+新しい参照情報を必要とする原本の記述形式とスナップショット形式には識別子を付ける。未変更のrc.11はこれらを読み取り段階で拒否する。新実装は旧形式も読み、rc.11で既に復旧したサイトに残る旧サイトの対応情報も引き継ぐ。過去に対応情報を失った保存について、本文から推測して完全修復できるとは扱わない。既存S3オブジェクトの移行・書換えは行わない。
+
+確認は「保存→復旧→別の要求で読み戻し→実際の利用→一部を変更して再保存→未編集の情報も含めて再復旧」とする。旧サイトへの通信を試験側で遮断し、HTTP 200だけでなく参照先・画像のバイト列・ブラウザの操作結果を検査する。期待値は製品の適用結果から作らない。今回の失敗を修正前に検出できることを先に記録した。
+
+実施結果：既存の契約試験、新しい参照境界・形式試験、実S3の二世代復旧、編集／未編集文書、Checkpoint経由の実ブラウザ利用を確認。原本・画像のSHA-256が一致し、旧readerによる新形式拒否も確認した。提出済みrc.11と既存タグは変更しない。修正用ブランチの確認と正式な候補作成・提出は別に扱う。
+
+再実行する確認：
+
+```sh
+php packages/markdown-m1/tests/application-rules.php packages/markdown-m1
+php packages/markdown-m1/tests/reference-context.php packages/markdown-m1
+php packages/markdown-m1/tests/reference-format.php packages/markdown-m1 /private/context-fixture.json
+php packages/markdown-m1/tests/reference-legacy-reader.php /frozen/rc11/package /private/context-fixture.json
+php tools/testing/table-runtime-readback.php /isolated/site /private/expected-table.json
+QA_TOKEN=... node tools/testing/recovery-use-browser.cjs /private/browser-expectations.json
+```
+
+最後の二つは隔離実環境用。ブラウザ確認はPlaywrightを別途試験環境へ用意する。試験トークンや原本値を公開ログへ出さない。オフラインの参照・適用契約は既存CIへ追加する。
+
+### English summary
+
+The structural gap was treating destination construction as filtering archived fields. A usable recovery also needs explicit safe runtime values and preservation of reference provenance for the next generation. Archived executable settings remain untouched in originals and are not executed; TablePress receives an explicit empty custom-command value. Complete-site recovery carries known site/upload origins forward without rewriting Markdown or inferring origins from document text. Context-dependent new originals and snapshots require a new reader; rc.11 rejects them, while the updated reader retains old-format support. Acceptance includes independent readback, browser interaction, edited and untouched documents, blocked access to earlier sites, and a second recovery. The submitted rc.11 and existing tags remain unchanged; these are development-branch changes, not a new submission.

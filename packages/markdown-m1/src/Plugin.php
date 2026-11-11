@@ -8,6 +8,7 @@ require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/SetupReadiness.php';
 require_once __DIR__.'/AdminText.php';
 require_once __DIR__.'/RecoveryPreparation.php';
+require_once __DIR__.'/ReferenceContext.php';
 
 final class Plugin
 {
@@ -359,6 +360,10 @@ final class Plugin
             $attributes=['title'=>wp_unslash($data['post_title']),'slug'=>wp_unslash($data['post_name']),'status'=>$data['post_status'],'date'=>$data['post_date'],'date_gmt'=>$data['post_date_gmt'],'origin_id'=>$id,'origin_url'=>get_permalink($id)];
             $attributes['post_type']=$data['post_type'];
             $attributes['content_format']=$markdown?'markdown':'wordpress-block-html';
+            if($markdown){
+                $origins=ReferenceContext::capture();
+                if($origins)$attributes['reference_origins']=$origins;
+            }
             foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)$attributes[$key]=wp_unslash($data[$key]);
             // Gutenberg separately posts legacy meta boxes after REST body saving.
             // Skip only a matching, already-confirmed body; metadata hooks still run.
@@ -478,18 +483,16 @@ final class Plugin
     }
     /** Alter URL attributes only; preserve HTML already rendered by core/shortcodes. */
     public function relocateContent(string $html): string {
-        $from=get_option('ozeki_resilience_site_origin_url');
         $to=esc_url_raw(home_url(),['http','https']);
-        if(!is_string($from) || $from==='' || !$to || esc_url_raw($from,['http','https'])!==$from)return $html;
-        $fromUploads=get_option('ozeki_resilience_origin_upload_url');
-        if(!is_string($fromUploads)||esc_url_raw($fromUploads,['http','https'])!==$fromUploads)$fromUploads=null;
+        $origins=ReferenceContext::inherited();
+        if(!$origins||!$to)return $html;
         $toUploads=wp_upload_dir()['baseurl'];
         $processor=new \WP_HTML_Tag_Processor($html);
         while($processor->next_tag()){
             foreach(['href','src','action','poster','cite','data','srcset'] as $attribute){
                 $value=$processor->get_attribute($attribute);
                 if(!is_string($value))continue;
-                $rebased=SiteSnapshot::relocate($value,$from,$to,$fromUploads,$toUploads);
+                $rebased=$attribute==='srcset'?preg_replace_callback('~(^|,)(\s*)(\S+)([^,]*)~',fn($m)=>$m[1].$m[2].ReferenceContext::url($m[3],$origins,$to,$toUploads).$m[4],$value):ReferenceContext::url($value,$origins,$to,$toUploads);
                 if($rebased!==$value)$processor->set_attribute($attribute,$attribute==='srcset'?$rebased:esc_url_raw($rebased,['http','https']));
             }
         }

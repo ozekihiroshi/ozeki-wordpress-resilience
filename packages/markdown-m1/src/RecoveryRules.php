@@ -117,7 +117,9 @@ final class RecoveryRules
             if($type==='tablepress_table')$rules+=TableHistory::recoveryMeta();
             $path='postmeta.'.$row['post_id'].'.'.$key;
             if(!array_key_exists($key,$rules)){$self->omit($path,$key==='_ozmd_source_sha256'?'Derived from restored Markdown; regenerated, not imported':'No recognized application rule');continue;}
-            $row['meta_value']=$self->metadata($row['meta_value'],$rules[$key],$path,$type==='tablepress_table'&&str_starts_with($key,'_tablepress_'));$out[]=$row;
+            $row['meta_value']=$self->metadata($row['meta_value'],$rules[$key],$path,$type==='tablepress_table'&&str_starts_with($key,'_tablepress_'));
+            if($type==='tablepress_table'&&$key==='_tablepress_table_options')$row['meta_value']=Store::json(TableHistory::runtimeOptions(json_decode($row['meta_value'],true,512,JSON_THROW_ON_ERROR)));
+            $out[]=$row;
         }
         $next=max(array_merge([0],array_map('intval',array_column($out,'meta_id'))))+1;
         foreach($acf['meta'] as $row){$row['meta_id']=(string)$next++;$out[]=$row;}

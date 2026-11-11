@@ -4,6 +4,7 @@ namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/GfsPolicy.php';
+require_once __DIR__.'/ReferenceContext.php';
 
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
@@ -543,6 +544,10 @@ final class Store
         return $this->saveOriginal($base,$asset,$operation,$source,$attributes,$until);
     }
     private function saveOriginal(string $base,string $asset,string $operation,string $source,array $attributes,?string $until): array {
+        if(isset($attributes['reference_origins'])){
+            $attributes['reference_origins']=ReferenceContext::merge($attributes['reference_origins']);
+            if(!$attributes['reference_origins'])throw new \RuntimeException('Empty required original reference context.');
+        }
         $meta=['schema'=>AssetFormat::SCHEMA,'attributes'=>$attributes];$parts=[];$body=$source;
         if(self::sourceName($attributes)==='source.json'){
             $layout=AssetFormat::split(json_decode($source,true,512,JSON_THROW_ON_ERROR));
@@ -550,7 +555,7 @@ final class Store
             unset($layout['files']);$meta['structure']=$layout;
             $body=self::json(['schema'=>AssetFormat::SCHEMA,'data'=>$parts]);
         }
-        return ['schema'=>'owr-md-original-2','asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
+        return ['schema'=>isset($attributes['reference_origins'])?ReferenceContext::ORIGINAL_FORMAT:'owr-md-original-2','asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
             'source_sha256'=>hash('sha256',$source),'parts'=>$parts,
             'source'=>$this->put($base.self::sourceName($attributes),$body,self::sourceType($attributes).'; charset=utf-8',$until),
             'metadata'=>$this->put($base.'metadata.json',self::json($meta),'application/json',$until)];
@@ -558,9 +563,13 @@ final class Store
     /** Decode only for existing typed replay; S3 stores readable independent originals. */
     public function originalSource(array $original): string {
         if(($original['schema']??'owr-md-original-1')==='owr-md-original-1')return $this->get($original['source']);
-        if(($original['schema']??'')!=='owr-md-original-2')throw new \RuntimeException('Unsupported original format.');
+        if(!in_array($original['schema']??'',['owr-md-original-2',ReferenceContext::ORIGINAL_FORMAT],true))throw new \RuntimeException('Unsupported original format.');
         $meta=json_decode($this->get($original['metadata']),true,512,JSON_THROW_ON_ERROR);
         if(($meta['schema']??'')!==AssetFormat::SCHEMA)throw new \RuntimeException('Invalid original metadata.');
+        if(($original['schema']??'')===ReferenceContext::ORIGINAL_FORMAT){
+            if(empty($meta['attributes']['reference_origins']))throw new \RuntimeException('Missing required original reference context.');
+            ReferenceContext::merge($meta['attributes']['reference_origins']);
+        }
         $raw=$this->get($original['source']);
         if(isset($meta['structure'])){
             $index=json_decode($raw,true,512,JSON_THROW_ON_ERROR);

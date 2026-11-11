@@ -6,6 +6,8 @@
 
 [English](README.md) | 日本語
 
+mainには[TablePress・Markdownの復旧修正と、構築方針・互換性・確認結果](docs/review/recovery-runtime-results-20261111.md)を反映しています。提出済みrc.11のZIPには含まれず、新しい公開用ZIPはまだ作成していません。
+
 
 ## 攻撃の後も、サイトを再開するために
 

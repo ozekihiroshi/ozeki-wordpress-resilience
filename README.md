@@ -6,6 +6,8 @@ Preserve the articles, images and inquiries your site has accumulated, so you ca
 
 English | [日本語](RAADME-jp.md)
 
+Development on main includes [TablePress and Markdown recovery fixes, compatibility notes and verification results](docs/review/recovery-runtime-results-20261111.md). These changes are not in the submitted rc.11 ZIP; no new release package has been issued.
+
 
 ## Keep a path to recovery after an attack
 
