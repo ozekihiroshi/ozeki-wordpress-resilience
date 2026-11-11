@@ -1,0 +1,151 @@
+[
+  {
+    "0": "16",
+    "1": "Trial text",
+    "2": "trial_text",
+    "3": "text",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "pattern": "",
+    "title": ""
+  },
+  {
+    "0": "17",
+    "1": "Trial checkbox",
+    "2": "trial_checkbox",
+    "3": "checkbox",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "7": "accepted",
+    "8": "n",
+    "checkbox_label": 0
+  },
+  {
+    "0": "18",
+    "1": "Trial select",
+    "2": "trial_select",
+    "3": "select",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "7": [
+      "Alpha|a",
+      "Beta|b"
+    ]
+  },
+  {
+    "0": "19",
+    "1": "Trial radio",
+    "2": "trial_radio",
+    "3": "radio",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "7": [
+      "Alpha|a",
+      "Beta|b"
+    ]
+  },
+  {
+    "0": "20",
+    "1": "Trial multiselect",
+    "2": "trial_multiselect",
+    "3": "multiselect",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "7": [
+      "Alpha|a",
+      "Beta|b"
+    ],
+    "8": ","
+  },
+  {
+    "0": "21",
+    "1": "Trial hidden",
+    "2": "trial_hidden",
+    "3": "hidden",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "7": "fixed"
+  },
+  {
+    "0": "22",
+    "1": "Trial number",
+    "2": "trial_number",
+    "3": "number",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "pattern": "",
+    "title": "",
+    "min": "0",
+    "max": "100"
+  },
+  {
+    "0": "23",
+    "1": "Trial date",
+    "2": "trial_date",
+    "3": "date",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "pattern": "",
+    "title": "",
+    "min": "0",
+    "max": "100"
+  },
+  {
+    "0": "24",
+    "1": "Trial textarea",
+    "2": "trial_textarea",
+    "3": "textarea",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "rows": "4",
+    "cols": "40"
+  },
+  {
+    "0": "25",
+    "1": "Trial email",
+    "2": "trial_email",
+    "3": "email",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "pattern": "",
+    "title": ""
+  },
+  {
+    "0": "26",
+    "1": "Trial url",
+    "2": "trial_url",
+    "3": "url",
+    "4": "y",
+    "5": "n",
+    "profile": true,
+    "6": "n",
+    "placeholder": "Trial",
+    "pattern": "",
+    "title": ""
+  }
+]

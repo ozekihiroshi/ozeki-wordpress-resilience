@@ -32,6 +32,8 @@ final class RecoveryRules
         if($rule==='number'&&(is_int($v)||is_float($v)||(is_string($v)&&is_numeric($v))))return $v;
         if($rule==='number-or-empty'&&($v===''||is_int($v)||(is_string($v)&&is_numeric($v))))return $v;
         if($rule==='bool'&&in_array($v,[true,false,0,1,'0','1'],true))return $v;
+        if($rule==='member-delimiter'&&in_array($v,[',','|'],true))return $v;
+        if($rule==='yes-no'&&in_array($v,['y','n'],true))return $v;
         if(in_array($rule,['text-map','number-map'],true)&&is_array($v)){
             foreach($v as $k=>$x)$this->value($x,$rule==='text-map'?'text':'number',$path.'.'.$k);return $v;
         }
@@ -49,7 +51,19 @@ final class RecoveryRules
                 if(!in_array($field[3],['text','textarea','email','url','password','checkbox','select','radio','multiselect','number','date','hidden'],true)){
                     $this->omit($path.'.'.$i,'Unsupported registration field type');continue;
                 }
-                $out[]=$this->value($field,[0=>'number',1=>'text',2=>'text',3=>'text',4=>'text',5=>'text',6=>'text','profile'=>'number','native'=>'bool','value'=>'plain','values'=>'plain'],$path.'.'.$i);
+                // Initial fields use 0/1; the normal field editor writes true/false.
+                // Numeric keys 7/8 carry type-specific definitions, not member values.
+                $rules=[0=>'number',1=>'text',2=>'text',3=>'text',4=>'text',5=>'text',6=>'text','profile'=>'bool','native'=>'bool','value'=>'plain','values'=>'plain'];
+                $type=$field[3];
+                if(in_array($type,['text','textarea','email','url','password','number','date'],true))$rules['placeholder']='text';
+                if(in_array($type,['text','email','url','password','number','date'],true))$rules+=['pattern'=>'text','title'=>'text'];
+                if(in_array($type,['number','date'],true))$rules+=['min'=>'number-or-empty','max'=>'number-or-empty'];
+                if($type==='textarea')$rules+=['rows'=>'number-or-empty','cols'=>'number-or-empty'];
+                if(in_array($type,['select','radio','multiselect'],true))$rules[7]='text-map';
+                if($type==='multiselect')$rules[8]='member-delimiter';
+                if($type==='checkbox')$rules+=[7=>'text',8=>'yes-no','checkbox_label'=>'number'];
+                if($type==='hidden')$rules[7]='text';
+                $out[]=$this->value($field,$rules,$path.'.'.$i);
             }return $out;
         }
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.

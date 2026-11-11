@@ -49,6 +49,29 @@ foreach([[],true,-1,2.5] as $page){
  reject(fn()=>RecoveryRules::project($case,['blogname']));
 }
 check(!str_contains(Store::json($first['report']),'private-')&&!str_contains(Store::json($first['report']),'private token'),'Report does not expose values');
+// Captured from WP-Members 3.5.8.1's real Add Field form, not invented normalized definitions.
+$editorFields=json_decode(file_get_contents(__DIR__.'/member-fields-editor.json'),true,512,JSON_THROW_ON_ERROR);
+foreach([true,false,1,0,'1','0'] as $profile){
+ $case=$state;$fields=$editorFields;foreach($fields as &$field)$field['profile']=$profile;unset($field);
+ $case['membership']['settings']['wpmembers_fields']=$fields;
+ $case['membership']['users']['3']['meta']+=['trial_checkbox'=>['accepted'],'trial_multiselect'=>['a,b'],'trial_hidden'=>['fixed']];
+ $original=Store::json($case);$projected=RecoveryRules::project($case,['blogname'])['data'];
+ check($projected['membership']['settings']['wpmembers_fields']===$fields,'Editor field definitions retained, including native storage types');
+ foreach(['trial_checkbox','trial_multiselect','trial_hidden'] as $key)check($projected['membership']['users']['3']['meta'][$key]===$case['membership']['users']['3']['meta'][$key],'Member values retained with their definitions');
+ check(Store::json($case)===$original,'Member editor originals unchanged');
+ check(RecoveryRules::project($projected,['blogname'])['data']['membership']===$projected['membership'],'Member application is stable on another recovery');
+}
+$fieldCase=function($type,$key,$value)use($state,$editorFields){$case=$state;foreach($editorFields as $f)if($f[3]===$type){$f[$key]=$value;$case['membership']['settings']['wpmembers_fields']=[$f];break;}return $case;};
+foreach([['multiselect',8,'|'],['checkbox',8,'y'],['checkbox',7,'0'],['date','min',''],['number','max',''],['textarea','rows','']] as [$type,$key,$value]){
+ $case=$fieldCase($type,$key,$value);$result=RecoveryRules::project($case,['blogname']);
+ check($result['data']['membership']['settings']['wpmembers_fields']===$case['membership']['settings']['wpmembers_fields'],'Optional empty constraints and alternate native field settings preserved');
+}
+foreach([['text','profile',2],['text','profile','yes'],['text','profile',[]],['select',7,'a|Alpha'],['select',7,[['nested']]],['checkbox',7,['accepted']],['checkbox',8,'yes'],['multiselect',8,';'],['number','min',[]],['textarea','rows','four'],['text','pattern',new stdClass()]] as [$type,$key,$value]){
+ $case=$fieldCase($type,$key,$value);reject(fn()=>RecoveryRules::project($case,['blogname']));
+}
+$case=$fieldCase('text','extension_command','private-command');$projected=RecoveryRules::project($case,['blogname']);
+check(!isset($projected['data']['membership']['settings']['wpmembers_fields'][0]['extension_command']),'Unknown field settings remain withheld');
+check(!str_contains(Store::json($projected['report']),'private-command'),'Field omission report does not expose values');
 check(count($first['data']['tables']['commentmeta'])===1&&$first['data']['tables']['commentmeta'][0]['meta_key']==='_wp_trash_meta_status','Core comment trash state retained');
 // Both baseline and confirmed-history overlay arrive at the same projection boundary.
 $baseline=$site->save(['content.json'=>$before,'software.zip'=>'fixture'],['schema'=>'owr-site-snapshot-1','through'=>0,'origin'=>'administrator_initial']);
