@@ -81,7 +81,7 @@ These checks complete initial setup and the post-save check. Next, check the inq
 
 Only confirmed history is available after source loss. If an original save failed before being queued, resolve the cause and save again through the normal editor.
 
-After changes to non-image attachments (such as PDFs), menus/settings, plugin versions or ACF definitions, pause editing and create a new trusted initial save. Ordinary supported edits are confirmed through formal history; a scheduled Checkpoint does not capture untracked site changes.
+After changes to non-image attachments (such as PDFs), menus/settings or plugin versions, pause editing and create a new trusted initial save. Ordinary supported edits are confirmed through formal history; a scheduled Checkpoint does not capture untracked site changes. Submitted rc.10 also needs a new Baseline after ACF definition-only changes; the development update described below records those changes in history.
 
 After the initial save, keep the version list from **Prepare the recovery destination** outside the source site, together with bucket, region, prefix and owner.
 
@@ -117,6 +117,6 @@ See the [README](../README.md#what-remains-and-what-you-can-recover) for saved a
 
 ## ACF free
 
-0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing ACF version/field definitions, pause editing and create a new trusted Baseline. Prepare the recorded ACF free version on the recovery destination. See [coverage](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
+0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing the ACF version, pause editing and create a new trusted Baseline. The development update (not in submitted rc.10) records definition-only changes and deletions while protection is enabled; check formal-history confirmation. Recover its new records/Baselines/Checkpoints with the updated recovery implementation and the recorded ACF free version. See [coverage](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
 
 Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it requests a new initial save when a capture including the current version cannot be confirmed. ACF PRO fields are outside protection; article protection can continue. Stored definitions with inactive ACF free are also shown as outside protection with a next action.

@@ -76,7 +76,7 @@ final class SetupReadiness
         if($mode==='inactive')return $row+['excluded'=>true,'next'=>$t('Stored ACF definitions were found, but ACF free is not active. Activate ACF free and create a new trusted initial snapshot to protect supported fields.','ACFの定義がありますが、無料版が有効ではありません。対応フィールドを保護する場合は無料版を有効化し、新しい信頼済みの初期保存を作成してください。')];
         if($mode==='unused')return $row+['unused'=>true,'next'=>$t('Not used; no action needed.','使用していないため対応は不要です。')];
         $ready=self::acfReady($c);$row['ok']=$ready;
-        $row['next']=$ready?$t('Initial save includes this ACF free version. Basic fields only; create a new trusted initial snapshot after changing field definitions.','現在のACF無料版を含む初期保存を確認済みです。基本フィールドが対象です。定義を変更した場合は初期保存を作り直してください。'):$t('Create a new trusted initial snapshot with ACF free active. Older initial saves do not confirm ACF coverage; existing article protection continues.','ACF無料版を有効にして、新しい信頼済みの初期保存を作成してください。過去の保存だけではACF対応を確認できません。既存の記事保護は継続します。');
+        $row['next']=$ready?$t('Initial save includes this ACF free version. Basic fields only; after changing field definitions, check formal-history confirmation.','現在のACF無料版を含む初期保存を確認済みです。基本フィールドが対象です。定義の変更後は正式履歴への確定を確認してください。'):$t('Create a new trusted initial snapshot with ACF free active. Older initial saves do not confirm ACF coverage; existing article protection continues.','ACF無料版を有効にして、新しい信頼済みの初期保存を作成してください。過去の保存だけではACF対応を確認できません。既存の記事保護は継続します。');
         return $row;
     }
     public static function requireStart(array $c): void {

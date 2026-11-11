@@ -48,12 +48,18 @@ final class CommentHistory
     public function enqueue(string $asset,string $source,array $attrs,array $resources=[]): void {
         SaveFailure::run('Shared queue registration',fn()=>$this->enqueueOperation($asset,$source,$attrs,$resources));
     }
-    private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[]): void {
+    /** Read current shared definitions under the same lock that orders their history. */
+    public function enqueueCurrent(string $asset,callable $capture,array $attrs): void {
+        SaveFailure::run('Shared queue current-state registration',fn()=>$this->enqueueOperation($asset,'',$attrs,[],$capture));
+    }
+    private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[],?callable $capture=null): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
         if($resources && ($attrs['post_type']??'')!=='owr_native')throw new \RuntimeException('Unexpected operation resources.');
         if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
         $name=$this->lock();$operation=wp_generate_uuid4();
         try {
+            if($capture!==null)$source=$capture();
+            if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
             $queue=(array)get_option(self::PENDING,[]);
             // Native state can be emitted by both REST and legacy meta-box requests.
             // Compare against S3 authority under the writer lock, never a local cache.

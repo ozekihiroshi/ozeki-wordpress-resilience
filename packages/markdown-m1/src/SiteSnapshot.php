@@ -104,11 +104,13 @@ final class SiteSnapshot
     }
     public function save(array $files,array $manifest,?array $slot=null): array {
         // The same lossless partition is used for normal structured originals and full baselines.
-        $layout=AssetFormat::split(json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR));
+        $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        $layout=AssetFormat::split($content);
         foreach($layout['files'] as $path=>$body)$files['assets/'.$path]=$body;
         unset($layout['files'],$files['content.json']);
         $files['assets/metadata.json']=Store::json($layout);
-        $manifest['asset_format']=AssetFormat::SCHEMA;
+        // Older readers must reject independent-definition checkpoints, not use stale embedded definitions.
+        $manifest['asset_format']=isset($content['acf']['definitions_schema'])?AcfHistory::SNAPSHOT_FORMAT:AssetFormat::SCHEMA;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -139,7 +141,7 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if($m['asset_format']!==AssetFormat::SCHEMA||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);

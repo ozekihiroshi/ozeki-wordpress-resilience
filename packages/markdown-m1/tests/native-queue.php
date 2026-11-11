@@ -24,4 +24,20 @@ $res['uploads/a.png']['body']=base64_encode('original bytes');$q->enqueue('nativ
 $s3->readFail=true;$q->enqueue('native-state-10','{"changed":true}',$attrs,$res);ok(count(get_option(OzekiResilience\M1\CommentHistory::PENDING))===1,'Failed equality lookup preserves pending');
 $s3->readFail=false;$q->resume();ok(count($store->history())===2&&!get_option(OzekiResilience\M1\CommentHistory::PENDING),'Changed native state resumes after read failure');
 echo "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\n";
+
+// Definition capture is ordered by the shared queue lock and frozen before any retry.
+class DefinitionLockDB extends DB {public bool $locked=false;function get_var($q){if(str_contains($q,'GET_LOCK'))$this->locked=true;if(str_contains($q,'RELEASE_LOCK'))$this->locked=false;return 1;}}
+$GLOBALS['wpdb']=new DefinitionLockDB();$GLOBALS['opts']=[];
+$s3=new QueueS3();$store=new OzekiResilience\M1\Store($s3,['bucket'=>'trial','prefix'=>'definition-queue/']);OzekiResilience\M1\Plugin::$store=$store;
+$calls=0;$current='{"schema":"owr-acf-definitions-1","acf_definitions":[]}';
+$capture=function()use(&$calls,&$current){ok($GLOBALS['wpdb']->locked,'Capture inside writer lock');$calls++;return $current;};
+$attrs=['post_type'=>'owr_acf','content_format'=>'acf-json','origin_id'=>0];
+$q->enqueueCurrent('acf-definitions',$capture,$attrs);
+ok($calls===1&&!$GLOBALS['wpdb']->locked&&count(get_option(OzekiResilience\M1\CommentHistory::PENDING))===1,'Failed definition save remains frozen and unlocks');
+$frozen=$current;$current='{"changed":"after failure"}';$s3->fail=false;$q->resume();
+$history=$store->history();ok($calls===1&&$store->originalSource($history[0]['original'])===$frozen,'Resume uses original definitions without recapture');
+$current=$frozen;$q->enqueueCurrent('acf-definitions',$capture,$attrs);ok(count($store->history())===1,'Duplicate definition state suppressed');
+try{$q->enqueueCurrent('acf-definitions',function(){throw new RuntimeException('capture failed');},$attrs);throw new LogicException('capture accepted');}catch(RuntimeException $e){}
+ok(!$GLOBALS['wpdb']->locked&&!get_option(OzekiResilience\M1\CommentHistory::PENDING),'Capture failure unlocks without fabricated pending payload');
+echo "PASS definition capture lock, frozen retry, deduplication and capture-failure boundary\n";
 }

@@ -7,14 +7,19 @@ require_once __DIR__.'/SaveFailure.php';
 /** ACF free, database-defined basic fields on posts/pages. Originals are never filtered. */
 final class AcfHistory {
     public const PLUGIN='advanced-custom-fields/acf.php';
+    public const DEFINITIONS_SCHEMA='owr-acf-definitions-1';
+    public const SNAPSHOT_FORMAT='owr-separated-assets-acf-definitions-1';
     public const TYPES=['text','textarea','number','range','email','url','select','checkbox','radio','button_group','true_false','date_picker','date_time_picker','time_picker','color_picker'];
     private array $dirty=[];
+    private bool $definitionsDirty=false;
     public static function enabled(): bool {return function_exists('acf_get_field_groups')&&!(defined('ACF_PRO')&&ACF_PRO)&&in_array(self::PLUGIN,(array)get_option('active_plugins'),true);}
     public function boot(): void {
         add_action('wp_after_insert_post',fn($id)=>$this->mark((int)$id),PHP_INT_MAX,1);
         add_action('acf/save_post',function($id){if(is_numeric($id))$this->mark((int)$id);},30);
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)
             add_action($hook,function($mid,$id,$key){if(!(str_starts_with((string)$key,'_owr_')||str_starts_with((string)$key,'_ozeki_resilience_')))$this->mark((int)$id);},PHP_INT_MAX,3);
+        foreach(['updated_field','delete_field','trash_field','untrash_field','update_field_group','delete_field_group','trash_field_group','untrash_field_group','update_field_group_active_status','import_field_group'] as $event)
+            add_action('acf/'.$event,function(){if(self::enabled()&&!empty((new Plugin())->config()['protect']))$this->definitionsDirty=true;},PHP_INT_MAX);
         add_action('deleted_post',function($id){unset($this->dirty[(int)$id]);});
         add_action('shutdown',[$this,'flush'],PHP_INT_MAX);
     }
@@ -45,12 +50,27 @@ final class AcfHistory {
         return ['schema'=>'owr-acf-1','id'=>$id,'type'=>$post->post_type,'version'=>acf_get_setting('version'),
             'acf_values'=>$values,'acf_definitions'=>$groups,'acf_references'=>$references,'raw_meta'=>$raw];
     }
+    /** Complete definitions, including an empty list, independent of any article. */
+    public static function definitions(): array {
+        // Another request may have updated definitions while this one waited for the queue lock.
+        acf_get_store('field-groups')->reset();acf_get_store('fields')->reset();
+        $groups=[];
+        foreach(acf_get_field_groups() as $g){$g['fields']=acf_get_fields($g)?:[];$groups[]=$g;}
+        return ['schema'=>self::DEFINITIONS_SCHEMA,'version'=>acf_get_setting('version'),'acf_definitions'=>$groups];
+    }
     public static function baseline(array &$data): void {
         if(!self::enabled())return;
+        self::replay($data,Store::json(self::definitions()),['origin_id'=>0]);
         foreach($data['tables']['posts'] as $post)if(in_array($post['post_type'],['post','page'],true))
             self::replay($data,Store::json(self::capture((int)$post['ID'])),['origin_id'=>(int)$post['ID']]);
     }
     public function flush(): void {
+        if($this->definitionsDirty||$this->dirty){
+            SaveFailure::run('ACF completed definition save',function(){
+                (new CommentHistory())->enqueueCurrent('acf-definitions',fn()=>Store::json(self::definitions()),['post_type'=>'owr_acf','content_format'=>'acf-json','origin_id'=>0,'title'=>'ACF field definitions','status'=>'saved']);
+            });
+            $this->definitionsDirty=false;
+        }
         foreach(array_keys($this->dirty) as $id){
             SaveFailure::run('ACF completed field save',function()use($id){
                 $v=self::capture($id);
@@ -65,17 +85,26 @@ final class AcfHistory {
     }
     public static function replay(array &$data,string $source,array $attributes): void {
         $v=json_decode($source,true,512,JSON_THROW_ON_ERROR);
+        if(($v['schema']??'')===self::DEFINITIONS_SCHEMA){
+            if(($attributes['origin_id']??null)!==0||!is_string($v['version']??null)||!is_array($v['acf_definitions']??null))throw new \RuntimeException('Invalid ACF definition original.');
+            $data['acf']['version']=$v['version'];$data['acf']['acf_definitions']=$v['acf_definitions'];
+            $data['acf']['definitions_schema']=self::DEFINITIONS_SCHEMA;$data['acf']['posts']??=[];
+            return;
+        }
         if(($v['schema']??'')!=='owr-acf-1'||!is_int($v['id']??null)||$v['id']<=0||$v['id']!==(int)$attributes['origin_id']||!in_array($v['type']??'',['post','page'],true))throw new \RuntimeException('Invalid ACF identity.');
         foreach(['acf_values','acf_definitions','acf_references','raw_meta'] as $key)if(!is_array($v[$key]??null))throw new \RuntimeException('Invalid ACF original.');
         $found=false;foreach($data['tables']['posts'] as $p)if((int)$p['ID']===$v['id']&&$p['post_type']===$v['type'])$found=true;
         if(!$found)throw new \RuntimeException('ACF owner is absent from confirmed site state.');
-        $data['acf']['version']=$v['version'];$data['acf']['acf_definitions']=$v['acf_definitions'];
+        if(!isset($data['acf']['definitions_schema'])){
+            $data['acf']['version']=$v['version'];$data['acf']['acf_definitions']=$v['acf_definitions'];
+        }elseif($data['acf']['definitions_schema']!==self::DEFINITIONS_SCHEMA||$data['acf']['version']!==$v['version'])throw new \RuntimeException('ACF definition history version mismatch.');
         $data['acf']['posts'][(string)$v['id']]=$v;
     }
     /** Prepare recognized definitions and values without touching the preserved state. */
     public static function project(array $data): array {
         $out=['groups'=>[],'meta'=>[],'skipped'=>[],'keys'=>[]];
         if(!isset($data['acf']))return $out;
+        if(isset($data['acf']['definitions_schema'])&&$data['acf']['definitions_schema']!==self::DEFINITIONS_SCHEMA)throw new \RuntimeException('Unsupported ACF definition state; use a compatible recovery version.');
         $omit=function($item,$reason)use(&$out){$out['skipped'][]=['item'=>$item,'reason'=>$reason];};
         $fields=[];
         foreach($data['acf']['acf_definitions'] as $g){

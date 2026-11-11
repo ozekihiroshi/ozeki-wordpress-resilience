@@ -1,0 +1,40 @@
+<?php
+require __DIR__.'/acf.php';
+use OzekiResilience\M1\{AcfHistory,Store,SiteSnapshot};
+$original=json_decode($raw,true);
+$data=['tables'=>['posts'=>[['ID'=>'10','post_type'=>'post']],'postmeta'=>[]]];
+AcfHistory::replay($data,$raw,$a);
+$definition=['schema'=>AcfHistory::DEFINITIONS_SCHEMA,'version'=>'6.8.10','acf_definitions'=>$original['acf_definitions']];
+$definition['acf_definitions'][0]['fields'][0]['required']=1;
+$definition['acf_definitions'][0]['fields'][0]['placeholder']='Changed independently';
+$attrs=['post_type'=>'owr_acf','content_format'=>'acf-json','origin_id'=>0];
+AcfHistory::replay($data,Store::json($definition),$attrs);
+ok($data['acf']['acf_definitions'][0]['fields'][0]['required']===1,'Independent definition update');
+AcfHistory::replay($data,$raw,$a);
+ok($data['acf']['acf_definitions'][0]['fields'][0]['required']===1,'Delayed article original cannot revert authoritative definitions');
+ok($data['acf']['posts'][10]['acf_definitions']===$original['acf_definitions'],'Embedded original definitions retained');
+$definition['acf_definitions']=[];
+AcfHistory::replay($data,Store::json($definition),$attrs);
+AcfHistory::replay($data,$raw,$a);
+$p=AcfHistory::project($data);
+ok(!$p['groups']&&!$p['meta']&&count($p['skipped'])===3,'Last group deletion withholds stale values without deleting originals');
+ok($data['acf']['posts'][10]['raw_meta']===$original['raw_meta'],'Raw metadata untouched');
+$empty=['tables'=>['posts'=>[],'postmeta'=>[]]];
+AcfHistory::replay($empty,Store::json($definition),$attrs);
+ok($empty['acf']['posts']===[]&&AcfHistory::project($empty)['groups']===[],'No article required');
+$future=$empty;$future['acf']['definitions_schema']='unknown-future-schema';
+try{AcfHistory::project($future);throw new LogicException('unknown definition state accepted');}catch(RuntimeException $e){}
+$bad=$attrs;$bad['origin_id']=10;
+try{AcfHistory::replay($empty,Store::json($definition),$bad);throw new LogicException('wrong identity accepted');}catch(RuntimeException $e){}
+$s3=new AcfS3();$s=new Store($s3,['bucket'=>'test','prefix'=>'defs/']);$site=new SiteSnapshot($s);
+$baseline=$site->save(['content.json'=>Store::json($data)],['schema'=>'owr-site-snapshot-1','through'=>0]);
+[$manifest]=$site->load($baseline['manifest']);
+ok($manifest['asset_format']===AcfHistory::SNAPSHOT_FORMAT,'Explicit minimum reader boundary');
+$definition['acf_definitions']=$original['acf_definitions'];
+$o=$s->prepare('acf-definitions','new',Store::json($definition),$attrs);
+$s->commit(['schema'=>'owr-md-history-1','sequence'=>1,'original'=>$o,'attributes'=>$attrs]);
+$cp=$site->checkpoint($baseline['manifest']);
+[$m,$f]=$site->load($cp['manifest']);$state=json_decode($f['content.json'],true);
+ok($state['acf']['acf_definitions']===$definition['acf_definitions']&&$m['through']===1,'Definition history replayed into Checkpoint');
+ok($state['acf']['posts'][10]['raw_meta']===$original['raw_meta'],'Checkpoint keeps article originals');
+echo "PASS independent ACF definitions, deletion, no articles, delayed article, legacy originals and Checkpoint.\n";
