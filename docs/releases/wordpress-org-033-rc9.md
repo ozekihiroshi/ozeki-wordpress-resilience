@@ -1,5 +1,7 @@
 # WordPress.org 0.3.3 rc.9 — November 10 review response
 
+Post-rc.10 follow-up: [保存と復旧の不整合から見直す構築方針](../review/recovery-construction-policy-20261111.md) records subsequent findings, the member-field fix, and checks required before the next release decision. Those changes are not part of the submitted rc.10 ZIP; this submission record remains unchanged in meaning.
+
 **Submitted November 11, 2026 (JST): update accepted and review-email reply sent. Awaiting the reviewer response; publication is NOT approved.** The reviewer requested changes to rc.8 on November 10. All submitted ZIPs/tags remain preserved.
 
 ## 今回の修正 / Changes
