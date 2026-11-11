@@ -1,6 +1,6 @@
-# 0.3.3 rc.12 — GitHub公開候補・WordPress.org未提出
+# 0.3.3 rc.12 — 更新受付・返信完了、審査担当者の回答待ち
 
-今回の候補はTablePressとMarkdownの復旧継続性の修正を含みます。**WordPress.orgへは未提出です。提出済みrc.11は審査担当者の回答待ちであり、公開承認済みではありません。**
+今回の候補はTablePressとMarkdownの復旧継続性の修正を含みます。**申請者からrc.12のWordPress.org更新受付と元の審査メールへの返信完了の報告を受けました。審査担当者の回答待ちであり、公開承認済みではありません。**
 
 ## 変更と互換性
 
@@ -24,16 +24,24 @@
 - Plugin Check 2.1.0：**エラー0／警告100**。[結果](../../evidence-public/wordpress-org-033-rc12/plugin-check.json)。rc.11の99件に対し、追加1件は配列内meta_valueのJSON処理を低速DB問い合わせとみなす静的警告。該当行はDB問い合わせを行わない。警告ゼロ・審査承認とは扱わない。
 - [確認サマリー](../../evidence-public/wordpress-org-033-rc12/validation.json)。導入・更新はCLI、管理画面は別プロセス描画、利用確認はChromium。管理画面でのアップロード操作や全連携の再検証ではない。
 
-## 保全と送信前の状態
+## 保全と送信状態
 
 提出済みrc.11のZIP・タグは変更しません。rc.11 ZIP SHA-256: `0fcbbac0a7e8dcadbbb5d5b247248a3c8081ceb1b4ee6c2771f7e19cc5233c1c`。研究側の未コミット変更は含めません。
 
-**rc.12のWordPress.orgアップロードと審査メール返信はまだ行っていません。** この記録はGitHub公開候補の準備結果であり、公開承認ではありません。
+**rc.12の更新受付・審査メール返信は完了しています。** 受付・送信完了の根拠は申請者からの報告であり、エージェントによる画面の独立確認ではありません。公開承認ではなく、審査担当者の回答待ちです。
 
-## Supplementary explanation (draft; not sent)
+## Supplementary explanation / 補足説明の要旨
 
 This candidate retains the previous review-response fixes. Follow-up recovery checks corrected two usability issues: TablePress receives its required safe empty runtime setting without executing archived custom commands, and complete-site recovery carries verified site/image origins into subsequent saves so untouched Markdown links and images remain usable after another recovery.
 
 Existing originals and formal history remain unchanged and readable. New recovery points containing reference context require this updated reader; older readers reject them rather than silently restoring stale links. Administrators install trusted WordPress, themes and plugins separately. Recovery does not deploy archived executable software.
 
-The exact candidate ZIP is verified separately from the earlier development checks. See the results above and the release assets. rc.12 is not yet submitted; rc.11 remains awaiting the reviewer response.
+The exact candidate ZIP is verified separately from the earlier development checks. See the results above and the release assets. The author confirmed rc.12 upload acceptance and sending the reply to the original review email. We are awaiting the reviewer response; publication is not approved.
+
+## 更新受付・返信完了の記録
+
+申請者が手動でrc.12をアップロードし、元の審査スレッドへ返信しました。本チャットで申請者から両方の完了報告を受けたことを根拠に記録を更新しています。操作ツールで申請画面を取得できなかったため、受付画面や送信済みメールを独立に確認したとは扱いません。
+
+今回変更したのはmain上の説明とGitHubリリース説明のみです。提出済みrc.12および以前のZIP・タグ・対応ソースは変更しません。タグ内文書・ZIP内READMEの未提出表記は作成時点の記録として残り、現在の状態はmainの本記録を参照してください。
+
+The author manually uploaded rc.12 and replied in the original review thread, then confirmed both actions in this chat. This record relies on that confirmation, not an independent inspection of the receipt or sent email. The submitted ZIP, tag and matching source remain unchanged. Submission-time status is maintained on main and in the release description; packaged/tagged documents retain their build-time status.

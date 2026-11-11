@@ -2,9 +2,9 @@
 
 ## 日本語
 
-新しいGitHub公開候補は **0.3.3 rc.12（WordPress.org未提出）** です。TablePressの復旧先に必要な安全な設定値を用意し、未編集Markdownを含む参照関係を再保存・再復旧へ引き継ぎます。
+新しいGitHub公開候補は **0.3.3 rc.12（更新受付・返信完了）** です。TablePressの復旧先に必要な安全な設定値を用意し、未編集Markdownを含む参照関係を再保存・再復旧へ引き継ぎます。
 
-**提出済みrc.11は審査担当者の回答待ちであり、公開承認済みではありません。** rc.11を含む以前のZIP・タグはそのまま保全しています。
+**申請者からrc.12の更新受付と元の審査メールへの返信完了の報告を受けました。審査担当者の回答待ちであり、公開承認済みではありません。** rc.11を含む以前のZIP・タグはそのまま保全しています。
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.12/ozeki-resilience-0.3.3.zip)
 - [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.12) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.12)
@@ -15,9 +15,9 @@
 
 ## English
 
-The new GitHub candidate is **0.3.3 rc.12 (not submitted to WordPress.org)**. It supplies safe TablePress runtime defaults and preserves reference relationships across resaving and repeated recovery, including untouched Markdown.
+The new GitHub candidate is **0.3.3 rc.12 (update accepted and review-email reply sent)**. It supplies safe TablePress runtime defaults and preserves reference relationships across resaving and repeated recovery, including untouched Markdown.
 
-**Submitted rc.11 remains awaiting the reviewer response; publication is not approved.** Earlier ZIPs and tags, including rc.11, remain unchanged.
+**The author confirmed rc.12 upload acceptance and sending the reply to the original review email. We are awaiting the reviewer response; publication is not approved.** Earlier ZIPs and tags, including rc.11, remain unchanged.
 
 - [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.12/ozeki-resilience-0.3.3.zip)
 - [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.12) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.12)
