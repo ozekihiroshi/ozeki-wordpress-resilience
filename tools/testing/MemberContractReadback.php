@@ -30,7 +30,13 @@ final class MemberContractReadback
     }
     /** Only explicitly recognized page URL references are rebased; other values stay exact. */
     public static function destinationExpected(array $raw,string $from,string $to): array {
-        foreach($raw['settings']['wpmembers_settings']['user_pages']??[] as $key=>$value)if(is_string($value)&&str_starts_with($value,$from))$raw['settings']['wpmembers_settings']['user_pages'][$key]=$to.substr($value,strlen($from));
+        $from=rtrim($from,'/');$to=rtrim($to,'/');
+        if($from==='')return $raw;
+        foreach($raw['settings']['wpmembers_settings']['user_pages']??[] as $key=>$value){
+            // Match the site itself or a child path, never a similar host or path.
+            if(is_string($value)&&($value===$from||str_starts_with($value,$from.'/')))
+                $raw['settings']['wpmembers_settings']['user_pages'][$key]=$to.substr($value,strlen($from));
+        }
         return $raw;
     }
     public static function restrictions(array $originalRows,array $posts): array {

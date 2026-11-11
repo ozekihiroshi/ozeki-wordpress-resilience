@@ -2,6 +2,28 @@
 use OzekiResilience\M1\RecoveryRules;
 require __DIR__.'/../../packages/markdown-m1/tests/application-rules.php';
 require __DIR__.'/MemberApplicationContract.php';
+require __DIR__.'/MemberContractReadback.php';
+// Literal expectations remain independent of the production URL conversion helper.
+$urlCases=[
+    ['https://source.example','https://target.example','https://source.example/profile','https://target.example/profile'],
+    ['https://source.example','https://target.example','https://source.example','https://target.example'],
+    ['https://source.example/','https://target.example/','https://source.example/profile?view=1#form','https://target.example/profile?view=1#form'],
+    ['https://source.example','https://target.example','https://source.example.evil.invalid/profile','https://source.example.evil.invalid/profile'],
+    ['https://source.example','https://target.example','https://source.example@evil.invalid/profile','https://source.example@evil.invalid/profile'],
+    ['https://source.example/site','https://target.example/new','https://source.example/site/profile','https://target.example/new/profile'],
+    ['https://source.example/site','https://target.example/new','https://source.example/site-other/profile','https://source.example/site-other/profile'],
+    ['https://source.example/site/','https://target.example/new/','https://source.example/site2/profile','https://source.example/site2/profile'],
+    ['https://source.example','https://target.example',24,24],
+    ['','https://target.example','/profile','/profile'],
+];
+foreach($urlCases as [$from,$to,$input,$expectedUrl]){
+    $urlRaw=['settings'=>['wpmembers_settings'=>['user_pages'=>['profile'=>$input]],'unrelated'=>$input],'users'=>[]];
+    $before=serialize($urlRaw);
+    $rebased=MemberContractReadback::destinationExpected($urlRaw,$from,$to);
+    check($rebased['settings']['wpmembers_settings']['user_pages']['profile']===$expectedUrl,'Page URL boundary: '.(string)$input);
+    check($rebased['settings']['unrelated']===$input&&serialize($urlRaw)===$before,'Only page references change; originals preserved');
+}
+echo 'PASS '.count($urlCases)." independent page URL boundary cases.\n";
 $fields=json_decode(file_get_contents(__DIR__.'/../../packages/markdown-m1/tests/member-fields-editor.json'),true);
 $user=array_fill_keys(MemberApplicationContract::USER,'fixture');$user['ID']='3';$user['user_pass']='test-only-hash-never-report';
 $raw=['version'=>'3.5.8.1','settings'=>['wpmembers_fields'=>$fields,'wpmembers_settings'=>['db_version'=>'2.4.3','block'=>['post'=>1,'page'=>0],'user_pages'=>['profile'=>24]],'wpmembers_tos'=>false],'users'=>['3'=>['user'=>$user,'meta'=>['first_name'=>['fixture'],'trial_checkbox'=>['accepted'],'trial_multiselect'=>['a,b']]]]];
