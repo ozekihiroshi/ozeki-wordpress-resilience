@@ -31,7 +31,7 @@ php tools/testing/acf-contract-check.php /isolated/wp-load.php /private/expected
 - 変更・削除それぞれロールバック後、posts/postmeta/options全行のハッシュが一致。最後の読み戻し照合も再度合格。
 - この変更・削除試験はアダプター適用試験であり、実S3で保存→復旧→再保存→再復旧したという意味ではない。
 
-## 次に解消すべき確認点
+## 調査時点の確認点と、その後の対応
 
 定義変更が保存される起点について問題候補を発見した。`AcfHistory::boot()`は記事保存とメタ更新等を監視し、`mark()`はpost/pageだけを対象にする。定義の投稿種別acf-field/管理グループ自体は対象にならず、定義専用の更新・削除監視は当該ソースにない。
 
@@ -43,4 +43,4 @@ php tools/testing/acf-contract-check.php /isolated/wp-load.php /private/expected
 
 ユーザー承認後、この開発ブランチには独立した定義履歴を追加した。実S3で定義の変更・削除・グループのゴミ箱移動と復帰・記事ゼロ・再保存と再復旧・Checkpointを確認した。独立定義履歴が存在する場合、記事に同梱された古い定義では上書きしない。旧原本は新版で読め、新履歴と新しい形式識別子の復旧点は旧版で拒否される。
 
-詳細記録は作業領域の `release-readiness/acf-definition-fix-20261111/REPORT-ja.txt`。main取り込み・push・新ZIP作成はまだ行っていない。開発用照合コードは正常な対応データを対象とする暫定段階で、全公開条件を満たす検証機構とは扱わない。
+管理画面での作成・変更・削除と実S3からの復旧、Plugin Checkも確認した。main取り込み時の[確認結果と残る範囲](../../docs/review/acf-definition-history-20261111.md)を参照。新ZIP作成・申請送信は行っていない。開発用照合コードは正常な対応データを対象とする暫定段階で、全公開条件を満たす検証機構とは扱わない。
