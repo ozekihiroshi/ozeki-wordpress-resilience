@@ -1,0 +1,117 @@
+{
+  "candidate": "0.3.3 rc.13",
+  "submitted": false,
+  "zip_sha256": "34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8",
+  "wordpress": "7.1.3",
+  "php": "8.3.36",
+  "isolation": "Local dedicated containers, internal network, no published ports, dedicated DB/volumes, mail and cron disabled; no production connection",
+  "fresh": {
+    "side": "fresh",
+    "phase": "installed",
+    "zip_sha256": "34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8",
+    "installed_files_match": 3814,
+    "no_extra_files": true,
+    "state": {
+      "hashes": {
+        "ozeki_resilience_m1_config": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+        "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+      },
+      "present": {
+        "ozeki_resilience_m1_config": false,
+        "ozeki_resilience_m1_pending": false,
+        "ozeki_resilience_m1_comment_pending": false,
+        "ozeki_resilience_site_restore_attempt": false,
+        "ozeki_resilience_site_restore_result": false
+      },
+      "posts": 3,
+      "active": [
+        "ozeki-resilience/ozeki-wordpress-resilience.php"
+      ]
+    },
+    "admin_render": true,
+    "wordpress": "7.1.3",
+    "php": "8.3.36",
+    "protect": false
+  },
+  "update_from_rc12": {
+    "before": {
+      "side": "update",
+      "phase": "seed",
+      "zip_sha256": "8084a992fb593a65ca239fc8dc5b30b01061237424d768f106a2d1c63788ac6b",
+      "installed_files_match": 3814,
+      "no_extra_files": true,
+      "state": {
+        "hashes": {
+          "ozeki_resilience_m1_config": "03a73c4f6a00dd68670bfbcf20fa8948cf36e39dbe446927e4c59282a4ab12e8",
+          "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+        },
+        "present": {
+          "ozeki_resilience_m1_config": true,
+          "ozeki_resilience_m1_pending": false,
+          "ozeki_resilience_m1_comment_pending": false,
+          "ozeki_resilience_site_restore_attempt": false,
+          "ozeki_resilience_site_restore_result": false
+        },
+        "posts": 4,
+        "active": [
+          "ozeki-resilience/ozeki-wordpress-resilience.php"
+        ]
+      },
+      "admin_render": true,
+      "wordpress": "7.1.3",
+      "php": "8.3.36",
+      "protect": false
+    },
+    "after": {
+      "side": "update",
+      "phase": "updated",
+      "zip_sha256": "34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8",
+      "installed_files_match": 3814,
+      "no_extra_files": true,
+      "state": {
+        "hashes": {
+          "ozeki_resilience_m1_config": "03a73c4f6a00dd68670bfbcf20fa8948cf36e39dbe446927e4c59282a4ab12e8",
+          "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+          "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+        },
+        "present": {
+          "ozeki_resilience_m1_config": true,
+          "ozeki_resilience_m1_pending": false,
+          "ozeki_resilience_m1_comment_pending": false,
+          "ozeki_resilience_site_restore_attempt": false,
+          "ozeki_resilience_site_restore_result": false
+        },
+        "posts": 4,
+        "active": [
+          "ozeki-resilience/ozeki-wordpress-resilience.php"
+        ]
+      },
+      "admin_render": true,
+      "wordpress": "7.1.3",
+      "php": "8.3.36",
+      "protect": false
+    },
+    "state_equal": true
+  },
+  "plugin_check": {
+    "version": "2.1.0",
+    "errors": 0,
+    "warnings": 100,
+    "same_type_code_counts_as_rc12": true
+  },
+  "contracts": "Exact installed ZIP: existing application rules and Flamingo effective-value regression passed",
+  "limits": [
+    "Installation/update via WP-CLI, admin page rendered in separate PHP process; not browser upload testing",
+    "Pending operations and recovery results absent in this update fixture; preservation of populated queues/results not demonstrated here",
+    "No new real-S3 recovery cycle in this packaging check; prior isolated full-cycle results linked in release record",
+    "WordPress update-service warnings during install are expected because the network is internal-only"
+  ]
+}

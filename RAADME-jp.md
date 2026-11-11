@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**0.3.3 rc.12はWordPress.orgの既存申請への更新受付と、元の審査メールへの返信が完了しました（申請者からの報告）。** 表の復旧先設定とMarkdownの再復旧時の参照継承を修正しました。rc.12は審査担当者の回答待ちであり、公開承認済みではありません。[現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
+**0.3.3 rc.13は新しいGitHub公開候補で、WordPress.orgには未提出です。** Flamingoの復旧時に受信値が欠落する問題を修正し、rc.12の修正も含みます。提出済みrc.12は審査担当者の回答待ちであり、公開承認済みではありません。[現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
 [English](README.md) | 日本語
 
-mainには[TablePress・Markdownの復旧修正と、構築方針・互換性・確認結果](docs/review/recovery-runtime-results-20261111.md)を反映しています。今回の変更はrc.12に含まれ、提出済みrc.11のZIPには含まれません。
+[Flamingo修正・見逃しの原因・再発防止の確認記録](packages/markdown-m1/docs/flamingo-recovery-fix.md)。今回の修正はrc.13に含まれ、提出済みrc.12には含まれません。
 
 
 ## 攻撃の後も、サイトを再開するために

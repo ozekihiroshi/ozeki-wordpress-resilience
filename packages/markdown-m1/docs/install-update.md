@@ -8,6 +8,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+**rc.13 Flamingo correction:** Existing receipt originals need no migration. Update the recovery destination too. If a receipt was already re-saved with missing values, recover from an earlier original that still contains them; updating alone cannot recreate lost values.
+
 **rc.12 compatibility:** Existing originals remain readable. After complete-site recovery, new saves retain the known earlier site/image locations without rewriting Markdown. Recovery points containing this new reference context require rc.12 or a later compatible reader; rc.11 rejects them. Prepare the updated version on recovery destinations too. Updating alone does not rewrite S3 history or require a new Baseline.
 
 1. Download the ZIP linked in the [README](../README.md) and verify its checksum. Before updating, preserve the current plugin files, database and settings using your usual maintenance procedure. Pause editing and record settings, confirmed history, pending operations and recovery results.
@@ -18,6 +20,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+**rc.13のFlamingo修正：** 既存の受信原本の移行は不要です。復旧先にも更新版を用意してください。欠落した状態で再保存した受信は、値が残っている以前の原本から復旧します。更新だけで失われた値を補完するものではありません。
 
 **rc.12の互換性：** 既存原本は引き続き読めます。サイト全体復旧後の新しい保存では、Markdownを書き換えずに過去のサイト・画像保存先の対応を引き継ぎます。この新しい参照情報を含む復旧点にはrc.12以降の対応版が必要で、rc.11は読み取りを拒否します。復旧先にも更新版を用意してください。更新だけでS3履歴を書き換えたり、Baselineを作り直したりする必要はありません。
 

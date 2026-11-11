@@ -1,0 +1,18 @@
+{
+  "sha256": "34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8",
+  "bytes": 8289284,
+  "files": 3814,
+  "runtime_files_identical_to_rc12": 3795,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/FormHistory.php",
+    "ozeki-resilience/src/RecoveryRules.php"
+  ],
+  "product_source_matches": true,
+  "bundled_guides": 8,
+  "relative_links_resolve": 80,
+  "development_artifacts": 0
+}

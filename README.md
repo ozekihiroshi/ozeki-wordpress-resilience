@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**The author confirmed that the 0.3.3 rc.12 update was accepted by the existing WordPress.org application and the reply to the original review email was sent.** It adds TablePress runtime defaults and Markdown reference continuity across repeated recovery. Submitted rc.12 is awaiting the reviewer response; publication is not approved. [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**0.3.3 rc.13 is a new GitHub candidate, not yet submitted to WordPress.org.** It corrects missing Flamingo receipt values during recovery and retains the rc.12 fixes. Submitted rc.12 remains awaiting the reviewer response; publication is not approved. [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
-Development on main includes [TablePress and Markdown recovery fixes, compatibility notes and verification results](docs/review/recovery-runtime-results-20261111.md). These changes are included in rc.12, not the submitted rc.11 ZIP.
+See the [Flamingo correction, missed-check cause and regression coverage](packages/markdown-m1/docs/flamingo-recovery-fix.md). This fix is included in rc.13, not submitted rc.12.
 
 
 ## Keep a path to recovery after an attack

@@ -87,6 +87,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Restore declared Flamingo receipt values for continued viewing, resaving and repeated recovery. Existing originals need no migration; receipts already re-saved empty require an earlier original containing their values.
 * Supply safe TablePress runtime defaults without importing archived custom commands.
 * Preserve Markdown reference origins across complete-site recovery and subsequent saves, including untouched documents. New context-dependent recovery points require the updated reader; older readers reject them. Existing originals remain readable and are not rewritten.
 * Record standalone ACF definition changes and deletions in formal history; new recovery points require a compatible updated reader.
