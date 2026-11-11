@@ -1,6 +1,6 @@
-# 0.3.3 rc.13 — Flamingo修正候補・WordPress.org未提出
+# 0.3.3 rc.13 — 更新受付・返信完了、審査担当者の回答待ち
 
-Flamingoの復旧時に受信値が欠落する問題を修正した公開候補です。**rc.13はWordPress.org未提出です。提出済みrc.12は審査担当者の回答待ちであり、公開承認済みではありません。**
+Flamingoの復旧時に受信値が欠落する問題を修正した公開候補です。**申請者からrc.13のWordPress.org更新受付と元の審査メールへの返信完了の報告を受けました。審査担当者の回答待ちであり、公開承認済みではありません。**
 
 ## 変更と互換性
 
@@ -28,7 +28,7 @@ rc.12までの修正を含みます。参照情報を持つ原本・Baseline・C
 
 communityの空き容量が少ないため、新しい試験負荷を加えずローカルに分離しました。communityで次の大きな試験を行う前には容量確保が必要です。
 
-**WordPress.orgへのアップロードと審査メール返信は行っていません。** この候補と結果を確認後、既存申請を更新する段階です。
+**申請者によるrc.13のアップロード受付・審査メール返信が完了しました。** 受付・送信完了は本チャットでの申請者からの報告を根拠に記録しています。エージェントによる受付画面・送信済みメールの独立確認ではありません。
 
 ## Supplementary explanation / 申請用補足案
 
@@ -36,4 +36,12 @@ Ozeki Resilience 0.3.3 rc.13 retains the previous review-response fixes and corr
 
 Existing S3 originals and formal history are unchanged and need no migration. A receipt already re-saved with missing values must be recovered from an earlier original that still holds them. Administrators continue to install trusted WordPress, themes and plugins separately; recovery does not deploy archived executable software.
 
-Earlier isolated real-S3 checks verified restored receipt viewing, standard resaving, new submissions and recovery into a third site, including compatibility with pre-fix originals. The exact rc.13 ZIP separately passed fresh installation, replacement of submitted rc.12, file/source checks and the Flamingo regression contract. Plugin Check 2.1.0 reports 0 errors and 100 warnings, with the same per-code counts as rc.12. This candidate has not yet been submitted; rc.12 remains awaiting the reviewer's response.
+Earlier isolated real-S3 checks verified restored receipt viewing, standard resaving, new submissions and recovery into a third site, including compatibility with pre-fix originals. The exact rc.13 ZIP separately passed fresh installation, replacement of submitted rc.12, file/source checks and the Flamingo regression contract. Plugin Check 2.1.0 reports 0 errors and 100 warnings, with the same per-code counts as rc.12. The author confirmed rc.13 upload acceptance and sending the reply to the original review email. We are awaiting the reviewer's response; publication is not approved.
+
+## 更新受付・返信完了の記録
+
+申請者が手動でrc.13を既存申請へアップロードし、元の審査スレッドへ返信したことを、本チャットで報告しました。画面操作ツールがURLを確認できず操作を停止したため、エージェントが送信・受付確認を行ったとは扱いません。
+
+今回更新するのはmain上のREADME・配布状況・申請記録とGitHubリリースの説明だけです。提出済みrc.13および以前のZIP・タグ・対応ソースは変更しません。タグ内文書・ZIP内README・ビルド時の確認サマリーの未提出表記は作成時点の記録として残り、現在の申請状態はmainの本記録とリリース説明を参照してください。
+
+The author manually uploaded rc.13 to the existing application and replied in the original review thread, then confirmed both actions in this chat. This status relies on that confirmation, not an independent inspection of the receipt or sent email. The submitted ZIPs, tags and matching source remain unchanged. Packaged/tagged documents and build-time validation retain their original status; current submission status is recorded here on main and in the release description.

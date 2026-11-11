@@ -2,7 +2,7 @@
 
 ## 日本語
 
-新しいGitHub公開候補は **0.3.3 rc.13（WordPress.org未提出）** です。Flamingoの復旧時の受信値欠落を修正し、rc.12までの修正も含みます。**提出済みrc.12は審査担当者の回答待ちであり、公開承認済みではありません。** 以前のZIP・タグは保全しています。
+新しいGitHub公開候補は **0.3.3 rc.13（更新受付・返信完了）** です。Flamingoの復旧時の受信値欠落を修正し、rc.12までの修正も含みます。**申請者からrc.13の更新受付と元の審査メールへの返信完了の報告を受けました。審査担当者の回答待ちであり、公開承認済みではありません。** 以前のZIP・タグは保全しています。
 
 - [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.13/ozeki-resilience-0.3.3.zip) / [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.13) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.13)
 - SHA-256: `34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8`
@@ -12,7 +12,7 @@
 
 ## English
 
-The new GitHub candidate is **0.3.3 rc.13 (not yet submitted to WordPress.org)**. It fixes missing Flamingo receipt values during recovery and includes the earlier fixes. **Submitted rc.12 remains awaiting the reviewer response; publication is not approved.** Earlier ZIPs and tags remain unchanged.
+The new GitHub candidate is **0.3.3 rc.13 (update accepted and review-email reply sent)**. It fixes missing Flamingo receipt values during recovery and includes the earlier fixes. **The author confirmed rc.13 upload acceptance and sending the reply to the original review email. We are awaiting the reviewer response; publication is not approved.** Earlier ZIPs and tags remain unchanged.
 
 - [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.13/ozeki-resilience-0.3.3.zip) / [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.13) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.13)
 - SHA-256: `34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8`
