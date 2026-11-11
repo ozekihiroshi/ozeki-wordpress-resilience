@@ -7,6 +7,7 @@ foreach(['FormHistory','MemberHistory','TableHistory'] as $class)require_once $a
 use OzekiResilience\M1\{RecoveryRules,FormHistory,Store};
 function esc_html($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function determine_locale(){return 'en_US';} // Standalone WordPress locale fixture.
+function sanitize_key($key){return preg_replace('/[^a-z0-9_-]/','',strtolower((string)$key));} // Core metadata-name mapping.
 $state=['tables'=>['posts'=>[['ID'=>'10','post_type'=>'wpcf7_contact_form','post_content'=>''],['ID'=>'11','post_type'=>'flamingo_inbound','post_content'=>'問い合わせ'],['ID'=>'12','post_type'=>'tablepress_table','post_content'=>'[["Item","Count"],["A",2]]'],['ID'=>'13','post_type'=>'ozmd_document','post_content'=>'generated']], 'postmeta'=>[], 'commentmeta'=>[['comment_id'=>'1','meta_key'=>'extension','meta_value'=>'private value']], 'termmeta'=>[],'term_relationships'=>[],'terms'=>[],'term_taxonomy'=>[]], 'options'=>['blogname'=>'Example','tablepress_tables'=>'{"table_post":{"1":12},"last_id":1}','tablepress_plugin_options'=>'{"tablepress_version":"3.4.1","custom_css":"private-style","modules":{"unknown":true}}','widget_unknown'=>['private'=>'do not apply']], 'membership'=>['version'=>'3.5.8.1','settings'=>['wpmembers_settings'=>['mod_reg'=>1,'block'=>['post'=>1,'page'=>0],'extension'=>'private-setting'],'wpmembers_fields'=>[[1,'Name','first_name','text','y','y','n','profile'=>1]],'wpmembers_dialogs'=>['success'=>'Welcome'],'wpmembers_tos'=>'Terms'], 'users'=>['3'=>['user'=>['ID'=>'3','user_pass'=>'private hash'],'meta'=>['first_name'=>['Alice'],'active'=>['1'],'session_tokens'=>['private token']]]]]];
 $add=function($id,$key,$value)use(&$state){$state['tables']['postmeta'][]=['meta_id'=>(string)(count($state['tables']['postmeta'])+1),'post_id'=>(string)$id,'meta_key'=>$key,'meta_value'=>$value];};
 $add(10,'_form','[text your-name]');$add(10,'_mail',serialize(['subject'=>'Question','body'=>'[your-name]','active'=>true,'extension'=>'private-mail']));
@@ -98,3 +99,6 @@ echo "PASS common baseline/tail rules, originals preserved, core adapter setting
 $legacy=[["post_id"=>"1","meta_key"=>"_owr_m1_asset","meta_value"=>"asset","meta_id"=>"1"]];
 $mapped=\OzekiResilience\M1\Identifiers::metadata($legacy);
 if($mapped[0]["meta_key"]!=="_ozeki_resilience_m1_asset"||$legacy[0]["meta_key"]!=="_owr_m1_asset")throw new RuntimeException("Legacy archive mapping failed");
+
+// Existing contracts CI must check effective receipt values, not only _fields.
+(static function(){require __DIR__.'/flamingo-application.php';})();

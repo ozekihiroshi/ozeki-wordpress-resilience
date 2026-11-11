@@ -106,6 +106,13 @@ final class RecoveryRules
         }));
         $d['tables']['commentmeta']=array_values(array_filter($d['tables']['commentmeta']??[],fn($row)=>!in_array((string)$row['comment_id'],$removedComments,true)));
         foreach($d['tables']['posts']??[] as $post)$types[(string)$post['ID']]=$post['post_type'];
+        $receiptRules=[];
+        foreach($d['tables']['postmeta']??[] as $row){
+            $id=(string)$row['post_id'];
+            if(($types[$id]??'')!=='flamingo_inbound'||$row['meta_key']!=='_fields')continue;
+            if(isset($receiptRules[$id]))throw new \RuntimeException('Duplicate Flamingo field map.');
+            $receiptRules[$id]=FormHistory::receiptFieldRules($row['meta_value']);
+        }
         $base=['_ozeki_resilience_m1_asset'=>'text','_ozeki_resilience_m1_origin_url'=>'text','_ozeki_resilience_m1_origin'=>'text','_ozeki_resilience_m1_origin_id'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
         $out=[];
         foreach($d['tables']['postmeta']??[] as $row){
@@ -114,6 +121,7 @@ final class RecoveryRules
             if($type==='attachment')$rules+=['_wp_attached_file'=>'text','_wp_attachment_image_alt'=>'text','_wp_attachment_metadata'=>'plain','_wp_attachment_backup_sizes'=>'plain'];
             if($type==='nav_menu_item')$rules+=array_fill_keys(['_menu_item_type','_menu_item_menu_item_parent','_menu_item_object_id','_menu_item_object','_menu_item_target','_menu_item_xfn','_menu_item_url'],'text')+['_menu_item_classes'=>'plain'];
             if(in_array($type,['wpcf7_contact_form','flamingo_inbound'],true))$rules+=FormHistory::recoveryMeta($type);
+            if($type==='flamingo_inbound')$rules+=$receiptRules[(string)$row['post_id']]??[];
             if($type==='tablepress_table')$rules+=TableHistory::recoveryMeta();
             $path='postmeta.'.$row['post_id'].'.'.$key;
             if(!array_key_exists($key,$rules)){$self->omit($path,$key==='_ozmd_source_sha256'?'Derived from restored Markdown; regenerated, not imported':'No recognized application rule');continue;}

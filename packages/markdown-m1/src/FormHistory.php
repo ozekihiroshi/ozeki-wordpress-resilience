@@ -13,6 +13,21 @@ final class FormHistory
         return ['_fields'=>'plain','_subject'=>'text','_from'=>'text','_from_name'=>'text','_from_email'=>'text','_submission_status'=>'text','_spam_meta_time'=>'number','_hash'=>'text','_consent'=>'plain'];
     }
 
+    /** Only values declared by this receipt's own field map may be applied. */
+    public static function receiptFieldRules(string $raw): array {
+        // Decode storage encoding without instantiating archived objects.
+        $fields=@unserialize($raw,['allowed_classes'=>false]);
+        if(!is_array($fields))throw new \RuntimeException('Invalid Flamingo field map.');
+        $rules=[];
+        foreach($fields as $name=>$value){
+            // This is the same name mapping used by Flamingo's reader/writer.
+            $key=sanitize_key('_field_'.$name);
+            if($key==='_field_'||isset($rules[$key]))throw new \RuntimeException('Ambiguous Flamingo field identity.');
+            $rules[$key]='plain';
+        }
+        return $rules;
+    }
+
     public const DEPENDENCIES=['contact-form-7/wp-contact-form-7.php','flamingo/flamingo.php'];
     private array $dirty=[];
     public function boot(): void {
