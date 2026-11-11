@@ -1,6 +1,6 @@
-# 0.3.3 rc.11 — GitHub公開候補（WordPress.org未提出）
+# 0.3.3 rc.11 — 更新受付・返信完了、審査担当者の回答待ち
 
-提出済みrc.10は審査担当者の回答待ちであり、公開承認済みではありません。rc.11は次回の申請更新に備えた候補です。今回の作成・確認・GitHub公開だけではWordPress.orgへの送信を行いません。
+rc.11は2026年11月11日（日本時間）に既存申請への更新受付と元の審査メールへの返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。
 
 ## rc.10からの変更
 
@@ -29,12 +29,22 @@
 
 - rc.10 ZIP SHA-256: `a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf`。ZIP・タグは変更しません。
 - 研究側の未コミット変更は含めません。
-- **rc.11はWordPress.org未提出。メール返信も未送信。** 補足説明案は下記であり、受付記録ではありません。
+- **rc.11は更新受付・メール返信完了。審査担当者の回答待ち、公開未承認です。** 確認根拠は末尾に記録します。
 
-## Draft supplementary explanation
+## Supplementary explanation / 補足説明の要旨
 
 This candidate retains the previous nonce and input-validation corrections. It adds complete supported WP-Members field definitions/flags for use after recovery and records ACF free database-definition changes independently of article saves.
 
 Existing S3 originals and formal history are not rewritten. New ACF definition history and the Baselines/Checkpoints containing it require the updated recovery implementation; older readers reject those points rather than silently applying stale definitions. Administrators continue to install trusted WordPress, themes and plugins separately. Recovery does not deploy archived executable software.
 
 Source, ZIP and verification: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.11
+
+## Submission receipt and reply — November 11, 2026 (JST)
+
+申請者が手動でアップロード・メール返信を行いました。提供された13:28のスクリーンショットの「Submitted files」に、November 11, 2026、ozeki-resilience-0.3.3.zip、0.3.3 rc.11の補足説明が記録されており、更新受付を確認しました。その後、申請者から元の審査スレッドへのメール送信完了の報告を受けました。13:32のメール画像自体は下書きであり、送信完了の根拠とは扱いません。
+
+The author manually uploaded rc.11 and replied to the original review-email thread. The supplied screenshot confirms the rc.11 entry in Submitted files dated November 11, 2026. Email completion is based on the author's subsequent confirmation, not the earlier draft screenshot. **Awaiting the reviewer response; publication is not approved.**
+
+申請画面の「Being Reviewed — We've got your email ... waiting on action from our plugins team」は返信前の画像にも表示されていました。この表示だけでrc.11返信の受領を独立確認したとは扱いません。
+
+今回変更するのはmainの説明とリリース説明だけです。提出済みrc.11のZIP・タグ、以前のrc.10等は不変です。ZIPとタグ内文書には作成時点の未提出表記が残ります。現在の申請状況はmainの本記録を参照してください。
