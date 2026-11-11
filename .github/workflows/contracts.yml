@@ -43,6 +43,9 @@ jobs:
           php packages/markdown-m1/tests/gfs-admin.php packages/markdown-m1
           php packages/markdown-m1/tests/site-checkpoint-admin-failure.php packages/markdown-m1
           php packages/markdown-m1/tests/application-rules.php packages/markdown-m1
+          php tools/testing/member-contract-test.php packages/markdown-m1
+          php -l tools/testing/MemberContractReadback.php
+          php -l tools/testing/member-contract-check.php
           php packages/markdown-m1/tests/capture-failure.php packages/markdown-m1
           php packages/markdown-m1/tests/commit-verification.php packages/markdown-m1
           php packages/markdown-m1/tests/recovery-result.php packages/markdown-m1
