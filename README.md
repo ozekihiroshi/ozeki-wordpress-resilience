@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**The 0.3.3 rc.11 update was accepted by the existing WordPress.org application on November 11, 2026 (JST), and the author confirmed sending the reply to the original review email. We are awaiting the reviewer response; publication is not approved.** [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**GitHub candidate: 0.3.3 rc.12 (not submitted to WordPress.org).** It adds TablePress runtime defaults and Markdown reference continuity across repeated recovery. The submitted rc.11 remains awaiting the reviewer response; publication is not approved. [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
 
-Development on main includes [TablePress and Markdown recovery fixes, compatibility notes and verification results](docs/review/recovery-runtime-results-20261111.md). These changes are not in the submitted rc.11 ZIP; no new release package has been issued.
+Development on main includes [TablePress and Markdown recovery fixes, compatibility notes and verification results](docs/review/recovery-runtime-results-20261111.md). These changes are included in rc.12, not the submitted rc.11 ZIP.
 
 
 ## Keep a path to recovery after an attack

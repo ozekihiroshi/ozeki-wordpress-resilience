@@ -1,12 +1,12 @@
 # Ozeki Resilience
 
-**0.3.3 rc.11は2026年11月11日（日本時間）にWordPress.orgの既存申請への更新が受け付けられ、申請者から元の審査メールへの返信完了の報告を受けました。審査担当者の回答待ちであり、公開承認済みではありません。** [現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
+**GitHub公開候補は0.3.3 rc.12（WordPress.org未提出）です。** 表の復旧先設定とMarkdownの再復旧時の参照継承を修正しました。提出済みrc.11は審査担当者の回答待ちであり、公開承認済みではありません。[現行版の配布状況・ZIPの案内](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 
 [English](README.md) | 日本語
 
-mainには[TablePress・Markdownの復旧修正と、構築方針・互換性・確認結果](docs/review/recovery-runtime-results-20261111.md)を反映しています。提出済みrc.11のZIPには含まれず、新しい公開用ZIPはまだ作成していません。
+mainには[TablePress・Markdownの復旧修正と、構築方針・互換性・確認結果](docs/review/recovery-runtime-results-20261111.md)を反映しています。今回の変更はrc.12に含まれ、提出済みrc.11のZIPには含まれません。
 
 
 ## 攻撃の後も、サイトを再開するために

@@ -1,0 +1,110 @@
+{
+  "zip_sha256": "8084a992fb593a65ca239fc8dc5b30b01061237424d768f106a2d1c63788ac6b",
+  "fresh": {
+    "zip_sha256": "8084a992fb593a65ca239fc8dc5b30b01061237424d768f106a2d1c63788ac6b",
+    "installed_files_match": 3814,
+    "active": true,
+    "fresh": true,
+    "config_present": false,
+    "state_hashes": {
+      "ozeki_resilience_m1_config": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+    },
+    "admin_render": true,
+    "posts": 3,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+  },
+  "updated": {
+    "zip_sha256": "8084a992fb593a65ca239fc8dc5b30b01061237424d768f106a2d1c63788ac6b",
+    "installed_files_match": 3814,
+    "active": true,
+    "fresh": false,
+    "config_present": true,
+    "state_hashes": {
+      "ozeki_resilience_m1_config": "699e80cdfe7660dd9499f846f0af1aea0fbd877a830d9f62acd6c6f631a3cb2b",
+      "ozeki_resilience_m1_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_m1_comment_pending": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_attempt": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7",
+      "ozeki_resilience_site_restore_result": "d7558fd9aaedfc894dc306ac51a78789346aa9bc93e6a7d3505decf02cedd0d7"
+    },
+    "admin_render": true,
+    "posts": 21,
+    "wordpress": "7.1.3",
+    "php": "8.3.36"
+  },
+  "update_from": "submitted rc.11; all 3813 installed files matched before update",
+  "update_state_identical": true,
+  "pending_operations": "empty; not a pending-operation update test",
+  "recovery_results": "absent on update source; absence retained",
+  "browser": [
+    {
+      "site": "target",
+      "test": "table-use",
+      "ok": true
+    },
+    {
+      "site": "target",
+      "test": "untouched",
+      "ok": true
+    },
+    {
+      "site": "target",
+      "test": "edited",
+      "ok": true
+    },
+    {
+      "site": "target",
+      "test": "no-old-site-access",
+      "ok": true,
+      "blocked": []
+    },
+    {
+      "site": "target",
+      "test": "no-script-errors",
+      "ok": true,
+      "errors": []
+    },
+    {
+      "site": "third",
+      "test": "table-use",
+      "ok": true
+    },
+    {
+      "site": "third",
+      "test": "untouched",
+      "ok": true
+    },
+    {
+      "site": "third",
+      "test": "edited",
+      "ok": true
+    },
+    {
+      "site": "third",
+      "test": "no-old-site-access",
+      "ok": true,
+      "blocked": []
+    },
+    {
+      "site": "third",
+      "test": "no-script-errors",
+      "ok": true,
+      "errors": []
+    }
+  ],
+  "contract_log": [
+    "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.",
+    "PASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.",
+    "PASS: reference provenance, unchanged document, independent URL expectations, negative boundaries and missing-provenance detection",
+    "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.",
+    "PASS: old originals readable, contextual original/snapshot format guards, byte-identical Markdown and Checkpoint provenance",
+    "PASS: actual legacy reader reads old originals/points and rejects new mandatory-context originals/points"
+  ],
+  "plugin_check_errors": 0,
+  "plugin_check_warnings": 100,
+  "scope": "CLI installation/update, separate-process admin rendering, browser use of existing two-generation real-S3 recovery fixtures; no new real-S3 recovery cycle in this packaging check"
+}

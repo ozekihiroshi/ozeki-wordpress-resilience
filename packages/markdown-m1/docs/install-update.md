@@ -8,6 +8,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+**rc.12 compatibility:** Existing originals remain readable. After complete-site recovery, new saves retain the known earlier site/image locations without rewriting Markdown. Recovery points containing this new reference context require rc.12 or a later compatible reader; rc.11 rejects them. Prepare the updated version on recovery destinations too. Updating alone does not rewrite S3 history or require a new Baseline.
+
 1. Download the ZIP linked in the [README](../README.md) and verify its checksum. Before updating, preserve the current plugin files, database and settings using your usual maintenance procedure. Pause editing and record settings, confirmed history, pending operations and recovery results.
 2. If the old prerelease uses `ozeki-wordpress-resilience/`, deactivate it first. The current folder is `ozeki-resilience/`; do not activate both copies. Keep the old files until the switch is verified. Do not uninstall as an update method.
 3. Use **Plugins → Add New Plugin → Upload Plugin**. For the same folder, choose **Replace current with uploaded**; for a new folder, install and activate the new copy. Wait for success.
@@ -16,6 +18,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+**rc.12の互換性：** 既存原本は引き続き読めます。サイト全体復旧後の新しい保存では、Markdownを書き換えずに過去のサイト・画像保存先の対応を引き継ぎます。この新しい参照情報を含む復旧点にはrc.12以降の対応版が必要で、rc.11は読み取りを拒否します。復旧先にも更新版を用意してください。更新だけでS3履歴を書き換えたり、Baselineを作り直したりする必要はありません。
 
 1. [README](../RAADME-jp.md)のZIPを取得してハッシュを照合します。通常の保守手順で現行プラグイン・DB・設定を退避し、編集を一時停止します。設定・確定履歴・未確定操作・復旧結果を控えてください。
 2. 旧試験版のフォルダーが `ozeki-wordpress-resilience/` なら先に停止します。現行は `ozeki-resilience/` です。同時に有効化せず、切替確認まで旧ファイルを残します。更新のためにアンインストールしません。

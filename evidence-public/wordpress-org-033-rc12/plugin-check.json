@@ -1,0 +1,707 @@
+{
+  "version": "2.1.0",
+  "errors": 0,
+  "warnings": 100,
+  "items": [
+    {
+      "file": "RAADME-jp.md",
+      "line": 0,
+      "type": "WARNING",
+      "code": "unexpected_markdown_file",
+      "message": "Unexpected markdown file \"RAADME-jp.md\" detected in plugin root. Only specific markdown files are expected in production plugins."
+    },
+    {
+      "file": "src/SaveFailure.php",
+      "line": 15,
+      "type": "WARNING",
+      "code": "WordPress.PHP.DevelopmentFunctions.error_log_error_log",
+      "message": "error_log() found. Debug code should not normally be used in production."
+    },
+    {
+      "file": "src/SaveFailure.php",
+      "line": 17,
+      "type": "WARNING",
+      "code": "WordPress.PHP.DevelopmentFunctions.error_log_error_log",
+      "message": "error_log() found. Debug code should not normally be used in production."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 96,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 96,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 298,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 298,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 301,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 301,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 307,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 307,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 312,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 312,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 317,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 317,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 318,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 318,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 447,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 447,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/Plugin.php",
+      "line": 505,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 63,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 63,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 65,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 65,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 67,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 67,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 106,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/FormHistory.php",
+      "line": 106,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 54,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 54,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 56,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 56,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 91,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/TableHistory.php",
+      "line": 91,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/NativeHistory.php",
+      "line": 36,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/NativeHistory.php",
+      "line": 36,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/NativeHistory.php",
+      "line": 73,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/NativeHistory.php",
+      "line": 73,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/CommentHistory.php",
+      "line": 29,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/CommentHistory.php",
+      "line": 29,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/CommentHistory.php",
+      "line": 32,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/CommentHistory.php",
+      "line": 32,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 74,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 74,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 85,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 85,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 94,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 94,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 106,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 106,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 108,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 108,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 110,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 110,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 110,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 114,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 114,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 116,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "line": 116,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 35,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 35,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 41,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 41,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 214,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 214,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 218,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 234,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 235,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 235,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 243,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 243,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 247,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 247,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 255,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 255,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 262,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 262,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 284,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 284,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 329,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 329,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 334,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 346,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "line": 346,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 37,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 37,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 154,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 154,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 156,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 156,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 172,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "line": 172,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SetupReadiness.php",
+      "line": 36,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SetupReadiness.php",
+      "line": 36,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/SetupReadiness.php",
+      "line": 40,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.DirectQuery",
+      "message": "Use of a direct database call is discouraged."
+    },
+    {
+      "file": "src/SetupReadiness.php",
+      "line": 40,
+      "type": "WARNING",
+      "code": "WordPress.DB.DirectDatabaseQuery.NoCaching",
+      "message": "Direct database call without caching detected. Consider using wp_cache_get() / wp_cache_set() or wp_cache_delete()."
+    },
+    {
+      "file": "src/RecoveryRules.php",
+      "line": 120,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/RecoveryRules.php",
+      "line": 121,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/RecoveryRules.php",
+      "line": 131,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_value",
+      "message": "Detected usage of meta_value, possible slow query."
+    },
+    {
+      "file": "src/Identifiers.php",
+      "line": 29,
+      "type": "WARNING",
+      "code": "WordPress.DB.SlowDBQuery.slow_db_query_meta_key",
+      "message": "Detected usage of meta_key, possible slow query."
+    }
+  ]
+}

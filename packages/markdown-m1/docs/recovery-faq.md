@@ -42,6 +42,6 @@ Install themes and plugins from trusted distributors and select the destination 
 
 Keep the selected Checkpoint, requested history end, product/plugin versions and the recorded error. Inspect the failed/latest attempt and its details; do not substitute an older success result. Preserve S3 resources, identify the cause, prepare the destination and decide whether to retry. Redact credentials and private originals from support reports. Environment preparation issues and unsupported scope should not be confused with lost required resources or false success reporting.
 
-## Development update after rc.11: preserving a recovered site again
+## rc.12: preserving a recovered site again
 
-This change carries the article, Markdown and image reference relationships from complete-site recovery into the next preservation and recovery cycle. Markdown originals are not rewritten. Recovery of new saves containing this context requires the updated reader; submitted rc.11 rejects that new format. Existing originals and history remain unchanged and old formats remain readable by the updated version. This change is not included in the submitted rc.11 ZIP.
+This change carries the article, Markdown and image reference relationships from complete-site recovery into the next preservation and recovery cycle. Markdown originals are not rewritten. Recovery of new saves containing this context requires rc.12 or a later compatible reader; submitted rc.11 rejects that new format. Existing originals and history remain unchanged and old formats remain readable by the updated version. This change is not included in the submitted rc.11 ZIP.

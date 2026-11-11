@@ -120,3 +120,7 @@ See the [README](../README.md#what-remains-and-what-you-can-recover) for saved a
 0.3.3 supports 15 basic field types on posts/pages. Activate ACF free before the initial capture. When adding ACF protection after updating from 0.3.2, or changing the ACF version, pause editing and create a new trusted Baseline. The rc.11 update (not in submitted rc.10) records definition-only changes and deletions while protection is enabled; check formal-history confirmation. Recover its new records/Baselines/Checkpoints with the updated recovery implementation and the recorded ACF free version. See [coverage](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/acf-free.md).
 
 Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it requests a new initial save when a capture including the current version cannot be confirmed. ACF PRO fields are outside protection; article protection can continue. Stored definitions with inactive ACF free are also shown as outside protection with a next action.
+
+## Preserving a recovered site with rc.12
+
+Existing originals remain readable. New saves after complete-site recovery retain reference relationships, including untouched Markdown. Recovery points containing this new context require rc.12 or a later compatible reader; prepare the updated version on recovery destinations too. Existing originals and history are not rewritten. See [updating](install-update.md).
