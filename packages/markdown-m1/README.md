@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.10 was accepted as an update to the existing WordPress.org application on November 11, 2026 (JST), and the reply to the original review email was sent. We are awaiting the reviewer response; publication is not approved.** [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**0.3.3 rc.11 is the new GitHub review candidate and has not been submitted to WordPress.org. Submitted rc.10 remains awaiting the reviewer response; publication is not approved.** [Current distribution status and ZIP availability](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 

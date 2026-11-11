@@ -28,7 +28,7 @@ Start with a trusted initial capture (Baseline). Enable protection for supported
 
 Posts and Pages, supported local images and core comments are covered. Defined integrations support Ozeki Markdown Documents, Contact Form 7 / Flamingo, WP-Members core subscribers, TablePress core tables and ACF free basic fields on posts/pages. See the included README.md for exact coverage and tested versions.
 
-ACF recovery uses the recorded free version (tested 6.8.10), database-defined groups and post/page location rules. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Create a new trusted Baseline when adding ACF or changing its version. This development update also records definition-only changes and deletions; check formal-history confirmation. These new records and recovery points require the updated recovery implementation. Submitted rc.10 still requires a new Baseline after definition-only changes.
+ACF recovery uses the recorded free version (tested 6.8.10), database-defined groups and post/page location rules. PRO, reference/nested fields and PHP/Local JSON definitions are outside this integration. Create a new trusted Baseline when adding ACF or changing its version. This rc.11 update also records definition-only changes and deletions; check formal-history confirmation. These new records and recovery points require the updated recovery implementation. Submitted rc.10 still requires a new Baseline after definition-only changes.
 
 Standard WordPress Posts and Pages need no additional plugin. For integration-specific content, install the compatible plugin separately before recovery. Markdown Documents is needed when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
 
@@ -87,6 +87,8 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Record standalone ACF definition changes and deletions in formal history; new recovery points require a compatible updated reader.
+* Restore supported WP-Members field flags, choices and input definitions for continued use after recovery.
 * Preserve mismatched ACF values in originals and report them as not applied, while recovering other valid content.
 * Restore WP-Members version identifiers and page references; use the trusted installed plugin defaults for operational settings not imported from archives.
 * Require a valid nonce for submitted Markdown originals; sanitize and validate recovery and schedule form inputs before use.

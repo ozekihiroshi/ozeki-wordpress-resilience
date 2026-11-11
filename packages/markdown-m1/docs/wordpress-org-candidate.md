@@ -2,26 +2,26 @@
 
 ## 日本語
 
-現在の公開候補は **0.3.3 rc.10** です。ACFの不適合値は原本に残して理由付きで未適用にし、WP-Membersの版情報・ページIDの扱いを修正しました。rc.10はWordPress.orgの既存申請へ提出済みです。2026年11月10日のrc.8への追加審査に対応し、Markdown保存時のnonce確認と、復旧番号・復旧ポイント・保持設定の入力処理を修正しました。利用手順・対応範囲・保存形式は変わりません。
+新しいGitHub公開候補は **0.3.3 rc.11** です。WP-Membersの会員項目に必要な定義の復旧と、ACF無料版の定義単独の変更・削除を正式履歴へ保存する更新を含みます。
 
-**rc.10は2026年11月11日（日本時間）に更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。** 提出済みZIPと対応タグ、以前のrc.9・rc.8はそのまま保全しています。
+**rc.11はWordPress.org未提出です。提出済みrc.10は審査担当者の回答待ちで、公開承認済みではありません。** 以前のZIP・タグはそのまま保全しています。
 
-- [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.10/ozeki-resilience-0.3.3.zip)
-- [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.10)
-- SHA-256: `a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf`
-- [確認結果](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10)
+- [導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.11/ozeki-resilience-0.3.3.zip)
+- [リリース説明](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.11) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.11)
+- SHA-256: `0fcbbac0a7e8dcadbbb5d5b247248a3c8081ceb1b4ee6c2771f7e19cc5233c1c`
+- [確認結果と補足説明案](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc11.md)
 
-[導入・復旧ガイド](user-guide-ja.md)に従って準備してください。GitHubの `Source code (zip)` は導入用ZIPではありません。提出済みrc.8を含む旧ZIP・タグは保全しています。
+既存原本は更新版で読めます。新しいACF定義履歴と、それを含むBaseline・Checkpointの復旧にはrc.11以降の対応版を用意してください。[導入ガイド](user-guide-ja.md)・[更新手順](install-update.md)を参照してください。GitHubの `Source code (zip)` は導入用ZIPではありません。
 
 ## English
 
-The current candidate is **0.3.3 rc.10** (submitted to the existing WordPress.org application), adding ACF not-applied handling and WP-Members version/page-reference corrections while addressing the November 10 review of rc.8: mandatory nonce checks for submitted Markdown originals and sanitized, validated recovery/schedule inputs. Setup steps, supported scope and stored data formats are unchanged.
+The new GitHub candidate is **0.3.3 rc.11**, including supported WP-Members field definitions and independent formal history for ACF free definition changes/deletions.
 
-**The rc.10 update was accepted and the review-email reply was sent on November 11, 2026 (JST). We await the reviewer response; publication is not approved.** Submitted ZIPs and matching tags, including rc.9 and rc.8, remain unchanged.
+**rc.11 has not been submitted to WordPress.org. Submitted rc.10 is awaiting the reviewer response; publication is not approved.** Earlier ZIPs and tags remain unchanged.
 
-- [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.10/ozeki-resilience-0.3.3.zip)
-- [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.10)
-- SHA-256: `a762c181772ded58ac403ad520a731278c4c73ed91181d3326bd1cab6420acbf`
-- [Validation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.10)
+- [Installable ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.11/ozeki-resilience-0.3.3.zip)
+- [Release notes](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.11) / [Matching source](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.11)
+- SHA-256: `0fcbbac0a7e8dcadbbb5d5b247248a3c8081ceb1b4ee6c2771f7e19cc5233c1c`
+- [Verification and draft supplementary explanation](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc11.md)
 
-Follow the [setup and recovery guide](user-guide.md). Use the installable ZIP, not GitHub's source archive. Previous ZIPs and tags, including submitted rc.8, remain preserved.
+Existing originals remain readable. New ACF definition history and the Baselines/Checkpoints containing it require rc.11 or a later compatible reader. Follow the [setup guide](user-guide.md) and [update procedure](install-update.md). Use the installable ZIP, not GitHub's source archive.

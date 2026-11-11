@@ -1,0 +1,23 @@
+{
+  "sha256": "0fcbbac0a7e8dcadbbb5d5b247248a3c8081ceb1b4ee6c2771f7e19cc5233c1c",
+  "bytes": 8285733,
+  "files": 3813,
+  "runtime_files_identical_to_rc10": 3791,
+  "changed_files": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/AcfHistory.php",
+    "ozeki-resilience/src/CommentHistory.php",
+    "ozeki-resilience/src/RecoveryRules.php",
+    "ozeki-resilience/src/SetupReadiness.php",
+    "ozeki-resilience/src/SiteSnapshot.php"
+  ],
+  "product_source_matches": true,
+  "bundled_guides": 8,
+  "relative_links_resolve": 78,
+  "development_artifacts": 0
+}

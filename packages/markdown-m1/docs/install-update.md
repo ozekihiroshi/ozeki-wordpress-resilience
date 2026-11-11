@@ -45,3 +45,9 @@ Settings, pending saves, recovery mappings and scheduled Checkpoints are carried
 If the settings update cannot finish, public pages and administrator sign-in remain available, while saving is paused. Open **Tools → Resilience**, ask your hosting administrator to check database write access and locks, then select **Retry**. Do not delete pending saves or recreate the Baseline.
 
 設定の引き継ぎに失敗した場合も、公開ページの閲覧と管理者ログインは利用できますが、保存は一時停止します。**ツール → Resilience** の案内に従い、サーバー管理者にDBの書込みとロックを確認してもらい、**再試行**を押してください。未完了の保存の削除やBaselineの作り直しは不要です。
+
+## rc.11: ACF definitions and member fields / ACF定義・会員項目
+
+rc.11 includes WP-Members field definitions and standalone ACF definition history. Existing originals remain readable and are not rewritten. After enabling protection, confirm definition changes in formal history. New ACF definition records and the Baselines/Checkpoints containing them require rc.11 or a later compatible recovery implementation; keep that version available for the recovery destination. An update alone does not require a new Baseline when the existing one already covers the installed ACF version.
+
+rc.11はWP-Membersの会員項目定義と、ACF定義単独の履歴保存に対応します。既存原本は変更せず引き続き読めます。保護中の定義変更後は正式履歴への確定を確認してください。新しいACF定義履歴と、それを含むBaseline・Checkpointにはrc.11以降の対応する復旧処理が必要です。復旧先にも用意できるよう、この版を保管してください。既存Baselineが現在のACF版を含む場合、更新だけを理由に作り直す必要はありません。
