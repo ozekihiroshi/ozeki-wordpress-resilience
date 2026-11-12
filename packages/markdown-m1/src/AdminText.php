@@ -125,6 +125,7 @@ final class AdminText
         'Recovery adopts only confirmed S3 history. If the source is lost before confirmation, omit that operation. An old error alone does not establish a current pending operation. Checkpoint, recovery and other administration errors are shown separately below.' => '復旧にはS3の確定済み履歴を使います。未完了のまま保存元を失った操作は含まれません。過去のエラーだけで現在も未完了とは判断しません。復旧ポイントの作成・復旧などのエラーは別途表示します。',
         'Storage and optional scheduling settings / 保存先の設定' => '保存先と定期保存の設定',
         'Protect supported operations (one writer per prefix)' => '保護を開始する（同じ保存先への書き込み元は1サイト）',
+        'For initial setup, leave this off and save settings. Turn it on after the storage check and the first save and verified read-back have succeeded.' => '初回はオフのまま設定を保存してください。保存先の確認と最初の保存・読み戻しが成功した後にオンにします。',
         'Bucket defaults and existing locks still apply. Changing this value does not shorten existing locks. Locked expired points wait; protection is never bypassed.' => 'バケット既定のロックと既存のロックも適用されます。日数を変更しても、既存のロックは短くなりません。保持期限切れでもロック中のデータは解除期限まで待ちます。',
         'Automatically clean expired versions after successful scheduled Checkpoint checks' => '定期保存の確認成功後、保持期間を過ぎたデータを自動整理する',
         'Resilience — Site recovery' => 'Resilience — サイトの保護と復旧',

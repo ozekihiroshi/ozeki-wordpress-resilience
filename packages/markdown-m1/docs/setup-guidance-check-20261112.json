@@ -1,0 +1,46 @@
+{
+  "cases": [
+    {
+      "role": "source",
+      "protect": false,
+      "user": "operator",
+      "passed": true
+    },
+    {
+      "role": "source",
+      "protect": false,
+      "user": "japanese",
+      "passed": true
+    },
+    {
+      "role": "source",
+      "protect": true,
+      "user": "operator",
+      "passed": true
+    },
+    {
+      "role": "source",
+      "protect": true,
+      "user": "japanese",
+      "passed": true
+    },
+    {
+      "role": "recovery",
+      "protect": false,
+      "user": "operator",
+      "passed": true
+    },
+    {
+      "role": "recovery",
+      "protect": false,
+      "user": "japanese",
+      "passed": true
+    }
+  ],
+  "wordpress": "7.1.3",
+  "php": "8.3.36",
+  "submitted_zip_sha256": "34eee728e5c6d78f6e8368256d60676a0df7085e8a35ed343f787afd2898c2b8",
+  "zip_unchanged": true,
+  "settings_unchanged_by_render": true,
+  "outbound_network_blocked": true
+}
