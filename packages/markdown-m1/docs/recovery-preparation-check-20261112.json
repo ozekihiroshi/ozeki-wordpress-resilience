@@ -1,0 +1,44 @@
+{
+  "blocked": {
+    "blocked_before_content_or_staging": true,
+    "messages": {
+      "en_US": "Recovery preparation needed: flamingo/flamingo.php (2.6.4): Install the recorded version from a trusted distributor and activate it in Plugins, then recheck. / Site language pack (ja): In Settings → General → Site Language, select the recorded language and save. If downloads are unavailable, ask the administrator to install the official language pack for this WordPress version. Then recheck.",
+      "ja": "復旧先の準備が必要です：flamingo/flamingo.php (2.6.4): 信頼できる配布元から記録された版を導入し、「プラグイン」で有効化して再確認してください。 / サイトの言語パック (ja): 「設定 → 一般 → サイトの言語」で記録された言語を選んで保存してください。ダウンロードできない場合は管理者に、このWordPress版の公式言語パックの導入を依頼し、その後に再確認してください。"
+    }
+  },
+  "recovery": {
+    "wordpress": "7.1.4",
+    "php": "8.3.36",
+    "through": 5,
+    "restored_article_id": 85,
+    "title": "レジリエンスの保存確認（確認用記事）",
+    "source_body_matches": true,
+    "public_http_body_matches": true,
+    "fresh_request_after_restore": true,
+    "destination_protect": false,
+    "destination_gfs": [],
+    "destination_cleanup": false,
+    "plugins_unchanged": true,
+    "no_published_ports": true,
+    "cron_and_mail_disabled": true,
+    "credential_role": "OwrM1RecoveryReader"
+  },
+  "ui": [
+    {
+      "user": "operator",
+      "missing_language_and_plugin_guidance": true
+    },
+    {
+      "user": "japanese",
+      "missing_language_and_plugin_guidance": true
+    },
+    {
+      "user": "operator",
+      "all_conditions_ready_after_install": true
+    },
+    {
+      "user": "japanese",
+      "all_conditions_ready_after_install": true
+    }
+  ]
+}

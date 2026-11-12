@@ -61,6 +61,8 @@ These samples do not set S3 Lifecycle, change bucket configuration or grant EC2/
 
 ## 5. Verify from the product, not only the shell
 
+On the recovery destination, keep protection, schedules and cleanup off. Save the destination settings, use **Check storage**, then follow the [recovery preparation steps](user-guide.md#6-recover-onto-a-separate-wordpress). The complete read-only policy above belongs on the recovery role, never the source saving role. Reading S3 successfully does not by itself confirm that the required software and language packs are installed.
+
 Return to [installation and Baseline](user-guide.md#3-create-the-first-baseline). After saving settings, a successful complete initial snapshot demonstrates that the product runtime can write and fixed-version read the captured set. A confirmed normal edit checks history; a preview checks full-version/lock-reading access without deletion. Later confirm a restore with the separate read-only destination. Do not claim any of these checks succeeded merely because a policy was saved or `aws sts get-caller-identity` works in another session.
 
 If AccessDenied appears, record the operation and exact scope. Check the runtime identity, policy substitutions, explicit Deny, bucket/KMS conditions and environment credentials. Never use AdministratorAccess as the product's error workaround. A lock with an unexpired date/Legal Hold is a blocked deletion condition, not a request to bypass it. Unknown/network errors are not treated as “no lock.”

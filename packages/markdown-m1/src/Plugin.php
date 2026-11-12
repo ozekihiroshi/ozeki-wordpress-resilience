@@ -620,6 +620,15 @@ final class Plugin
                 $ref=self::snapshotReference(sanitize_text_field(wp_unslash($_POST['site_ref'])));
                 $this->wholeCheckpoint($ref);
             }
+            elseif ($action==='recovery_check') {
+                delete_option('ozeki_resilience_recovery_preparation');
+                if(!isset($_POST['site_ref'],$_POST['site_through'])||!is_string($_POST['site_ref'])||!is_string($_POST['site_through']))throw new \RuntimeException('Select a valid recovery point and formal history end.');
+                $end=sanitize_text_field(wp_unslash($_POST['site_through']));
+                if(!preg_match('/^(0|[1-9][0-9]*)$/D',$end)||filter_var($end,FILTER_VALIDATE_INT)===false)throw new \RuntimeException('Select a valid formal history end number.');
+                $ref=self::snapshotReference(sanitize_text_field(wp_unslash($_POST['site_ref'])));
+                $check=(new SiteSnapshot($this->store()))->recoveryPreparation($ref,(int)$end);
+                update_option('ozeki_resilience_recovery_preparation',$check+['ref'=>$ref,'identity'=>SetupReadiness::identity($this->config()),'at'=>gmdate('c')],false);
+            }
             elseif ($action==='whole_restore') {
                 $attempt=['status'=>'running','at'=>gmdate('c')];
                 try {
@@ -769,22 +778,26 @@ final class Plugin
         try{
             $siteSnapshots=$this->store()->siteSnapshots();
             RecoveryPreparation::render($siteSnapshots);
+            RecoveryPreparation::renderCheck((array)get_option('ozeki_resilience_recovery_preparation',[]));
             $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]=AdminText::text('Checkpoint boundary');
             if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.($row['attributes']['title']??$row['original']['asset']??'').' / '.($row['attributes']['status']??'');
             ksort($ends);
             $lastAttempt=(array)get_option('ozeki_resilience_site_restore_attempt',[]);
+            $preparation=(array)get_option('ozeki_resilience_recovery_preparation',[]);
+            if(($preparation['identity']??'')===SetupReadiness::identity($this->config()))$lastAttempt=['manifest'=>$preparation['ref'],'requested_through'=>$preparation['through']];
             $selectedRef=$lastAttempt['manifest']??null;
             $selectedEnd=$lastAttempt['requested_through']??array_key_last($ends);
             if(!in_array($selectedRef,array_column($siteSnapshots,'ref'),true)||!array_key_exists($selectedEnd,$ends))$selectedEnd=array_key_last($ends);
-            foreach(['whole_checkpoint'=>AdminText::text('Create complete Checkpoint'),'whole_restore'=>AdminText::text('Restore complete site')] as $op=>$label){
+            foreach(['whole_checkpoint'=>AdminText::text('Create complete Checkpoint'),'recovery_check'=>SetupReadiness::text('Check / recheck recovery preparation','復旧前の準備を確認・再確認'),'whole_restore'=>AdminText::text('Restore complete site')] as $op=>$label){
                 if($op==='whole_checkpoint'&&($this->config()['setup_role']??'source')==='recovery')continue;
                 $this->form($op);echo '<label>'.esc_html(AdminText::text('Checkpoint')).' <select name="site_ref" required>';
-                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'"'.($op==='whole_restore'&&$item['ref']===$selectedRef?' selected':'').'>'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).AdminText::text(' / history ').$item['through'].' / '.$item['ref']['key']).'</option>';
+                foreach($siteSnapshots as $item)echo '<option value="'.esc_attr(Store::json($item['ref'])).'"'.(in_array($op,['recovery_check','whole_restore'],true)&&$item['ref']===$selectedRef?' selected':'').'>'.esc_html($item['origin'].' / '.gmdate('c',$item['created']).' / '.implode(', ',array_keys($item['gfs']??[])).AdminText::text(' / history ').$item['through'].' / '.$item['ref']['key']).'</option>';
                 echo '</select></label>';
-                if($op==='whole_restore'){
+                if(in_array($op,['recovery_check','whole_restore'],true)){
                     echo '<label>'.esc_html(AdminText::text('Formal history end')).' <select name="site_through" required>';
                     foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===$selectedEnd?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
-                    echo '</select></label><p>'.esc_html(AdminText::text('Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.')).'</p><label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace all destination content with this site (a private local rollback copy is retained).')).'</label>';
+                    echo '</select></label><p>'.esc_html(AdminText::text('Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.')).'</p>';
+                    if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace all destination content with this site (a private local rollback copy is retained).')).'</label>';
                 }
                 submit_button($label);echo '</form>';
             }

@@ -7,6 +7,7 @@ require_once __DIR__.'/AcfHistory.php';
 require_once __DIR__.'/RecoveryRules.php';
 require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/ReferenceContext.php';
+require_once __DIR__.'/RecoveryPreparation.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -261,11 +262,18 @@ final class SiteSnapshot
         // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it. Private transaction helper receives only literal START TRANSACTION or COMMIT from this class; no input interpolation.
         if($wpdb->query($sql)===false)throw new \RuntimeException('Recovery database '.$sql.' failed: '.$wpdb->last_error);
     }
+    /** Load and replay without changing destination content or S3. Also works with existing originals. */
+    public function recoveryPreparation(array $ref,?int $targetThrough=null): array {
+        [$m,$files]=$this->load($ref,true);[$m,$files]=$this->replay($m,$files,$targetThrough);
+        $data=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        return ['requirements'=>array_intersect_key($m,array_flip(['wordpress','plugins','software_inventory','source_url','required_form_plugins','required_tablepress_version'])),'language'=>$data['options']['WPLANG']??'','through'=>$m['through']];
+    }
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
         if(!empty((new Plugin())->config()['protect'])||get_option('ozeki_resilience_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
         [$m,$files]=$this->load($ref,true);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
+        RecoveryPreparation::requireReady($m,json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR));
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
         foreach($m['required_form_plugins']??[] as $plugin=>$version){
             FormHistory::checkDependency($plugin,$version);
