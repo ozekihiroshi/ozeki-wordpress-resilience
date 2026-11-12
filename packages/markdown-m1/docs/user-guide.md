@@ -97,7 +97,7 @@ Start with **Preview complete-site retention**, which does not delete. Review re
 
 ## 6. Recover onto a separate WordPress
 
-The check/recheck button is available in GitHub source after submitted rc.13. That submitted ZIP is unchanged; when using it, check the preparation requirements below manually.
+The check/recheck button is included in rc.14. Earlier ZIPs remain unchanged; when using rc.13 or earlier, check the preparation requirements below manually.
 
 Prepare the source site's language pack too. For Japanese, select Japanese in Settings → General → Site Language and save; WordPress normally installs the official pack. If downloads or filesystem writes are restricted, ask the administrator to install the official pack for the destination WordPress version. Resilience does not automatically install software.
 

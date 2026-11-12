@@ -1,0 +1,13 @@
+{
+  "zip_sha256": "453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a",
+  "installed_files": 3814,
+  "exact_zip_match": true,
+  "state_unchanged": true,
+  "protect": true,
+  "gfs": [],
+  "cleanup": false,
+  "home_http_status": 200,
+  "wordpress": "7.1.4",
+  "php": "8.3.36",
+  "rollback_backup_on_host": true
+}

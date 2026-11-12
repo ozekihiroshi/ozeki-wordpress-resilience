@@ -8,6 +8,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+**rc.14 preparation checks:** Update recovery destinations too. Missing language packs or required software are reported before content replacement; prepare them from trusted sources and recheck. Existing originals/history and protection/scheduling settings need no migration.
+
 **rc.13 Flamingo correction:** Existing receipt originals need no migration. Update the recovery destination too. If a receipt was already re-saved with missing values, recover from an earlier original that still contains them; updating alone cannot recreate lost values.
 
 **rc.12 compatibility:** Existing originals remain readable. After complete-site recovery, new saves retain the known earlier site/image locations without rewriting Markdown. Recovery points containing this new reference context require rc.12 or a later compatible reader; rc.11 rejects them. Prepare the updated version on recovery destinations too. Updating alone does not rewrite S3 history or require a new Baseline.
@@ -20,6 +22,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+**rc.14の準備確認：** 復旧先にも更新版を用意してください。不足する言語パックや必要なソフトウェアを内容の置換前に案内します。信頼できる配布元から準備し、再確認してください。既存原本・履歴、保護・定期保存設定の移行は不要です。
 
 **rc.13のFlamingo修正：** 既存の受信原本の移行は不要です。復旧先にも更新版を用意してください。欠落した状態で再保存した受信は、値が残っている以前の原本から復旧します。更新だけで失われた値を補完するものではありません。
 
