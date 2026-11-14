@@ -1,0 +1,17 @@
+{
+  "files": 3816,
+  "bytes": 8300208,
+  "sha256": "c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae",
+  "changes_from_rc15": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/Plugin.php"
+  ],
+  "removed": [],
+  "vendor_unchanged": true,
+  "user_guides": 8,
+  "relative_links_checked": 86,
+  "development_files_absent": true
+}

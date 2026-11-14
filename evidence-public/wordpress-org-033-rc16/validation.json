@@ -1,0 +1,48 @@
+{
+  "fresh": {
+    "files": 3816,
+    "zip_sha256": "c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae",
+    "state": "6cdd14ab857a479c3adfe4eb68ae4128b1307d5f7a0e944828fd5da1a519d020",
+    "wordpress": "7.0",
+    "php": "8.3.31",
+    "bilingual_admin": true,
+    "history_display": {
+      "history_records": 36,
+      "types": 9,
+      "locales": {
+        "en_US": true,
+        "ja": true
+      },
+      "warnings": 0,
+      "existing_history_unchanged": true,
+      "individual_media_restore_rejected": true
+    }
+  },
+  "update": {
+    "files": 3816,
+    "zip_sha256": "c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae",
+    "state": "a8fe19f6f786a19ebd58cc58df20a1fbba3d3c0cc35c1ae7ffc615a9699fca65",
+    "wordpress": "7.0",
+    "php": "8.3.31",
+    "bilingual_admin": true,
+    "history_display": {
+      "history_records": 36,
+      "types": 9,
+      "locales": {
+        "en_US": true,
+        "ja": true
+      },
+      "warnings": 0,
+      "existing_history_unchanged": true,
+      "individual_media_restore_rejected": true
+    }
+  },
+  "update_before": {
+    "files": 3816,
+    "zip_sha256": "5f8ce491ec286f3e84f3667ceaddc5416ac0febad81441d8fc3bca601ea6e4eb",
+    "state": "a8fe19f6f786a19ebd58cc58df20a1fbba3d3c0cc35c1ae7ffc615a9699fca65",
+    "wordpress": "7.0",
+    "php": "8.3.31",
+    "bilingual_admin": true
+  }
+}
