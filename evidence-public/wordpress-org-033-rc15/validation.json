@@ -1,0 +1,26 @@
+{
+  "fresh": {
+    "files": 3816,
+    "zip_sha256": "5f8ce491ec286f3e84f3667ceaddc5416ac0febad81441d8fc3bca601ea6e4eb",
+    "state": "d03856aa59ba6bee24708d05f8b954c19363c16f18f191ceaa309b98c8d3fae1",
+    "wordpress": "7.1.3",
+    "php": "8.3.36",
+    "bilingual_admin": true
+  },
+  "update": {
+    "files": 3816,
+    "zip_sha256": "5f8ce491ec286f3e84f3667ceaddc5416ac0febad81441d8fc3bca601ea6e4eb",
+    "state": "7d32d49acb3926141603cf5e3742c33d80ab6a557f68e58d5c83d5a53077824d",
+    "wordpress": "7.1.3",
+    "php": "8.3.36",
+    "bilingual_admin": true
+  },
+  "update_before": {
+    "files": 3814,
+    "zip_sha256": "453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a",
+    "state": "7d32d49acb3926141603cf5e3742c33d80ab6a557f68e58d5c83d5a53077824d",
+    "wordpress": "7.1.3",
+    "php": "8.3.36",
+    "bilingual_admin": true
+  }
+}

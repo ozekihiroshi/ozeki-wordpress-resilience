@@ -1,0 +1,14 @@
+{
+  "version": "2.2.0",
+  "candidate_counts": {
+    "WARNING": 102
+  },
+  "rc14_counts": {
+    "WARNING": 100
+  },
+  "new_warning_codes": {
+    "WordPress.DB.DirectDatabaseQuery.DirectQuery": 1,
+    "WordPress.DB.DirectDatabaseQuery.NoCaching": 1
+  },
+  "assessment": "Two warnings are a fixed direct database read without caching for current media access conditions. It contains no user-supplied SQL; caching could reuse stale access decisions. Error count is zero."
+}
