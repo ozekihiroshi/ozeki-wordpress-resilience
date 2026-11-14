@@ -54,7 +54,7 @@ final class CommentHistory
     }
     private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[],?callable $capture=null): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
-        if($resources && ($attrs['post_type']??'')!=='owr_native')throw new \RuntimeException('Unexpected operation resources.');
+        if($resources && !in_array($attrs['post_type']??'',['owr_native','owr_attachment'],true))throw new \RuntimeException('Unexpected operation resources.');
         if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
         $name=$this->lock();$operation=wp_generate_uuid4();
         try {
@@ -63,7 +63,7 @@ final class CommentHistory
             $queue=(array)get_option(self::PENDING,[]);
             // Native state can be emitted by both REST and legacy meta-box requests.
             // Compare against S3 authority under the writer lock, never a local cache.
-            if(!$queue && !get_option('ozeki_resilience_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf','owr_media_access'],true)){
+            if(!$queue && !get_option('ozeki_resilience_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf','owr_media_access','owr_attachment'],true)){
                 try {
                     $state=(new Plugin())->store()->latestState();
                     if(self::sameNativeState($state['assets'][$asset]??null,$source,$attrs,$resources))return;

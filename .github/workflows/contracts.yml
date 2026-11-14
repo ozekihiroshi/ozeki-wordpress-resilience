@@ -65,6 +65,8 @@ jobs:
           php packages/markdown-m1/tests/upload-guard.php
           php packages/markdown-m1/tests/file-scope.php
           php packages/markdown-m1/tests/media-access.php
+          php packages/markdown-m1/tests/attachment-contract.php
+          php packages/markdown-m1/tests/attachment-pending.php
           php packages/markdown-m1/tests/media-access-format.php packages/markdown-m1 packages/markdown-m1/tests/fixtures/media-access-legacy.json /tmp/media-access-format.json
           php packages/markdown-m1/tests/native-details.php packages/markdown-m1
           php packages/markdown-m1/tests/native-queue.php packages/markdown-m1

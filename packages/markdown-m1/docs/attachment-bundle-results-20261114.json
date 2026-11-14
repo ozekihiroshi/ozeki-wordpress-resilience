@@ -1,0 +1,24 @@
+{
+  "rc16_registration_gap_reproduced": true,
+  "old_format_read": true,
+  "old_reader_new_tail_rejected": {
+    "rejected": true,
+    "reason": "Unsupported history type or state.",
+    "unchanged": true
+  },
+  "old_reader_new_baseline_rejected": {
+    "rejected": true,
+    "reason": "Invalid separated site resources.",
+    "unchanged": true
+  },
+  "old_reader_new_index_rejected": true,
+  "legacy_missing_originals_reported": true,
+  "pdf_roundtrip": {
+    "files": 10,
+    "attachments": 2,
+    "private_preserved": 5,
+    "content_metadata_equal": true
+  },
+  "missing_detected_and_retry_passed": true,
+  "interrupted_confirmation_resumed": true
+}

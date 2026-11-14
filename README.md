@@ -6,6 +6,8 @@ Preserve the articles, images and inquiries your site has accumulated, so you ca
 
 English | [日本語](RAADME-jp.md)
 
+**Unreleased source changes:** PDF attachment bundles now have shared completeness checks for initial and daily preservation. See the [implementation, compatibility and isolated live-S3 verification](packages/markdown-m1/docs/attachment-bundle-verification-20261114.md). These changes are not included in submitted rc.16; no replacement ZIP has been released.
+
 See the [Flamingo correction, missed-check cause and regression coverage](packages/markdown-m1/docs/flamingo-recovery-fix.md). This fix is included in rc.13, not submitted rc.12.
 
 
