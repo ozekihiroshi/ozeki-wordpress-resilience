@@ -8,7 +8,7 @@ try {
  $report=['format'=>'owr-observer-status-v1','site_id'=>'site','monitor_id'=>'watchdog','observed_at'=>gmdate('c'),'simulated'=>true,'targets'=>[],'delivery'=>['state'=>'ok','pending'=>0],'history'=>[]];
  foreach(['reachability','watchdog'] as $key){$report['targets'][$key]=['last_seen'=>gmdate('c'),'active'=>[],'pending'=>0,'observation'=>'confirmed'];}
  file_put_contents($path,json_encode($report));check('current','healthy');
- $report['history'][]=['target'=>'watchdog','kind'=>'monitor_stopped','transition'=>'resolved','at'=>gmdate('c')];
+ $report['history'][]=['target'=>'watchdog','kind'=>'monitor_stopped','transition'=>'resolved','at'=>$report['observed_at']];
  file_put_contents($path,json_encode($report));check('current','recovery');
  if(ObserverAdmin::status($settings)['history'][0]['transition']!=='resolved'){throw new RuntimeException('history lost');}
  $bad=$report;$bad['targets']['watchdog']['pending']=-1;file_put_contents($path,json_encode($bad));check('invalid','negative');

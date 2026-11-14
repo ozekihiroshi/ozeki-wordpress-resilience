@@ -19,3 +19,5 @@ Production remains at submitted rc.15. No production settings, existing S3 origi
 記事用のtitle／statusを持たない閲覧条件の記録を、履歴一覧が記事と同じ前提で表示したことが原因です。表示だけに共通の補完処理を設け、欠けた状態を公開・非公開と推測せず「未記録」とします。既存の文字列と空欄はそのまま表示し、閲覧条件には日英の名称を付けます。原本・履歴の補完や書換えは行いません。
 
 他の対応記録と未知の種類も含む36件で、日英の管理画面表示・履歴読取り・保存済み値の保持を確認しました。閲覧条件をMarkdown文書として個別復旧する経路の判定漏れも防止しました。本番・提出済みrc.15には反映していません。
+
+CI follow-up: the first PHP 8.1 run passed the M1 package checks but failed the unrelated observer fixture at the recovery case. It generated the history timestamp with a later clock read than observed_at; crossing a second made the fixture invalid. The fixture now uses its recorded observation timestamp for that event. Observer product code is unchanged.
