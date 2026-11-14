@@ -8,6 +8,7 @@ require_once __DIR__.'/RecoveryRules.php';
 require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/ReferenceContext.php';
 require_once __DIR__.'/RecoveryPreparation.php';
+require_once __DIR__.'/FileScope.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -46,15 +47,22 @@ final class SiteSnapshot
         AcfHistory::baseline($data);
         return $data;
     }
-    private function files(string $root,string $prefix,array &$out): void {
+    private function files(string $root,string $prefix,array &$out,array $allowed,array &$excluded): void {
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         if(!is_dir($root))throw new \RuntimeException('Missing resource root '.$prefix);
         foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root,\FilesystemIterator::SKIP_DOTS)) as $f){
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
-            if($f->isLink())throw new \RuntimeException('Symlink not portable: '.$f->getFilename());
+
             if(!$f->isFile())continue;
-            $rel=$prefix.'/'.substr($f->getPathname(),strlen($root)+1);self::safePath($rel);
-            if($prefix==='uploads'&&!self::isInformationFile($rel))continue;
+            $rel=$prefix.'/'.substr($f->getPathname(),strlen($root)+1);
+            if(!isset($allowed[$rel])){
+                try{$information=self::isInformationFile($rel);}catch(\RuntimeException $e){$information=true;}
+                if($information)$excluded[]=['item'=>$rel,'reason'=>FileScope::REASON];continue;
+            }
+            self::safePath($rel);
+            $guarded=false;for($dir=dirname($f->getPathname());str_starts_with($dir,$root);$dir=dirname($dir)){if(is_file($dir.'/.htaccess')){$guarded=true;break;}if($dir===$root)break;}
+            if($guarded){$excluded[]=['item'=>$rel,'reason'=>FileScope::REASON];continue;}
+            if($f->isLink())throw new \RuntimeException('Symlink not portable: '.$rel);
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if($f->getSize()>32*1024*1024)throw new \RuntimeException('Resource exceeds 32 MiB: '.$rel);
             $out[$rel]=file_get_contents($f->getPathname());
@@ -92,7 +100,7 @@ final class SiteSnapshot
             $dir=dirname($plugin);if($dir==='.')throw new \RuntimeException('Select a directory-based dependency.');
             $header=get_file_data(WP_PLUGIN_DIR.'/'.$plugin,['name'=>'Plugin Name','version'=>'Version']);$software['plugins'][$plugin]=$header;
         }
-        $upload=wp_upload_dir();$this->files($upload['basedir'],'uploads',$files);
+        $upload=wp_upload_dir();$excluded=[];$this->files($upload['basedir'],'uploads',$files,FileScope::paths($data),$excluded);
         foreach($files as $path=>$body)if(!self::isInformationFile($path))unset($files[$path]);else self::validateUpload($path,$body);
         foreach($data['tables']['postmeta'] as $r)if($r['meta_key']==='_ozmd_source')$files['markdown/'.$r['post_id'].'.md']=$r['meta_value'];
         if(Store::json($data)!==Store::json($this->data()))throw new \RuntimeException('Site changed during capture; retry while editing is paused.');
@@ -100,7 +108,7 @@ final class SiteSnapshot
         $state=$this->store->latestState();
         $manifest=['schema'=>'owr-site-snapshot-1','origin'=>'administrator_initial','source_url'=>home_url(),'source_upload_url'=>$upload['baseurl'],
             'wordpress'=>$GLOBALS['wp_version'],'php'=>PHP_VERSION,'through'=>$state['through'],'plugins'=>$plugins,
-            'software_inventory'=>$software,'recovery_mode'=>'information-assets-only','excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
+            'excluded_files'=>$excluded,'software_inventory'=>$software,'recovery_mode'=>'information-assets-only','excluded_plugins'=>array_values(array_diff((array)get_option('active_plugins'),$plugins)),
             'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
         $origins=ReferenceContext::capture();
         if($origins)$manifest['reference_origins']=ReferenceContext::merge($origins,[['site'=>home_url(),'uploads'=>$upload['baseurl']]]);
@@ -142,7 +150,7 @@ final class SiteSnapshot
             $manifest['gfs']=GfsPolicy::labels($slot['rules'],time(),new \DateTimeZone($slot['timezone']));
         }
         $ref=$this->store->put($base.'manifest.json',Store::json($manifest),'application/json',$until);
-        return ['manifest'=>$ref,'files'=>count($files),'through'=>$manifest['through']];
+        return ['manifest'=>$ref,'files'=>count($files),'through'=>$manifest['through'],'excluded_files'=>$manifest['excluded_files']??[]];
     }
     public function load(array $ref,bool $informationOnly=false): array {
         $m=json_decode($this->store->get($ref),true,512,JSON_THROW_ON_ERROR);
@@ -286,6 +294,9 @@ final class SiteSnapshot
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
         $origins=ReferenceContext::merge($m['reference_origins']??[],[['site'=>$from,'uploads'=>$m['source_upload_url']??$from.'/wp-content/uploads']]);
         AcfHistory::check($d);
+        $allowedFiles=FileScope::paths($d);
+        foreach($m['excluded_files']??[] as $excludedFile)unset($allowedFiles[$excludedFile['item']]);
+        if(($d['options']['WPLANG']??null)===false)$d['options']['WPLANG']='';
         $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
@@ -308,7 +319,7 @@ final class SiteSnapshot
             unset($d['options'][$key]);$application['report']['not_applied'][]=['item'=>'options.'.$key,'reason'=>'Destination theme differs; install and select the intended theme separately'];
         }
         $install=[];foreach($files as $p=>$body)if(str_starts_with($p,'uploads/')){
-            if(!self::isInformationFile($p)){$application['report']['not_applied'][]=['item'=>$p,'reason'=>'Not a supported information file'];continue;}
+            if(!isset($allowedFiles[$p])){$application['report']['not_applied'][]=['item'=>$p,'reason'=>FileScope::REASON];continue;}
             self::validateUpload($p,$body);$install[$p]=$body;
         }
         $application['report']['count']=count($application['report']['not_applied']);
@@ -355,7 +366,7 @@ final class SiteSnapshot
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
         self::writeOption('ozeki_resilience_site_origin_url',$from,false);
         self::writeOption('ozeki_resilience_origin_upload_url',$fromUploads,false);
-        $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from,'application_report'=>$application['report']];
+        $result=['manifest'=>$ref,'checkpoint_through'=>$base,'requested_through'=>$targetThrough??$m['through'],'through'=>$m['through'],'at'=>gmdate('c'),'posts'=>count($d['tables']['posts']),'files'=>count($install),'source_url'=>$from,'application_report'=>$application['report'],'capture_excluded_files'=>$m['excluded_files']??[]];
         self::writeOption('ozeki_resilience_site_restore_result',$result,false);
         return $result;
     }

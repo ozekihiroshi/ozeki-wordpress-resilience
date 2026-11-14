@@ -19,3 +19,9 @@ $h=render([],$s);ok(str_contains($h,'Not available'),'Missing checkpoint does no
 $s['through']=33;$h=render(['status'=>'success']+$s,$s,$list);ok(str_contains($h,'>None<'),'No tail');
 $s['checkpoint_through']=33;$s['requested_through']=68;$s['through']=68;$h=render(['status'=>'success']+$s,$s);ok(str_contains($h,'Requested formal history end')&&str_contains($h,'34–68 (35 records)'),'Explicit boundary retained without live snapshot listing');
 echo "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n";
+
+foreach(['en_US','ja'] as $testLocale){
+ ob_start();OzekiResilience\M1\Plugin::renderSiteResult([],[],['excluded_files'=>[['item'=>'uploads/<private>.pdf']]]);$h=ob_get_clean();
+ ok(str_contains($h,$testLocale==='ja'?'自動保全の対象外ファイル':'Files outside automatic protection'),'Visible exclusions in user language');
+ ok(str_contains($h,'&lt;private&gt;')&&!str_contains($h,'<private>'),'Excluded paths escaped');
+}

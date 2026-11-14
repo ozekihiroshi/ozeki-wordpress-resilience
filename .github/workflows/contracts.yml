@@ -63,6 +63,7 @@ jobs:
           php packages/markdown-m1/tests/tablepress.php
           php packages/markdown-m1/tests/tablepress-capture.php
           php packages/markdown-m1/tests/upload-guard.php
+          php packages/markdown-m1/tests/file-scope.php
           php packages/markdown-m1/tests/native-details.php packages/markdown-m1
           php packages/markdown-m1/tests/native-queue.php packages/markdown-m1
           php packages/markdown-m1/tests/members.php

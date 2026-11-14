@@ -7,10 +7,10 @@ $m=['wordpress'=>$wp_version,'source_url'=>'https://source.example.invalid','plu
 foreach(['en_US','ja'] as $locale){
     $filter=static fn()=>$locale;add_filter('determine_locale',$filter);
     $label=$locale==='ja'?'サイトの言語パック':'Site language pack';
-    foreach(['','en_US','zz_OWR_MISSING','../../invalid'] as $language){
+    foreach([false,'','en_US','zz_OWR_MISSING','../../invalid',true,42,[]] as $language){
         $rows=RecoveryPreparation::checks($m,['options'=>['WPLANG'=>$language]]);
         $row=array_values(array_filter($rows,static fn($r)=>$r['label']===$label))[0];
-        mustPreparation($row['ok']===in_array($language,['','en_US'],true),'Language availability must match WordPress installation requirements');
+        mustPreparation($row['ok']===in_array($language,[false,'','en_US'],true),'Language availability must match WordPress installation requirements');
         if(!$row['ok'])mustPreparation(str_contains($row['next'],$locale==='ja'?'サイトの言語':'Site Language'),'Missing language must identify next action');
     }
     $missing=$m;$missing['wordpress']='999.0';$missing['plugins']=['owr-nonexistent/absent.php'];$missing['software_inventory']['plugins']['owr-nonexistent/absent.php']['version']='1.0';
