@@ -1,6 +1,6 @@
 # 0.3.3 rc.15 — 閲覧条件の継続と互換性確認
 
-2026-11-14。**GitHub公開候補。WordPress.org未提出です。提出済みrc.14は審査担当者の回答待ちで、公開承認済みではありません。**
+2026-11-14。**rc.15の既存申請への更新受付と元の審査メールへの返信が完了しました。審査担当者の回答待ちで、公開承認済みではありません。** 管理者による手動アップロードの受付・メール送信完了の報告に基づき更新しました。
 
 ## 変更と互換性
 
@@ -29,9 +29,9 @@
 
 ## 保全と提出状況
 
-本番サイトには変更していません。既存原本・履歴、研究側の未コミット変更、既存ZIP・タグを保全しました。提出済みrc.14 ZIPのSHA-256は `453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a` のままです。rc.15のWordPress.orgアップロードと審査メール返信は実施していません。
+本番サイトには変更していません。既存原本・履歴、研究側の未コミット変更、既存ZIP・タグを保全しました。提出済みrc.14 ZIPのSHA-256は `453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a` のままです。rc.15は管理者が手動でアップロードし、受付と元の審査メールへの返信完了を報告しました。今回変更したのはmainの説明文書とGitHubリリースの説明だけです。提出済みZIPとタグ内の文書は提出時のまま保全しています。
 
-## Supplementary explanation (not sent)
+## Supplementary explanation for the submitted rc.15 update
 
 Ozeki Resilience 0.3.3 rc.15 — update to the existing application
 

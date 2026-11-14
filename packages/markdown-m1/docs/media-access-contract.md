@@ -1,6 +1,6 @@
 # File access contract — unreleased / ファイル閲覧条件の契約（未配布）
 
-This change is included in GitHub candidate rc.15, not in submitted rc.14. It does not change existing S3 objects, production settings or release archives.
+This change is included in submitted rc.15; the application is awaiting the reviewer's response and publication has not been approved. It does not change existing S3 objects, production settings or release archives.
 
 ## User behavior
 
