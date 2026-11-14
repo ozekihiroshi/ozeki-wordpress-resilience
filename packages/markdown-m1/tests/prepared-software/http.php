@@ -1,0 +1,15 @@
+<?php
+// Real HTTP requests; no WordPress bootstrap or forged authentication cookies.
+$base=$argv[1];$edit=$argv[2]??'';$jar=tempnam('/tmp','noinit-cookie');
+function reqN($url,$data=null){global $jar;$c=curl_init($url);curl_setopt_array($c,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>true,CURLOPT_COOKIEJAR=>$jar,CURLOPT_COOKIEFILE=>$jar,CURLOPT_TIMEOUT=>60]);if($data!==null)curl_setopt_array($c,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>http_build_query($data)]);$html=curl_exec($c);$code=curl_getinfo($c,CURLINFO_HTTP_CODE);$final=curl_getinfo($c,CURLINFO_EFFECTIVE_URL);if($html===false||$code!==200)throw new RuntimeException('HTTP failed '.$code.' '.curl_error($c));curl_close($c);return [$html,$final];}
+function formN($html,$needle){$d=new DOMDocument();@$d->loadHTML('<?xml encoding="utf-8" ?>'.$html);foreach($d->getElementsByTagName('form') as $form){$data=[];$found=false;foreach($form->getElementsByTagName('input') as $i){$n=$i->getAttribute('name');$t=$i->getAttribute('type');if($t===$needle||$n===$needle)$found=true;if(!$n||in_array($t,['submit','reset','button'])||in_array($t,['checkbox','radio'])&&!$i->hasAttribute('checked'))continue;$data[$n]=$i->getAttribute('value');}foreach($form->getElementsByTagName('select') as $s){$n=$s->getAttribute('name');foreach($s->getElementsByTagName('option') as $o)if($o->hasAttribute('selected'))$data[$n]=$o->getAttribute('value');}if($found)return [$form->getAttribute('action'),$data];}file_put_contents('/tmp/noinit-form-missing.html',$html);throw new RuntimeException('Form absent: '.$needle);}
+try{
+ [$anon]=reqN($base.'/?p='.$argv[3]);if(str_contains($anon,'CONFIDENTIAL_SYNTHETIC_TEXT'))throw new RuntimeException('Anonymous exposure');
+ [$login,$url]=reqN($base.'/?page_id='.$argv[4]);[$action,$data]=formN($login,'password');$data['log']='trialreader';$data['pwd']='Trial-member-ONLY-382!';reqN($action&&str_starts_with($action,'http')?$action:$url,$data);
+ [$body]=reqN($base.'/?p='.$argv[3]);if(!str_contains($body,'CONFIDENTIAL_SYNTHETIC_TEXT'))throw new RuntimeException('Member blocked');
+ [$profile,$url]=reqN($base.'/?page_id='.$argv[5].'&a=edit');[$action,$data]=formN($profile,'billing_city');
+ if(!str_contains($profile,'Technical area')&&!str_contains($profile,'Updated technical area'))throw new RuntimeException('Definition label absent');
+ if(!str_contains($profile,'PLC'))throw new RuntimeException('Definition choices absent');
+ if($edit!==''){$data=array_merge($data,['first_name'=>'Edited '.$edit,'last_name'=>'Reader','billing_address_1'=>'Trial 1','billing_city'=>$edit,'billing_state'=>'Trial','billing_postcode'=>'1000000','billing_country'=>'JP','billing_phone'=>'0000000000','user_email'=>'trialreader@example.invalid','trial_select'=>'b']);[$saved]=reqN($action&&str_starts_with($action,'http')?$action:$url,$data);file_put_contents('/tmp/noinit-profile-result.html',$saved);}
+ echo json_encode(['anonymous_blocked'=>true,'member_login_and_read'=>true,'profile_and_choices'=>true,'profile_posted'=>$edit!=='']);
+}finally{unlink($jar);}

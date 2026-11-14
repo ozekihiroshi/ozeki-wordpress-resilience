@@ -1,0 +1,119 @@
+Ozeki Resilience — 準備済みソフトウェアへの情報復旧
+確認日: 2026-11-15 JST（検証開始 2026-11-14）
+対象: main f105a99 + codex/recovery-prepared-software の作業差分
+
+判定
+今回の境界については合格。既存の保存・履歴・復旧の仕組みと過去の修正を
+生かして修正可能であり、全面的に白紙へ戻す必要は確認されなかった。
+実S3での追加確認も合格（末尾参照）。公開・本番適用・審査返信の承認を意味しない。
+提出rc.16は未変更。
+
+契約
+管理者が信頼できる配布元からWordPress・テーマ・プラグインを別途準備する。
+復旧はインストール・有効化・初期設定生成を行わず、準備済み環境へ情報を適用する。
+通常のプラグイン起動、情報の登録API、表示用キャッシュの再生成は、ソフトウェアの
+インストールや設定初期化とは区別する。未知の保存設定を取り込まないことは、
+復旧先の準備済み設定を消してよいことを意味しない。
+
+原因と変更
+MemberHistoryは選別後の設定で設定全体を置換し、不足した動作設定を
+wpmem_install_settings()で補っていた。初期設定への置換を期待値が許容していた。
+今回、includes/install.phpの読み込みと当該関数の呼び出しを除去。
+復旧先の設定を土台に、認識済みの保存値だけを反映する。版・DB版は復旧先を維持。
+dialogsも復旧先の未適用項目を保持。項目定義の配列は完全な集合として置換し、
+削除した項目を合成で復活させない。保存元で不存在のoptionは復旧先を消去しない。
+準備不足は変更前の確認と日英の準備案内で示す。代替の初期化処理は追加していない。
+保存処理・保存形式・原本・正式履歴の書換えは行っていない。
+
+検証
+使い捨てDockerネットワーク（internal）、専用DB・ボリューム、外部公開ポートなし。
+本番マウント・AWS認証なし。S3部分はファイル型SDK代替。実S3試験ではない。
+通常のソフトウェア導入は試験準備として先に完了し、その後で復旧を実行。
+WP-Members初期化関数は試験コピー内で呼ぶと例外になるよう計測した。
+WordPress 7.1.4 / PHP 8.3.31
+WP-Members 3.5.8.3 / CF7 6.2.5 / Flamingo 2.6.4 / TablePress 3.4.1
+ACF無料版 6.8.11 / Ozeki Markdown Documents 0.1.2
+
+結果
+- WP-Members: 会員情報、項目定義・選択肢、閲覧条件を復旧。
+  実HTTPでログイン、非会員の遮断、会員閲覧、プロフィール編集を確認。
+  Tokyo→Kyoto→Osakaの変更が保存・再復旧へ引き継がれた。項目定義削除も反映。
+  初期値と異なる復旧先form_tags/clone_menus等と版情報を保持。
+- Markdown: 原文、HTTPでの表示、内容変更・再保存・再復旧を確認。
+- ACF: フィールド定義と値、通常の取得APIによる利用、値変更・再保存・再復旧を確認。
+- TablePress: 表データ、ショートコード表示、通常の保存APIでの変更・再復旧を確認。
+- CF7: フォーム定義・表示、通常の保存APIでの変更・再復旧を確認。
+- Flamingo: 受信項目の実効値（文字列0を含む）、通常の読取・再保存・再復旧を確認。
+  この回では実メール送信やCF7からの新規受付HTTP送信は実施していない。
+- 各復旧の前後でプラグイン全ファイルのハッシュとactive_pluginsが一致。
+  install.php/uninstall.phpの追加読み込みなし。WP-Members初期化ガード発火なし。
+- 復旧中の隔離原本・履歴のハッシュ不変。最終試験218オブジェクト。
+- 準備設定を欠くケースは変更前に不足を通知し、会員・コンテンツ状態が不変。
+- 専用コンテナは終了・除去済み。証跡は隔離作業領域へ保管。
+
+再発防止
+member-prepared-settings.php: 準備済み設定・版・入れ子設定の維持、削除と不存在、日英案内。
+no-software-install.php: 製品srcの既知のインストール・初期化依存と第三者PHP includeを拒否。
+この静的チェックだけを万能な保証にはしない。実環境のファイル不変・初期化ガードと併用。
+両テストを既存GitHub Actionsの契約試験へ追加。実行状態はPR #61のChecksを参照。
+既存の独立照合もwp-members-application-2へ更新。期待値は初期値ではなく、復旧直前の
+prepared_destination.settingsを使用する。旧trusted_defaults入力では合格にしない。
+これは開発用の照合入力の変更であり、S3保存形式の変更ではない。
+正常例、166か所の欠落、準備設定の消失・初期値への置換を検出する回帰試験PASS。
+関連する会員・表・フォーム・ACF・共通適用規則の既存試験もPASS。
+
+失敗試行の扱い
+単独試験ではフォーム名、サンプルページURLの期待値、CLI/Web間の隔離ストレージ権限に
+検証側の不備があった。送信待ちのまま再復旧した試行は不合格のまま保管。
+混合試験ではCF7要求版に対してWP7.0だった準備不備、Markdown表示の呼び出し条件と
+HTTPリダイレクト追従の不足があった。対応版と通常URLで再試験しPASS。
+これらを製品障害の修正や初回からの成功として数えない。
+
+生かせるものと残る範囲
+原本の独立保全、正式履歴、入力/nonce確認、ACF定義履歴、Flamingo実効項目、
+WP-Membersの値・定義の修正、ファイル閲覧条件、添付一式保全を破棄する必要はない。
+問題のあった設定適用と、それを許した合格基準を直す。
+ただし、全項目・全版・全設定の保証や過去の監査全件の完了ではない。
+TablePress/theme_modsの設定の取捨選択、消費側の内容解釈、URL変換の差異は先行監査の
+別課題として残る。一部を保留して他の情報を先に復旧する段階制御も今回未実装。
+単に例外を握り潰して成功にする変更は行っていない。
+
+保全
+本番サイト、既存S3原本・履歴、提出ZIP・タグは未変更。mainへ未マージ。
+修正と確認結果はcodex/recovery-prepared-softwareブランチで管理する。
+レビュー用Draft PR: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/61
+研究側7ファイルの未コミット変更を維持。ZIP新規作成、WordPress.org送信、メール返信なし。
+提出rc.16 ZIP SHA256:
+c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae
+証跡: D:/workspace/wp-rescue/release-readiness/member-no-init-20261114/
+再現用: packages/markdown-m1/tests/prepared-software/README.txt
+
+実S3追加確認（2026-11-15 JST）
+最終差分で、準備済み設定との結合後にURL変換すると復旧先の値も変わり得ることを確認。
+保存元の値だけを変換してから結合する順序へ修正。復旧先の非適用設定に保存元URLを
+含む文字列を置き、文字列全体が変わらないことを単体・実S3往復で確認した。
+
+既存試験用バケット内の新規prefixだけを使用。本番バケットや既存prefixは操作しない。
+bucket: ceri-link-resilience-lock-lab-121426368082
+prefix: sites/isolated-queue-lab/delete-validation-20261026/onboarding-20261026/input-audit-20261111/acf-fix-only/prepared-software-f3ffa88465a34caa8652de13/
+認証はEC2ホストの既存ロールに保持。内部ネットワークのWordPressには渡していない。
+ホスト側の専用SDK中継は対象prefixへの読み取りとIfNoneMatch=*の新規作成だけを許可。
+Delete/PutObjectRetention等の変更操作は中継しない。バケット・IAM設定は未変更。
+
+実S3結果: PASS。PutObject 218、GetObject 786、ListObjectsV2 64、失敗0。
+各復旧前後に対象prefix全版のVersionId/ETag/Size/IsLatestを比較して不変。
+既存原本や履歴の再書込みなし。試験用218オブジェクト版はそのまま保持。
+WP-Members、Markdown、ACF、TablePress、CF7、Flamingoの前述の利用・変更/再保存・
+再復旧が合格。WP-Members初期化ガード発火なし。プラグインファイル・有効化状態不変。
+復旧先設定の維持、匿名閲覧の遮断、項目定義の削除、不足時の変更前案内も合格。
+専用コンテナ・ボリューム・ネットワークは試験終了時に除去済み。
+
+最初の実S3試行はPHP SDKの@http/@contextをPython SDKへ渡す中継不備で、一覧取得時に停止。
+書込み前の失敗として記録を保持。中継だけ修正し、読み取り確認後に別の未使用prefixで
+試験全体を再実行した。合格試行にこの失敗を隠して混ぜていない。
+
+実S3で検証した製品ソースSHA256:
+MemberHistory.php: bcf251fd1f618c5ccb1eb5f1fae872c9b92ef9cb6c02a0cb05faa0894aab27bf
+RecoveryPreparation.php: 10e7c36360202651e52cf9784b7c3bb4f9e1c676374adf66d4816ba81b30a743
+機械可読の結果: prepared-software-live-20261115.json
+詳細証跡: D:/workspace/wp-rescue/release-readiness/member-no-init-20261114/live-results/

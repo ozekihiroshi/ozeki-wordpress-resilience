@@ -1,0 +1,46 @@
+{
+  "scope": "Isolated WP-Members no-initialization feasibility experiment, not product release",
+  "storage": "Real S3 via host-only scoped SDK transport",
+  "s3": {
+    "bucket": "ceri-link-resilience-lock-lab-121426368082",
+    "owner": "121426368082",
+    "region": "ap-northeast-1",
+    "prefix": "sites/isolated-queue-lab/delete-validation-20261026/onboarding-20261026/input-audit-20261111/acf-fix-only/prepared-software-f3ffa88465a34caa8652de13/"
+  },
+  "versions": {
+    "wordpress": "7.1.4",
+    "php": "8.3.31",
+    "wp_members": "3.5.8.3"
+  },
+  "missing_preparation": {
+    "rejected": true,
+    "reason": "Recovery preparation needed: WP-Members destination setup (Already set up): Complete WP-Members setup on the destination, then recheck. Recovery does not install or initialize plugins.",
+    "state_unchanged": true
+  },
+  "first_recovery": {
+    "anonymous_blocked": true,
+    "member_login_and_read": true,
+    "profile_and_choices": true,
+    "profile_posted": false
+  },
+  "integrations_roundtrip": true,
+  "second_recovery": {
+    "anonymous_blocked": true,
+    "member_login_and_read": true,
+    "profile_and_choices": true,
+    "profile_posted": false
+  },
+  "definition_deletion": true,
+  "prepared_settings_preserved": true,
+  "initialization_guard_never_triggered": true,
+  "object_count": 218,
+  "pass": true,
+  "s3_operations": {
+    "failed": 0,
+    "ListObjectsV2": 64,
+    "PutObject": 218,
+    "GetObject": 786
+  },
+  "installed_software_unchanged": true,
+  "no_installer_included": true
+}

@@ -61,6 +61,8 @@ jobs:
           php packages/markdown-m1/tests/comments.php packages/markdown-m1
           php packages/markdown-m1/tests/forms.php packages/markdown-m1
           php packages/markdown-m1/tests/tablepress.php
+          php packages/markdown-m1/tests/member-prepared-settings.php
+          php packages/markdown-m1/tests/no-software-install.php
           php packages/markdown-m1/tests/tablepress-capture.php
           php packages/markdown-m1/tests/upload-guard.php
           php packages/markdown-m1/tests/file-scope.php
