@@ -55,7 +55,7 @@ ACF無料版 6.8.11 / Ozeki Markdown Documents 0.1.2
 member-prepared-settings.php: 準備済み設定・版・入れ子設定の維持、削除と不存在、日英案内。
 no-software-install.php: 製品srcの既知のインストール・初期化依存と第三者PHP includeを拒否。
 この静的チェックだけを万能な保証にはしない。実環境のファイル不変・初期化ガードと併用。
-両テストを既存GitHub Actionsの契約試験へ追加（未pushのためActions実行済みではない）。
+両テストを既存GitHub Actionsの契約試験へ追加。実行状態はPR #61のChecksを参照。
 既存の独立照合もwp-members-application-2へ更新。期待値は初期値ではなく、復旧直前の
 prepared_destination.settingsを使用する。旧trusted_defaults入力では合格にしない。
 これは開発用の照合入力の変更であり、S3保存形式の変更ではない。
@@ -81,6 +81,7 @@ TablePress/theme_modsの設定の取捨選択、消費側の内容解釈、URL�
 保全
 本番サイト、既存S3原本・履歴、提出ZIP・タグは未変更。mainへ未マージ。
 修正と確認結果はcodex/recovery-prepared-softwareブランチで管理する。
+レビュー用Draft PR: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/61
 研究側7ファイルの未コミット変更を維持。ZIP新規作成、WordPress.org送信、メール返信なし。
 提出rc.16 ZIP SHA256:
 c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae
