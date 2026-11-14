@@ -63,6 +63,7 @@ final class SiteSnapshot
             }
             self::safePath($rel);
             // Guarded registered originals are retained; their contract prevents public placement.
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception data; Plugin::action stores it and the admin renderers escape it at output.
             if($f->isLink())throw new \RuntimeException('Symlink not portable: '.$rel);
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if($f->getSize()>32*1024*1024)throw new \RuntimeException('Resource exceeds 32 MiB: '.$rel);
