@@ -1,8 +1,8 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.16 is the latest GitHub candidate; it has not been submitted to WordPress.org.** Submitted rc.15 is awaiting the reviewer's response; publication has not been approved.
+**0.3.3 rc.16 has been accepted as an update to the existing WordPress.org application, and the original review email has been replied to.** We are awaiting the reviewer's response; publication has not been approved. This status is based on the maintainer's confirmation of successful manual upload and email submission.
 
-**0.3.3 rc.16は最新のGitHub公開候補で、WordPress.org未提出です。** 提出済みrc.15は審査担当者の回答待ちで、公開承認済みではありません。
+**0.3.3 rc.16の既存申請への更新受付と元の審査メールへの返信が完了しています。審査担当者の回答待ちで、公開承認済みではありません。** 管理者による手動アップロードの受付・メール送信完了の報告に基づく記録です。
 
 - [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.16/ozeki-resilience-0.3.3.zip)
 - [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.16)

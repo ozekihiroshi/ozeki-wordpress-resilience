@@ -1,6 +1,6 @@
 # 0.3.3 rc.16 — 履歴一覧の表示修正・公開候補
 
-2026-11-14。**rc.16はGitHub公開候補でWordPress.org未提出です。提出済みrc.15は審査担当者の回答待ちで、公開承認済みではありません。** 本番サイトはrc.15のままです。
+2026-11-14。**rc.16の既存申請への更新受付と元の審査メールへの返信が完了しました。審査担当者の回答待ちで、公開承認済みではありません。** 管理者による手動アップロードの受付・メール送信完了の報告に基づき更新しました。本番サイトはrc.15のままです。
 
 ## 変更と互換性
 
@@ -28,9 +28,9 @@
 
 ## 保全
 
-本番サイト・既存S3原本と履歴・研究側の未コミット変更には手を加えていません。提出済みrc.15 ZIPはSHA-256 `5f8ce491ec286f3e84f3667ceaddc5416ac0febad81441d8fc3bca601ea6e4eb` のままです。既存ZIP・タグを保持し、rc.16を別タグとして公開します。WordPress.orgへの送信・審査メール返信は未実施です。
+本番サイト・既存S3原本と履歴・研究側の未コミット変更には手を加えていません。提出済みrc.15 ZIPはSHA-256 `5f8ce491ec286f3e84f3667ceaddc5416ac0febad81441d8fc3bca601ea6e4eb` のままです。既存ZIP・タグを保持し、rc.16を別タグとして公開しました。その後、管理者からWordPress.orgの更新受付と元の審査メールへの返信完了が報告されました。今回更新したのはmainの説明文書とGitHubリリースの説明だけです。提出済みZIPとタグ内の文書は提出時のまま保全しています。
 
-## Supplementary explanation (not sent)
+## Supplementary explanation for the submitted rc.16 update
 
 Ozeki Resilience 0.3.3 rc.16 — update to the existing application
 

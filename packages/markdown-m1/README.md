@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.16 is the latest GitHub candidate and has not been submitted to WordPress.org.** It fixes history display for records without article titles or statuses. Submitted rc.15 is awaiting the reviewer's response; publication has not been approved. [Distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**0.3.3 rc.16 has been accepted as an update to the existing WordPress.org application, and the original review email has been replied to.** We are awaiting the reviewer's response; publication has not been approved. It fixes history display for records without article titles or statuses. [Distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
