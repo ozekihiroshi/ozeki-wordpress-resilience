@@ -9,12 +9,13 @@ try{
     require $argv[1];
     $raw=$input['raw'];$source=$input['source_url'];
     $observed=MemberContractReadback::observe($raw['membership'],$source);
-    // Captured independently after activating this version on a clean isolated site.
-    // Never call wpmem_install_settings(): it writes options even when used for its return value.
-    if(($input['trusted_defaults']['version']??null)!==$observed['data']['version']||!is_array($input['trusted_defaults']['settings']??null))throw new RuntimeException('Missing matching trusted defaults');
-    $defaults=$input['trusted_defaults']['settings'];
+    // Capture ALL MemberHistory::OPTIONS from the prepared destination BEFORE recovery.
+    // Generic installation defaults cannot prove that operator preparation was preserved.
+    if(($input['prepared_destination']['version']??null)!==$observed['data']['version']||!is_array($input['prepared_destination']['settings']['wpmembers_settings']??null))throw new RuntimeException('Missing pre-recovery destination settings');
+    $prepared=$input['prepared_destination']['settings'];
+    if(array_diff(['wpmembers_settings','wpmembers_fields','wpmembers_dialogs','wpmembers_tos'],array_keys($prepared)))throw new RuntimeException('Incomplete pre-recovery destination settings');
     $expected=MemberContractReadback::destinationExpected($raw['membership'],$source,home_url());
-    $result=MemberApplicationContract::compare($expected,$observed['data'],$defaults);
+    $result=MemberApplicationContract::compare($expected,$observed['data'],$prepared);
     $restrictions=MemberContractReadback::restrictions($raw['tables']['postmeta'],$raw['tables']['posts']);
     $result['errors']=array_merge($result['errors'],$observed['errors'],$restrictions['errors']);$result['pass']=!$result['errors'];
     $result['stage']='separate-request-readback';$result['restrictions_checked']=$restrictions['checked'];
