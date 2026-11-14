@@ -1,0 +1,13 @@
+{
+  "history_records": 36,
+  "types": 9,
+  "locales": {
+    "en_US": true,
+    "ja": true
+  },
+  "warnings": 0,
+  "existing_history_unchanged": true,
+  "individual_media_restore_rejected": true,
+  "wordpress": "7.0",
+  "original_rc15_warning_reproduced": true
+}

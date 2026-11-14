@@ -417,7 +417,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->originalSource($row['original']);
@@ -431,7 +431,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
             $source=$store->originalSource($row['original']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -719,6 +719,17 @@ final class Plugin
     private function form(string $operation): void {
         echo '<form id="owr-action-'.esc_attr($operation).'" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="ozeki_resilience_m1"><input type="hidden" name="operation" value="'.esc_attr($operation).'">';wp_nonce_field('ozeki_resilience_m1');
     }
+    /** Display metadata is optional for non-document history; never alter saved records. */
+    public static function historyDisplay(array $row): array {
+        $a=is_array($row['attributes']??null)?$row['attributes']:[];
+        $fallback=($a['post_type']??'')==='owr_media_access'
+            ? SetupReadiness::text('File access conditions','ファイルの閲覧条件')
+            : AdminText::text('Not recorded');
+        return [
+            'title'=>is_string($a['title']??null)?$a['title']:$fallback,
+            'status'=>is_string($a['status']??null)?$a['status']:AdminText::text('Not recorded'),
+        ];
+    }
     /** Read-only summary: local pending data is never treated as S3 confirmation. */
     public static function renderSaveStatus(?array $history, string $readError, array $pending, array $queue, string $notice, string $queueError, bool $protect, array $captureError=[]): void {
         echo '<h2>'.esc_html(AdminText::text('Save protection status')).'</h2><p>'.esc_html(AdminText::text('Protection setting:')).' '.esc_html($protect?AdminText::text('Enabled'):AdminText::text('Disabled')).''.esc_html(AdminText::text('. This setting alone does not prove that all site changes are protected.')).'</p>';
@@ -727,7 +738,7 @@ final class Plugin
         else {
             $last=$history[count($history)-1];
             echo '<table class="widefat striped"><tbody>';
-            foreach([AdminText::text('Last confirmed sequence')=>$last['sequence']??AdminText::text('Unknown'),AdminText::text('Confirmed at (UTC)')=>$last['confirmed_at']??AdminText::text('Not recorded'),AdminText::text('Asset')=>$last['original']['asset']??AdminText::text('Not recorded'),AdminText::text('Title')=>$last['attributes']['title']??AdminText::text('Not recorded'),AdminText::text('Recorded state')=>$last['attributes']['status']??AdminText::text('Not recorded')] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
+            foreach([AdminText::text('Last confirmed sequence')=>$last['sequence']??AdminText::text('Unknown'),AdminText::text('Confirmed at (UTC)')=>$last['confirmed_at']??AdminText::text('Not recorded'),AdminText::text('Asset')=>$last['original']['asset']??AdminText::text('Not recorded'),AdminText::text('Title')=>self::historyDisplay($last)['title'],AdminText::text('Recorded state')=>self::historyDisplay($last)['status']] as $k=>$v)echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
             echo '</tbody></table>';
         }
         echo '<p>'.esc_html(AdminText::text('Formal history confirmation records a completed S3 save. This display reads history only: it does not re-fetch or verify all referenced originals now. Original retrieval status: not checked by this display.')).'</p>';
@@ -794,7 +805,7 @@ final class Plugin
             RecoveryPreparation::render($siteSnapshots);
             RecoveryPreparation::renderCheck((array)get_option('ozeki_resilience_recovery_preparation',[]));
             $ends=[];foreach($siteSnapshots as $item)$ends[(int)$item['through']]=AdminText::text('Checkpoint boundary');
-            if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.($row['attributes']['title']??$row['original']['asset']??'').' / '.($row['attributes']['status']??'');
+            if($ends)foreach($this->store()->history(min(array_keys($ends))) as $row)$ends[(int)$row['sequence']]=($row['confirmed_at']??'').' / '.self::historyDisplay($row)['title'].' / '.self::historyDisplay($row)['status'];
             ksort($ends);
             $lastAttempt=(array)get_option('ozeki_resilience_site_restore_attempt',[]);
             $preparation=(array)get_option('ozeki_resilience_recovery_preparation',[]);
@@ -859,7 +870,7 @@ final class Plugin
         echo '<h2>'.esc_html(AdminText::text('Confirmed formal history / Individual recovery')).'</h2><p>'.esc_html(AdminText::text('This table lists operations confirmed in S3, not prepared originals or pending operations. Individual recovery is supplementary: select one version per asset to restore its text, recorded attributes and publication status. Matching asset identities are updated; missing ones are created. Media files, themes, menus and full site relationships are not restored by this action. Select related documents as needed; use site-wide recovery above for articles with images and site relationships.')).'</p>';
         try {
             if($history===null)throw new \RuntimeException($historyReadError);$this->form('restore');echo '<table class="widefat"><tr><th>'.esc_html(AdminText::text('Select')).'</th><th>'.esc_html(AdminText::text('Order')).'</th><th>'.esc_html(AdminText::text('Document')).'</th><th>'.esc_html(AdminText::text('Status')).'</th><th>'.esc_html(AdminText::text('Raw S3 original')).'</th></tr>';
-            foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html($row['attributes']['title']).'</td><td>'.esc_html($row['attributes']['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
+            foreach (array_reverse($history) as $row) echo '<tr><td><input type="checkbox" name="sequences[]" value="'.(int)$row['sequence'].'"></td><td>'.(int)$row['sequence'].'</td><td>'.esc_html(self::historyDisplay($row)['title']).'</td><td>'.esc_html(self::historyDisplay($row)['status']).'</td><td><code>'.esc_html($row['original']['source']['key']).'</code></td></tr>';
             echo '</table>';submit_button(AdminText::text('Restore selected assets (text and attributes)'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '<h2>'.esc_html(AdminText::text('Last asset recovery result')).'</h2><pre>'.esc_html(Store::json((array)get_option('ozeki_resilience_m1_restore_result',[]))).'</pre></div>';
