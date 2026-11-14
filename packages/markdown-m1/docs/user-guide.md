@@ -128,8 +128,8 @@ Preparation distinguishes ACF free, PRO and unused ACF. For the free version, it
 ## Preserving a recovered site with rc.12
 
 Existing originals remain readable. New saves after complete-site recovery retain reference relationships, including untouched Markdown. Recovery points containing this new context require rc.12 or a later compatible reader; prepare the updated version on recovery destinations too. Existing originals and history are not rewritten. See [updating](install-update.md).
-### File access conditions (development; not in submitted rc.14)
+### File access conditions (rc.15)
 
 Page membership and file restrictions are separate. Ordinary public images remain usable after recovery. Registered media with unresolved access conditions is retained without public placement, and survives article editing, resaving and the next recovery. Legacy files without recorded conditions receive the same treatment. Continue to review the exclusions for files outside ordinary media, such as plugin-managed directories.
 
-After directly changing access-control files in uploads directories, select **Record file access conditions** and verify formal-history confirmation. Prepare the updated reader on recovery destinations. See [behavior and compatibility](media-access-contract.md).
+After directly changing access-control files in uploads directories, select **Record file access conditions** and verify formal-history confirmation. Prepare the updated reader on recovery destinations. See [behavior and compatibility](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/media-access-contract.md).

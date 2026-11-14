@@ -32,6 +32,12 @@ ACF recovery uses the recorded free version (tested 6.8.10), database-defined gr
 
 Standard WordPress Posts and Pages need no additional plugin. For integration-specific content, install the compatible plugin separately before recovery. Markdown Documents is needed when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
 
+= File access and compatible recovery =
+
+Page membership and file access are separate. Public supported images remain usable. Registered media with unresolved file conditions is retained without public placement, including after article editing, resaving and repeated recovery. Legacy files without recorded access conditions remain on hold. This does not reproduce unsupported private-download services.
+
+New media originals and recovery points created by rc.15 require a compatible updated recovery reader; older versions reject them. Existing S3 originals and history remain unchanged and readable. Update recovery destinations too. After updating the source, record file access conditions and confirm formal history. See docs/install-update.md.
+
 = Scope and responsibilities =
 
 * Protection covers documented content and operations, not arbitrary plugins, all settings or external/CDN resources. Keep separate protection for resources outside this scope.
@@ -87,6 +93,8 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Record file access conditions consistently in initial capture and daily history; preserve held originals across recovery, resaving and repeated recovery. New formats require the updated reader; old files with unknown conditions are not publicly placed.
+* Separate WP-Members page restrictions from file restrictions; preserve supported content when unrelated plugins are installed. Normalize the English default locale during recovery.
 * Guide initial storage setup and check recovery prerequisites, including language packs and required plugins, before changing destination data. Prepare missing items and recheck.
 * Restore declared Flamingo receipt values for continued viewing, resaving and repeated recovery. Existing originals need no migration; receipts already re-saved empty require an earlier original containing their values.
 * Supply safe TablePress runtime defaults without importing archived custom commands.

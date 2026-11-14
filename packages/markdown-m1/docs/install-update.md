@@ -64,8 +64,8 @@ rc.11 includes WP-Members field definitions and standalone ACF definition histor
 
 rc.11はWP-Membersの会員項目定義と、ACF定義単独の履歴保存に対応します。既存原本は変更せず引き続き読めます。保護中の定義変更後は正式履歴への確定を確認してください。新しいACF定義履歴と、それを含むBaseline・Checkpointにはrc.11以降の対応する復旧処理が必要です。復旧先にも用意できるよう、この版を保管してください。既存Baselineが現在のACF版を含む場合、更新だけを理由に作り直す必要はありません。
 
-## Development change: file access / 開発中：ファイル閲覧条件
+## rc.15: file access / ファイル閲覧条件
 
-Not included in submitted rc.14. New media-bearing originals and site recovery points require the updated reader. Existing originals remain unchanged and readable; files without recorded access conditions are held rather than published. After updating the source, record file access conditions and confirm formal history. Keep the updated reader for recovery. See [the contract and verification scope](media-access-contract.md).
+rc.15 introduces new media-bearing originals and site recovery points that require the rc.15-compatible reader; older versions reject them. Existing originals remain unchanged and readable; files without recorded access conditions are held rather than published. After updating the source, record file access conditions and confirm formal history. Keep the updated reader for recovery. See [the contract and verification scope](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/media-access-contract.md).
 
-提出済みrc.14には未収録です。新しい画像付き原本と復旧ポイントには更新版の復旧処理が必要です。既存原本は変更せず読めますが、閲覧条件の記録がないファイルは公開配置を保留します。保存元の更新後はファイルの閲覧条件を再確認・記録し、正式履歴への確定を確認してください。復旧用にも更新版を保管します。[動作と確認範囲](media-access-contract.md)を参照してください。
+rc.15の新しい画像付き原本と復旧ポイントには、rc.15対応の復旧処理が必要で、旧版は読み取りを拒否します。既存原本は変更せず読めますが、閲覧条件の記録がないファイルは公開配置を保留します。保存元の更新後はファイルの閲覧条件を再確認・記録し、正式履歴への確定を確認してください。復旧用にも更新版を保管します。[動作と確認範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/media-access-contract.md)を参照してください。
