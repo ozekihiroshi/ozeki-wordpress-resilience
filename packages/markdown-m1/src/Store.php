@@ -5,12 +5,13 @@ if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/AssetFormat.php';
 require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/ReferenceContext.php';
+require_once __DIR__.'/MediaAccess.php';
 
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
 {
-    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
-    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
+    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
+    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
     private function requireWriter(): void {
         if (($this->config['setup_role']??'source')==='recovery') {
@@ -544,6 +545,8 @@ final class Store
         return $this->saveOriginal($base,$asset,$operation,$source,$attributes,$until);
     }
     private function saveOriginal(string $base,string $asset,string $operation,string $source,array $attributes,?string $until): array {
+        // An already frozen legacy queue entry can resume without inventing public permission.
+        foreach($attributes['media']??[] as $i=>$media)$attributes['media'][$i]['access']=MediaAccess::effective($media['access']??[],$media['files']??[]);
         if(isset($attributes['reference_origins'])){
             $attributes['reference_origins']=ReferenceContext::merge($attributes['reference_origins']);
             if(!$attributes['reference_origins'])throw new \RuntimeException('Empty required original reference context.');
@@ -555,7 +558,7 @@ final class Store
             unset($layout['files']);$meta['structure']=$layout;
             $body=self::json(['schema'=>AssetFormat::SCHEMA,'data'=>$parts]);
         }
-        return ['schema'=>isset($attributes['reference_origins'])?ReferenceContext::ORIGINAL_FORMAT:'owr-md-original-2','asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
+        return ['schema'=>isset($attributes['media_access_schema'])||!empty($attributes['media'])?MediaAccess::ORIGINAL_FORMAT:(isset($attributes['reference_origins'])?ReferenceContext::ORIGINAL_FORMAT:'owr-md-original-2'),'asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
             'source_sha256'=>hash('sha256',$source),'parts'=>$parts,
             'source'=>$this->put($base.self::sourceName($attributes),$body,self::sourceType($attributes).'; charset=utf-8',$until),
             'metadata'=>$this->put($base.'metadata.json',self::json($meta),'application/json',$until)];
@@ -563,10 +566,19 @@ final class Store
     /** Decode only for existing typed replay; S3 stores readable independent originals. */
     public function originalSource(array $original): string {
         if(($original['schema']??'owr-md-original-1')==='owr-md-original-1')return $this->get($original['source']);
-        if(!in_array($original['schema']??'',['owr-md-original-2',ReferenceContext::ORIGINAL_FORMAT],true))throw new \RuntimeException('Unsupported original format.');
+        if(!in_array($original['schema']??'',['owr-md-original-2',ReferenceContext::ORIGINAL_FORMAT,MediaAccess::ORIGINAL_FORMAT],true))throw new \RuntimeException('Unsupported original format.');
         $meta=json_decode($this->get($original['metadata']),true,512,JSON_THROW_ON_ERROR);
         if(($meta['schema']??'')!==AssetFormat::SCHEMA)throw new \RuntimeException('Invalid original metadata.');
-        if(($original['schema']??'')===ReferenceContext::ORIGINAL_FORMAT){
+        if(($original['schema']??'')===MediaAccess::ORIGINAL_FORMAT){
+            $a=$meta['attributes'];
+            if(($a['post_type']??'')==='owr_media_access'&&($a['media_access_schema']??'')!==MediaAccess::SCHEMA)throw new \RuntimeException('Missing media access history contract.');
+            foreach($a['media']??[] as $media){
+                if(!is_array($media['access']??null))throw new \RuntimeException('Missing media access original contract.');
+                $rules=MediaAccess::validate($media['access']);
+                if(array_diff_key($media['files'],$rules)||array_diff_key($rules,$media['files']))throw new \RuntimeException('Incomplete media access original contract.');
+            }
+        }
+        if(isset($meta['attributes']['reference_origins'])||($original['schema']??'')===ReferenceContext::ORIGINAL_FORMAT){
             if(empty($meta['attributes']['reference_origins']))throw new \RuntimeException('Missing required original reference context.');
             ReferenceContext::merge($meta['attributes']['reference_origins']);
         }

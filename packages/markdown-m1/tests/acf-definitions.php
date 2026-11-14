@@ -29,7 +29,7 @@ try{AcfHistory::replay($empty,Store::json($definition),$bad);throw new LogicExce
 $s3=new AcfS3();$s=new Store($s3,['bucket'=>'test','prefix'=>'defs/']);$site=new SiteSnapshot($s);
 $baseline=$site->save(['content.json'=>Store::json($data)],['schema'=>'owr-site-snapshot-1','through'=>0]);
 [$manifest]=$site->load($baseline['manifest']);
-ok($manifest['asset_format']===AcfHistory::SNAPSHOT_FORMAT,'Explicit minimum reader boundary');
+ok($manifest['asset_format']===\OzekiResilience\M1\MediaAccess::SNAPSHOT_FORMAT,'Explicit minimum reader boundary');
 $definition['acf_definitions']=$original['acf_definitions'];
 $o=$s->prepare('acf-definitions','new',Store::json($definition),$attrs);
 $s->commit(['schema'=>'owr-md-history-1','sequence'=>1,'original'=>$o,'attributes'=>$attrs]);

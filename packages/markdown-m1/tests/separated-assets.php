@@ -47,7 +47,7 @@ check(!isset($rawManifest['resources']['content.json'])&&isset($rawManifest['res
 $metadata=$store->get($rawManifest['resources']['assets/metadata.json']);check(!str_contains($metadata,$html)&&!str_contains($metadata,'独立したコメント本文'),'metadata excludes body');
 $cp=$site->checkpoint($initial['manifest']);
 $prefix='trial/'.dirname($cp['manifest']['key']).'/';foreach(array_keys($s3->objects) as $key)if(!str_starts_with($key,$prefix))unset($s3->objects[$key]);
-[$m,$loaded]=$site->load($cp['manifest']);ksort($files);check($loaded===$files,'Checkpoint independent, all unknown information retained');
+[$m,$loaded]=$site->load($cp['manifest']);$d['media_access']=['uploads/photo.png'=>['state'=>'unknown']];$files['content.json']=Store::json($d);ksort($files);check($loaded===$files,'Checkpoint independent, all unknown information retained');
 // Tail uses the same representation and the existing typed replay.
 $attrs=['post_type'=>'owr_comment','content_format'=>'comment-json','origin_id'=>9,'post_id'=>1,'status'=>'1'];$r=$rows[1];$r['comment']['comment_content']='更新後のコメント';
 $o=$store->prepare('comment-9','updated',Store::json($r),$attrs);$store->commit(['schema'=>'owr-md-history-1','sequence'=>1,'original'=>$o,'attributes'=>$attrs]);

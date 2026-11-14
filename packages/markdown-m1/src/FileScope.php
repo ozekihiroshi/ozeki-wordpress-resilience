@@ -16,7 +16,7 @@ final class FileScope {
         try{return SiteSnapshot::isInformationFile('uploads/'.$p);}
         catch(\RuntimeException $e){return false;}
     }
-    public static function paths(array $data): array {
+    public static function paths(array $data,bool $registered=false): array {
         $posts=[];$meta=[];$out=[];$denied=[];$unknownReferences=[];
         foreach($data['tables']['posts']??[] as $p)$posts[(string)$p['ID']]=$p;
         foreach($data['tables']['postmeta']??[] as $m)$meta[(string)$m['post_id']][$m['meta_key']]=self::value($m['meta_value']);
@@ -33,18 +33,13 @@ final class FileScope {
                 $extra[]=$details['original_image']??null;
                 foreach($extra as $name)if(is_string($name)&&basename($name)===$name&&self::ordinary($dir.$name))$paths['uploads/'.$dir.$name]=true;
             }
+            if($registered){$out+=$paths;continue;}
             if(!in_array($p['post_status'],['inherit','publish'],true)||!empty($p['post_password'])){$denied+=$paths;continue;}
             $ownedElsewhere=false;foreach($unknownReferences as $references)foreach($paths as $path=>$_)if($references===false||str_contains($references,substr($path,8))){$ownedElsewhere=true;break 2;}
             if($ownedElsewhere){$denied+=$paths;continue;}
             $known=['_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt','_wp_attachment_backup_sizes','_wp_attachment_context','_wp_attachment_is_custom_header','_wp_attachment_is_custom_background','_edit_lock','_edit_last'];
             if(array_diff(array_keys($m),$known)){$denied+=$paths;continue;}
-            $parent=(string)($p['post_parent']??0);$seen=[];$public=true;
-            while($parent!=='0'&&$parent!==''){
-                $q=$posts[$parent]??null;
-                if(!$q||isset($seen[$parent])||!in_array($q['post_type'],['post','page','ozmd_document'],true)||$q['post_status']!=='publish'||!empty($q['post_password'])||!empty($meta[$parent]['_wpmem_block'])){$public=false;break;}
-                $seen[$parent]=true;$parent=(string)($q['post_parent']??0);
-            }
-            if(!$public){$denied+=$paths;continue;}
+            // A page password, draft state or membership rule does not protect its file URL.
             $out+=$paths;
         }
         return array_diff_key($out,$denied);

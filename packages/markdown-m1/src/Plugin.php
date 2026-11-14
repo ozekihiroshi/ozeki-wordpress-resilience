@@ -21,6 +21,7 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        (new MediaAccess())->boot();
         add_filter('wp_handle_upload_prefilter',[$this,'protectUpload']);
         add_filter('wp_handle_sideload_prefilter',[$this,'protectUpload']);
         add_filter('wp_insert_post_data',[$this,'before'],PHP_INT_MAX,4);
@@ -80,7 +81,7 @@ final class Plugin
             if(!$id)throw new \RuntimeException('Cannot identify local media: '.$url);
             $ids[$id]=true;
         }
-        $out=[];$root=realpath($upload['basedir']);
+        $out=[];$root=realpath($upload['basedir']);$access=MediaAccess::current();
         foreach(array_keys($ids) as $id){
             $p=get_post($id);$meta=wp_get_attachment_metadata($id);
             if(!$p || !str_starts_with($p->post_mime_type,'image/') || !is_array($meta)||empty($meta['file']))throw new \RuntimeException('Image metadata is incomplete.');
@@ -88,13 +89,17 @@ final class Plugin
             foreach($meta['sizes']??[] as $size)$paths[]=$dir.$size['file'];
             if(!empty($meta['original_image']))$paths[]=$dir.$meta['original_image'];
             $refs=[];foreach(array_unique($paths) as $path){SiteSnapshot::safePath($path);$full=realpath($upload['basedir'].'/'.$path);
-                if(!$full||!str_starts_with($full,$root.DIRECTORY_SEPARATOR)||!is_file($full)||filesize($full)>32*1024*1024)throw new \RuntimeException('Invalid image resource.');
-                $mime=wp_get_image_mime($full);if(!in_array($mime,['image/jpeg','image/png','image/gif','image/webp','image/avif'],true))throw new \RuntimeException('Invalid image bytes.');
-                if($resources===null)$refs['uploads/'.$path]=$store->put($base.'media/'.$path,file_get_contents($full),$mime);
-                else {$resources['uploads/'.$path]=['body'=>base64_encode(file_get_contents($full)),'type'=>$mime];$refs['uploads/'.$path]=null;}
+                $bytes=MediaAccess::heldBody('uploads/'.$path);
+                if($bytes===null){
+                    if(!$full||!$root||!str_starts_with($full,$root.DIRECTORY_SEPARATOR)||!is_file($full)||filesize($full)>32*1024*1024)throw new \RuntimeException('Invalid image resource.');
+                    $bytes=file_get_contents($full);
+                }
+                $info=@getimagesizefromstring($bytes);$mime=$info['mime']??'';if(!in_array($mime,['image/jpeg','image/png','image/gif','image/webp','image/avif'],true))throw new \RuntimeException('Invalid image bytes.');
+                if($resources===null)$refs['uploads/'.$path]=$store->put($base.'media/'.$path,$bytes,$mime);
+                else {$resources['uploads/'.$path]=['body'=>base64_encode($bytes),'type'=>$mime];$refs['uploads/'.$path]=null;}
             }
             $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE ID=%d",$id),ARRAY_A);
-            $out[]=['post'=>$row,'meta'=>['_wp_attached_file'=>get_post_meta($id,'_wp_attached_file',true),'_wp_attachment_metadata'=>$meta,'_wp_attachment_image_alt'=>get_post_meta($id,'_wp_attachment_image_alt',true)],'files'=>$refs];
+            $out[]=['post'=>$row,'meta'=>['_wp_attached_file'=>get_post_meta($id,'_wp_attached_file',true),'_wp_attachment_metadata'=>$meta,'_wp_attachment_image_alt'=>get_post_meta($id,'_wp_attachment_image_alt',true)],'files'=>$refs,'access'=>MediaAccess::effective(array_intersect_key($access,$refs),$refs)];
         }
         return $out;
     }
@@ -528,7 +533,7 @@ final class Plugin
         check_admin_referer('ozeki_resilience_m1');
         try {
             $action=sanitize_key(wp_unslash($_POST['operation']??''));
-            if (($this->config()['setup_role']??'source')==='recovery' && in_array($action,['resume','checkpoint','whole_checkpoint','initial_snapshot','whole_initial','site_cleanup_preview','site_cleanup_execute','site_retention_renew','cleanup_preview','cleanup_execute'],true)) {
+            if (($this->config()['setup_role']??'source')==='recovery' && in_array($action,['media_recheck','resume','checkpoint','whole_checkpoint','initial_snapshot','whole_initial','site_cleanup_preview','site_cleanup_execute','site_retention_renew','cleanup_preview','cleanup_execute'],true)) {
                 // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Localized diagnostic escaped by the action handler.
                 throw new \RuntimeException(SetupReadiness::text('This recovery destination only reads S3. Create or manage recovery points on the source site.','復旧先ではS3を読み取るだけです。復旧ポイントの作成・管理は保存元で行ってください。'));
             }
@@ -585,6 +590,9 @@ final class Plugin
                     $r['message']=$e->getMessage();
                 }
                 update_option('ozeki_resilience_setup_storage',$r,false);
+            } elseif ($action==='media_recheck') {
+                if(empty($this->config()['protect']))throw new \RuntimeException('Enable protection before recording access changes.');
+                MediaAccess::record();
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
             elseif ($action==='restore') {
                 if(!isset($_POST['sequences']) || !is_array($_POST['sequences']))throw new \RuntimeException('Select valid history numbers.');
@@ -770,6 +778,10 @@ final class Plugin
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
         self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('ozeki_resilience_m1_comment_pending',[]),(string)get_option('ozeki_resilience_m1_notice',''),(string)get_option('ozeki_resilience_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
         if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(!empty($this->config()['protect'])){
+            echo '<p>'.esc_html(SetupReadiness::text('File access conditions are recorded separately from page membership rules. After changing access-control files in uploads directories, recheck here. Unrecognized or inherited unresolved file conditions remain on hold after recovery; this does not publish those files.','ファイルの閲覧条件はページの会員制限とは別に記録します。uploads内のディレクトリ制限ファイルを変更したら、ここで再確認してください。認識できない条件や復旧時に保留した条件は引き続き保留し、ファイルを公開しません。')).'</p>';
+            $this->form('media_recheck');submit_button(SetupReadiness::text('Record file access conditions','ファイルの閲覧条件を再確認・記録'));echo '</form>';
+        }
         if (get_option(self::PENDING)) echo '<p role="alert"><strong>'.esc_html(AdminText::text('WordPress applied; S3 formal history pending.')).'</strong> '.esc_html(AdminText::text('This operation is not yet part of the recovery state. If the source remains available, use Resume history below to verify and confirm it.')).'</p>';
         if ($error=get_option('ozeki_resilience_m1_error')) echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(SetupReadiness::text('Prepare WordPress, themes and required plugins from trusted distributors. Recovery restores information assets, not software from S3; the destination theme and active plugins remain unchanged.','WordPress・テーマ・必要なプラグインは信頼できる配布元から準備してください。復旧するのは情報資産です。S3からソフトウェアを配置せず、復旧先のテーマと有効なプラグインを維持します。')).'</p>';

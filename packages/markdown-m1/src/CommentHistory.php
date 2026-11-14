@@ -63,7 +63,7 @@ final class CommentHistory
             $queue=(array)get_option(self::PENDING,[]);
             // Native state can be emitted by both REST and legacy meta-box requests.
             // Compare against S3 authority under the writer lock, never a local cache.
-            if(!$queue && !get_option('ozeki_resilience_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf'],true)){
+            if(!$queue && !get_option('ozeki_resilience_m1_pending') && in_array($attrs['post_type']??'',['owr_native','owr_acf','owr_media_access'],true)){
                 try {
                     $state=(new Plugin())->store()->latestState();
                     if(self::sameNativeState($state['assets'][$asset]??null,$source,$attrs,$resources))return;

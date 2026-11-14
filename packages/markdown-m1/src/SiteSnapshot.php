@@ -9,6 +9,7 @@ require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/ReferenceContext.php';
 require_once __DIR__.'/RecoveryPreparation.php';
 require_once __DIR__.'/FileScope.php';
+require_once __DIR__.'/MediaAccess.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -45,6 +46,7 @@ final class SiteSnapshot
         if(TableHistory::enabled())TableHistory::baseline($data);
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         AcfHistory::baseline($data);
+        $data['media_access']=MediaAccess::current($data);
         return $data;
     }
     private function files(string $root,string $prefix,array &$out,array $allowed,array &$excluded): void {
@@ -60,8 +62,7 @@ final class SiteSnapshot
                 if($information)$excluded[]=['item'=>$rel,'reason'=>FileScope::REASON];continue;
             }
             self::safePath($rel);
-            $guarded=false;for($dir=dirname($f->getPathname());str_starts_with($dir,$root);$dir=dirname($dir)){if(is_file($dir.'/.htaccess')){$guarded=true;break;}if($dir===$root)break;}
-            if($guarded){$excluded[]=['item'=>$rel,'reason'=>FileScope::REASON];continue;}
+            // Guarded registered originals are retained; their contract prevents public placement.
             if($f->isLink())throw new \RuntimeException('Symlink not portable: '.$rel);
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
             if($f->getSize()>32*1024*1024)throw new \RuntimeException('Resource exceeds 32 MiB: '.$rel);
@@ -100,7 +101,10 @@ final class SiteSnapshot
             $dir=dirname($plugin);if($dir==='.')throw new \RuntimeException('Select a directory-based dependency.');
             $header=get_file_data(WP_PLUGIN_DIR.'/'.$plugin,['name'=>'Plugin Name','version'=>'Version']);$software['plugins'][$plugin]=$header;
         }
-        $upload=wp_upload_dir();$excluded=[];$this->files($upload['basedir'],'uploads',$files,FileScope::paths($data),$excluded);
+        $upload=wp_upload_dir();$excluded=[];$this->files($upload['basedir'],'uploads',$files,FileScope::paths($data,true),$excluded);
+        foreach($data['media_access'] as $path=>$rule)if($rule['state']!=='public'){
+            $held=MediaAccess::heldBody($path);if($held!==null)$files[$path]=$held;
+        }
         foreach($files as $path=>$body)if(!self::isInformationFile($path))unset($files[$path]);else self::validateUpload($path,$body);
         foreach($data['tables']['postmeta'] as $r)if($r['meta_key']==='_ozmd_source')$files['markdown/'.$r['post_id'].'.md']=$r['meta_value'];
         if(Store::json($data)!==Store::json($this->data()))throw new \RuntimeException('Site changed during capture; retry while editing is paused.');
@@ -117,6 +121,7 @@ final class SiteSnapshot
     public function save(array $files,array $manifest,?array $slot=null): array {
         // The same lossless partition is used for normal structured originals and full baselines.
         $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+        $content['media_access']=MediaAccess::effective($content['media_access']??[],$files);
         $layout=AssetFormat::split($content);
         foreach($layout['files'] as $path=>$body)$files['assets/'.$path]=$body;
         unset($layout['files'],$files['content.json']);
@@ -127,7 +132,9 @@ final class SiteSnapshot
             $manifest['reference_origins']=ReferenceContext::merge($manifest['reference_origins']);
             if(!$manifest['reference_origins'])throw new \RuntimeException('Empty required snapshot reference context.');
             $manifest['asset_format']=ReferenceContext::SNAPSHOT_FORMAT;
+            $manifest['requires_reference_context']=true;
         }
+        $manifest['asset_format']=MediaAccess::SNAPSHOT_FORMAT;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -158,12 +165,17 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
-            if($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT||!empty($m['requires_reference_context']))&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
             if(isset($m['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']);
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
+        }
+        if(($m['asset_format']??'')===MediaAccess::SNAPSHOT_FORMAT){
+            $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+            if(!is_array($content['media_access']??null))throw new \RuntimeException('Missing mandatory media access contract.');
+            MediaAccess::validate($content['media_access']);
         }
         ksort($files);
         return [$m,$files];
@@ -181,6 +193,9 @@ final class SiteSnapshot
         $target??=$rows?(int)$rows[count($rows)-1]['sequence']:$through;
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_media_access'){
+                MediaAccess::replay($d,$this->store->originalSource($r['original']));continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_acf'){
                 $this->store->get($r['original']['metadata']);
                 AcfHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
@@ -235,6 +250,8 @@ final class SiteSnapshot
                 $attachment=$media['post'];$aid=(string)$attachment['ID'];
                 if($attachment['post_type']!=='attachment'||!str_starts_with($attachment['post_mime_type'],'image/'))throw new \RuntimeException('Invalid image record.');
                 foreach($media['files'] as $path=>$ref){self::safePath($path);if(!str_starts_with($path,'uploads/')||!preg_match('/\.(jpe?g|png|gif|webp|avif)$/i',$path))throw new \RuntimeException('Invalid image path.');$files[$path]=$store->get($ref);}
+                $rules=MediaAccess::effective($media['access']??[],$media['files']);
+                $d['media_access']=array_replace($d['media_access']??[],$rules);
                 $exists=false;foreach($d['tables']['posts'] as &$ap)if((string)$ap['ID']===$aid){if($ap['post_type']!=='attachment')throw new \RuntimeException('Image identity conflict.');$ap=$attachment;$exists=true;}unset($ap);
                 if(!$exists)$d['tables']['posts'][]=$attachment;
                 foreach($media['meta'] as $key=>$value){
@@ -294,7 +311,9 @@ final class SiteSnapshot
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
         $origins=ReferenceContext::merge($m['reference_origins']??[],[['site'=>$from,'uploads'=>$m['source_upload_url']??$from.'/wp-content/uploads']]);
         AcfHistory::check($d);
-        $allowedFiles=FileScope::paths($d);
+        $mediaRules=MediaAccess::effective($d['media_access']??[],$files);
+        $allowedFiles=FileScope::paths($d,true);
+        foreach($allowedFiles as $path=>$_)if(($mediaRules[$path]['state']??'unknown')!=='public')unset($allowedFiles[$path]);
         foreach($m['excluded_files']??[] as $excludedFile)unset($allowedFiles[$excludedFile['item']]);
         if(($d['options']['WPLANG']??null)===false)$d['options']['WPLANG']='';
         $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
@@ -326,6 +345,9 @@ final class SiteSnapshot
         $uploads=wp_upload_dir();
         if(!empty($uploads['error']))throw new \RuntimeException('Destination uploads directory is unavailable.');
         $uploadRoot=$uploads['basedir'];$fromUploads=$m['source_upload_url']??rtrim($from,'/').'/wp-content/uploads';$toUploads=$uploads['baseurl'];
+        foreach($mediaRules as $path=>&$rule)if(!isset($allowedFiles[$path])&&$rule['state']==='public')$rule=['state'=>'held'];unset($rule);
+        $heldMedia=MediaAccess::hold($mediaRules,$files);
+        foreach($heldMedia['files'] as $path=>$_)if(file_exists($uploadRoot.'/'.substr($path,8)))throw new \RuntimeException('A held media path already exists at the destination. Use a clean uploads directory before recovery.');
         if(!is_dir($uploadRoot)&&!wp_mkdir_p($uploadRoot))throw new \RuntimeException('Cannot create uploads directory.');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         file_put_contents($work.'/before-content.json',Store::json($this->data()));chmod($work.'/before-content.json',0600);
@@ -360,6 +382,7 @@ final class SiteSnapshot
                 self::writeMeta((int)$match[1],'_ozeki_resilience_m1_origin_url',$from.'/?ozmd_document='.get_post((int)$match[1])->post_name);
             }
             self::writeOption(ReferenceContext::OPTION,$origins,false);
+            self::writeOption(MediaAccess::OPTION,$heldMedia,false);
             self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}

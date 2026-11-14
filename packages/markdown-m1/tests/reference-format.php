@@ -15,7 +15,7 @@ check($old['schema']==='owr-md-original-2'&&$store->originalSource($old)===$raw,
 $legacyPoint=$site->save($files,$manifest);
 $manifest['reference_origins']=$ctx;
 $point=$site->save($files,$manifest);[$m,$restored]=$site->load($point['manifest']);
-check($m['asset_format']===R::SNAPSHOT_FORMAT&&$m['reference_origins']===$ctx,'Snapshot carries mandatory provenance');
+check($m['asset_format']===\OzekiResilience\M1\MediaAccess::SNAPSHOT_FORMAT&&$m['reference_origins']===$ctx,'Snapshot carries mandatory provenance');
 $cp=$site->checkpoint($point['manifest']);[$after,$content]=$site->load($cp['manifest']);
 check($after['reference_origins']===$ctx&&$content['markdown/2.md']===$md,'Checkpoint retains provenance and untouched Markdown');
 // A missing required field must fail even when the manifest itself has a valid hash.
