@@ -6,6 +6,8 @@
 
 [English](README.md) | 日本語
 
+**未配布のソース修正：** PDFの添付一式について、初回保存と日常保存で原本不足を共通に確認する修正を加えています。[修正内容・互換性・実S3の隔離確認](packages/markdown-m1/docs/attachment-bundle-verification-20261114.md)。提出済みrc.16には含まれず、差替えZIPはまだ公開していません。
+
 [Flamingo修正・見逃しの原因・再発防止の確認記録](packages/markdown-m1/docs/flamingo-recovery-fix.md)。今回の修正はrc.13に含まれ、提出済みrc.12には含まれません。
 
 

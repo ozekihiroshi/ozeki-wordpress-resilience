@@ -3,7 +3,7 @@ require '/var/www/html/wp-load.php';
 use OzekiResilience\M1\{Plugin,SiteSnapshot,MediaAccess,AttachmentHistory};
 if(!str_starts_with(home_url(),'http://owr-coexist-'))throw new RuntimeException('Isolated site required');
 wp_set_current_user(1);$mode=$argv[1];
-function cfgA($prefix,$protect=false,$role='source'){update_option('ozeki_resilience_m1_config',['bucket'=>'isolated','region'=>'ap-northeast-1','prefix'=>$prefix.'/','protect'=>$protect,'setup_role'=>$role,'gfs'=>[],'cleanup_enabled'=>false],false);}
+function cfgA($prefix,$protect=false,$role='source'){$aws=is_file('/lab/aws.json')?json_decode(file_get_contents('/lab/aws.json'),true):[];update_option('ozeki_resilience_m1_config',['bucket'=>$aws['bucket']??'isolated','region'=>'ap-northeast-1','owner'=>$aws['owner']??'','prefix'=>($aws['prefix']??'').$prefix.'/','protect'=>$protect,'setup_role'=>$role,'gfs'=>[],'cleanup_enabled'=>false],false);}
 function outA($v){echo wp_json_encode($v,JSON_THROW_ON_ERROR);}
 function stateA(){global $wpdb;$rows=$wpdb->get_results("SELECT ID,post_title,post_mime_type FROM {$wpdb->posts} WHERE post_type='attachment' ORDER BY ID",ARRAY_A);$rules=MediaAccess::current();$files=[];foreach($rules as $p=>$r){$f=wp_upload_dir()['basedir'].'/'.substr($p,8);$bytes=MediaAccess::heldBody($p);$files[$p]=['state'=>$r['state'],'public'=>is_file($f),'hash'=>is_file($f)?hash_file('sha256',$f):($bytes===null?null:hash('sha256',$bytes))];}return ['attachments'=>$rows,'files'=>$files,'pending'=>(bool)get_option('ozeki_resilience_attachment_pending'),'queue'=>(bool)get_option('ozeki_resilience_m1_comment_pending'),'errors'=>get_option('ozeki_resilience_attachment_errors',[])];}
 if($mode==='baseline'){cfgA($argv[2]);$r=(new SiteSnapshot((new Plugin())->store()))->capture(true,[]);file_put_contents('/lab/'.$argv[2].'-ref.json',wp_json_encode($r));outA($r);exit;}
@@ -24,6 +24,7 @@ if($mode==='add'){
  outA(['added'=>true]);exit;
 }
 if($mode==='state'){outA(stateA());exit;}
+if($mode==='delete'){cfgA($argv[2],true);global $wpdb;$id=(int)$wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_type='attachment' ORDER BY ID LIMIT 1");wp_delete_attachment($id,true);outA(['deleted'=>$id]);exit;}
 if($mode==='touch'){cfgA($argv[2],true);global $wpdb;$id=(int)$wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_type='attachment' ORDER BY ID LIMIT 1");wp_update_post(['ID'=>$id,'post_title'=>'Retry confirmation']);outA(['touched'=>true]);exit;}
 if($mode==='resume'){cfgA($argv[2],true);(new OzekiResilience\M1\CommentHistory())->resume();outA(['resumed'=>true]);exit;}
 if($mode==='index'){

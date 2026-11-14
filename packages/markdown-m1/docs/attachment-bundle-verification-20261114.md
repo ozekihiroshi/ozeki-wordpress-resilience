@@ -1,6 +1,6 @@
 # 添付一式の保全 / Attachment bundle preservation
 
-この変更は開発ブランチの確認用です。main、本番、提出済みrc.16のZIP・タグは更新していません。
+この変更はmainの未配布ソース修正です。本番、提出済みrc.16のZIP・タグは更新していません。新しい公開用ZIPはまだ作成していません。
 
 ## 修正の理由
 
@@ -39,10 +39,25 @@ S3のキー・版番号・SHA256参照、独立原本の分割形式、正式履
 
 実行時は隔離ディレクトリに `attachment-run.py` を `run.py`、`attachment-fixture.php` を `fixture.php`、試験用 `transport.php`、パッケージの `src/`、提出済みrc.16の複製を `candidate.zip`、WP-CLIを `wp.phar` として用意します。`attachment-pdf.py` で `manual.pdf` を生成し、`python3 run.py` を実行します。結果は `results/`。専用コンテナ・ネットワーク・ボリュームは終了時に削除します。実サイトのディレクトリをマウントしてはいけません。
 
+## 実S3での最終確認（2026-11-14）
+
+空であることを確認したランダムな試験専用prefixを使用し、実AWS SDK・EC2ロールで確認しました。認証情報のホスト間転送は行っていません。試験用トランスポートはバケット・prefix・所有者・操作種別を限定し、削除操作を許可しません。既存の本番S3領域には接続していません。
+
+- PDF2件とWordPressが生成したJPEG8件：保存、復旧後の利用、再保存、再復旧で内容・添付情報・閲覧条件が一致。
+- 公開側5件はHTTP取得内容のSHA256まで一致。保留側5件は直接URLが404で、非公開領域に原本を保持。
+- 旧形式の読取り、旧復旧点の原本不足10件の表示、不足原本を戻してからの再試行を確認。
+- 実際のrc.16が新しい履歴・完全復旧点・独立Checkpointを拒否。拒否・復旧処理の前後で試験S3の版一覧が不変。
+- 正式履歴の書込み失敗を注入し、保存待ちからの再開を確認。途中の原本を完了扱いにしない。
+- 最終レビューで、添付削除後のメタデータ削除通知が削除状態を上書きする経路を修正。実S3で削除記録の確定を確認し、専用回帰テストをActionsにも追加。
+- 試験終了時のS3オブジェクト版数は171。試験データは新規prefixに残し、専用コンテナ・ネットワーク・ボリュームは削除。
+- PHP 8.1でActions相当のパッケージ契約39コマンドが成功。旧形式名を期待していたACF・参照元情報テストは、新形式名に更新し、元の情報一致の検証を維持。
+
+機械可読結果：[実S3確認結果](attachment-bundle-live-results-20261114.json)。ファイルベース試験の結果は[別記録](attachment-bundle-results-20261114.json)として保全しています。実S3実行時は `OWR_ATTACHMENT_LIVE=1` と `attachment-live-transport.php` を使用します。
+
 ## English summary
 
 Daily capture previously missed newly registered PDFs even when their viewing conditions appeared in formal history. The new attachment bundle records registered originals, metadata-listed derivatives, required definitions and viewing conditions together, independently of article editing. Full and daily capture share file selection and completeness validation. Held files remain private after recovery while their bytes remain preserved.
 
 Existing originals/history are unchanged. New readers accept old formats and explicitly report missing originals. rc.16 rejects new attachment history, full recovery points and independent history Checkpoints. Do not downgrade a writer or storage-management installation using the new format. No production update or replacement of a submitted ZIP/tag is part of this change.
 
-The isolated tests use real WordPress PDF registration/preview generation and HTTP checks, with an isolated file-backed S3 test transport. They cover restoration, use, resave and second restoration, missing-original detection/retry, interrupted confirmation and old-reader rejection. This is not a live AWS IAM/network validation.
+The first isolated tests used real WordPress PDF registration/preview generation and HTTP checks with a file-backed S3 test transport. A subsequent run repeated the checks against real AWS S3 in a new, initially empty, guarded test prefix. It confirmed all ten files, public HTTP hashes, private retention, resave/second restoration, missing-original detection/retry, interrupted confirmation and rc.16 rejection of all three new recovery formats. Attachment deletion confirmation was also checked after correcting callback ordering. The live run produced 171 object versions; no production objects, submitted ZIPs or tags were changed. No new release ZIP has been created.

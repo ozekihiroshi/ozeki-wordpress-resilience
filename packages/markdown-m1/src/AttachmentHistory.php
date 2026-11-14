@@ -34,7 +34,7 @@ final class AttachmentHistory {
     private static function mark(int $id,bool $deleted=false): void {
         if(!self::enabled())return;
         $lock=self::lock();try {
-        $pending=(array)get_option(self::PENDING,[]);$pending[$id]=$deleted;
+        $pending=(array)get_option(self::PENDING,[]);$pending[$id]=$deleted||!empty($pending[$id]);
         update_option(self::PENDING,$pending,false);
         if(get_option(self::PENDING)!==$pending)throw new \RuntimeException('Cannot persist attachment capture pending state.');
         } finally {self::unlock($lock);}
