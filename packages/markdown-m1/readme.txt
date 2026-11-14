@@ -93,6 +93,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Display history without requiring article titles or statuses; preserve existing recorded values and guide file-access records to complete site recovery.
 * Record file access conditions consistently in initial capture and daily history; preserve held originals across recovery, resaving and repeated recovery. New formats require the updated reader; old files with unknown conditions are not publicly placed.
 * Separate WP-Members page restrictions from file restrictions; preserve supported content when unrelated plugins are installed. Normalize the English default locale during recovery.
 * Guide initial storage setup and check recovery prerequisites, including language packs and required plugins, before changing destination data. Prepare missing items and recheck.
