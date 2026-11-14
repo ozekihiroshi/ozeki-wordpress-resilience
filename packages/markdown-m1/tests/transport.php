@@ -29,7 +29,7 @@ $ozeki_resilience_test_transport=function($options){
                 if (!is_dir(dirname($path))) mkdir(dirname($path),0777,true);
                 file_put_contents($path,(string)$args['Body']);$r=['VersionId'=>hash_file('sha256',$path)];
             } elseif ($name==='GetObject') {
-                if (!is_file($path)) throw new RuntimeException('404');
+                if (!is_file($path)) throw new RuntimeException('404',404);
                 $version=hash_file('sha256',$path);
                 if (isset($args['VersionId']) && $args['VersionId']!==$version) throw new RuntimeException('Wrong version');
                 $r=['Body'=>file_get_contents($path),'VersionId'=>$version];

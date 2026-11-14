@@ -9,6 +9,7 @@ require_once __DIR__.'/SetupReadiness.php';
 require_once __DIR__.'/AdminText.php';
 require_once __DIR__.'/RecoveryPreparation.php';
 require_once __DIR__.'/ReferenceContext.php';
+require_once __DIR__.'/AttachmentHistory.php';
 
 final class Plugin
 {
@@ -21,6 +22,7 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        (new AttachmentHistory())->boot();
         (new MediaAccess())->boot();
         add_filter('wp_handle_upload_prefilter',[$this,'protectUpload']);
         add_filter('wp_handle_sideload_prefilter',[$this,'protectUpload']);
@@ -73,7 +75,9 @@ final class Plugin
         global $wpdb;
         $ids=[];$upload=wp_upload_dir();
         preg_match_all('/(?:wp-image-|"id"\s*:\s*)([0-9]+)/',$body,$matches);
-        foreach($matches[1] as $id)if(get_post_type((int)$id)==='attachment')$ids[(int)$id]=true;
+        // Non-image attachments have their own complete bundle history. A file block's
+        // attachment ID must not be interpreted as an image and stop the article save.
+        foreach($matches[1] as $id)if(get_post_type((int)$id)==='attachment'&&str_starts_with((string)get_post_mime_type((int)$id),'image/'))$ids[(int)$id]=true;
         preg_match_all('~'.preg_quote($upload['baseurl'],'~').'/[^\s"<>\)]+~',$body,$urls);
         foreach($urls[0] as $url){$url=html_entity_decode($url,ENT_QUOTES,'UTF-8');if(!preg_match('/\.(jpe?g|png|gif|webp|avif)(?:[?#].*)?$/i',$url))continue;$url=preg_replace('/[?#].*$/','',$url);$id=attachment_url_to_postid($url);
             if(!$id){$full=preg_replace('/-\d+x\d+(?=\.[^.]+$)/','',$url);$id=attachment_url_to_postid($full);}
@@ -417,7 +421,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->originalSource($row['original']);
@@ -431,7 +435,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
             $source=$store->originalSource($row['original']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -593,7 +597,7 @@ final class Plugin
             } elseif ($action==='media_recheck') {
                 if(empty($this->config()['protect']))throw new \RuntimeException('Enable protection before recording access changes.');
                 MediaAccess::record();
-            } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); }
+            } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); AttachmentHistory::flush(); }
             elseif ($action==='restore') {
                 if(!isset($_POST['sequences']) || !is_array($_POST['sequences']))throw new \RuntimeException('Select valid history numbers.');
                 $sequences=array_map('sanitize_text_field',wp_unslash($_POST['sequences']));
@@ -681,6 +685,7 @@ final class Plugin
         else {
             $status=$attempt?($attempt['status']??'unknown'):(isset($success['at'],$success['posts'])?'success':'unknown');
             $labels=['success'=>AdminText::text('Success'),'failed'=>AdminText::text('Failed'),'running'=>AdminText::text('Started — completion not confirmed'),'unknown'=>AdminText::text('Status unknown')];
+            if(!empty($r['application_report']['missing_originals']))$labels['success']=SetupReadiness::text('Incomplete — originals are missing','未完了 — 原本が不足しています');
             echo '<p role="status"><strong>'.esc_html($labels[$status]??$labels['unknown']).'</strong></p>';
             $rows=[AdminText::text('Recorded at (UTC)')=>$r['at']??AdminText::text('Not recorded'),AdminText::text('Checkpoint / snapshot key')=>$r['manifest']['key']??AdminText::text('Not recorded'),AdminText::text('S3 Version ID')=>$r['manifest']['version']??AdminText::text('Not recorded')];
             $base=isset($r['checkpoint_through'])?(int)$r['checkpoint_through']:null;
@@ -708,6 +713,11 @@ final class Plugin
         }
         if(($attempt['status']??(isset($success['at'])?'success':''))==='success' && isset($r['application_report'])){
             $report=$r['application_report'];
+            if(!empty($report['missing_originals'])){
+                echo '<div class="notice notice-error"><p>'.esc_html(SetupReadiness::text('Recovery is incomplete: these originals or derivatives are absent from this recovery point. Preserve them from the source site into a new recovery point.','復旧は未完了です。この復旧ポイントには次の原本または付随画像がありません。保存元から新しい復旧ポイントへ追加保全してください。')).'</p><ul>';
+                foreach($report['missing_originals'] as $path)echo '<li>'.esc_html($path).'</li>';
+                echo '</ul></div>';
+            }
             echo '<h4>'.esc_html(AdminText::text('Preserved in S3 — not automatically applied')).'</h4><p>'.esc_html((string)$report['count']).esc_html(AdminText::text(' item(s). Rules: ')).esc_html($report['rules']).''.esc_html(AdminText::text('. Original resources remain unchanged; omission is not data deletion.')).'</p><ul>';
             foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html($item['reason']).'</li>';
             echo '</ul>';
@@ -788,7 +798,7 @@ final class Plugin
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
         self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('ozeki_resilience_m1_comment_pending',[]),(string)get_option('ozeki_resilience_m1_notice',''),(string)get_option('ozeki_resilience_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
-        if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if(!empty($this->config()['protect'])){
             echo '<p>'.esc_html(SetupReadiness::text('File access conditions are recorded separately from page membership rules. After changing access-control files in uploads directories, recheck here. Unrecognized or inherited unresolved file conditions remain on hold after recovery; this does not publish those files.','ファイルの閲覧条件はページの会員制限とは別に記録します。uploads内のディレクトリ制限ファイルを変更したら、ここで再確認してください。認識できない条件や復旧時に保留した条件は引き続き保留し、ファイルを公開しません。')).'</p>';
             $this->form('media_recheck');submit_button(SetupReadiness::text('Record file access conditions','ファイルの閲覧条件を再確認・記録'));echo '</form>';
@@ -862,7 +872,7 @@ final class Plugin
             echo '</select>';submit_button(AdminText::text('Restore assets from Checkpoint + later history'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
-        if (($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending'))) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if (($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING))) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if(get_option('ozeki_resilience_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
         if($error=get_option('ozeki_resilience_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(AdminText::text('Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.')).'</p>';

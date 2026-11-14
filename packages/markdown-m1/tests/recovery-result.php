@@ -24,4 +24,9 @@ foreach(['en_US','ja'] as $testLocale){
  ob_start();OzekiResilience\M1\Plugin::renderSiteResult([],[],['excluded_files'=>[['item'=>'uploads/<private>.pdf']]]);$h=ob_get_clean();
  ok(str_contains($h,$testLocale==='ja'?'自動保全の対象外ファイル':'Files outside automatic protection'),'Visible exclusions in user language');
  ok(str_contains($h,'&lt;private&gt;')&&!str_contains($h,'<private>'),'Excluded paths escaped');
+ $missing=$s+['application_report'=>['missing_originals'=>['uploads/<missing>.pdf'],'not_applied'=>[],'count'=>0,'rules'=>'fixture']];
+ $h=render([],$missing);
+ ok(str_contains($h,$testLocale==='ja'?'復旧は未完了':'Recovery is incomplete'),'Missing originals prominently distinguished from unapplied preserved data');
+ ok(!str_contains($h,'<strong>Success</strong>')&&!str_contains($h,'<strong>成功</strong>'),'Missing originals are not labelled successful');
+ ok(str_contains($h,'&lt;missing&gt;')&&!str_contains($h,'<missing>'),'Missing paths escaped');
 }

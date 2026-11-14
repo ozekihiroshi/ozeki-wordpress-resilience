@@ -76,6 +76,7 @@ final class MediaAccess {
     public static function record(): void {
         $config=(new Plugin())->config();
         if(empty($config['protect'])||($config['setup_role']??'source')==='recovery')return;
+        if(!AttachmentHistory::reconcile())return;
         (new CommentHistory())->enqueueCurrent('media-access',fn()=>Store::json(['schema'=>self::SCHEMA,'rules'=>self::current()]),['post_type'=>'owr_media_access','content_format'=>'media-access-json','media_access_schema'=>self::SCHEMA]);
     }
     public static function replay(array &$data,string $source): void {

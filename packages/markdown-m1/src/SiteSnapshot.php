@@ -10,6 +10,7 @@ require_once __DIR__.'/ReferenceContext.php';
 require_once __DIR__.'/RecoveryPreparation.php';
 require_once __DIR__.'/FileScope.php';
 require_once __DIR__.'/MediaAccess.php';
+require_once __DIR__.'/AttachmentHistory.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -87,6 +88,7 @@ final class SiteSnapshot
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
         if(get_option('ozeki_resilience_m1_pending')||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
+        if(get_option(AttachmentHistory::PENDING))throw new \RuntimeException('Attachment preservation is incomplete. Restore missing source files and retry before creating a complete recovery point.');
         // Include active supported runtimes; native-only sites do not require Markdown Documents.
         foreach(array_merge(FormHistory::DEPENDENCIES,['ozeki-markdown-documents/ozeki-markdown-documents.php',MemberHistory::PLUGIN,TableHistory::PLUGIN,AcfHistory::PLUGIN]) as $dependency)if(in_array($dependency,(array)get_option('active_plugins'),true)&&!in_array($dependency,$plugins,true))$plugins[]=$dependency;
         $data=$this->data();$files=[];$software=['themes'=>[],'plugins'=>[]];
@@ -107,6 +109,7 @@ final class SiteSnapshot
             $held=MediaAccess::heldBody($path);if($held!==null)$files[$path]=$held;
         }
         foreach($files as $path=>$body)if(!self::isInformationFile($path))unset($files[$path]);else self::validateUpload($path,$body);
+        AttachmentHistory::assertComplete($data,$files);
         foreach($data['tables']['postmeta'] as $r)if($r['meta_key']==='_ozmd_source')$files['markdown/'.$r['post_id'].'.md']=$r['meta_value'];
         if(Store::json($data)!==Store::json($this->data()))throw new \RuntimeException('Site changed during capture; retry while editing is paused.');
         $files['content.json']=Store::json($data);
@@ -123,6 +126,7 @@ final class SiteSnapshot
         // The same lossless partition is used for normal structured originals and full baselines.
         $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
         $content['media_access']=MediaAccess::effective($content['media_access']??[],$files);
+        AttachmentHistory::assertComplete($content,$files);
         $layout=AssetFormat::split($content);
         foreach($layout['files'] as $path=>$body)$files['assets/'.$path]=$body;
         unset($layout['files'],$files['content.json']);
@@ -135,7 +139,7 @@ final class SiteSnapshot
             $manifest['asset_format']=ReferenceContext::SNAPSHOT_FORMAT;
             $manifest['requires_reference_context']=true;
         }
-        $manifest['asset_format']=MediaAccess::SNAPSHOT_FORMAT;
+        $manifest['asset_format']=AttachmentHistory::SNAPSHOT_FORMAT;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -166,17 +170,18 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
             if(($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT||!empty($m['requires_reference_context']))&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
             if(isset($m['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']);
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
         }
-        if(($m['asset_format']??'')===MediaAccess::SNAPSHOT_FORMAT){
+        if(in_array($m['asset_format']??'',[MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT],true)){
             $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
             if(!is_array($content['media_access']??null))throw new \RuntimeException('Missing mandatory media access contract.');
             MediaAccess::validate($content['media_access']);
+            if($m['asset_format']===AttachmentHistory::SNAPSHOT_FORMAT)AttachmentHistory::assertComplete($content,$files);
         }
         ksort($files);
         return [$m,$files];
@@ -194,6 +199,9 @@ final class SiteSnapshot
         $target??=$rows?(int)$rows[count($rows)-1]['sequence']:$through;
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_attachment'){
+                AttachmentHistory::replay($d,$files,$this->store->originalSource($r['original']),$r['attributes'],$this->store);continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_media_access'){
                 MediaAccess::replay($d,$this->store->originalSource($r['original']));continue;
             }
@@ -246,11 +254,12 @@ final class SiteSnapshot
         if($through!==$target)throw new \RuntimeException('Requested formal history is missing; refusing partial recovery.');
         $files['content.json']=Store::json($d);$m['through']=$through;$m['origin']='confirmed_s3';return [$m,$files];
     }
-    public static function applyMedia(array &$d,array &$files,array $mediaRecords,Store $store): void {
+    public static function applyMedia(array &$d,array &$files,array $mediaRecords,Store $store,bool $attachmentBundle=false): void {
             foreach($mediaRecords as $media){
+                if($attachmentBundle)AttachmentHistory::validate($media);
                 $attachment=$media['post'];$aid=(string)$attachment['ID'];
-                if($attachment['post_type']!=='attachment'||!str_starts_with($attachment['post_mime_type'],'image/'))throw new \RuntimeException('Invalid image record.');
-                foreach($media['files'] as $path=>$ref){self::safePath($path);if(!str_starts_with($path,'uploads/')||!preg_match('/\.(jpe?g|png|gif|webp|avif)$/i',$path))throw new \RuntimeException('Invalid image path.');$files[$path]=$store->get($ref);}
+                if($attachment['post_type']!=='attachment'||(!$attachmentBundle&&!str_starts_with($attachment['post_mime_type'],'image/')))throw new \RuntimeException('Invalid image record.');
+                foreach($media['files'] as $path=>$ref){self::safePath($path);if(!str_starts_with($path,'uploads/')||($attachmentBundle?!self::isInformationFile($path):!preg_match('/\.(jpe?g|png|gif|webp|avif)$/i',$path)))throw new \RuntimeException('Invalid attachment path.');$files[$path]=$store->get($ref);}
                 $rules=MediaAccess::effective($media['access']??[],$media['files']);
                 $d['media_access']=array_replace($d['media_access']??[],$rules);
                 $exists=false;foreach($d['tables']['posts'] as &$ap)if((string)$ap['ID']===$aid){if($ap['post_type']!=='attachment')throw new \RuntimeException('Image identity conflict.');$ap=$attachment;$exists=true;}unset($ap);
@@ -318,6 +327,8 @@ final class SiteSnapshot
         foreach($m['excluded_files']??[] as $excludedFile)unset($allowedFiles[$excludedFile['item']]);
         if(($d['options']['WPLANG']??null)===false)$d['options']['WPLANG']='';
         $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
+        $application['report']['missing_originals']=AttachmentHistory::missing($d,$files);
+        $application['report']['attachment_complete']=!$application['report']['missing_originals'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         foreach(self::TABLES as $t){if(!isset($d['tables'][$t]))throw new \RuntimeException('Missing table '.$t);$engine=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$wpdb->$t));if(strtolower($engine->Engine??'')!=='innodb')throw new \RuntimeException('Transactional tables required.');}
