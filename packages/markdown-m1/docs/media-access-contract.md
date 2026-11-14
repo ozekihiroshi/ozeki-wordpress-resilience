@@ -1,6 +1,6 @@
 # File access contract — unreleased / ファイル閲覧条件の契約（未配布）
 
-This change is on the development branch, not in submitted rc.14. It does not change existing S3 objects, production settings or release archives.
+This is an unreleased change, not included in submitted rc.14. It does not change existing S3 objects, production settings or release archives.
 
 ## User behavior
 
@@ -25,7 +25,7 @@ The contract records public / held / unknown. It does not execute old configurat
 
 ---
 
-この変更は開発ブランチのもので、提出済みrc.14には含まれません。既存S3原本・履歴、本番設定、配布済みファイルは変更しません。
+この変更は未配布で、提出済みrc.14には含まれません。既存S3原本・履歴、本番設定、配布済みファイルは変更しません。
 
 ## 利用時の動作
 

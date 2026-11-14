@@ -1,0 +1,46 @@
+{
+  "product_source": "fb3c3e3",
+  "source_files_verified": 22,
+  "wordpress": "7.1.3",
+  "php": "8.3.31",
+  "s3_real": true,
+  "new_prefix_only": true,
+  "s3_object_versions": 569,
+  "s3_reads_preserved_versions": true,
+  "old_reader_rejected_new": {
+    "snapshot": true,
+    "original": true
+  },
+  "old_B_and_C_roundtrip": "PASS",
+  "cases": {
+    "A": {
+      "result": "PASS",
+      "first_file_http": "200",
+      "second_file_http": "200",
+      "second_member_view": true,
+      "second_anonymous_view": true
+    },
+    "B": {
+      "result": "PASS",
+      "first_file_http": "404",
+      "second_file_http": "404",
+      "second_member_view": true,
+      "second_anonymous_view": true
+    },
+    "C": {
+      "result": "PASS",
+      "first_file_http": "404",
+      "second_file_http": "404",
+      "second_member_view": true,
+      "second_anonymous_view": true
+    },
+    "D": {
+      "result": "PASS",
+      "first_file_http": "200",
+      "second_file_http": "200",
+      "second_member_view": true,
+      "second_anonymous_view": false
+    }
+  },
+  "existing_release_sha256": "453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a"
+}

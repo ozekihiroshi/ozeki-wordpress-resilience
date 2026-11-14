@@ -50,4 +50,3 @@ if($mode==='ui'){
  out(['locale'=>$locale,'label_present'=>str_contains($html,$label),'operation_present'=>str_contains($html,'media_recheck'),'nonce_present'=>str_contains($html,'_wpnonce')]);exit;
 }
 throw new RuntimeException('Mode');
-

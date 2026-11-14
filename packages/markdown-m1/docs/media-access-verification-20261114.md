@@ -2,7 +2,7 @@
 
 ## 対象と保全
 
-main `054d5a2`から分離した`codex/media-access-contract`で実装・確認した。mainへのマージ、GitHub push、新しい配布ZIP・タグ作成、WordPress.org送信は行っていない。本番communityと研究側の未コミット変更は変更していない。
+main `054d5a2`から分離した`codex/media-access-contract`で実装・確認した。この隔離確認時点ではmainへのマージ、GitHub push、新しい配布ZIP・タグ作成、WordPress.org送信は行っていない。後続の実S3確認と取り込み結果は[実S3確認記録](media-access-live-verification-20261114.md)を参照。本番communityと研究側の未コミット変更は変更していない。
 
 提出済みrc.14 ZIPのSHA-256は前後で一致：`453acc6930d57da11da72eaba5adf9c386d0d79aa179cfd15b12b82ad0ba5a2a`。
 
