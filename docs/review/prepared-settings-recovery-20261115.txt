@@ -90,3 +90,18 @@ S3 SDKはホストのスコープ制限付き輸送を使用し、認証情報�
 既存PHP契約確認を実行し合格。unset-object-lockのみ既存研究ツリーのSDKを読取り利用。
 提出済みrc.16と既存rc.17 ZIPのSHA256、既存タグ、研究側7件の未コミット変更を保全。
 今回の変更はブランチで共有し、mainへのマージ・ZIP作成・申請・メール返信は行わない。
+
+mainへの取り込み（2026-11-15）
+ユーザーの指示によりPR #62を最終確認し、mainへマージした。
+PR: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/62
+確認済みhead: 6195cd3fd89e449aca3ebf23c25fe9e4d872a5dd
+merge: 5030b7513e58d287fa3e0b89737ef358a7c56343
+マージ直後のツリーは確認済みheadと一致。追加の製品コード変更なし。
+PR ActionsはPHP 8.1/8.3とも成功:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/actions/runs/43662596571
+実S3の往復確認・準備済み設定維持・インストール/初期化なしの結果は上記とJSONに記録。
+先の「mainへのマージは行わない」は前段階の作業範囲であり、この記録で更新する。
+既存rc.16 ZIP SHA256: c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae
+既存rc.17 ZIP SHA256: 27440e5fd02804ffb5eee6ec60d092f88f4d52881a54c4ed47274f3a68681db5
+本番・既存S3原本/履歴に接続・変更せず、ZIP/タグと研究側の未コミット変更を保全。
+新しい公開ZIP・リリース・申請・メール返信は引き続き行わない。
