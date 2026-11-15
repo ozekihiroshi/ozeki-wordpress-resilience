@@ -79,3 +79,10 @@ rc.15の新しい画像付き原本と復旧ポイントには、rc.15対応の�
 rc.16 displays file-access history and other records without requiring article title/status fields. Existing originals and history do not need migration or rewriting. It uses the same recording formats as rc.15; the rc.15 reader requirement above remains unchanged. File-access records are restored through complete site recovery, not individual Markdown recovery.
 
 rc.16では、記事用のタイトル・状態を持たない閲覧条件などの記録も表示できます。原本・履歴の移行や書換えは不要です。保存形式はrc.15と同じで、上記の対応readerの条件は変わりません。閲覧条件はMarkdownの個別復旧ではなく、サイト全体の復旧で戻します。
+
+
+## rc.17
+
+rc.17 preserves registered attachment originals, generated previews, metadata and file-access conditions together. New attachment records and recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Update recovery destinations too. Do not resume saving or cleanup with an older version after using the new format. Existing originals/history are not rewritten. Older recovery points remain readable; missing originals are reported as incomplete and cannot be recreated by updating.
+
+rc.17は登録された添付の原本・付随画像・添付情報・閲覧条件を一組で保全します。新しい添付記録と復旧点にはrc.17以降の対応版が必要で、rc.16は読取りを拒否します。復旧先も更新してください。新形式を使った保存先へ旧版を戻して保存・整理を続けないでください。既存原本・履歴は書き換えません。旧復旧点も読めますが、原本不足は未完了として報告し、更新だけで失われた原本を補完することはありません。

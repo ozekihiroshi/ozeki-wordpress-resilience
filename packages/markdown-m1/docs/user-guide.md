@@ -135,3 +135,8 @@ Existing originals remain readable. New saves after complete-site recovery retai
 Page membership and file restrictions are separate. Ordinary public images remain usable after recovery. Registered media with unresolved access conditions is retained without public placement, and survives article editing, resaving and the next recovery. Legacy files without recorded conditions receive the same treatment. Continue to review the exclusions for files outside ordinary media, such as plugin-managed directories.
 
 After directly changing access-control files in uploads directories, select **Record file access conditions** and verify formal-history confirmation. Prepare the updated reader on recovery destinations. See [behavior and compatibility](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/media-access-contract.md).
+
+
+## rc.17
+
+rc.17 preserves registered attachment originals, generated previews, metadata and file-access conditions together. New attachment records and recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Update recovery destinations too. Do not resume saving or cleanup with an older version after using the new format. Existing originals/history are not rewritten. Older recovery points remain readable; missing originals are reported as incomplete and cannot be recreated by updating.
