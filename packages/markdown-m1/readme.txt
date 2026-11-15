@@ -20,6 +20,8 @@ Its design starts with independent originals: articles, images and other support
 
 The aim is preparedness, not minimum storage or the fastest restoration. Independent originals and additional recovery points provide reserves for recovery. Storage, transfers and read-back time are part of maintaining that reserve.
 
+Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
+
 = From originals and history to recovery =
 
 Start with a trusted initial capture (Baseline). Enable protection for supported edits, then create Checkpoints from the saved resources and confirmed history. When needed, prepare a compatible destination and recover a selected point plus confirmed history. Checkpoints use what has been saved; untracked live changes may require a new trusted Baseline.
@@ -37,6 +39,8 @@ Standard WordPress Posts and Pages need no additional plugin. For integration-sp
 Page membership and file access are separate. Public supported images remain usable. Registered media with unresolved file conditions is retained without public placement, including after article editing, resaving and repeated recovery. Legacy files without recorded access conditions remain on hold. This does not reproduce unsupported private-download services.
 
 New media originals and recovery points created by rc.15 require a compatible updated recovery reader; older versions reject them. Existing S3 originals and history remain unchanged and readable. Update recovery destinations too. After updating the source, record file access conditions and confirm formal history. See docs/install-update.md.
+
+rc.17 records registered attachment originals, generated previews, attachment metadata and file-access conditions together during initial and daily preservation. New attachment records and recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Update recovery destinations too, and do not resume saving or cleanup with an older version after using the new format. Existing S3 originals/history are not rewritten. Older recovery points remain readable; missing originals are reported as incomplete, not recreated by updating.
 
 = Scope and responsibilities =
 

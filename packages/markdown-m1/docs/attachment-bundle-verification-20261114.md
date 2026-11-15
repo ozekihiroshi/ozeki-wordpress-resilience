@@ -1,6 +1,6 @@
 # 添付一式の保全 / Attachment bundle preservation
 
-この変更はmainの未配布ソース修正です。本番、提出済みrc.16のZIP・タグは更新していません。新しい公開用ZIPはまだ作成していません。
+この変更はrc.17候補に含まれます。本番、提出済みrc.16のZIP・タグは更新していません。rc.17はWordPress.org未提出です。
 
 ## 修正の理由
 

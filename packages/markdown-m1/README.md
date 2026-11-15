@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.16 has been accepted as an update to the existing WordPress.org application, and the original review email has been replied to.** We are awaiting the reviewer's response; publication has not been approved. It fixes history display for records without article titles or statuses. [Distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**0.3.3 rc.17 is a GitHub release candidate, not yet submitted to WordPress.org or approved for publication. Submitted rc.16 is awaiting a response from the reviewer.** [Distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
@@ -14,6 +14,8 @@ Ozeki Resilience helps you resume your work with accumulated articles, images an
 This purpose leads to a design principle: preserve information as independent originals, separate from the system that created it. **Preserved originals have value independent of the recovery engine.** Coverage balances the value of the information with the work needed to recover it safely.
 
 Prepare a fresh WordPress destination, then separately install and activate the necessary trusted software. S3 supplies supported information assets and their required relationships. **Recovery does not deploy or execute archived theme/plugin code, and applies only recognized settings.** It keeps the destination theme selection and reports items it did not apply.
+
+Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
 
 The aim is not to minimize storage or make restoration as fast as possible. Independent originals and additional recovery points provide reserves and room to recover when needed, so information can remain usable. Storage, transfers and read-back time are part of maintaining that reserve.
 

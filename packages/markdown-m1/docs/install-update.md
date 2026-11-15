@@ -8,6 +8,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
+
 **rc.14 preparation checks:** Update recovery destinations too. Missing language packs or required software are reported before content replacement; prepare them from trusted sources and recheck. Existing originals/history and protection/scheduling settings need no migration.
 
 **rc.13 Flamingo correction:** Existing receipt originals need no migration. Update the recovery destination too. If a receipt was already re-saved with missing values, recover from an earlier original that still contains them; updating alone cannot recreate lost values.
@@ -22,6 +24,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+復旧処理はプラグインのインストール・初期化を行いません。通常のセットアップを事前に済ませてください。WP-Membersでは準備済みの動作設定・版情報を維持し、対応する会員情報・項目定義・閲覧条件を戻します。準備不足は置換前に表示されるので、準備後に再確認してください。
 
 **rc.14の準備確認：** 復旧先にも更新版を用意してください。不足する言語パックや必要なソフトウェアを内容の置換前に案内します。信頼できる配布元から準備し、再確認してください。既存原本・履歴、保護・定期保存設定の移行は不要です。
 
