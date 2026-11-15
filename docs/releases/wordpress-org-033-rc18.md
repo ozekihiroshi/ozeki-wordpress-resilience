@@ -1,6 +1,6 @@
 # 0.3.3 rc.18 — 準備済み設定を維持する復旧
 
-2026-11-15。**GitHub公開候補です。WordPress.orgへの送信・審査メール返信は未実施です。提出済みrc.16は審査担当者の回答待ちで、公開承認済みではありません。既存rc.17も保全しています。**
+2026-11-15。**0.3.3 rc.18の既存申請への更新受付と審査メールへの返信が完了しました。審査担当者の回答待ちで、公開承認済みではありません。** 既存rc.16・rc.17も保全しています。
 
 ## 修正と復旧方針
 
@@ -37,7 +37,14 @@ rc.17の添付記録と復旧点にはrc.17以降の対応版が必要で、rc.1
 
 [ZIP監査](../../evidence-public/wordpress-org-033-rc18/package-audit.json) / [ソース一致](../../evidence-public/wordpress-org-033-rc18/source-match.json) / [Plugin Check](../../evidence-public/wordpress-org-033-rc18/plugin-check.json) / [導入・rc.17からの更新](../../evidence-public/wordpress-org-033-rc18/validation.json) / [rc.16からの更新](../../evidence-public/wordpress-org-033-rc18/validation-from-rc16.json) / [回帰確認](../../evidence-public/wordpress-org-033-rc18/final-contracts.txt)
 
-## 保全と提出前の説明案
+## 保全と申請記録
 
-本番・既存S3原本/履歴・既存ZIP/タグ・研究側の未コミット変更は保全。新しいGitHub prereleaseとして分離し、WordPress.orgの申請とメール返信は行いません。
-[申請補足説明案](wordpress-org-033-rc18-additional-information.txt) / [未送信の返信案](wordpress-org-033-rc18-review-reply-DRAFT.txt)
+本番・既存S3原本/履歴・既存ZIP/タグ・研究側の未コミット変更は保全。GitHub prereleaseは維持し、既存申請へのrc.18更新受付とメール返信完了を記録しました。
+[申請補足説明案](wordpress-org-033-rc18-additional-information.txt) / [送信準備時の返信案（履歴）](wordpress-org-033-rc18-review-reply-DRAFT.txt)
+
+
+## 受付・返信完了（2026-11-15）
+
+管理者がWordPress.orgの既存申請へrc.18を手動アップロードし、受付と元の審査メールへの返信送信が完了したと報告しました。本記録はその完了報告に基づきます。審査担当者の回答待ちであり、公開承認・WordPress.orgでの一般配布開始を意味しません。
+
+提出ZIPのSHA-256は eadc9ec4de01f06014414a9bb709b11905019e525fdbdc918f45d3626d2f2d97。タグ wporg-0.3.3-rc.18 と添付ZIP・manifestは変更していません。main上の文書とGitHubリリース本文だけを更新します。タグ内の未提出表記は提出前の固定記録として残ります。

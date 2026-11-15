@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.18はGitHub公開候補です。WordPress.orgには未提出で、公開承認済みではありません。提出済みrc.16については審査担当者の回答待ちです。** [配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
+**0.3.3 rc.18の既存申請への更新受付と審査メールへの返信が完了しました。審査担当者の回答待ちで、公開承認済みではありません。** [配布状況](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md)。
 
 サイバー攻撃でサイトが使えなくなっても、積み重ねた記事や画像、問い合わせなどを失わず、情報発信や業務を再開するために。Ozeki Resilienceは、対応するコンテンツを保存し、別のWordPressへ復旧する道を用意します。
 

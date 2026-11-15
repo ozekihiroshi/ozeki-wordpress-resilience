@@ -1,8 +1,8 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.18 is a GitHub release candidate. It has not been submitted to WordPress.org. Submitted rc.16 is awaiting the reviewer response; publication has not been approved.**
+**0.3.3 rc.18 has been accepted as an update to the existing WordPress.org application, and the review-email reply has been sent. Awaiting the reviewer response; publication has not been approved.**
 
-**0.3.3 rc.18はGitHub公開候補で、WordPress.orgには未提出です。提出済みrc.16は審査担当者の回答待ちで、公開承認済みではありません。**
+**0.3.3 rc.18の既存申請への更新受付と審査メールへの返信が完了しました。審査担当者の回答待ちで、公開承認済みではありません。**
 
 - [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.18/ozeki-resilience-0.3.3.zip)
 - [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.18)
@@ -18,3 +18,7 @@ Previous submission: [rc.16 record / 提出済みrc.16の記録](https://github.
 rc.18 also retains prepared TablePress global settings, destination theme CSS and widget configurations; unverifiable placements are held for review. No new recording format is introduced.
 
 rc.18ではTablePress全体設定・復旧先の追加CSS・ウィジェット本体設定も維持し、照合できない配置は保留します。新しい記録形式の追加はありません。
+
+Submission record (2026-11-15): the maintainer reported successful upload acceptance and sending the reply in the original review-email thread. ZIP and tag are unchanged.
+
+申請記録（2026-11-15）：管理者から、更新アップロード受付と元の審査メールへの返信送信の完了報告を受けて反映。ZIPとタグは変更していません。
