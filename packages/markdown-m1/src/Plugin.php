@@ -719,8 +719,13 @@ final class Plugin
                 echo '</ul></div>';
             }
             echo '<h4>'.esc_html(AdminText::text('Preserved in S3 — not automatically applied')).'</h4><p>'.esc_html((string)$report['count']).esc_html(AdminText::text(' item(s). Rules: ')).esc_html($report['rules']).''.esc_html(AdminText::text('. Original resources remain unchanged; omission is not data deletion.')).'</p><ul>';
-            foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html($item['reason']).'</li>';
+            foreach($report['not_applied'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html(AdminText::text($item['reason'])).'</li>';
             echo '</ul>';
+            if(!empty($report['prepared_destination'])){
+                echo '<h4>'.esc_html(AdminText::text('Prepared destination — settings requiring review')).'</h4><ul>';
+                foreach($report['prepared_destination'] as $item)echo '<li>'.esc_html($item['item']).' — '.esc_html(AdminText::text($item['reason'])).'</li>';
+                echo '</ul>';
+            }
         }
         if(!empty($r['capture_excluded_files'])){echo '<h4>'.esc_html(SetupReadiness::text('Files not included in this recovery point','この復旧ポイントに保存されていないファイル')).'</h4><ul>';foreach($r['capture_excluded_files'] as $item)echo '<li>'.esc_html($item['item']).'</li>';echo '</ul>';}
         if(!empty($snapshot['excluded_files'])){echo '<h4>'.esc_html(SetupReadiness::text('Files outside automatic protection','自動保全の対象外ファイル')).'</h4><p>'.esc_html(SetupReadiness::text('Supported data was saved. These files were excluded because their ownership or access conditions are not supported. Keep their originals separately; do not publish them on a recovery site without checking access.','対応データを保存しました。以下のファイルは管理元や公開条件が対応範囲外のため除外しました。原本は別途保管し、復旧先へ公開する前に閲覧条件を確認してください。')).'</p><ul>';foreach($snapshot['excluded_files'] as $item)echo '<li>'.esc_html($item['item']).'</li>';echo '</ul>';}

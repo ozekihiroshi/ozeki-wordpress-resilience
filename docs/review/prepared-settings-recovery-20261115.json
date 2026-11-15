@@ -1,0 +1,149 @@
+{
+  "scope": "Isolated prepared TablePress/theme/widget settings roundtrip",
+  "storage": "file-backed SDK transport; no AWS access",
+  "versions": {
+    "wordpress": "7.1.4",
+    "php": "8.3.31",
+    "wp_members": "3.5.8.3"
+  },
+  "missing_preparation": {
+    "rejected": true,
+    "reason": "Recovery preparation needed: WP-Members destination setup (Already set up): Complete WP-Members setup on the destination, then recheck. Recovery does not install or initialize plugins.",
+    "state_unchanged": true
+  },
+  "first_recovery": {
+    "anonymous_blocked": true,
+    "member_login_and_read": true,
+    "profile_and_choices": true,
+    "profile_posted": false
+  },
+  "first_prepared_settings": {
+    "pass": true,
+    "prepared": {
+      "global": "{\"plugin_options_db_version\":134,\"table_scheme_db_version\":3,\"prev_tablepress_version\":\"0\",\"tablepress_version\":\"3.4.1\",\"first_activation\":1794704299,\"message_plugin_update\":false,\"message_donation_nag\":true,\"use_custom_css\":true,\"use_custom_css_file\":false,\"custom_css\":\".tablepress { color: #135790; }\",\"custom_css_minified\":\"\",\"custom_css_version\":0,\"modules\":false,\"prepared_marker\":\"target\"}",
+      "mods": {
+        "custom_css_post_id": 711,
+        "prepared_marker": "target",
+        "prepared_url": "Keep https://source.invalid/path",
+        "background_color": "123456"
+      },
+      "css": ".prepared-target { color: #123456; }",
+      "text": {
+        "2": {
+          "title": "Prepared target",
+          "text": "Prepared explanation target",
+          "filter": false
+        },
+        "_multiwidget": 1
+      },
+      "image": {
+        "3": {
+          "attachment_id": 700,
+          "url": "http://owr-noinit-1794704231-target/prepared.png"
+        },
+        "_multiwidget": 1
+      },
+      "sidebars": {
+        "trial-sidebar": [
+          "text-2"
+        ],
+        "wp_inactive_widgets": [
+          "media_image-3"
+        ],
+        "array_version": 3
+      }
+    },
+    "widget_rendered": true,
+    "held_placement_reported": true
+  },
+  "resaved_prepared_settings": {
+    "pass": true,
+    "prepared": {
+      "global": "{\"plugin_options_db_version\":134,\"table_scheme_db_version\":3,\"prev_tablepress_version\":\"0\",\"tablepress_version\":\"3.4.1\",\"first_activation\":1794704299,\"message_plugin_update\":false,\"message_donation_nag\":true,\"use_custom_css\":true,\"use_custom_css_file\":false,\"custom_css\":\".tablepress { color: #135790; }\",\"custom_css_minified\":\"\",\"custom_css_version\":0,\"modules\":false,\"prepared_marker\":\"target\"}",
+      "mods": {
+        "custom_css_post_id": 711,
+        "prepared_marker": "target",
+        "prepared_url": "Keep https://source.invalid/path",
+        "background_color": "654321"
+      },
+      "css": ".prepared-target { color: #123456; }",
+      "text": {
+        "2": {
+          "title": "Prepared target",
+          "text": "Edited prepared explanation target",
+          "filter": false
+        },
+        "_multiwidget": 1
+      },
+      "image": {
+        "3": {
+          "attachment_id": 700,
+          "url": "http://owr-noinit-1794704231-target/prepared.png"
+        },
+        "_multiwidget": 1
+      },
+      "sidebars": {
+        "trial-sidebar": [
+          "text-2"
+        ],
+        "wp_inactive_widgets": [
+          "media_image-3"
+        ],
+        "array_version": 3
+      }
+    },
+    "widget_rendered": true,
+    "held_placement_reported": true
+  },
+  "integrations_roundtrip": true,
+  "second_recovery": {
+    "anonymous_blocked": true,
+    "member_login_and_read": true,
+    "profile_and_choices": true,
+    "profile_posted": false
+  },
+  "second_prepared_settings": {
+    "pass": true,
+    "prepared": {
+      "global": "{\"plugin_options_db_version\":134,\"table_scheme_db_version\":3,\"prev_tablepress_version\":\"0\",\"tablepress_version\":\"3.4.1\",\"first_activation\":1794704327,\"message_plugin_update\":false,\"message_donation_nag\":true,\"use_custom_css\":true,\"use_custom_css_file\":false,\"custom_css\":\".tablepress { color: #135790; }\",\"custom_css_minified\":\"\",\"custom_css_version\":0,\"modules\":false,\"prepared_marker\":\"third\"}",
+      "mods": {
+        "custom_css_post_id": 711,
+        "prepared_marker": "third",
+        "prepared_url": "Keep https://source.invalid/path",
+        "background_color": "654321"
+      },
+      "css": ".prepared-third { color: #123456; }",
+      "text": {
+        "2": {
+          "title": "Prepared third",
+          "text": "Prepared explanation third",
+          "filter": false
+        },
+        "_multiwidget": 1
+      },
+      "image": {
+        "3": {
+          "attachment_id": 700,
+          "url": "http://owr-noinit-1794704231-third/prepared.png"
+        },
+        "_multiwidget": 1
+      },
+      "sidebars": {
+        "trial-sidebar": [
+          "text-2"
+        ],
+        "wp_inactive_widgets": [
+          "media_image-3"
+        ],
+        "array_version": 3
+      }
+    },
+    "widget_rendered": true,
+    "held_placement_reported": true
+  },
+  "definition_deletion": true,
+  "prepared_settings_preserved": true,
+  "initialization_guard_never_triggered": true,
+  "object_count": 236,
+  "pass": true
+}
