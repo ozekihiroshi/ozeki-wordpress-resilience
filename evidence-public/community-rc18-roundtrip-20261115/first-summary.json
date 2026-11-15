@@ -1,0 +1,25 @@
+{
+  "initial_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 66,
+    "posts": 87,
+    "files": 12,
+    "not_applied": 177
+  },
+  "prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "file_count": 51,
+  "states": {
+    "public": 12,
+    "held": 39,
+    "unknown": 0
+  },
+  "missing_bytes": 0,
+  "previous_missing_count": 10,
+  "previous_missing_now_present": 10,
+  "restricted_pages": 3
+}

@@ -1,0 +1,56 @@
+{
+  "first_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 66,
+    "posts": 87,
+    "files": 12,
+    "not_applied": 177
+  },
+  "first_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "initial_media_states": {
+    "public": 12,
+    "held": 39,
+    "unknown": 0
+  },
+  "new_baseline": {
+    "files": 323,
+    "through": 0
+  },
+  "resave": {
+    "updated": true
+  },
+  "resaved_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "second_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 26,
+    "posts": 87,
+    "files": 12,
+    "not_applied": 133
+  },
+  "second_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "roundtrip_completed": true,
+  "all_registered_files_recovered": true,
+  "missing_byte_count": 0,
+  "media_roundtrip_equal": true,
+  "content_roundtrip_equal": true,
+  "page_restrictions_equal": true,
+  "test_s3_versions": 457,
+  "source_data_used_fixed_version_copy": true,
+  "source_write_credentials_transferred": false,
+  "submitted_zip_sha256": "eadc9ec4de01f06014414a9bb709b11905019e525fdbdc918f45d3626d2f2d97",
+  "second_history_through": 26
+}

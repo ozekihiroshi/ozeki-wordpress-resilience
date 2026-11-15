@@ -1,0 +1,9 @@
+{
+  "remaining_resources": [],
+  "operations": {
+    "ListObjectsV2": 107,
+    "PutObject": 457,
+    "GetObject": 1593
+  },
+  "failures": {}
+}
