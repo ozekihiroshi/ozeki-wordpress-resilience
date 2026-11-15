@@ -24,7 +24,9 @@ final class AttachmentHistory {
     public static function assertComplete(array $data,array $files): void {
         $paths=FileScope::paths($data,true);$rules=MediaAccess::validate($data['media_access']??[]);
         foreach($paths+$rules as $path=>$_){
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; attachment notices and recovery admin renderers escape it at output.
             if(!array_key_exists($path,$files))throw new \RuntimeException('Attachment original or derivative missing: '.$path);
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; attachment notices and recovery admin renderers escape it at output.
             if(!isset($rules[$path]))throw new \RuntimeException('Attachment viewing condition missing: '.$path);
         }
     }
@@ -93,6 +95,7 @@ final class AttachmentHistory {
             foreach($paths as $path=>$_){
                 $body=MediaAccess::heldBody($path);
                 if($body===null){$full=realpath(wp_upload_dir()['basedir'].'/'.substr($path,8));
+                    // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; attachment notices and recovery admin renderers escape it at output.
                     if(!$root||!$full||!str_starts_with($full,$root.DIRECTORY_SEPARATOR)||!is_file($full)||is_link(wp_upload_dir()['basedir'].'/'.substr($path,8)))throw new \RuntimeException('Attachment original or derivative missing: '.$path);
                     if(filesize($full)>32*1024*1024)throw new \RuntimeException('Attachment exceeds 32 MiB.');
                     $body=file_get_contents($full);if($body===false)throw new \RuntimeException('Cannot read attachment.');

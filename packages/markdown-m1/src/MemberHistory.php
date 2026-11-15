@@ -103,6 +103,7 @@ final class MemberHistory
     public static function preparedSettings(array $saved,string $from='',string $to=''): array {
         $prepared=get_option('wpmembers_settings',false);
         if(!is_array($prepared)||!isset($prepared['version'],$prepared['db_version']))
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal localized diagnostic; recovery admin renderers escape it at output.
             throw new \RuntimeException(SetupReadiness::text('Set up WP-Members on the destination, then recheck recovery preparation. Recovery does not initialize plugins.','復旧先でWP-Membersのセットアップを済ませ、復旧前の準備を再確認してください。復旧処理はプラグインを初期化しません。'));
         $out=[];
         foreach($saved as $key=>$value){
