@@ -86,3 +86,14 @@ rc.16では、記事用のタイトル・状態を持たない閲覧条件など
 rc.17 preserves registered attachment originals, generated previews, metadata and file-access conditions together. New attachment records and recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Update recovery destinations too. Do not resume saving or cleanup with an older version after using the new format. Existing originals/history are not rewritten. Older recovery points remain readable; missing originals are reported as incomplete and cannot be recreated by updating.
 
 rc.17は登録された添付の原本・付随画像・添付情報・閲覧条件を一組で保全します。新しい添付記録と復旧点にはrc.17以降の対応版が必要で、rc.16は読取りを拒否します。復旧先も更新してください。新形式を使った保存先へ旧版を戻して保存・整理を続けないでください。既存原本・履歴は書き換えません。旧復旧点も読めますが、原本不足は未完了として報告し、更新だけで失われた原本を補完することはありません。
+
+
+## rc.18: prepared settings / 準備済み設定
+
+TablePress table content and supported table options are restored while its prepared global settings remain unchanged. Recovery retains the selected theme, its prepared Additional CSS and other non-restored settings. Prepared widget configurations remain available; unverifiable placements are held for administrator review. See the recovery guide for supported references.
+
+TablePressは表の内容と対応する表単位の設定を戻し、準備済みの全体設定を維持します。選択中のテーマ、準備済みの追加CSSと復旧対象外の設定も維持します。ウィジェット本体の設定は残し、参照先を確認できない配置は保留して管理者の確認につなぎます。照合範囲は復旧ガイドを参照してください。
+
+This change adds no recording format or migration. The rc.17 attachment compatibility requirements above still apply. Update recovery destinations too.
+
+この変更による記録形式の追加や移行はありません。rc.17の添付記録に関する互換性条件は引き続き適用されます。復旧先も更新してください。

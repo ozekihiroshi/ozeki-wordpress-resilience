@@ -22,6 +22,8 @@ The aim is preparedness, not minimum storage or the fastest restoration. Indepen
 
 Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
 
+TablePress table content and supported table options are restored while its prepared global settings remain unchanged. Recovery retains the selected theme, its prepared Additional CSS and other non-restored settings. Prepared widget configurations remain available; unverifiable placements are held for administrator review. See the recovery guide for supported references.
+
 = From originals and history to recovery =
 
 Start with a trusted initial capture (Baseline). Enable protection for supported edits, then create Checkpoints from the saved resources and confirmed history. When needed, prepare a compatible destination and recover a selected point plus confirmed history. Checkpoints use what has been saved; untracked live changes may require a new trusted Baseline.
