@@ -21,6 +21,14 @@ $s['checkpoint_through']=33;$s['requested_through']=68;$s['through']=68;$h=rende
 echo "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n";
 
 foreach(['en_US','ja'] as $testLocale){
+ $prepared=$s+['application_report'=>['rules'=>'fixture','not_applied'=>[],'count'=>0,'prepared_destination'=>[['item'=>'widgets.<held>','reason'=>'Placement held: referenced content changed or widget references cannot be verified; configuration retained for administrator review']]]];
+ $h=render([],$prepared);
+ ok(str_contains($h,$testLocale==='ja'?'復旧先で準備した設定':'Prepared destination — settings requiring review'),'Destination adjustments distinguished from archived omissions');
+ ok(str_contains($h,'widgets.&lt;held&gt;')&&!str_contains($h,'widgets.<held>'),'Destination adjustment identifiers escaped');
+ ok(str_contains($h,$testLocale==='ja'?'本体設定は残っています':'configuration retained'),'Actionable language-specific reason');
+}
+
+foreach(['en_US','ja'] as $testLocale){
  ob_start();OzekiResilience\M1\Plugin::renderSiteResult([],[],['excluded_files'=>[['item'=>'uploads/<private>.pdf']]]);$h=ob_get_clean();
  ok(str_contains($h,$testLocale==='ja'?'自動保全の対象外ファイル':'Files outside automatic protection'),'Visible exclusions in user language');
  ok(str_contains($h,'&lt;private&gt;')&&!str_contains($h,'<private>'),'Excluded paths escaped');

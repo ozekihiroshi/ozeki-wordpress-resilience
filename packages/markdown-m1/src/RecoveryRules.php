@@ -152,11 +152,7 @@ final class RecoveryRules
             if(in_array($key,TableHistory::OPTIONS,true))$out[$key]=$self->metadata($value,$rules[$key],$path,true);
             else $out[$key]=$value===false?false:$self->value($value,$rules[$key],$path);
         }
-        if(isset($out['tablepress_plugin_options'])){
-            $o=json_decode($out['tablepress_plugin_options'],true,512,JSON_THROW_ON_ERROR);
-            // Do not inherit destination CSS or module defaults as though they were recovered.
-            $o+=['use_custom_css'=>false,'use_custom_css_file'=>false,'custom_css'=>'','custom_css_minified'=>'','modules'=>false];$out['tablepress_plugin_options']=Store::json($o);
-        }
+        // Destination operational settings are retained by RecoverySettings, not regenerated here.
         $d['options']=$out;
         if(isset($d['membership'])){
             $settings=[];$rules=MemberHistory::recoverySettings();

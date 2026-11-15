@@ -11,6 +11,7 @@ require_once __DIR__.'/RecoveryPreparation.php';
 require_once __DIR__.'/FileScope.php';
 require_once __DIR__.'/MediaAccess.php';
 require_once __DIR__.'/AttachmentHistory.php';
+require_once __DIR__.'/RecoverySettings.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -344,10 +345,17 @@ final class SiteSnapshot
         }
         if(isset($m['required_tablepress_version'])&&(!TableHistory::enabled()||\TablePress::version!==$m['required_tablepress_version']))
             throw new \RuntimeException('Activate the recorded TablePress version before recovery.');
-        // Keep the destination theme selection; apply theme settings only to that same theme.
+        // Keep destination software and build a read-only settings plan before replacing content.
         foreach(['template','stylesheet'] as $key)unset($d['options'][$key]);
-        foreach(array_keys($d['options']) as $key)if(str_starts_with($key,'theme_mods_')&&$key!=='theme_mods_'.get_stylesheet()){
-            unset($d['options'][$key]);$application['report']['not_applied'][]=['item'=>'options.'.$key,'reason'=>'Destination theme differs; install and select the intended theme separately'];
+        $destination=$this->data();$prepared=$destination['options'];
+        // Relocate source values first, never prepared destination strings.
+        $savedOptions=self::relocate($d['options'],$from,$to,$m['source_upload_url']??$from.'/wp-content/uploads',wp_upload_dir()['baseurl']);
+        $settingsPlan=RecoverySettings::plan($savedOptions,$prepared,$d['tables'],$destination['tables'],get_stylesheet());
+        $d['options']=$settingsPlan['options'];
+        $application['report']['prepared_destination']=[];
+        foreach($settingsPlan['report'] as $item){
+            if($item['origin']==='destination')$application['report']['prepared_destination'][]=$item;
+            else $application['report']['not_applied'][]=$item;
         }
         $install=[];foreach($files as $p=>$body)if(str_starts_with($p,'uploads/')){
             if(!isset($allowedFiles[$p])){$application['report']['not_applied'][]=['item'=>$p,'reason'=>FileScope::REASON];continue;}
@@ -386,8 +394,11 @@ final class SiteSnapshot
                 foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to,$fromUploads,$toUploads);$row[$k]=is_serialized($v)?serialize($value):$value;}
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
+            // These records came from the prepared destination, not the archive. Keep their authors.
+            foreach($settingsPlan['local_posts'] as $row)if($wpdb->insert($wpdb->posts,$row)===false)throw new \RuntimeException('Cannot preserve prepared theme CSS.');
+            foreach($settingsPlan['local_postmeta'] as $row)if($wpdb->insert($wpdb->postmeta,$row)===false)throw new \RuntimeException('Cannot preserve prepared theme CSS metadata.');
             AcfHistory::install($d['acf_restore_groups']??[]);
-            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');if($k==='tablepress_plugin_options'){$options=json_decode($v,true,512,JSON_THROW_ON_ERROR);$options['use_custom_css_file']=false;$v=Store::json($options);}self::writeOption($k,self::relocate($v,$from,$to,$fromUploads,$toUploads));}
+            foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');self::writeOption($k,$v);}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
                 (new \OzekiMarkdownDocuments\Content\MarkdownSource())->store((int)$match[1],$raw);

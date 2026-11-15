@@ -140,3 +140,13 @@ After directly changing access-control files in uploads directories, select **Re
 ## rc.17
 
 rc.17 preserves registered attachment originals, generated previews, metadata and file-access conditions together. New attachment records and recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Update recovery destinations too. Do not resume saving or cleanup with an older version after using the new format. Existing originals/history are not rewritten. Older recovery points remain readable; missing originals are reported as incomplete and cannot be recreated by updating.
+
+## Prepared settings during recovery
+
+Prepare and set up the destination software before recovery. TablePress table content, table IDs and supported table options are restored, while the destination's plugin-wide settings remain unchanged. Archived custom commands are not executed.
+
+For the selected theme, recovery applies recognized saved menu locations, logo and color settings and retains other prepared settings, including the destination Additional CSS body. A missing field in an older record does not erase a prepared value. Menu and logo references must refer to the correct recovered objects, not just an equal numeric ID.
+
+Source widget bodies and layouts are not applied. Prepared destination widget configurations are retained. Verified core widget placements remain active; placements whose references changed or cannot be checked are moved to Inactive Widgets and identified in the recovery result. Review and reactivate them after checking their content. This includes extension widgets, block widgets and rich text with links or shortcodes that this check cannot interpret. Arbitrary theme-specific setting references are not comprehensively validated; inspect the prepared theme after recovery.
+
+These application rules do not change stored originals/history or require a new recording format.

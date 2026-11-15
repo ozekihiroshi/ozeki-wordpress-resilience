@@ -44,3 +44,12 @@ No delete or software-install operation is forwarded. All versions in the test
 prefix are compared before and after recovery; existing prefixes are not queried
 or mutated. Test originals are retained after completion. The identity/bucket
 constants in live.py are specific to the authorized test infrastructure.
+
+Prepared settings roundtrip (2026-11-15)
+Use the same disposable resources described above and add settings.php. Run python3 settings-run.py.
+It adds distinct prepared TablePress settings, theme values/Additional CSS and widget instances to
+each site. The destination must retain its own settings through restore/use/resave/second restore.
+A same-ID unrelated attachment must not remain referenced. Source widget layouts are not imported.
+Keep each run in a separate evidence directory; do not overwrite results. The committed result
+used the file-backed SDK transport without AWS access. rc.17 fails the prepared TablePress check.
+Standalone: php packages/markdown-m1/tests/prepared-settings.php.

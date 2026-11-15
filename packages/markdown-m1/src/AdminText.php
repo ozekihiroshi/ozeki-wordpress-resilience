@@ -29,6 +29,14 @@ final class AdminText
         return SetupReadiness::text('Keep the destination private and record the recovery point, history end and error. Check storage access and the destination state before retrying. For an interrupted or repeated failure, send the redacted details to support.','復旧先を非公開のままにし、復旧ポイント・履歴番号・エラーを記録してください。保存先への接続と復旧先の状態を確認してから再実行します。途中中断や失敗が続く場合は、秘密情報を除いた記録を不具合受付へ送ってください。');
     }
     private const JA = [
+        'Prepared custom CSS reference is missing; review the destination theme CSS' => '準備済みの追加CSSの参照先がありません。復旧先のテーマの追加CSSを確認してください',
+        'Prepared destination — settings requiring review' => '復旧先で準備した設定 — 再確認が必要な項目',
+        'Prepared destination TablePress settings retained; archived global settings are not applied' => '復旧先のTablePress全体設定を維持し、保存元の全体設定は適用していません',
+        'Destination theme differs; prepared theme retained' => 'テーマが異なるため、復旧先で準備したテーマを維持しました',
+        'Logo reference unavailable or changed identity; select the logo again' => 'ロゴの参照先がないか別の内容に変わったため、ロゴを再選択してください',
+        'Menu reference unavailable or changed identity; assign the menu again' => 'メニューの参照先がないか別の内容に変わったため、メニューを再指定してください',
+        'Placement held: referenced content changed or widget references cannot be verified; configuration retained for administrator review' => '参照先が変わったか照合できないため配置を保留しました。本体設定は残っています。内容を確認してから再配置してください',
+        'Source widget layout not applied; destination widget configuration retained' => '保存元のウィジェット配置は適用せず、復旧先の本体設定を維持しました',
         'Site recovery failed' => 'サイトの復旧を完了できませんでした',
         'Use the recorded WordPress release line with the same or a newer maintenance patch.' => '保存時と同じWordPress系列の、同じか新しい修正版を用意してください。',
         'Refusing to replace the source site.' => '保存元と同じURLには復旧できません。',
