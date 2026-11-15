@@ -1,0 +1,43 @@
+# 0.3.3 rc.18 — 準備済み設定を維持する復旧
+
+2026-11-15。**GitHub公開候補です。WordPress.orgへの送信・審査メール返信は未実施です。提出済みrc.16は審査担当者の回答待ちで、公開承認済みではありません。既存rc.17も保全しています。**
+
+## 修正と復旧方針
+
+管理者が信頼できるWordPress・テーマ・プラグインを別途導入し、通常のセットアップを済ませます。復旧はソフトウェアをインストール・初期化せず、保存元の実行コードも配置しません。
+
+- TablePressは表データ・ID・対応する表単位設定を戻し、復旧先の全体設定・版情報・CSS・モジュール設定を維持します。部分的な保存情報で置換して初期値を補う処理は行いません。
+- 選択中のテーマへ認識したメニュー・ロゴ・色を適用し、準備済みの追加CSS本文と他の設定を維持します。保存元の項目不存在と明示的な空欄を区別します。
+- ウィジェット本体の設定は維持し、確認できる標準配置を残します。参照先の衝突や照合できない配置は保留し、理由を表示します。保存元のウィジェットを全面復元する機能ではありません。
+- WP-Membersの準備済み設定維持・初期化禁止、およびrc.17の添付一式保全修正も含みます。
+
+[設計・回帰確認・実S3の確認記録](../review/prepared-settings-recovery-20261115.txt) / [実S3結果](../review/prepared-settings-live-20261115.json)
+
+## 互換性
+
+今回の設定維持修正は保存形式を変えません。既存原本・履歴を移行・上書きしません。
+rc.17の添付記録と復旧点にはrc.17以降の対応版が必要で、rc.16は読取りを拒否します。復旧先も更新してください。新形式を使った保存先へ旧版を戻して保存・整理を続けないでください。旧形式は引き続き読めますが、過去の原本不足は更新だけでは補完できません。[更新手順](../../packages/markdown-m1/docs/install-update.md)。
+
+## 候補と確認
+
+- [ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.18/ozeki-resilience-0.3.3.zip) / [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.18)
+- SHA-256: eadc9ec4de01f06014414a9bb709b11905019e525fdbdc918f45d3626d2f2d97
+- 8,311,861 bytes / 3,818 files。製品42ファイルを固定ソースと照合。依存ライブラリ変更なし、削除ファイルなし。同梱8ガイド・相対リンク86件を確認。開発資料・試験コードは配布ZIPに含めません。
+- ビルド元: eabed4f58bd8069dd88b07b1d8c816f6de8d961f。以後の公開記録変更は同梱ファイルを変更しません。
+- Plugin Check 2.2.0: エラー0／警告116。rc.17の114件との差2件は、準備済み追加CSS本文/メタ情報を保持するDB書込みです。既存の警告も残して記録し、検査を抑制していません。
+
+## 検証の区別
+
+実S3の保存→復旧後の利用→編集・再保存→再復旧はPR #62の実装で確認済みです。各復旧先の準備済み設定を維持し、S3の236版は復旧前後で不変、初期化ガードの発火なし。候補の製品PHPはその実装と同一です。完成ZIPで実S3の全往復を再実行したという意味ではありません。
+
+完成ZIPはcommunityホストの専用Docker環境（WordPress 7.0 / PHP 8.3.31）で新規導入・有効化、rc.17および提出済みrc.16からの更新に成功。別DB・内部ネットワーク、公開ポート/本番マウント/AWS認証情報なし。メール・Cron・自動更新を停止し、資源上限を設定しました。全配置ファイルの一致、更新前後のデータ/設定/有効化状態、保護状態と定期保存/自動削除オフ、日英管理画面・準備案内・9種類36件の合成履歴を照合して合格しました。専用コンテナ・ネットワークの残存ゼロを確認しました。管理画面はPHP描画、導入更新はWP-CLIで、実ブラウザの全操作確認ではありません。
+
+完成ZIPと一致するソースで、設定維持・初期化禁止・日英結果表示/エスケープ・適用規則の回帰確認も合格。
+拡張/ブロックウィジェットや照合できないリンク等の配置は保留します。任意のテーマ固有参照や全テーマのブラウザ外観はこの確認の対象ではありません。
+
+[ZIP監査](../../evidence-public/wordpress-org-033-rc18/package-audit.json) / [ソース一致](../../evidence-public/wordpress-org-033-rc18/source-match.json) / [Plugin Check](../../evidence-public/wordpress-org-033-rc18/plugin-check.json) / [導入・rc.17からの更新](../../evidence-public/wordpress-org-033-rc18/validation.json) / [rc.16からの更新](../../evidence-public/wordpress-org-033-rc18/validation-from-rc16.json) / [回帰確認](../../evidence-public/wordpress-org-033-rc18/final-contracts.txt)
+
+## 保全と提出前の説明案
+
+本番・既存S3原本/履歴・既存ZIP/タグ・研究側の未コミット変更は保全。新しいGitHub prereleaseとして分離し、WordPress.orgの申請とメール返信は行いません。
+[申請補足説明案](wordpress-org-033-rc18-additional-information.txt) / [未送信の返信案](wordpress-org-033-rc18-review-reply-DRAFT.txt)

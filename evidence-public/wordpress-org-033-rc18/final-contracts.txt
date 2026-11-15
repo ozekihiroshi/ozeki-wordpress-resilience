@@ -1,0 +1,7 @@
+PASS prepared settings, source application, absent/empty, identity collision, widget placement and read-only planning
+Prepared settings contract PASS
+No software installation or initialization dependencies PASS
+PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON
+PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.
+PASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.
+Flamingo application contract passed

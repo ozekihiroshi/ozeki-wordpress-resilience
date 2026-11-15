@@ -1,0 +1,29 @@
+{
+  "update": {
+    "files": 3818,
+    "zip_sha256": "eadc9ec4de01f06014414a9bb709b11905019e525fdbdc918f45d3626d2f2d97",
+    "state": "f9a70be4c63d18f0f2af087d401df5c639fb73acf48d3e492cc4e8899a5f2314",
+    "wordpress": "7.0",
+    "php": "8.3.31",
+    "bilingual_admin": true,
+    "history_display": {
+      "history_records": 36,
+      "types": 9,
+      "locales": {
+        "en_US": true,
+        "ja": true
+      },
+      "warnings": 0,
+      "existing_history_unchanged": true,
+      "individual_media_restore_rejected": true
+    }
+  },
+  "update_before": {
+    "files": 3816,
+    "zip_sha256": "c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae",
+    "state": "f9a70be4c63d18f0f2af087d401df5c639fb73acf48d3e492cc4e8899a5f2314",
+    "wordpress": "7.0",
+    "php": "8.3.31",
+    "bilingual_admin": true
+  }
+}

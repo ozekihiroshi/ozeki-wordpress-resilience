@@ -1,0 +1,19 @@
+DRAFT — not sent; upload acceptance has not yet been confirmed.
+
+Hello Plugin Review Team,
+
+Thank you for highlighting the WP-Members installer dependency. We reviewed the cause rather than retaining the initialization call: recovery had replaced prepared settings with partial source data and then regenerated defaults. The installer include and initialization call have been removed, and prepared runtime settings and schema versions are now maintained while supported member information is restored.
+
+We also reviewed related settings recovery. The proposed rc.18 preserves TablePress global settings, prepared theme CSS and widget configurations. Unverifiable placements are held and reported. Administrators install and set up trusted software beforehand; recovery neither installs nor initializes plugins or deploys archived code.
+
+The implementation passed isolated real-S3 recovery, normal use, resaving and second recovery checks, with an initialization guard and unchanged installed software. The release record separates those checks from exact-ZIP installation/upgrade tests and includes the full Plugin Check results (0 errors, 116 warnings).
+
+Existing originals/history are not rewritten. The attachment recording compatibility requirements introduced in rc.17 remain unchanged.
+
+Candidate source and verification:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.18
+
+We will confirm the upload separately after acceptance.
+
+Thank you,
+Hiroshi Ozeki

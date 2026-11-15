@@ -1,0 +1,14 @@
+Ozeki Resilience 0.3.3 rc.18 — proposed update to the existing application
+
+Administrators separately install and normally set up trusted WordPress, themes and plugins. Recovery does not install or initialize third-party software, include the WP-Members installer, or deploy archived theme/plugin code.
+
+The underlying partial-settings replacement has been corrected. WP-Members runtime settings/schema versions and TablePress global settings are retained. Supported member information, table data and recognized settings are applied. Prepared destination theme CSS and widget configurations are retained; unverifiable widget placements are held with an explanation instead of being silently reassigned.
+
+The corresponding implementation passed isolated real-S3 save, recovery, use, edit/resave and second recovery checks. Prepared settings and installed plugin files remained intact; initialization was instrumented to fail if called, and no call occurred. The candidate PHP matches that tested implementation. Exact-ZIP installation/upgrade checks and Plugin Check are documented separately.
+
+Existing S3 originals/history are not rewritten. The rc.17 attachment recording format remains in use: recovery destinations need rc.17 or a compatible later reader; rc.16 rejects the new records. Do not resume saving or cleanup with an older version after using the new format. This prepared-settings correction adds no new recording format.
+
+Plugin Check 2.2.0: 0 errors, 116 warnings. Two additional warnings compared with rc.17 concern database inserts preserving prepared theme CSS; detailed results are linked below.
+ZIP SHA-256: eadc9ec4de01f06014414a9bb709b11905019e525fdbdc918f45d3626d2f2d97
+Source: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.18
+Verification: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc18.md
