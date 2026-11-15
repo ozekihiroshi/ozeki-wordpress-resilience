@@ -1,14 +1,17 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.16 has been accepted as an update to the existing WordPress.org application, and the original review email has been replied to.** We are awaiting the reviewer's response; publication has not been approved. This status is based on the maintainer's confirmation of successful manual upload and email submission.
+**0.3.3 rc.17 is a GitHub release candidate. It has not been submitted to WordPress.org. Submitted rc.16 is awaiting the reviewer response; publication has not been approved.**
 
-**0.3.3 rc.16の既存申請への更新受付と元の審査メールへの返信が完了しています。審査担当者の回答待ちで、公開承認済みではありません。** 管理者による手動アップロードの受付・メール送信完了の報告に基づく記録です。
+**0.3.3 rc.17はGitHub公開候補で、WordPress.orgには未提出です。提出済みrc.16は審査担当者の回答待ちで、公開承認済みではありません。**
 
-- [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.16/ozeki-resilience-0.3.3.zip)
-- [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.16)
-- [Verification / 確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc16.md)
-- SHA-256: `c5f98640b96fd85c47404d8bddab235efc0387e0e04bfd78131d120a488184ae`
+- [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.17/ozeki-resilience-0.3.3.zip)
+- [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.17)
+- [Verification / 確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc17.md)
+- SHA-256: 27440e5fd02804ffb5eee6ec60d092f88f4d52881a54c4ed47274f3a68681db5
 
-rc.16 corrects history display and excludes file-access records from supplementary Markdown recovery. It does not change rc.15 recording formats or require migration. Keep an rc.15-compatible reader on recovery destinations; older readers reject those media records. Existing originals/history remain unchanged. See the [update procedure](install-update.md) and [setup guide](user-guide.md). Use the installable ZIP, not GitHub's source archive.
+Recovery does not install or initialize plugins. Prepare trusted software and complete its normal setup first. WP-Members recovery retains prepared runtime settings/schema versions and applies supported information. rc.17 also preserves registered attachment originals, previews, metadata and access conditions together. New attachment recovery points require rc.17 or a compatible later reader; rc.16 rejects them. Do not resume saving or cleanup with an older version after using the new format. Existing originals/history are not rewritten. Missing originals in older points are reported as incomplete.
 
-rc.16は履歴表示を修正し、閲覧条件の記録をMarkdownの補助的な個別復旧から除外します。rc.15から保存形式の変更・移行はありません。復旧先にはrc.15対応readerが必要で、それ以前のreaderは新しい画像関連記録を拒否します。既存原本・履歴は変更しません。[更新手順](install-update.md)・[導入ガイド](user-guide-ja.md)を参照し、GitHubのソースアーカイブではなく導入用ZIPを使用してください。
+復旧処理はプラグインのインストール・初期化を行いません。信頼できるソフトウェアを事前に導入・セットアップし、WP-Membersの準備済み動作設定・版情報を維持して対応情報を戻します。rc.17は添付原本・付随画像・添付情報・閲覧条件を一組で保全します。新しい添付復旧点にはrc.17以降の対応版が必要で、rc.16は拒否します。新形式を使った後に旧版で保存・整理を続けないでください。既存原本・履歴は書き換えず、旧復旧点の原本不足は未完了として報告します。
+
+Use the installable ZIP, not GitHub source archives. See [updating](install-update.md), [setup](user-guide.md) / [導入ガイド](user-guide-ja.md).
+Previous submission: [rc.16 record / 提出済みrc.16の記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc16.md).

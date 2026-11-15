@@ -1,0 +1,17 @@
+DRAFT — not sent
+
+Hello Plugin Review Team,
+
+Thank you for pointing out the WP-Members installer dependency. On review, we found that recovery had replaced prepared settings with a partial projection and then regenerated defaults. We corrected the cause: recovery now preserves the destination settings established by normal setup and applies supported archived information to them. The includes/install.php include and initialization call have been removed. Missing setup is reported before replacement.
+
+Administrators prepare trusted WordPress, themes and plugins separately. Recovery does not install or initialize third-party plugins or deploy archived software. Isolated real-S3 checks covered recovery, normal use, resaving and second recovery, with WP-Members initialization instrumented to fail if called and installed plugin files/activation state unchanged.
+
+The proposed rc.17 also includes attachment preservation corrections. New attachment recovery points require an updated reader; existing originals and history are not rewritten.
+
+Candidate source and exact-ZIP verification:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.17
+
+We will confirm the upload separately once it has been accepted.
+
+Thank you,
+Hiroshi Ozeki

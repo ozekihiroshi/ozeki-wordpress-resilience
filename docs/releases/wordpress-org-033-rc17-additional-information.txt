@@ -1,0 +1,11 @@
+Ozeki Resilience 0.3.3 rc.17 — proposed update to the existing application
+
+Recovery uses software that the administrator separately installs, activates and sets up from trusted distributors. It does not install or initialize third-party plugins. We removed the WP-Members includes/install.php dependency and initialization call. Recovery preserves prepared destination runtime settings and schema versions, then applies supported saved member information, field definitions and access conditions. Missing preparation is reported before replacement.
+
+This candidate also preserves registered attachment originals, generated previews, metadata and file-access conditions together during initial and daily preservation. New attachment records and recovery points require rc.17 or a compatible updated reader; rc.16 rejects them. Existing S3 originals/history are not rewritten. Older recovery points remain readable, with missing originals explicitly reported as incomplete.
+
+The corresponding recovery implementation was verified in an isolated real-S3 environment through recovery, use, resaving and second recovery. WP-Members initialization was instrumented to fail if called; no call occurred. Installed plugin files and activation state remained unchanged. The release record distinguishes these tests from exact-ZIP installation and upgrade checks and documents remaining audit limits.
+
+ZIP SHA-256: 27440e5fd02804ffb5eee6ec60d092f88f4d52881a54c4ed47274f3a68681db5
+Source: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.17
+Verification: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc17.md
