@@ -82,6 +82,7 @@ final class MemberHistory
         $version=get_file_data(WP_PLUGIN_DIR.'/'.self::PLUGIN,['Version'=>'Version'])['Version']??'';
         if($version!==$state['version'])throw new \RuntimeException('Install recorded WP-Members version before recovery.');
         if(array_diff(array_keys($state['settings']),self::OPTIONS))throw new \RuntimeException('Unexpected membership setting.');
+        self::preparedSettings($state['settings']);
         foreach([$wpdb->users,$wpdb->usermeta,$wpdb->options] as $t){$s=$wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name=%s',$t));if(strtolower($s->Engine??'')!=='innodb')throw new \RuntimeException('Transactional membership tables required.');}
         $plan=[];$seen=[];
         foreach($state['users'] as $id=>$entry){
@@ -97,6 +98,32 @@ final class MemberHistory
             $plan[(string)$id]=['target'=>$target?$target->ID:0,'marker'=>$marker,'entry'=>$entry];
         }
         return $plan;
+    }
+    /** Apply only recorded information to separately prepared software; never create defaults. */
+    public static function preparedSettings(array $saved,string $from='',string $to=''): array {
+        $prepared=get_option('wpmembers_settings',false);
+        if(!is_array($prepared)||!isset($prepared['version'],$prepared['db_version']))
+            throw new \RuntimeException(SetupReadiness::text('Set up WP-Members on the destination, then recheck recovery preparation. Recovery does not initialize plugins.','復旧先でWP-Membersのセットアップを済ませ、復旧前の準備を再確認してください。復旧処理はプラグインを初期化しません。'));
+        $out=[];
+        foreach($saved as $key=>$value){
+            if(!in_array($key,self::OPTIONS,true))throw new \RuntimeException('Unexpected membership setting.');
+            // Absence in the source is not permission to erase prepared destination settings.
+            if($value===false)continue;
+            // Relocate archived values only. Prepared destination values are not source data.
+            if($from!==''&&$to!=='')$value=SiteSnapshot::relocate($value,$from,$to);
+            if($key==='wpmembers_settings'){
+                if(!is_array($value))throw new \RuntimeException('Invalid membership settings.');
+                unset($value['version'],$value['db_version']);
+                $value=array_replace_recursive($prepared,$value);
+            }elseif($key==='wpmembers_dialogs'){
+                $dialogs=get_option($key,false);
+                if(!is_array($dialogs)||!is_array($value))throw new \RuntimeException('Prepare WP-Members dialogs on the destination before recovery.');
+                $value=array_replace($dialogs,$value);
+            }
+            // Field definitions are complete collections: deleted fields must not survive a merge.
+            $out[$key]=$value;
+        }
+        return $out;
     }
     /** Called inside the site's DB transaction. Direct records avoid email/reset hooks. */
     public static function install(array $state,array $plan,string $from,string $to): array {
@@ -115,16 +142,8 @@ final class MemberHistory
             if($u->roles!==['subscriber']||array_diff_key($u->caps,['subscriber'=>true]))throw new \RuntimeException('Removed member has privileged destination role.');
             if($wpdb->delete($wpdb->usermeta,['user_id'=>$u->ID])===false||$wpdb->delete($wpdb->users,['ID'=>$u->ID])===false)throw new \RuntimeException('Cannot remove recovered member.');
         }
-        foreach($state['settings'] as $k=>$value){
-            if($k==='wpmembers_settings'){
-                // The trusted installed version supplies operational defaults. Only recognized
-                // archived settings override them; unknown archived settings are never imported.
-                require_once WP_PLUGIN_DIR.'/'.dirname(self::PLUGIN).'/includes/install.php';
-                $defaults=wpmem_install_settings();
-                if(!is_array($defaults)||!is_array($value))throw new \RuntimeException('Invalid membership defaults.');
-                $value=array_replace_recursive($defaults,$value);
-            }
-            SiteSnapshot::writeOption($k,SiteSnapshot::relocate($value,$from,$to));
+        foreach(self::preparedSettings($state['settings'],$from,$to) as $k=>$value){
+            SiteSnapshot::writeOption($k,$value);
         }
         return $map;
     }

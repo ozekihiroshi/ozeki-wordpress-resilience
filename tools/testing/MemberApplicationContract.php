@@ -4,7 +4,7 @@ declare(strict_types=1);
 /** Development-only oracle. Never used to filter or rewrite archived originals. */
 final class MemberApplicationContract
 {
-    public const VERSION='wp-members-application-1';
+    public const VERSION='wp-members-application-2';
     public const TYPES=['text','textarea','email','url','password','checkbox','select','radio','multiselect','number','date','hidden'];
     public const USER=['ID','user_login','user_pass','user_nicename','user_email','user_url','user_registered','user_status','display_name'];
     public const META=['first_name','last_name','nickname','description','active','_wpmem_user_confirmed','_wpmem_activation_confirm'];
@@ -91,12 +91,23 @@ final class MemberApplicationContract
         }elseif($expected!==$actual)$errors[]=['path'=>$path,'code'=>'changed'];
     }
     /** Actual values are not filtered: doing so could hide unexpected restoration. */
-    public static function compare(array $raw,array $actual,array $defaults=[]): array {
+    public static function compare(array $raw,array $actual,array $preparedSettings=[]): array {
         try{$expect=self::expected($raw);}catch(RuntimeException $e){return ['contract'=>self::VERSION,'pass'=>false,'errors'=>[['code'=>'invalid-source','path'=>$e->getMessage()]]];}
         $e=$expect['data'];
-        if($defaults&&is_array($e['settings']['wpmembers_settings']??null))$e['settings']['wpmembers_settings']=array_replace_recursive($defaults,$e['settings']['wpmembers_settings']);
+        if($preparedSettings){
+            $wanted=$preparedSettings;
+            foreach($e['settings'] as $key=>$value){
+                if($value===false)continue;
+                if($key==='wpmembers_settings'){
+                    unset($value['version'],$value['db_version']);
+                    $wanted[$key]=array_replace_recursive($wanted[$key]??[],$value);
+                }elseif($key==='wpmembers_dialogs')$wanted[$key]=array_replace($wanted[$key]??[],$value);
+                else $wanted[$key]=$value;
+            }
+            $e['settings']=$wanted;
+        }
         if(is_array($actual['settings']['wpmembers_fields']??null))foreach($actual['settings']['wpmembers_fields'] as &$f)foreach(['profile','native'] as $key)if(isset($f[$key])&&self::valid($f[$key],'bool'))$f[$key]=(bool)(int)$f[$key];unset($f);
         $errors=[];self::diff($e,$actual,'membership',$errors);
-        return ['contract'=>self::VERSION,'pass'=>!$errors,'errors'=>$errors,'excluded'=>$expect['excluded']];
+        return ['contract'=>self::VERSION,'stage'=>$preparedSettings?'prepared-destination-application':'projection-only','pass'=>!$errors,'errors'=>$errors,'excluded'=>$expect['excluded']];
     }
 }

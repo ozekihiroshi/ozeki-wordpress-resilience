@@ -41,9 +41,12 @@ $broken=$actual;$broken['settings']['wpmembers_fields'][0]['profile']=false;chec
 $broken=$actual;$broken['users']['3']['meta']['trial_checkbox']=[''];check(!MemberApplicationContract::compare($raw,$broken)['pass'],'Empty differs from checked');
 $broken=$actual;$broken['users']['3']['meta']['session_tokens']=['secret'];$r=MemberApplicationContract::compare($raw,$broken);check(!$r['pass']&&!str_contains(json_encode($r),'secret'),'Unexpected access data rejected without disclosure');
 $unknown=$raw;$unknown['settings']['unknown']='secret';check(MemberApplicationContract::compare($unknown,$actual)['pass'],'Unsupported source setting excluded explicitly');
-$defaults=['runtime_required'=>['enabled'=>true]];$installed=$actual;$installed['settings']['wpmembers_settings']=array_replace_recursive($defaults,$installed['settings']['wpmembers_settings']);
-check(MemberApplicationContract::compare($raw,$installed,$defaults)['pass'],'Trusted defaults distinguished from archived settings');
-unset($installed['settings']['wpmembers_settings']['runtime_required']);check(!MemberApplicationContract::compare($raw,$installed,$defaults)['pass'],'Missing runtime default rejected');
+$prepared=['wpmembers_settings'=>['version'=>'prepared','db_version'=>'2.4.3','runtime_required'=>['enabled'=>true]],'wpmembers_dialogs'=>['prepared_only'=>'keep']];$installed=$actual;
+$installed['settings']['wpmembers_settings']=array_replace_recursive($prepared['wpmembers_settings'],$installed['settings']['wpmembers_settings']);$installed['settings']['wpmembers_settings']['version']='prepared';$installed['settings']['wpmembers_settings']['db_version']='2.4.3';
+$installed['settings']['wpmembers_dialogs']['prepared_only']='keep';
+check(MemberApplicationContract::compare($raw,$installed,$prepared)['pass'],'Prepared destination settings distinguished from archived settings');
+$reset=$installed;$reset['settings']['wpmembers_settings']['runtime_required']['enabled']=false;check(!MemberApplicationContract::compare($raw,$reset,$prepared)['pass'],'Reset to a different installation default rejected');
+unset($installed['settings']['wpmembers_settings']['runtime_required']);check(!MemberApplicationContract::compare($raw,$installed,$prepared)['pass'],'Missing prepared runtime setting rejected');
 $bad=$raw;$bad['settings']['wpmembers_fields'][0]['profile']=[];check(!MemberApplicationContract::compare($bad,$actual)['pass'],'Invalid source is not a successful omission');
 check(serialize($raw)===$original,'Raw originals unchanged');
-echo 'PASS member application contract; '.count($paths)." missing-leaf mutations detected, normal product output, changed values, defaults and exclusions.\n";
+echo 'PASS member application contract; '.count($paths)." missing-leaf mutations detected, normal product output, changed values, prepared settings and exclusions.\n";

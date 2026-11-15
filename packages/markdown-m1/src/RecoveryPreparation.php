@@ -22,6 +22,10 @@ final class RecoveryPreparation {
             $active=$valid&&in_array($plugin,(array)get_option('active_plugins',[]),true);$actual=(string)($header['Version']??'');
             $add((string)$plugin,$version,$actual?:$t('Not installed','未導入'),$active&&($version===''||$version===$actual),$t('Install the recorded version from a trusted distributor and activate it in Plugins, then recheck.','信頼できる配布元から記録された版を導入し、「プラグイン」で有効化して再確認してください。'));
         }
+        if(isset($data['membership'])||in_array(MemberHistory::PLUGIN,$plugins,true)){
+            $ready=true;try{MemberHistory::preparedSettings($data['membership']['settings']??[]);}catch(\RuntimeException $error){$ready=false;}
+            $add($t('WP-Members destination setup','WP-Membersの復旧先設定'),$t('Already set up','セットアップ済み'),$ready?$t('Confirmed','確認済み'):$t('Preparation needed','準備が必要'),$ready,$t('Complete WP-Members setup on the destination, then recheck. Recovery does not install or initialize plugins.','復旧先でWP-Membersのセットアップを済ませて再確認してください。復旧処理はプラグインのインストール・初期化を行いません。'));
+        }
         $language=$data['options']['WPLANG']??'';if($language===false)$language='';$valid=is_string($language)&&preg_match('/^[a-zA-Z0-9_@-]*$/D',$language);
         $ok=$valid&&($language===''||$language==='en_US'||in_array($language,get_available_languages(),true));
         $add($t('Site language pack','サイトの言語パック'),$valid?($language?:'en_US'):$t('Invalid saved value','保存値が不正'),$ok?$t('Installed','導入済み'):$t('Not installed','未導入'),$ok,$t('In Settings → General → Site Language, select the recorded language and save. If downloads are unavailable, ask the administrator to install the official language pack for this WordPress version. Then recheck.','「設定 → 一般 → サイトの言語」で記録された言語を選んで保存してください。ダウンロードできない場合は管理者に、このWordPress版の公式言語パックの導入を依頼し、その後に再確認してください。'));

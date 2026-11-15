@@ -9,7 +9,7 @@
 - `member-contract-test.php`: 製品の適用結果と独立した期待内容を比較する。実画面由来の定義と、契約の全設定を含むデータを使う。各末端項目を一つずつ取り除き、不合格になることも確認する。
 - `member-contract-check.php`: 別のWordPress起動で復旧先を照合するCLI。正常は終了コード0、不一致・実行失敗は1、使い方の誤りは2。
 
-今回の契約版は `wp-members-application-1`、実環境の確認版はWP-Members 3.5.8.1。契約と実装が同じ誤認を持つことを避けるため、実画面から採取した試験データと実環境の利用確認を併用する。
+現行の契約版は `wp-members-application-2`。初期値ではなく復旧直前の準備済み設定を維持することを確認する。契約と実装が同じ誤認を持つことを避けるため、実画面から採取した試験データと実環境の利用確認を併用する。末尾の2026年11月11日の結果は旧契約版の履歴であり、この条件を満たしたという意味ではない。
 
 ## 契約の範囲と判定
 
@@ -46,14 +46,16 @@ php tools/testing/member-contract-check.php /isolated/site/wp-load.php /private/
 ```text
 raw: membership、tables.posts、tables.postmetaを含む適用前の状態
 source_url: その原本の元サイトURL
-trusted_defaults:
-  version: 別の新規隔離サイトへ導入したWP-Membersの版
-  settings: その導入直後のwpmembers_settings
+prepared_destination:
+  version: 実際の復旧先に事前導入したWP-Membersの版
+  settings: 復旧直前に取得したwpmembers_settings、wpmembers_fields、wpmembers_dialogs、wpmembers_tosの全4項目
 ```
 
 入力ファイルには秘密情報が含まれるため、Web公開領域外に権限0600で置き、リポジトリへ入れない。S3原本の検証・履歴の組立て・この入力の作成は呼び出し側の責任である。CLIは入力の出所を認証するツールではない。
 
-標準設定は、信頼できる同じ版を別の空の隔離サイトで有効化して取得する。`wpmem_install_settings()`は設定を書き戻すので、検証対象から標準設定を得る目的で呼んではいけない。保存された認識済み設定と、別途得た標準設定を分けた上で期待内容を構成する。
+実際にセットアップを済ませた復旧先から、復旧前に設定を読み取る。`wpmem_install_settings()`や別の初期化処理は呼ばない。初期値と異なる設定も用意し、復旧がそれを初期値へ戻した場合に検出できるようにする。旧形式の`trusted_defaults`入力は受け付けない。設定の初期値・復旧後の観測値を、復旧前の期待値の代わりにしてはいけない。
+
+第三引数なしの`compare()`は`projection-only`で、原本からの選別内容だけを確認する。準備済み設定の維持まで合格したことにはならない。S3原本・保存形式はこの開発用入力の変更では書き換えない。
 
 復旧直後、利用者のログイン前に実行する。ログイン後に新しく作られたセッションを「旧セッションの持ち込み」と混同しない。WordPress起動にはプラグインの処理も伴うので、隔離環境で確認前後の状態も比較する。
 
