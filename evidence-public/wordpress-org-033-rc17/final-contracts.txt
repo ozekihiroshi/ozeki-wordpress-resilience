@@ -1,0 +1,4 @@
+PASS final diagnostic annotations leave executable PHP tokens unchanged
+Prepared settings contract PASS
+No software installation or initialization dependencies PASS
+PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON

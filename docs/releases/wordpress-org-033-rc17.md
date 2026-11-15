@@ -50,7 +50,7 @@ communityホスト上の使い捨てWordPress 7.0 / PHP 8.3.31で、新規導入
 [ソース一致](../../evidence-public/wordpress-org-033-rc17/source-match.json) /
 [Plugin Check](../../evidence-public/wordpress-org-033-rc17/plugin-check.json) /
 [導入・更新](../../evidence-public/wordpress-org-033-rc17/validation.json) /
-[回帰確認](../../evidence-public/wordpress-org-033-rc17/final-contracts.log)
+[回帰確認](../../evidence-public/wordpress-org-033-rc17/final-contracts.txt)
 
 ## 保全と次の操作
 
