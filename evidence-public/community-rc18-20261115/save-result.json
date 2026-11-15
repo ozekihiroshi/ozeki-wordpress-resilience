@@ -1,0 +1,26 @@
+{
+  "method": "WordPress wp_insert_post/wp_update_post with normal plugin hooks; readback in separate PHP requests; not browser editor automation",
+  "existing_history_count": 41,
+  "create": {
+    "post_id": 130,
+    "sequence": 42,
+    "original_readback_matches": true,
+    "existing_content_unchanged": true,
+    "existing_history_unchanged": true,
+    "configuration_unchanged": true,
+    "pending": false
+  },
+  "edit": {
+    "post_id": 130,
+    "sequence": 66,
+    "original_readback_matches": true,
+    "existing_content_unchanged": true,
+    "existing_history_unchanged": true,
+    "configuration_unchanged": true,
+    "pending": false
+  },
+  "history_count": 66,
+  "last_sequence": 66,
+  "url": "https://www.community-energy.jp/resilience-save-check-rc18-20261115/",
+  "updated_page_http_verified": true
+}
