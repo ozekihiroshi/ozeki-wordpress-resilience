@@ -11,8 +11,8 @@ function review_integrations_seed(): array {
     $fields=get_option('wpmembers_fields');foreach($fields as &$f)if(($f[2]??'')==='first_name')$f['placeholder']='Name <PLC> [channel]';unset($f);update_option('wpmembers_fields',$fields);
     $group=acf_update_field_group(['key'=>'group_review_safe','title'=>'Technical information','fields'=>[],'location'=>[[['param'=>'post_type','operator'=>'==','value'=>'page']]]]);
     acf_update_field(['key'=>'field_review_safe_voltage','name'=>'review_voltage','label'=>'Voltage','type'=>'text','default_value'=>'Default <PLC>','parent'=>$group['ID']]);
-    $page=wp_insert_post(['post_type'=>'page','post_title'=>'ACF review','post_status'=>'publish']);update_field('field_review_safe_voltage','24 V <PLC> [channel]',$page);
-    return ['form'=>$form->id(),'sender'=>$properties['mail']['sender'],'table'=>$tableId,'table_data'=>$table['data'],'receipt'=>$receipt->id(),'login'=>get_userdata($user)->user_login,'prepared'=>get_option('wpmembers_settings'),'acf_page'=>$page,'fields'=>$fields];
+    $page=wp_insert_post(['post_type'=>'page','post_title'=>'ACF review','post_status'=>'publish']);$literal='24 V <PLC> [channel] reference '.home_url().'/spec';update_field('field_review_safe_voltage',$literal,$page);
+    return ['form'=>$form->id(),'sender'=>$properties['mail']['sender'],'table'=>$tableId,'table_data'=>$table['data'],'receipt'=>$receipt->id(),'login'=>get_userdata($user)->user_login,'prepared'=>get_option('wpmembers_settings'),'acf_page'=>$page,'fields'=>$fields,'acf_literal'=>$literal];
 }
 function review_integrations_check(array $ids): void {
     $form=WPCF7_ContactForm::get_instance($ids['form']);$p=$form->get_properties();
@@ -32,6 +32,6 @@ function review_integrations_check(array $ids): void {
     $settings=get_option('wpmembers_settings');foreach(['version','db_version','form_tags'] as $k)review_assert($settings[$k]===$ids['prepared'][$k],'Prepared member runtime changed');
     review_assert(get_user_meta($user->ID,'description',true)==='Technical <PLC> [channel]','Member text interpreted as HTML');
     foreach(get_option('wpmembers_fields') as $f)if(($f[2]??'')==='first_name')review_assert(($f['placeholder']??'')==='Name <PLC> [channel]','Member definition interpreted as HTML');
-    review_assert(get_field('review_voltage',$ids['acf_page'])==='24 V <PLC> [channel]','ACF field value/definition lost');
+    review_assert(get_field('review_voltage',$ids['acf_page'])===$ids['acf_literal'],'ACF field value/definition lost');
     $field=acf_get_field('field_review_safe_voltage');review_assert($field['default_value']==='Default <PLC>','ACF default interpreted as HTML');
 }

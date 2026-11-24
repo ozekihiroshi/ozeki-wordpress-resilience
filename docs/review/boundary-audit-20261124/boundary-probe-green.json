@@ -1,0 +1,18 @@
+{
+    "cf7_tag": {
+        "before": "[text sample \"<PLC>\"]",
+        "after": "[text sample \"<PLC>\"]",
+        "preserved": true
+    },
+    "member_definition": {
+        "preserved": true
+    },
+    "core_option": {
+        "rejected": true,
+        "message": "Cannot persist recovery option: blogdescription"
+    },
+    "synced_pattern": {
+        "safe_before": true,
+        "executed_after_edit": false
+    }
+}

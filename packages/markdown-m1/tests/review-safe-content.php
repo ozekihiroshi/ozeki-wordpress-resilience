@@ -27,4 +27,22 @@ $r=[];$block="<!--\nwp:review/attack /-->";
 safe_check(!str_contains(do_blocks(RecoveryContent::html($block,'block-whitespace',$r)),'<script>'),'Alternate block whitespace executed');
 $md="# 技術資料\n\n```html\n<script>alert(1)</script>\n```\n\n[bad](javascript:alert(2))\n";
 safe_check(OzekiResilience\M1\Plugin::validatedMarkdown($md)===$md,'Markdown original changed');
+
+// Concrete cross-boundary cases from the one-time call-site review.
+$form='[text sample "<PLC>"]<script>FORM_PROBE</script>[acceptance agreement]<script>BODY_PROBE</script>Agree[/acceptance]';
+$r=[];$projected=RecoveryContent::project(['tables'=>['posts'=>[['ID'=>91,'post_type'=>'wpcf7_contact_form']],'postmeta'=>[['post_id'=>91,'meta_key'=>'_form','meta_value'=>$form]]]],$r);
+$template=$projected['tables']['postmeta'][0]['meta_value'];
+safe_check(str_contains($template,'[text sample "<PLC>"]')&&!str_contains($template,'<script>')&&str_contains($template,'Agree'),'CF7 data/HTML boundary');
+$manager=clone WPCF7_FormTagsManager::get_instance();$controls=$manager->replace_all($template);
+safe_check(str_contains($controls,'&lt;PLC&gt;')&&!str_contains($controls,'<script>'),'CF7 generated input escaping');
+$fields=get_option('wpmembers_fields');foreach($fields as &$f)if(($f[2]??'')==='first_name')$f['placeholder']='Reference https://source.invalid/path';unset($f);
+$planned=OzekiResilience\M1\MemberHistory::preparedSettings(['wpmembers_fields'=>$fields],'https://source.invalid','https://destination.invalid');
+safe_check($planned['wpmembers_fields']===$fields,'Member definitions relocated as site links');
+$n=[];$safe=RecoveryContent::html('<!-- wp:review/attack /-->','pattern',$n);
+$id=wp_insert_post(['post_type'=>'wp_block','post_status'=>'publish','post_title'=>'Temporary pattern boundary','post_content'=>$safe]);
+try{
+    update_post_meta($id,'_ozeki_resilience_m1_origin_url','https://source.invalid/?p=91');
+    wp_update_post(['ID'=>$id,'post_content'=>html_entity_decode($safe,ENT_QUOTES|ENT_HTML5,'UTF-8')]);
+    safe_check(!str_contains(do_blocks('<!-- wp:block {"ref":'.$id.'} /-->'),'<script>'),'Synced pattern reactivated after editing');
+}finally{wp_delete_post($id,true);}
 echo "Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS\n";

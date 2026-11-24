@@ -357,8 +357,10 @@ final class SiteSnapshot
         // Keep destination software and build a read-only settings plan before replacing content.
         foreach(['template','stylesheet'] as $key)unset($d['options'][$key]);
         $destination=$this->data();$prepared=$destination['options'];
-        // Relocate source values first, never prepared destination strings.
-        $savedOptions=self::relocate($d['options'],$from,$to,$m['source_upload_url']??$from.'/wp-content/uploads',wp_upload_dir()['baseurl']);
+        // Keep source values distinct from prepared destination settings.
+        // These recognized options contain labels, formats, IDs and theme choices,
+        // not an arbitrary collection of relocatable URLs.
+        $savedOptions=$d['options'];
         $settingsPlan=RecoverySettings::plan($savedOptions,$prepared,$d['tables'],$destination['tables'],get_stylesheet());
         $d['options']=$settingsPlan['options'];
         $application['report']['prepared_destination']=[];
@@ -400,7 +402,11 @@ final class SiteSnapshot
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
                 if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??0;
                 if($t==='comments')$row['user_id']=$authors[(string)$row['user_id']]??0;
-                foreach($row as $k=>$v)if(is_string($v)){if($t==='postmeta'&&$k==='meta_value'&&$row['meta_key']==='_ozmd_source')continue;$value=self::relocate(self::decode($v),$from,$to,$fromUploads,$toUploads);$row[$k]=is_serialized($v)?serialize($value):$value;}
+                // Preserve scalar/serialized plugin values and definitions verbatim.
+                // Article links already use the provenance-aware presentation filter.
+                $urlKeys=$t==='posts'?['guid']:($t==='comments'?['comment_author_url']:[]);
+                if($t==='postmeta'&&($row['meta_key']??'')==='_menu_item_url')$urlKeys=['meta_value'];
+                foreach($urlKeys as $key)if(isset($row[$key])&&is_string($row[$key]))$row[$key]=ReferenceContext::url($row[$key],[['site'=>$from,'uploads'=>$fromUploads]],$to,$toUploads);
                 if($wpdb->insert($wpdb->$t,$row)===false)throw new \RuntimeException('Content import failed: '.$t.' '.$wpdb->last_error);
             }
             // These records came from the prepared destination, not the archive. Keep their authors.
@@ -409,7 +415,7 @@ final class SiteSnapshot
             AcfHistory::install($d['acf_restore_groups']??[]);
             // Existing origin metadata also identifies articles whose presentation
             // must retain the recovery execution boundary after ordinary editing.
-            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],['post','page','tablepress_table'],true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
+            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],array_merge(['post','page','attachment','tablepress_table'],RecoveryContent::EDITED_BLOCK_TYPES),true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
             foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');self::writeOption($k,$v);}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
