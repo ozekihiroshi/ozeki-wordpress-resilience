@@ -94,7 +94,7 @@ final class RecoveryRules
         }
         $removed=[];
         $d['tables']['posts']=array_values(array_filter($d['tables']['posts']??[],function($post)use($self,&$removed){
-            if(!in_array($post['post_type'],['post','page','attachment','revision','nav_menu_item','wp_block','wp_template','wp_template_part','wp_navigation','ozmd_document','wpcf7_contact_form','flamingo_inbound','tablepress_table'],true)){
+            if(!in_array($post['post_type'],['post','page','attachment','revision','nav_menu_item','wp_block','ozmd_document','wpcf7_contact_form','flamingo_inbound','tablepress_table'],true)){
                 $removed[]=(string)$post['ID'];$self->omit('posts.'.$post['ID'],'Post type has no information-asset recovery rule; software customization is prepared on the destination');return false;
             }return true;
         }));

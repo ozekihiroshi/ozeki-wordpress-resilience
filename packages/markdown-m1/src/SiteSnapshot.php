@@ -12,6 +12,7 @@ require_once __DIR__.'/FileScope.php';
 require_once __DIR__.'/MediaAccess.php';
 require_once __DIR__.'/AttachmentHistory.php';
 require_once __DIR__.'/RecoverySettings.php';
+require_once __DIR__.'/RecoveryTemplates.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -121,7 +122,10 @@ final class SiteSnapshot
             'excluded'=>'Administrator credentials, sessions, reset tokens, cron queues, mail transport and unsupported plugin settings are excluded; WP-Members subscriber password hashes and configured member fields are included when active.'];
         $origins=ReferenceContext::capture();
         if($origins)$manifest['reference_origins']=ReferenceContext::merge($origins,[['site'=>home_url(),'uploads'=>$upload['baseurl']]]);
-        return $this->save($files,$manifest);
+        $result=$this->save($files,$manifest);
+        // Only a verified, unchanged complete baseline can seed daily media completion.
+        if(Store::json($data)===Store::json($this->data()))MediaAccess::baselineComplete($data['media_access'],$this->store->mediaScope());
+        return $result;
     }
     public function save(array $files,array $manifest,?array $slot=null): array {
         // The same lossless partition is used for normal structured originals and full baselines.
@@ -357,6 +361,8 @@ final class SiteSnapshot
         // Keep destination software and build a read-only settings plan before replacing content.
         foreach(['template','stylesheet'] as $key)unset($d['options'][$key]);
         $destination=$this->data();$prepared=$destination['options'];
+        $templates=RecoveryTemplates::plan($d['tables'],$destination['tables'],get_stylesheet());
+        $d['tables']=$templates['tables'];
         // Keep source values distinct from prepared destination settings.
         // These recognized options contain labels, formats, IDs and theme choices,
         // not an arbitrary collection of relocatable URLs.
@@ -364,7 +370,7 @@ final class SiteSnapshot
         $settingsPlan=RecoverySettings::plan($savedOptions,$prepared,$d['tables'],$destination['tables'],get_stylesheet());
         $d['options']=$settingsPlan['options'];
         $application['report']['prepared_destination']=[];
-        foreach($settingsPlan['report'] as $item){
+        foreach(array_merge($settingsPlan['report'],$templates['report']) as $item){
             if($item['origin']==='destination')$application['report']['prepared_destination'][]=$item;
             else $application['report']['not_applied'][]=$item;
         }
@@ -400,7 +406,7 @@ final class SiteSnapshot
             if(isset($d['membership']))$authors=MemberHistory::install($d['membership'],$memberPlan,$from,$to)+$authors;
             foreach(array_reverse(self::TABLES) as $t)if($wpdb->query('DELETE FROM `'.$wpdb->$t.'`')===false)throw new \RuntimeException('Cannot replace destination content.');
             foreach(self::TABLES as $t)foreach($d['tables'][$t] as $row){
-                if($t==='posts')$row['post_author']=$authors[(string)$row['post_author']]??0;
+                if($t==='posts'&&!in_array((int)$row['ID'],$templates['ids'],true))$row['post_author']=$authors[(string)$row['post_author']]??0;
                 if($t==='comments')$row['user_id']=$authors[(string)$row['user_id']]??0;
                 // Preserve scalar/serialized plugin values and definitions verbatim.
                 // Article links already use the provenance-aware presentation filter.
@@ -415,7 +421,7 @@ final class SiteSnapshot
             AcfHistory::install($d['acf_restore_groups']??[]);
             // Existing origin metadata also identifies articles whose presentation
             // must retain the recovery execution boundary after ordinary editing.
-            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],array_merge(['post','page','attachment','tablepress_table'],RecoveryContent::EDITED_BLOCK_TYPES),true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
+            foreach($d['tables']['posts'] as $row)if(!in_array((int)$row['ID'],$templates['ids'],true)&&in_array($row['post_type'],array_merge(['post','page','attachment','tablepress_table'],RecoveryContent::EDITED_BLOCK_TYPES),true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
             foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');self::writeOption($k,$v);}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){

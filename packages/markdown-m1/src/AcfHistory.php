@@ -17,7 +17,7 @@ final class AcfHistory {
         add_action('wp_after_insert_post',fn($id)=>$this->mark((int)$id),PHP_INT_MAX,1);
         add_action('acf/save_post',function($id){if(is_numeric($id))$this->mark((int)$id);},30);
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)
-            add_action($hook,function($mid,$id,$key){if(!(str_starts_with((string)$key,'_owr_')||str_starts_with((string)$key,'_ozeki_resilience_')))$this->mark((int)$id);},PHP_INT_MAX,3);
+            add_action($hook,function($mid,$id,$key){if(!in_array($key,['_edit_lock','_edit_last'],true)&&!(str_starts_with((string)$key,'_owr_')||str_starts_with((string)$key,'_ozeki_resilience_')))$this->mark((int)$id);},PHP_INT_MAX,3);
         foreach(['updated_field','delete_field','trash_field','untrash_field','update_field_group','delete_field_group','trash_field_group','untrash_field_group','update_field_group_active_status','import_field_group'] as $event)
             add_action('acf/'.$event,function(){if(self::enabled()&&!empty((new Plugin())->config()['protect']))$this->definitionsDirty=true;},PHP_INT_MAX);
         add_action('deleted_post',function($id){unset($this->dirty[(int)$id]);});
