@@ -104,6 +104,12 @@ rc.19 does not change the archive format. Update recovery destinations to apply 
 
 rc.19は保存形式を変更しません。安全な表示と編集・保存時の規則を適用するため、復旧先も更新してください。以前に復旧済みで識別情報のないブロック文書へは遡って適用しません。添付・参照情報の互換性条件は引き続き必要です。
 
+## rc.21 recovery display and ordinary saves / 復旧表示と通常保存
+
+rc.21 preserves prepared destination templates and navigation, checks the embedded Markdown document's own viewing conditions, and avoids unnecessary media reconciliation during autosave. No archive format changes or rewriting of existing originals/history are required. Use rc.21 on the recovery destination to obtain these corrections. Previously textified embeds are not decoded automatically: recover from the original or set the correct document reference as an administrator. See the user guide for destination template preparation.
+
+rc.21は、復旧先の準備済みテンプレートとナビゲーションを維持し、Markdown埋込み先文書自身の閲覧条件を確認します。自動保存時の不要な画像再照合も修正します。保存形式の変更や既存原本・履歴の書換えは不要です。修正を使う復旧先にもrc.21を用意してください。以前の復旧で文字になった埋込みは自動変換せず、原本から復旧するか、管理者が正しい文書参照を設定します。テンプレートの準備は利用ガイドを参照してください。
+
 ## rc.20 media classification / ファイルの閲覧条件判定
 
 rc.20 recognizes Resilience's own recovery-origin marker without changing file access conditions. It adds no archive format and does not rewrite originals or history. Use rc.20 on recovery destinations before recovery and resaving. Existing private, held and unknown conditions remain restricted.

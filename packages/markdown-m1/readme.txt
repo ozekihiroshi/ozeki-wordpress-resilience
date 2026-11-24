@@ -26,6 +26,8 @@ TablePress table content and supported table options are restored while its prep
 
 Preserved originals and safe presentation are separate. Markdown source remains unchanged; recovery filters executable HTML and keeps unrecognized shortcodes and dynamic blocks as text. Supported form definitions, table cells, member fields and ACF values retain their data meaning. Normal editing of recovered content keeps this boundary; prepare any additional executable behaviour separately on the trusted destination.
 
+Templates and block navigation use the configuration prepared on the destination, not archived custom layouts. Prepare a template that displays page content and check menu destinations after recovery. Embedded Markdown follows the referenced document's own viewing conditions.
+
 = From originals and history to recovery =
 
 Start with a trusted initial capture (Baseline). Enable protection for supported edits, then create Checkpoints from the saved resources and confirmed history. When needed, prepare a compatible destination and recover a selected point plus confirmed history. Checkpoints use what has been saved; untracked live changes may require a new trusted Baseline.
@@ -101,6 +103,8 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Keep prepared destination templates and navigation; check the referenced document's viewing conditions when displaying embedded Markdown.
+* Avoid full media reconciliation for revision autosaves and editor lock updates; retain pending work and retry guidance when capture cannot complete.
 * Display history without requiring article titles or statuses; preserve existing recorded values and guide file-access records to complete site recovery.
 * Record file access conditions consistently in initial capture and daily history; preserve held originals across recovery, resaving and repeated recovery. New formats require the updated reader; old files with unknown conditions are not publicly placed.
 * Separate WP-Members page restrictions from file restrictions; preserve supported content when unrelated plugins are installed. Normalize the English default locale during recovery.
