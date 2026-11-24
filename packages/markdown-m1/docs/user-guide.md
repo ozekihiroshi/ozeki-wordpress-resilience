@@ -150,3 +150,6 @@ For the selected theme, recovery applies recognized saved menu locations, logo a
 Source widget bodies and layouts are not applied. Prepared destination widget configurations are retained. Verified core widget placements remain active; placements whose references changed or cannot be checked are moved to Inactive Widgets and identified in the recovery result. Review and reactivate them after checking their content. This includes extension widgets, block widgets and rich text with links or shortcodes that this check cannot interpret. Arbitrary theme-specific setting references are not comprehensively validated; inspect the prepared theme after recovery.
 
 These application rules do not change stored originals/history or require a new recording format.
+## Originals and safe use after recovery
+
+Preserved originals and safe presentation are separate. Markdown source remains unchanged; recovery filters executable HTML and keeps unrecognized shortcodes and dynamic blocks as text. Supported form definitions, table cells, member fields and ACF values retain their data meaning. Normal editing of recovered content keeps this boundary; prepare any additional executable behaviour separately on the trusted destination.

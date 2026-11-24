@@ -97,3 +97,9 @@ TablePressは表の内容と対応する表単位の設定を戻し、準備済�
 This change adds no recording format or migration. The rc.17 attachment compatibility requirements above still apply. Update recovery destinations too.
 
 この変更による記録形式の追加や移行はありません。rc.17の添付記録に関する互換性条件は引き続き適用されます。復旧先も更新してください。
+
+## rc.19 recovery application boundary / 復旧時の適用範囲
+
+rc.19 does not change the archive format. Update recovery destinations to apply the safe-display and edit/save rules. Previously recovered unmarked block documents are not retroactively migrated. Existing attachment/reference compatibility requirements still apply.
+
+rc.19は保存形式を変更しません。安全な表示と編集・保存時の規則を適用するため、復旧先も更新してください。以前に復旧済みで識別情報のないブロック文書へは遡って適用しません。添付・参照情報の互換性条件は引き続き必要です。
