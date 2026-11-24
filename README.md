@@ -1,8 +1,8 @@
 # Ozeki Resilience
 
-**0.3.3 rc.21: update accepted by WordPress.org and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. The same ZIP is deployed to community.**
+**0.3.3 rc.22: update accepted by WordPress.org and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. rc.22 is not deployed to production.**
 
-[rc.21 verification, compatibility and candidate ZIP](docs/releases/wordpress-org-033-rc21.md).
+[rc.22 submission, compatibility and verification](docs/review/core-updates-20261124/RC22-PACKAGE.ja.md).
 
 **Before the first public release:** Saved-data compatibility between prerelease candidates is not guaranteed. Use the same supported version on the source and recovery sites, and create a new trusted Baseline on the healthy source when upgrading. Existing originals and history are not rewritten.
 

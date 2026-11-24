@@ -1,5 +1,19 @@
 # Current distribution status / 現行版の配布状況
 
+**0.3.3 rc.22: update accepted and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. Not deployed to production.**
+
+**0.3.3 rc.22は2026-11-24に更新受付・審査メール返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。本番未導入です。**
+
+[rc.22 submission and verification / 申請・確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/review/core-updates-20261124/RC22-PACKAGE.ja.md) / [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/c7053f559de3e245465eec4466688ea5a684ba3c/packages/markdown-m1).
+
+SHA-256: `59db41d96e210e892c2a0cf53f85d5d581436a2d86a84d362986d852249fbeba`
+
+rc.22 requires the same candidate on the healthy source and prepared destination and a new trusted Baseline. Prerelease saved-data compatibility is not guaranteed; existing originals/history are not rewritten.
+
+rc.22では健全な保存元と復旧先を同じ候補に揃え、新しい初回保存を作成します。公開前候補間の保存データ互換性は保証しません。既存原本・履歴は書き換えません。
+
+## Previous rc.21 distribution / 以前のrc.21配布記録
+
 **0.3.3 rc.21: update accepted by WordPress.org and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. The same ZIP is deployed to community.**
 
 **0.3.3 rc.21は2026-11-24に更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。同じZIPをcommunity本番へ導入済みです。**
