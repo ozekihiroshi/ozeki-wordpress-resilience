@@ -578,7 +578,7 @@ final class Store
             $a=$meta['attributes'];
             if(($a['update_contract']??'')!==UpdateContract::SCHEMA)throw new \RuntimeException('Missing core update contract.');
             if(in_array($a['post_type']??'',['post','page','ozmd_document'],true))UpdateContract::validate($a);
-            elseif(!in_array($a['post_type']??'',['owr_core','owr_native'],true))throw new \RuntimeException('Unexpected core update type.');
+            elseif(!in_array($a['post_type']??'',['owr_core','owr_native','owr_attachment'],true))throw new \RuntimeException('Unexpected core update type.');
         }
         if(($original['schema']??'')===AttachmentHistory::ORIGINAL_FORMAT){
             if(($meta['attributes']['attachment_schema']??'')!==AttachmentHistory::SCHEMA||($meta['attributes']['post_type']??'')!=='owr_attachment')throw new \RuntimeException('Missing attachment bundle contract.');

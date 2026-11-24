@@ -1,0 +1,73 @@
+{
+  "checks": {
+    "no_harness_error": true,
+    "initial_recovery": true,
+    "second_recovery": true,
+    "readonly_recovery": true,
+    "missing_provider_explained": true,
+    "pending_resolved": true,
+    "initial_core_state": true,
+    "recapture_core_state": true,
+    "reference_selection": true,
+    "normal_markdown_edit": true,
+    "member_password_cache": true,
+    "anonymous_http": true,
+    "literal_not_executed": true,
+    "structured_table_values": true,
+    "file_vs_page_conditions": true,
+    "prepared_theme_setting": true,
+    "prepared_logo_conflict_cleared": true,
+    "software_unchanged": true,
+    "originals_unchanged": true,
+    "public_image_exact_bytes": true,
+    "private_image_not_served": true,
+    "cleanup": true
+  },
+  "pass": true,
+  "failed": [],
+  "storage": "Real S3 via existing EC2-role broker, fresh trial prefix; read-only HTTP follow-up",
+  "source_versions": 85,
+  "final_versions": 152,
+  "source_archive_sha256": "1ea7f38c4e04d12f8279e2bdadea762026a5da7f2e4b0603f68b9e0ee83e3a04",
+  "markdown_distribution_sha256": "039f5c110c5125d3751fb11de8376f358b0df5d61d25cc15a932c4f004d35c21",
+  "http_file_responses": {
+    "private": {
+      "headers": [
+        "HTTP/1.1 301 Moved Permanently",
+        "Date: Tue, 24 Nov 2026 13:39:42 GMT",
+        "Server: Apache/2.4.71 (Debian)",
+        "X-Powered-By: PHP/8.3.37",
+        "X-Redirect-By: WordPress",
+        "Location: http://owr-hypothesis-six-1795527540-second/wp-content/uploads/doc-image.png/",
+        "Content-Length: 0",
+        "Connection: close",
+        "Content-Type: text/html; charset=UTF-8",
+        "HTTP/1.1 200 OK",
+        "Date: Tue, 24 Nov 2026 13:39:42 GMT",
+        "Server: Apache/2.4.71 (Debian)",
+        "X-Powered-By: PHP/8.3.37",
+        "Link: <http://owr-hypothesis-six-1795527540-second/index.php?rest_route=/>; rel=\"https://api.w.org/\"",
+        "Vary: Accept-Encoding",
+        "Connection: close",
+        "Content-Type: text/html; charset=UTF-8"
+      ],
+      "bytes": 70067,
+      "sha256": "c2b87171eeaded3097acf21053b3c7c3269b8e5a9682922334f79e00f07fe892"
+    },
+    "public": {
+      "headers": [
+        "HTTP/1.1 200 OK",
+        "Date: Tue, 24 Nov 2026 13:39:42 GMT",
+        "Server: Apache/2.4.71 (Debian)",
+        "Last-Modified: Tue, 24 Nov 2026 13:39:37 GMT",
+        "ETag: \"44-66105d77555c6\"",
+        "Accept-Ranges: bytes",
+        "Content-Length: 68",
+        "Connection: close",
+        "Content-Type: image/png"
+      ],
+      "bytes": 68,
+      "sha256": "6b1048f8a6d40bac0b2954c18fefa40c4ea7a96120fc2e54b7317c0e43c2bbec"
+    }
+  }
+}

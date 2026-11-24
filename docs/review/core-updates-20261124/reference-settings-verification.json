@@ -1,0 +1,9 @@
+{
+  "all_seven_stages_match": true,
+  "second_recovery": true,
+  "new_post_categories": [
+    3
+  ],
+  "originals_unchanged": true,
+  "storage": "Isolated file-backed SDK; no AWS access"
+}

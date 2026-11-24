@@ -55,7 +55,7 @@ The [AWS instructions](aws-setup.md) use an EC2 role. For other hosting, ask whe
 
 ## 3. Create the first Baseline
 
-1. Confirm that the source is trustworthy and pause editing. If Markdown documents are used, activate the compatible Markdown Documents plugin first.
+1. Confirm that the source is trustworthy and pause editing. For a new Markdown setup, install and activate Markdown Documents 0.1.3 from WordPress.org first. If upgrading an existing source, resolve pending saves before updating it, then create this new Baseline. Prepare the recovery destination with the same recorded plugin version; changing only the destination does not update an old recovery point.
 2. Under **Site-wide recovery — primary workflow**, check **I trust the whole current site and have paused editing.** Click **Create complete initial snapshot**.
 3. In the **Checkpoint** selector, find `administrator_initial` with the time of this capture. This is your first Baseline (`history 0` for a new prefix). For an error, record its message and use [troubleshooting](#troubleshooting) below.
 4. Confirm **First save and verified read-back** is confirmed in the preparation checklist. In storage settings, enable **Protect supported operations (one writer per prefix)**, select the terms confirmation again and click **Save settings**. Resume editing.
@@ -83,7 +83,7 @@ These checks complete initial setup and the post-save check. Next, check the inq
 
 Only confirmed history is available after source loss. If an original save failed before being queued, resolve the cause and save again through the normal editor.
 
-After changes to non-image attachments (such as PDFs), menus/settings or plugin versions, pause editing and create a new trusted initial save. Ordinary supported edits are confirmed through formal history; a scheduled Checkpoint does not capture untracked site changes. Submitted rc.10 also needs a new Baseline after ACF definition-only changes; the rc.11 update described below records those changes in history.
+For supported attachments and adapter operations, check formal-history confirmation. After changing plugin versions or settings outside daily tracking, pause editing and create a new trusted initial save. A scheduled Checkpoint cannot capture untracked changes. See the [changes table](start-here.md) for the distinction between submitted candidates and the next candidate's source.
 
 After the initial save, keep the version list from **Prepare the recovery destination** outside the source site, together with bucket, region, prefix and owner.
 
@@ -103,7 +103,7 @@ The check/recheck button is included in rc.14. Earlier ZIPs remain unchanged; wh
 
 Prepare the source site's language pack too. For Japanese, select Japanese in Settings → General → Site Language and save; WordPress normally installs the official pack. If downloads or filesystem writes are restricted, ask the administrator to install the official pack for the destination WordPress version. Resilience does not automatically install software.
 
-Initial saves accept supported files up to 32 MiB each, including JPEG, PNG, GIF, WebP and AVIF images; PDF, TXT/CSV, DOCX/XLSX/PPTX and ODT/ODS/ODP attachments. Incremental tracking covers supported referenced images; create a new initial save after changing other attachments.
+Initial saves accept supported files up to 32 MiB each, including JPEG, PNG, GIF, WebP and AVIF images; PDF, TXT/CSV, DOCX/XLSX/PPTX and ODT/ODS/ODP attachments. Since rc.17, daily tracking also covers supported attachments registered in the WordPress media library, including their originals, generated images, metadata and access conditions. Direct filesystem changes are not normal media-library operations.
 
 Restore saved articles, images, inquiries and other supported content on a separate WordPress to resume publishing and serving users. Recovery uses what remains in S3 even when the original site is offline. After an attack, choose a trusted initial capture (Baseline) and the changes to restore. Prepare administrator access and external service connections on the destination, and check it with public access restricted before reopening.
 

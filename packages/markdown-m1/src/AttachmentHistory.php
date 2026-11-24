@@ -11,6 +11,25 @@ final class AttachmentHistory {
     public const INDEX_FORMAT='owr-snapshot-attachment-bundle-1';
     public const PENDING='ozeki_resilience_attachment_pending';
     public const ERRORS='ozeki_resilience_attachment_errors';
+    public const DELETED='ozeki_resilience_deleted_media';
+    private array $deleting=[];
+    public static function deletedPaths(): array {return (array)get_option(self::DELETED,[]);}
+    public static function knownDeletedUrl(string $url): bool {
+        $u=wp_upload_dir();$prefix=rtrim($u['baseurl'],'/').'/';
+        if(!str_starts_with($url,$prefix))return false;
+        $path='uploads/'.rawurldecode(substr($url,strlen($prefix)));SiteSnapshot::safePath($path);
+        if(file_exists($u['basedir'].'/'.substr($path,8)))return false;
+        foreach(self::deletedPaths() as $paths)if(in_array($path,$paths,true))return true;
+        return false;
+    }
+    public static function assertDeletedPathsAbsent(array $data,string $root,array $install): void {
+        foreach($data['deleted_media']??[] as $paths){
+            if(!is_array($paths))throw new \RuntimeException('Invalid deleted media record.');
+            foreach($paths as $path){SiteSnapshot::safePath($path);if(!str_starts_with($path,'uploads/'))throw new \RuntimeException('Invalid deleted media path.');
+                if(!isset($install[$path])&&file_exists($root.'/'.substr($path,8)))throw new \RuntimeException(SetupReadiness::text('A previously recovered, deleted file remains. Prepare a clean uploads directory before recovery: ','以前に復旧した削除済みファイルが残っています。空のアップロード領域を用意してから再確認してください: ').$path);
+            }
+        }
+    }
     private static bool $running=false;
     private static function lock(): string {
         global $wpdb;$name='ozeki-resilience-'.$wpdb->prefix;
@@ -43,7 +62,16 @@ final class AttachmentHistory {
     }
     public function boot(): void {
         foreach(['add_attachment','edit_attachment'] as $hook)add_action($hook,fn($id)=>self::mark((int)$id),PHP_INT_MAX);
-        add_action('delete_attachment',fn($id)=>self::mark((int)$id,true),PHP_INT_MAX);
+        add_action('delete_attachment',function($id){
+            if(!self::enabled())return;
+            $p=get_post($id);$rows=[];foreach(get_post_meta($id) as $key=>$values)foreach($values as $value)$rows[]=['post_id'=>$id,'meta_key'=>$key,'meta_value'=>$value];
+            $this->deleting[$id]=array_keys(FileScope::paths(['tables'=>['posts'=>[(array)$p],'postmeta'=>$rows]],true));
+        },PHP_INT_MAX);
+        add_action('deleted_post',function($id){
+            if(!isset($this->deleting[$id]))return;
+            $lock=self::lock();try{$paths=self::deletedPaths();$paths[$id]=$this->deleting[$id];update_option(self::DELETED,$paths,false);if(self::deletedPaths()!==$paths)throw new \RuntimeException('Cannot preserve attachment deletion.');self::mark((int)$id,true);}finally{self::unlock($lock);}
+            unset($this->deleting[$id]);
+        },PHP_INT_MAX);
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,function($mid,$id,$key){
             if(get_post_type($id)==='attachment'&&!in_array($key,['_edit_lock','_edit_last'],true))self::mark((int)$id);
         },PHP_INT_MAX,3);
@@ -117,8 +145,8 @@ final class AttachmentHistory {
             $allowed=['_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt'];
             $media[]=['post'=>$post,'meta'=>array_intersect_key($meta,array_flip($allowed)),'preserved_meta'=>array_diff_key($meta,array_flip($allowed)),'files'=>array_fill_keys(array_keys($paths),null),'access'=>$rules];
         }
-        $source=Store::json(['schema'=>self::SCHEMA,'id'=>$id,'deleted'=>$deleted]);
-        (new CommentHistory())->enqueue('attachment-'.$id,$source,['post_type'=>'owr_attachment','content_format'=>'attachment-json','attachment_schema'=>self::SCHEMA,'origin_id'=>$id,'title'=>'Attachment #'.$id,'status'=>$deleted?'deleted':'saved','media'=>$media],$resources);
+        $source=Store::json(['schema'=>self::SCHEMA,'id'=>$id,'deleted'=>$deleted,'deleted_paths'=>$deleted?(self::deletedPaths()[$id]??[]):[]]);
+        (new CommentHistory())->enqueue('attachment-'.$id,$source,['post_type'=>'owr_attachment','content_format'=>'attachment-json','attachment_schema'=>self::SCHEMA,'update_contract'=>UpdateContract::SCHEMA,'origin_id'=>$id,'title'=>'Attachment #'.$id,'status'=>$deleted?'deleted':'saved','media'=>$media],$resources);
     }
     public static function validate(array $media): void {
         $p=$media['post']??[];$id=(int)($p['ID']??0);
@@ -136,6 +164,7 @@ final class AttachmentHistory {
     public static function replay(array &$d,array &$files,string $source,array $a,Store $store): void {
         $v=json_decode($source,true,512,JSON_THROW_ON_ERROR);$id=(int)($v['id']??0);
         if(($v['schema']??'')!==self::SCHEMA||($a['attachment_schema']??'')!==self::SCHEMA||$id<=0||$id!==(int)($a['origin_id']??0)||!is_bool($v['deleted']??null))throw new \RuntimeException('Invalid attachment history.');
+        if(isset($a['update_contract'])&&!is_array($v['deleted_paths']??null))throw new \RuntimeException('Missing attachment deletion contract.');
         $media=$a['media']??[];if(count($media)!==($v['deleted']?0:1))throw new \RuntimeException('Incomplete attachment history.');
         if($media){self::validate($media[0]);if((int)$media[0]['post']['ID']!==$id)throw new \RuntimeException('Attachment identity mismatch.');}
         $old=$d;$old['tables']['posts']=array_values(array_filter($d['tables']['posts'],fn($p)=>(int)$p['ID']===$id));
@@ -143,6 +172,16 @@ final class AttachmentHistory {
         $other=$d;$other['tables']['posts']=array_values(array_filter($d['tables']['posts'],fn($p)=>(int)$p['ID']!==$id));
         foreach(array_diff_key(FileScope::paths($old,true),FileScope::paths($other,true)) as $path=>$_)unset($files[$path],$d['media_access'][$path]);
         $d['tables']['posts']=$other['tables']['posts'];$d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta'],fn($m)=>(int)$m['post_id']!==$id));
+        if($v['deleted']){
+            $d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta'],fn($m)=>!(($m['meta_key']??'')==='_thumbnail_id'&&(int)$m['meta_value']===$id)));
+            $comments=array_column(array_filter($d['tables']['comments'],fn($c)=>(int)$c['comment_post_ID']===$id),'comment_ID');
+            $d['tables']['comments']=array_values(array_filter($d['tables']['comments'],fn($c)=>(int)$c['comment_post_ID']!==$id));
+            $d['tables']['commentmeta']=array_values(array_filter($d['tables']['commentmeta'],fn($m)=>!in_array($m['comment_id'],$comments)));
+            $d['tables']['term_relationships']=array_values(array_filter($d['tables']['term_relationships'],fn($r)=>(int)$r['object_id']!==$id));
+            $paths=$v['deleted_paths']??array_keys(FileScope::paths($old,true));
+            foreach($paths as $path){SiteSnapshot::safePath($path);if(!str_starts_with($path,'uploads/'))throw new \RuntimeException('Invalid deleted media path.');}
+            $d['deleted_media'][$id]=$paths;
+        }
         if($media)SiteSnapshot::applyMedia($d,$files,$media,$store,true);
     }
 }

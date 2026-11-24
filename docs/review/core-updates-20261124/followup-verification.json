@@ -1,0 +1,32 @@
+[
+  {
+    "case": "publication-final",
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "storage": "Isolated file-backed SDK; no AWS access"
+  },
+  {
+    "case": "authors-verified",
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "storage": "Isolated file-backed SDK; no AWS access"
+  },
+  {
+    "case": "comments-verified",
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "storage": "Isolated file-backed SDK; no AWS access"
+  },
+  {
+    "case": "comments-stale",
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "storage": "Isolated file-backed SDK; no AWS access"
+  },
+  {
+    "case": "media-fixed",
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "storage": "Isolated file-backed SDK; no AWS access"
+  }
+]

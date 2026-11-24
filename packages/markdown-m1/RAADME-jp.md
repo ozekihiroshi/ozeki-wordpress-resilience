@@ -48,7 +48,7 @@ GitHubのソースアーカイブではなく、上記のインストール用ZI
 
 WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な領域が必要です。バージョニング有効なS3バケット、専用prefix、必要なIAM権限を用意し、1つのprefixへ書き込むサイトは1つにします。復旧先には互換性のあるWordPress系列、記録された依存プラグイン、Web公開領域外の非公開一時領域が必要です。操作画面はWordPressの利用言語に合わせて日本語・英語で表示します。
 
-**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdown復旧時は記録した互換版を事前に導入・有効化してください（確認版0.1.1）。
+**Markdownの依存条件：** Markdown未使用ならBaseline作成・復旧にMarkdown Documentsは不要です。有効なら収録し、文書や `_ozmd_source` 原文が残るのに無効なら保存前に停止します。Markdownを新しく導入する場合は、直接表示と埋込みの閲覧判定を修正したOzeki Markdown Documents 0.1.3を使用してください。健全な保存元を先に更新して新しい初回保存を作り、復旧先にも記録された同じ版を事前に導入・有効化します。古い復旧点を使うために復旧先だけ新版へ変更しないでください。過去の確認記録には当時の確認版を残します。
 
 <a id="supported-content-and-plugins"></a>
 
@@ -60,7 +60,7 @@ WordPress 6.4以上、PHP 8.1以上、ZipArchive、InnoDB、書込み可能な�
 |---|---|
 | 投稿・固定ページ・ローカル画像 | 本文、対応する画像、公開状態、カテゴリー・タグ、アイキャッチなど、記事として使うための内容と関連情報 |
 | 標準コメント | コメントと承認状態。保存した編集・削除の結果も反映 |
-| Markdown文書 | 原文と対応する関係情報。Ozeki Markdown Documents 0.1.1 |
+| Markdown文書 | 原文と対応する関係情報。新規導入はOzeki Markdown Documents 0.1.3 |
 | 問い合わせフォームと受信情報 | フォームと届いた問い合わせ。Contact Form 7 6.2.3 / Flamingo 2.6.4 |
 | 会員向けの情報提供 | 基本購読者の会員情報と、対応する項目・設定・閲覧制限。WP-Members 3.5.8.1 |
 | 表 | 表の内容、対応する表示設定と参照。TablePress 3.4.1 |

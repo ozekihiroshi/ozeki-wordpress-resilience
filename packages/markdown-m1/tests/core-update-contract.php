@@ -7,7 +7,7 @@ require __DIR__.'/../src/SetupReadiness.php';
 use OzekiResilience\M1\{UpdateContract,CoreStateHistory,NativeHistory,Store};
 function check($v,$message){if(!$v)throw new RuntimeException($message);}
 function determine_locale(){return 'en_US';}
-$failed=false;try{UpdateContract::requireArticleConditions([]);}catch(RuntimeException $e){$failed=str_contains($e->getMessage(),'password changes');}check($failed,'Legacy missing conditions cannot silently authorize publication');
+$failed=false;try{UpdateContract::requireArticleConditions([]);}catch(RuntimeException $e){$failed=str_contains($e->getMessage(),'current complete update contract');}check($failed,'Legacy missing conditions cannot silently authorize publication');
 $a=['update_contract'=>UpdateContract::SCHEMA,'post_excerpt'=>'','post_parent'=>'0','menu_order'=>'0','comment_status'=>'closed','ping_status'=>'closed','post_password'=>'<a>&[text]','post_author'=>'8','author'=>['display_name'=>'Author B','user_nicename'=>'author-b']];
 $d=['authors'=>[]];$values=UpdateContract::apply($a,$d);
 check($values['post_password']==='<a>&[text]'&&$d['authors']['8']===$a['author'],'Password is data, not HTML; author definition follows its value');

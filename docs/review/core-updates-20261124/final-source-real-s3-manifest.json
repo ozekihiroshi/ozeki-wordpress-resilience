@@ -1,0 +1,122 @@
+[
+  {
+    "path": "src/AcfHistory.php",
+    "sha256": "a0556b8f73ec08054cadf1a6f38da8fdc69e064eb4736b71d4405db0addb701d"
+  },
+  {
+    "path": "src/AdminText.php",
+    "sha256": "bb05b9ac59f3717f230fc9d3c19cf620d0bd1206f869496102cf85dd12a43cc7"
+  },
+  {
+    "path": "src/AssetFormat.php",
+    "sha256": "9359286f580c4e43401a2db9662c45ddad91f2a801f04dfcee8bf284bb922a70"
+  },
+  {
+    "path": "src/AttachmentHistory.php",
+    "sha256": "5f95686267ec39a9b3ae9c4875bf11c655f95c6de261cd316b4b24da8f387e44"
+  },
+  {
+    "path": "src/CheckpointSchedule.php",
+    "sha256": "20ab3e37a017deda61aa28ff3c48a2be4a0e642b7325846941caf1d29e938a64"
+  },
+  {
+    "path": "src/CommentHistory.php",
+    "sha256": "fc0e1a87ba74497b51e5c2535d4e441255e984e40dd791c23a675e283834dfea"
+  },
+  {
+    "path": "src/CoreStateHistory.php",
+    "sha256": "9baa5f324a2f75fdb8d6cddcc967abec749cdb6fc08a36e01bf5a0d74e944193"
+  },
+  {
+    "path": "src/FileScope.php",
+    "sha256": "6271b06084356719c74ea53afaba5f66abc4998f42165d695d4d76c006f337a0"
+  },
+  {
+    "path": "src/FormHistory.php",
+    "sha256": "0ae15c1476d7673b9d2ddde5c1b685867ceaad853972a69dbcc412df38c199ee"
+  },
+  {
+    "path": "src/GfsPolicy.php",
+    "sha256": "ea646e7d584956a92351dd6e5ec816e7576592f237a0bae5f95ba2a78bd05c7e"
+  },
+  {
+    "path": "src/Identifiers.php",
+    "sha256": "6a4bc14d4fcc4729bec5a6f237744a93aaac02aeb6fd424b5eb4ed0cc93f4706"
+  },
+  {
+    "path": "src/MediaAccess.php",
+    "sha256": "9939d5d824d1a03c6b8bc70d048d8b44fd2c04e791d20539cc2399783c166718"
+  },
+  {
+    "path": "src/MemberHistory.php",
+    "sha256": "c9c45f3b56c9148ce4e97e0b2d6baba08f946092edd647d22e834f7857de75c4"
+  },
+  {
+    "path": "src/NativeHistory.php",
+    "sha256": "3af188bdd45743a13325b1a729dcab18025ef5b1f5f61d329cdf925ca219e669"
+  },
+  {
+    "path": "src/Plugin.php",
+    "sha256": "22f0384cd187d86bbafb45e1785604b4f7f35279e81d0784b94c5a72a17ed6cb"
+  },
+  {
+    "path": "src/RecoveryContent.php",
+    "sha256": "f9e54f4b829bc1a002cc5f5b4ae5d83bd4b392ef426c1a750bae86d7e3ef3c73"
+  },
+  {
+    "path": "src/RecoveryPreparation.php",
+    "sha256": "10e7c36360202651e52cf9784b7c3bb4f9e1c676374adf66d4816ba81b30a743"
+  },
+  {
+    "path": "src/RecoveryRules.php",
+    "sha256": "be7b31da1dda66b7302e776512dd2e63b45a529526fac18c0037373750973da3"
+  },
+  {
+    "path": "src/RecoverySettings.php",
+    "sha256": "87a14381b86fc56283582005714c006630a60f785b5bd0bedb6a2496f80a98e5"
+  },
+  {
+    "path": "src/RecoveryTemplates.php",
+    "sha256": "a24a624db78f0c0098697b62cbc7ea151c09f784d3366666f839123ea157418d"
+  },
+  {
+    "path": "src/RecoveryWorkspace.php",
+    "sha256": "6ab4792964168567ab31d724433c5097e217f8251d48954123b5ee375205e927"
+  },
+  {
+    "path": "src/ReferenceContext.php",
+    "sha256": "8936aa3b2cdd305118cb7ab1b2cb7dd7b6ae546a7a9abe1a7526e0ed98bda3ab"
+  },
+  {
+    "path": "src/SaveFailure.php",
+    "sha256": "0187fbb6d69ff0b5a6691aa2a19c5d973c0130934fa2c729e9f8042a3b2897e4"
+  },
+  {
+    "path": "src/SetupReadiness.php",
+    "sha256": "0205504a8fbc63811ddf7869d73da77bd1cdfdf53d9dfd359f6ddf72c10cc0d9"
+  },
+  {
+    "path": "src/SiteSnapshot.php",
+    "sha256": "aca266411311436701dd344fc7da0a2961b3d927f68b58f78e6058bcee54edc6"
+  },
+  {
+    "path": "src/Startup.php",
+    "sha256": "4fa4820957847bd03e04f0472e4fbb45a5f8d7fa43d31e54f31946da4a9937e4"
+  },
+  {
+    "path": "src/Store.php",
+    "sha256": "8a770b4e8e4a9bbec206fdcb8c5db64850bf4c756e590ee3fbb56455ce52d346"
+  },
+  {
+    "path": "src/TableHistory.php",
+    "sha256": "72b978972daff853c617a7b9c71abc85fcda80c2cea2ed4a144ced3696840668"
+  },
+  {
+    "path": "src/UpdateContract.php",
+    "sha256": "6ca5eab38a477ded61171a70fbc6f692e9e94c0706edc35de3dcacfd995ae142"
+  },
+  {
+    "path": "ozeki-wordpress-resilience.php",
+    "sha256": "735a7dc5408680c731edda14e9b1fd7c72bcb4c8e7d74ced57218fdd31a8ce25"
+  }
+]

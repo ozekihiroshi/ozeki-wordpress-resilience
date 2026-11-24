@@ -20,7 +20,8 @@ require_once __DIR__.'/CoreStateHistory.php';
 final class SiteSnapshot
 {
     private const TABLES=['posts','postmeta','terms','term_taxonomy','term_relationships','termmeta','comments','commentmeta'];
-    private const OPTIONS=['blogname','blogdescription','show_on_front','page_on_front','page_for_posts','permalink_structure','category_base','tag_base','posts_per_page','posts_per_rss','date_format','time_format','timezone_string','gmt_offset','start_of_week','WPLANG','template','stylesheet','site_icon','default_category','sidebars_widgets','sticky_posts','wp_page_for_privacy_policy','default_comment_status','default_ping_status'];
+    // Daily source settings share the update contract. Remaining entries retain their existing baseline/prepared-site policies.
+    private const OPTIONS=[...UpdateContract::OPTIONS,'WPLANG','template','stylesheet','site_icon','sidebars_widgets'];
     public function __construct(private Store $store) {}
     public static function safePath(string $p): void {
         if ($p==='' || str_contains($p,'\\') || str_contains($p,"\0") || str_starts_with($p,'/') || preg_match('~(^|/)\.\.?(/|$)|:~',$p)) throw new \RuntimeException('Unsafe resource path.');
@@ -53,6 +54,7 @@ final class SiteSnapshot
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         AcfHistory::baseline($data);
         $data['media_access']=MediaAccess::current($data);
+        $data['deleted_media']=AttachmentHistory::deletedPaths();
         return $data;
     }
     private function files(string $root,string $prefix,array &$out,array $allowed,array &$excluded): void {
@@ -248,7 +250,7 @@ final class SiteSnapshot
             }
             $a=$r['attributes'];$id=(string)$a['origin_id'];$type=$a['post_type']??'ozmd_document';$found=false;
             if(isset($a['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']??[],$a['reference_origins']);
-            if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
+            if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash','future'],true))throw new \RuntimeException('Unsupported history type or state.');
             $raw=$this->store->originalSource($r['original']);$this->store->get($r['original']['metadata']);
             if(!isset($a['update_contract']))$m['legacy_incomplete_article_conditions']=true;
             self::applyMedia($d,$files,$a['media']??[],$this->store);
@@ -261,6 +263,11 @@ final class SiteSnapshot
                 $next=max(array_merge([0],array_map('intval',array_column($d['tables']['postmeta'],'meta_id'))))+1;
                 foreach(($type==='ozmd_document'?['_ozmd_source'=>'']:[])+['_ozeki_resilience_m1_asset'=>$r['original']['asset']] as $k=>$v)$d['tables']['postmeta'][]=['meta_id'=>(string)$next++,'post_id'=>$id,'meta_key'=>$k,'meta_value'=>$v];
             }
+            // Baseline articles may only have become protected in the daily tail.
+            // Carry that identity even when the article already existed in Baseline.
+            $d['tables']['postmeta']=array_values(array_filter($d['tables']['postmeta'],fn($p)=>!((string)$p['post_id']===$id&&$p['meta_key']==='_ozeki_resilience_m1_asset')));
+            $next=max(array_merge([0],array_map('intval',array_column($d['tables']['postmeta'],'meta_id'))))+1;
+            $d['tables']['postmeta'][]=['meta_id'=>(string)$next,'post_id'=>$id,'meta_key'=>'_ozeki_resilience_m1_asset','meta_value'=>$r['original']['asset']];
             if($type==='ozmd_document'){
                 $files['markdown/'.$id.'.md']=$raw;
                 foreach($d['tables']['postmeta'] as &$meta)if((string)$meta['post_id']===$id && $meta['meta_key']==='_ozmd_source')$meta['meta_value']=$raw;unset($meta);
@@ -351,6 +358,7 @@ final class SiteSnapshot
         foreach($m['excluded_files']??[] as $excludedFile)unset($allowedFiles[$excludedFile['item']]);
         if(($d['options']['WPLANG']??null)===false)$d['options']['WPLANG']='';
         $application=RecoveryRules::project($d,self::OPTIONS);
+        UpdateContract::referenceOptions($application['data'],$application['report']['not_applied']);
         require_once __DIR__.'/RecoveryContent.php';
         $d=RecoveryContent::project($application['data'],$application['report']['not_applied']);
         $application['report']['missing_originals']=AttachmentHistory::missing($d,$files);
@@ -394,6 +402,7 @@ final class SiteSnapshot
         $uploads=wp_upload_dir();
         if(!empty($uploads['error']))throw new \RuntimeException('Destination uploads directory is unavailable.');
         $uploadRoot=$uploads['basedir'];$fromUploads=$m['source_upload_url']??rtrim($from,'/').'/wp-content/uploads';$toUploads=$uploads['baseurl'];
+        AttachmentHistory::assertDeletedPathsAbsent($d,$uploadRoot,$install);
         foreach($mediaRules as $path=>&$rule)if(!isset($allowedFiles[$path])&&$rule['state']==='public')$rule=['state'=>'held'];unset($rule);
         $heldMedia=MediaAccess::hold($mediaRules,$files);
         foreach($heldMedia['files'] as $path=>$_)if(file_exists($uploadRoot.'/'.substr($path,8)))throw new \RuntimeException('A held media path already exists at the destination. Use a clean uploads directory before recovery.');
@@ -442,6 +451,7 @@ final class SiteSnapshot
             }
             self::writeOption(ReferenceContext::OPTION,$origins,false);
             self::writeOption(MediaAccess::OPTION,$heldMedia,false);
+            self::writeOption(AttachmentHistory::DELETED,$d['deleted_media']??[],false);
             self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         }catch(\Throwable $e){

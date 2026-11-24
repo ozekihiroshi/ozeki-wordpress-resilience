@@ -8,6 +8,10 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+**Markdown Documents 0.1.3:** For new Markdown setups, use the published 0.1.3 release. It checks the document's own access conditions for direct views and embeds. Resolve pending saves, update the healthy source first, and create a new trusted Baseline. Install the same recorded version on the recovery destination. Do not update only the destination for an older recovery point. Resilience does not install or initialize this plugin for you.
+
+**Before the first public release:** Saved-data compatibility between prerelease candidates is not guaranteed. The version-specific notes below describe earlier candidates, not a promise for all later development builds. Resolve pending saves before changing versions. Update the healthy source and prepared recovery destination to the same supported build, then create and verify a new trusted Baseline. Keep earlier originals and history unchanged. An update cannot recreate missing information; do not resume writing with an older build after the new format is used.
+
 Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
 
 **rc.14 preparation checks:** Update recovery destinations too. Missing language packs or required software are reported before content replacement; prepare them from trusted sources and recheck. Existing originals/history and protection/scheduling settings need no migration.
@@ -24,6 +28,10 @@ Recovery does not install or initialize plugins. Complete their normal setup bef
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+**Markdown Documents 0.1.3：** Markdownの新規導入には公開済みの0.1.3を使用します。直接表示・埋込みとも文書自身の閲覧条件を確認する版です。未確定の保存を解消してから健全な保存元を先に更新し、新しい信頼済みの初回保存を作ってください。復旧先には記録された同じ版を導入します。古い復旧点を使うために復旧先だけ新版へ変更しないでください。Resilienceがこのプラグインをインストール・初期化することはありません。
+
+**正式公開前の保存データ：** 候補版をまたぐ保存データの互換性は保証しません。以下の版別説明は当時の候補版についての記録で、以後の開発版すべてへの保証ではありません。更新前に未完了の保存を解消し、健全な保存元と準備済みの復旧先を同じ対応版に揃え、新しい初回保存を作って確認してください。以前の原本・履歴は変更せず保管します。更新だけで不足情報は補えません。新形式の使用後は、旧版に戻して書込みを再開しないでください。
 
 復旧処理はプラグインのインストール・初期化を行いません。通常のセットアップを事前に済ませてください。WP-Membersでは準備済みの動作設定・版情報を維持し、対応する会員情報・項目定義・閲覧条件を戻します。準備不足は置換前に表示されるので、準備後に再確認してください。
 

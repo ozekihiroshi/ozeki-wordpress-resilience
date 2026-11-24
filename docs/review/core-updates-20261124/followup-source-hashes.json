@@ -1,0 +1,70 @@
+[
+  {
+    "path": "packages/markdown-m1/src/AttachmentHistory.php",
+    "sha256": "5f95686267ec39a9b3ae9c4875bf11c655f95c6de261cd316b4b24da8f387e44"
+  },
+  {
+    "path": "packages/markdown-m1/src/CommentHistory.php",
+    "sha256": "fc0e1a87ba74497b51e5c2535d4e441255e984e40dd791c23a675e283834dfea"
+  },
+  {
+    "path": "packages/markdown-m1/src/CoreStateHistory.php",
+    "sha256": "fe32487fd21746041b5d60dd24ee409e8f2cbcfddfd21c74da61e2740d808982"
+  },
+  {
+    "path": "packages/markdown-m1/src/Plugin.php",
+    "sha256": "22f0384cd187d86bbafb45e1785604b4f7f35279e81d0784b94c5a72a17ed6cb"
+  },
+  {
+    "path": "packages/markdown-m1/src/SiteSnapshot.php",
+    "sha256": "12c8b60c156d22704b49c32629dbb6c3172db7eced37fe73fa519bc1dcc543ff"
+  },
+  {
+    "path": "packages/markdown-m1/src/Store.php",
+    "sha256": "8a770b4e8e4a9bbec206fdcb8c5db64850bf4c756e590ee3fbb56455ce52d346"
+  },
+  {
+    "path": "packages/markdown-m1/src/UpdateContract.php",
+    "sha256": "349844713b804006897d8d52596ac21cf94200b116bc041e99e13cbdd3c63cc7"
+  },
+  {
+    "path": "packages/markdown-m1/tests/attachment-deletion-state.php",
+    "sha256": "932ae5d1aec429a47232bba9f6e8eb3b8d6284433c8898a21924adae621d5283"
+  },
+  {
+    "path": "packages/markdown-m1/tests/attachment-pending.php",
+    "sha256": "109c51c4ca817c0fc86a6f8e7a47550b4c4ac5dcacede8992dcbaba374a068db"
+  },
+  {
+    "path": "packages/markdown-m1/tests/completed-state.php",
+    "sha256": "e899a9826b377690c61377d69f5df043a7b47df481cae6dd21a3e8777dc15c7c"
+  },
+  {
+    "path": "packages/markdown-m1/tests/core-update-contract.php",
+    "sha256": "c2c73040847672f0a1eba04a182780c96781cdfd71eb0e9465fdaef8dc49ef5b"
+  },
+  {
+    "path": "packages/markdown-m1/tests/protected-identity.php",
+    "sha256": "69ae6ca741d92d9676983d98b375d6e26863d4b32c15bf81d7ba6fb2d6021702"
+  },
+  {
+    "path": "packages/markdown-m1/tests/scheduled-capture.php",
+    "sha256": "ed2ea114f9b100dba7371a098fe73d807afc279c53866ca19eff22887d2dcff5"
+  },
+  {
+    "path": "tools/testing/core-update-scenarios/followup/authors.php",
+    "sha256": "4efde4e5b93e29c1f9aad911e993c1b5c7353a82a11c30e861e6b1688fbf10e7"
+  },
+  {
+    "path": "tools/testing/core-update-scenarios/followup/comments.php",
+    "sha256": "d9e30a10423c6572ae4965999b4b0ef40b4e2b76cead61a5ede91e9b9cdb6544"
+  },
+  {
+    "path": "tools/testing/core-update-scenarios/followup/media.php",
+    "sha256": "d424018ed172240258a0daad64839bae0bdce2cb6309f658e1022db840eded6e"
+  },
+  {
+    "path": "tools/testing/core-update-scenarios/followup/publication.php",
+    "sha256": "39f9ee17fa3b9d1c73c403e1f3630f446d39dcfc4af9091a073707580565a2a4"
+  }
+]

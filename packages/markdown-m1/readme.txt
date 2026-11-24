@@ -40,6 +40,8 @@ ACF recovery uses the recorded free version (tested 6.8.10), database-defined gr
 
 Standard WordPress Posts and Pages need no additional plugin. For integration-specific content, install the compatible plugin separately before recovery. Markdown Documents is needed when Markdown content exists. Source text is limited to 5 MiB and supported image and attachment files to 32 MiB each.
 
+For new Markdown setups, use Markdown Documents 0.1.3. Update the healthy source first, resolve pending saves before the update, and create a new trusted initial save. Prepare the recovery destination with the same recorded plugin version; changing only the destination does not update an older recovery point. Resilience does not install or initialize other plugins.
+
 = File access and compatible recovery =
 
 Page membership and file access are separate. Public supported images remain usable. Registered media with unresolved file conditions is retained without public placement, including after article editing, resaving and repeated recovery. Legacy files without recorded access conditions remain on hold. This does not reproduce unsupported private-download services.
@@ -74,6 +76,11 @@ No analytics or telemetry is sent to the developer. AWS access and credentials a
 User guide, AWS policies, terms of use (docs/terms-of-use.md; Japanese: docs/terms-of-use-ja.md) and installation/update instructions are included in docs/.
 Source and build tools: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/main/packages/markdown-m1
 Support: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/issues
+
+
+= Before the first public release =
+
+Saved-data compatibility between prerelease candidates is not guaranteed. Use the same supported version on the source and recovery sites, and create a new trusted Baseline on the healthy source when upgrading. Keep existing originals and history; upgrading does not rewrite them or reconstruct information that was never saved.
 
 == Installation ==
 

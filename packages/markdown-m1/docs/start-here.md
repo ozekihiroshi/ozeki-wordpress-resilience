@@ -18,11 +18,14 @@ Baseline is the first independent complete recovery point. A normal Checkpoint u
 
 ## 2. Changes requiring administrator attention
 
+The next candidate's source adds daily tracking for completed publication/comment/deletion operations, author changes, classic menu content, and the explicitly listed core settings. These changes are not included in the submitted rc.21 ZIP. Until the new candidate is distributed, follow the guidance for the ZIP you installed. For new Markdown setups, use Markdown Documents 0.1.3 on the source and the same recorded version on the prepared destination; see [update order](install-update.md).
+
 | Change | What to do |
 |---|---|
 | Supported article/image/comment/adapter operation | Use its normal editor. Check formal-history confirmation; resolve reported pending saves when the source survives. |
-| Software names/versions; menus, templates, navigation and supported presentation settings | Pause editing and create a **new trusted complete initial snapshot** after the change. A regular S3-derived Checkpoint cannot capture it. |
-| Runtime plugin update or captured plugin settings outside adapter history; global taxonomy administration; live-file changes outside recorded uploads | Determine whether initial capture includes that resource, then create a new trusted initial snapshot if it does. A tested earlier version does not certify an updated plugin. |
+| Classic menu content, categories/tags, and core settings listed in the next candidate's update contract | In that candidate, check formal-history confirmation. This does not include arbitrary theme settings or block-navigation layouts. |
+| Software names/versions; templates, theme selection, block-navigation layouts and settings outside daily tracking | Pause editing and create a **new trusted complete initial snapshot** when the change is within initial-capture scope. Prepare destination software/settings separately; a snapshot does not make them automatically applicable. |
+| Captured plugin settings outside adapter history; live-file changes outside recorded uploads | Determine whether initial capture includes that resource, then create a new trusted initial snapshot if it does. A tested earlier version does not certify an updated plugin. |
 | Uncaptured plugin tables/settings, external/CDN files, external services or secrets | A new snapshot does not automatically add support. Keep an independent preservation/setup procedure or exclude this resource from the promised recovery scope. |
 
 Do not replace trusted pre-incident recovery points with a new capture of a suspected compromised source. A new baseline requires the administrator's trust decision. Keep earlier recovery resources according to the retention plan; this guide does not authorize deletion. The current UI does not automatically detect every untracked change or prompt for a new baseline.

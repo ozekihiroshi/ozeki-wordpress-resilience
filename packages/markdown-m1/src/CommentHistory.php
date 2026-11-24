@@ -9,7 +9,12 @@ final class CommentHistory
 {
     public const PENDING='ozeki_resilience_m1_comment_pending';
     private array $statusOperations=[];
+    private array $completedElsewhere=[];
     public function boot(): void {
+        // These core operations write transition metadata after changing status.
+        // CoreStateHistory freezes the completed operation, not this intermediate row.
+        foreach(['trash_comment','untrash_comment','spam_comment','unspam_comment'] as $hook)add_action($hook,function($id){$this->completedElsewhere[(int)$id]=true;},PHP_INT_MIN,1);
+        foreach(['trashed_comment','untrashed_comment','spammed_comment','unspammed_comment'] as $hook)add_action($hook,function($id){unset($this->completedElsewhere[(int)$id]);},PHP_INT_MAX,1);
         // Freeze the successful operation payload, never re-fetch the comment by ID.
         add_action('wp_insert_comment',fn($id,$comment)=>$this->capture((array)$comment),PHP_INT_MIN,2);
         add_action('edit_comment',fn($id,$data)=>$this->capture(['comment_ID'=>$id]+$data),PHP_INT_MIN,2);
@@ -19,6 +24,7 @@ final class CommentHistory
         add_action('transition_comment_status',function($new,$old,$comment){
             $id=(int)$comment->comment_ID;
             if(!isset($this->statusOperations[$id]))return; // edit_comment already captured edits.
+            if(isset($this->completedElsewhere[$id])){unset($this->statusOperations[$id]);return;}
             unset($this->statusOperations[$id]);$this->capture((array)$comment);
         },PHP_INT_MIN,3);
         add_action('deleted_comment',fn($id,$old)=>$this->capture((array)$old,true),PHP_INT_MIN,2);
@@ -54,7 +60,7 @@ final class CommentHistory
     }
     private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[],?callable $capture=null): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
-        if($resources && !in_array($attrs['post_type']??'',['owr_native','owr_attachment'],true))throw new \RuntimeException('Unexpected operation resources.');
+        if($resources && !in_array($attrs['post_type']??'',['owr_native','owr_attachment','post','page','ozmd_document'],true))throw new \RuntimeException('Unexpected operation resources.');
         if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
         $name=$this->lock();$operation=wp_generate_uuid4();
         try {

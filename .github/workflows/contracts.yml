@@ -58,6 +58,13 @@ jobs:
           php packages/markdown-m1/tests/save-status.php packages/markdown-m1
           php packages/markdown-m1/tests/editor-save.php packages/markdown-m1
           php packages/markdown-m1/tests/core-update-contract.php
+          php packages/markdown-m1/tests/completed-state.php
+          php packages/markdown-m1/tests/navigation-state.php
+          php packages/markdown-m1/tests/basic-settings.php
+          php packages/markdown-m1/tests/reference-settings.php
+          php packages/markdown-m1/tests/scheduled-capture.php
+          php packages/markdown-m1/tests/protected-identity.php packages/markdown-m1
+          php packages/markdown-m1/tests/attachment-deletion-state.php packages/markdown-m1
           php packages/markdown-m1/tests/core-update-format.php packages/markdown-m1
           php packages/markdown-m1/tests/editor-nonce.php packages/markdown-m1
           php tools/testing/site-recovery-post-diff-test.php

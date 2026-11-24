@@ -118,7 +118,7 @@ final class Plugin
         foreach($urls[0] as $url){$url=html_entity_decode($url,ENT_QUOTES,'UTF-8');if(!preg_match('/\.(jpe?g|png|gif|webp|avif)(?:[?#].*)?$/i',$url))continue;$url=preg_replace('/[?#].*$/','',$url);$id=attachment_url_to_postid($url);
             if(!$id){$full=preg_replace('/-\d+x\d+(?=\.[^.]+$)/','',$url);$id=attachment_url_to_postid($full);}
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
-            if(!$id)throw new \RuntimeException('Cannot identify local media: '.$url);
+            if(!$id){if(AttachmentHistory::knownDeletedUrl($url))continue;throw new \RuntimeException('Cannot identify local media: '.$url);}
             $ids[$id]=true;
         }
         $out=[];$root=realpath($upload['basedir']);$access=MediaAccess::current();
@@ -381,9 +381,8 @@ final class Plugin
         // A partial editor submission must not fall back to the stored original.
         $editor=$markdown && (array_key_exists('ozmd_source',$_POST) || array_key_exists('ozmd_source_nonce',$_POST));
         $wasProtected=$id?(string)get_post_meta($id,self::ID,true):'';
-        if ($data['post_status']!=='publish' && !$wasProtected && $old?->post_status!=='publish') return $data;
-        // Scheduling remains a normal WordPress operation, outside automatic M1 protection.
-        if ($data['post_status']==='future' || $old?->post_status==='future') return $data;
+        if (!in_array($data['post_status'],['publish','future'],true) && !$wasProtected && !in_array($old?->post_status,['publish','future'],true)) return $data;
+        // A protected article remains protected when publication is postponed.
         try {
             // REST, classic editor and trash/untrash have already passed their core permission checks.
             if (($id && !current_user_can('edit_post',$id)) || (!$id && !current_user_can(get_post_type_object($data['post_type'])->cap->create_posts))) throw new \RuntimeException('Invalid save permission.');

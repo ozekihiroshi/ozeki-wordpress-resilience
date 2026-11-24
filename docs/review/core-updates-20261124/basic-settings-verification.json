@@ -1,0 +1,8 @@
+{
+  "change": true,
+  "article_save": true,
+  "fresh_baseline": true,
+  "second_recovery": true,
+  "originals_unchanged": true,
+  "storage": "Isolated file-backed SDK; no AWS access"
+}

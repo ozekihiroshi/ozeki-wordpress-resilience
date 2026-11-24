@@ -4,6 +4,8 @@
 
 [rc.21 verification, compatibility and candidate ZIP](docs/releases/wordpress-org-033-rc21.md).
 
+**Before the first public release:** Saved-data compatibility between prerelease candidates is not guaranteed. Use the same supported version on the source and recovery sites, and create a new trusted Baseline on the healthy source when upgrading. Existing originals and history are not rewritten.
+
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)
@@ -53,7 +55,7 @@ Use the installable ZIP, not GitHub's source archive. Runtime libraries are bund
 
 WordPress 6.4+, PHP 8.1+, ZipArchive, InnoDB and writable resource paths are required. Prepare a versioned S3 bucket and dedicated prefix, one writing site per prefix, and appropriate IAM permissions. Recovery requires a compatible WordPress release line, recorded plugin dependencies and private writable staging outside the web root. The controls follow your WordPress admin language: Japanese or English.
 
-**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For Markdown recovery, install and activate the recorded compatible version first (tested 0.1.1).
+**Markdown dependency:** Native-only Baseline and recovery do not require Markdown Documents. If active it is included; if documents or `_ozmd_source` originals remain while inactive, capture stops before saving. For new Markdown setups, use Ozeki Markdown Documents 0.1.3, which checks document access for direct views and embeds. Update the healthy source first and create a new trusted Baseline; install and activate that same recorded version on the recovery destination. Do not update only the destination for an older recovery point. Earlier verification records retain the versions actually tested.
 
 <a id="supported-content-and-plugins"></a>
 
@@ -65,7 +67,7 @@ Restore successfully saved content through the recovery point you select. Integr
 |---|---|
 | Posts, Pages and local images | Body, supported images, publication state, categories, tags, featured images and related information needed to use the articles |
 | Core comments | Comments and moderation state, including saved edits and deletions |
-| Markdown documents | Source and supported relationships. Ozeki Markdown Documents 0.1.1 |
+| Markdown documents | Source and supported relationships. Ozeki Markdown Documents 0.1.3 for new setups |
 | Inquiry forms and received inquiries | Forms and the inquiries you received. Contact Form 7 6.2.3 / Flamingo 2.6.4 |
 | Member access | Core subscriber information and supported fields, settings and viewing restrictions. WP-Members 3.5.8.1 |
 | Tables | Table content, supported display settings and references. TablePress 3.4.1 |

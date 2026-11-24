@@ -1,0 +1,17 @@
+{
+  "sticky": {
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "deletion_equal": null
+  },
+  "permalink": {
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "deletion_equal": null
+  },
+  "menu": {
+    "cycle_equal": true,
+    "originals_unchanged": true,
+    "deletion_equal": true
+  }
+}
