@@ -1,0 +1,20 @@
+{
+  "browser": {
+    "browser_edit_survives_rerecovery": true,
+    "admin_edit_save": true,
+    "prepared_home_content": true,
+    "guest_document_hidden": true,
+    "member_login_document_table": true,
+    "unknown_command_stays_text": true
+  },
+  "zip_unchanged": true,
+  "php_warnings": 0,
+  "after_rerecovery_page_bytes": [
+    63361,
+    62222
+  ],
+  "locales": [
+    "ja",
+    "en_US"
+  ]
+}

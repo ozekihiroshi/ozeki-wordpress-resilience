@@ -1,0 +1,10 @@
+Ozeki Resilience 0.3.3 rc.21 — candidate update (not yet submitted)
+
+This candidate addresses the common causes found during ordinary browser use after recovery:
+- Keep the destination's prepared templates and block navigation instead of activating archived layout instructions.
+- Treat embedded Markdown as a document reference: check the referenced document's own viewing conditions and safely render it without executing embedded commands. Preserve the Markdown original unchanged.
+- Avoid unnecessary full media reconciliation for revision autosaves and editor lock metadata; retain pending work and retry diagnostics when capture cannot complete.
+
+Recovery does not install or initialize third-party software. Administrators prepare trusted WordPress, themes and plugins separately. Existing S3 originals/history and the archive format are unchanged. Previously textified embeds are not decoded in bulk; recover from originals or set the correct reference explicitly.
+
+The submitted rc.20 ZIP remains unchanged. rc.21 will be considered for submission only after the separate production-use review.

@@ -1,20 +1,18 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.20 was accepted as an update to the existing WordPress.org application on 2026-11-24, and the original review email has been answered. Awaiting the reviewer’s response; publication has NOT been approved.**
+**0.3.3 rc.21 is a GitHub candidate awaiting community production-use review. It has not been deployed to community or submitted to WordPress.org. Submitted rc.20 remains awaiting the reviewer’s response; publication has NOT been approved.**
 
-**0.3.3 rc.20は2026-11-24にWordPress.orgの既存申請への更新が受け付けられ、元の審査メールへの返信も完了しました。審査担当者の回答待ちであり、公開承認済みではありません。**
+**0.3.3 rc.21はcommunity本番への導入前のGitHub公開候補です。本番導入・WordPress.orgへの送信はまだ行っていません。提出済みrc.20は審査担当者の回答待ちであり、公開承認済みではありません。**
 
-- [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.20/ozeki-resilience-0.3.3.zip)
-- [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.20)
-- [Verification / 確認記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc20.md)
-- SHA-256: `90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610`
+- [Candidate ZIP / 候補ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.21/ozeki-resilience-0.3.3.zip)
+- [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.21)
+- [Verification and scope / 確認結果と範囲](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc21.md)
+- SHA-256: `ec0b5cbedd7855054d87ef5656ffcfbde25335c25d4e939b0291d73acf0874de`
 
-rc.20 prevents our own attachment provenance marker from changing file access classification after recovery. Other private, held and unknown conditions remain enforced. Originals and formats are unchanged. Prepare trusted software and complete normal setup before recovery; recovery does not install or initialize plugins. Update recovery destinations too.
+rc.21 preserves prepared destination templates/navigation, checks embedded Markdown document viewing conditions and avoids unnecessary media reconciliation during autosave. Prepare trusted software and complete normal setup before recovery; recovery does not install or initialize plugins. Archive formats and existing originals/history are unchanged. Update recovery destinations too. Previously textified embeds require their original or an explicit administrator reference edit.
 
-rc.20は復旧時の自身の識別情報だけでファイルの閲覧条件が変わる不整合を修正します。非公開・保留・不明の条件は維持します。原本・保存形式は変わりません。信頼できるソフトウェアを事前に導入・セットアップしてください。復旧はインストール・初期化を行いません。復旧先も更新してください。
+rc.21は準備済みテンプレート・ナビゲーションを維持し、Markdown埋込み先文書自身の閲覧条件を確認します。自動保存時の不要な添付再照合も修正します。信頼できるソフトウェアを事前に導入・セットアップし、復旧処理はインストール・初期化を行いません。原本・履歴・保存形式は変わりません。復旧先も更新してください。以前に文字化した埋込みは原本から復旧するか、管理者が正しい参照を設定します。
 
 Use the installable ZIP, not GitHub source archives. See [updating](install-update.md), [setup](user-guide.md) / [導入ガイド](user-guide-ja.md).
 
-[Submitted rc.18 / 提出済みrc.18](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc18.md) / [Community rc.19 operation record / 本番更新・保存・日英履歴76件](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc19-20261124.md). Existing ZIPs and tags remain unchanged / 既存ZIP・タグは変更していません。
-
-[Community rc.20 operation record / 本番更新・保存・日英履歴77件](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc20-20261124.md)
+[Submitted rc.20 / 提出済みrc.20](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc20.md) / [Community rc.20 operation record / 本番更新・保存・日英履歴77件](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc20-20261124.md). Existing ZIPs and tags remain unchanged / 既存ZIP・タグは変更していません。

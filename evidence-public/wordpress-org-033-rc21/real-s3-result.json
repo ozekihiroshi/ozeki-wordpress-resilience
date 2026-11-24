@@ -1,0 +1,146 @@
+{
+  "first_installation": {
+    "mode": "rc20_update",
+    "zip_files_match": 3821,
+    "state_preserved": true,
+    "wordpress": "7.1.4"
+  },
+  "second_installation": {
+    "mode": "fresh",
+    "zip_files_match": 3821,
+    "state_preserved": true,
+    "wordpress": "7.1.4"
+  },
+  "first_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 77,
+    "posts": 91,
+    "files": 12,
+    "not_applied": 250
+  },
+  "second_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 5,
+    "posts": 94,
+    "files": 12,
+    "not_applied": 149
+  },
+  "first_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "second_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "first_content": {
+    "checks": {
+      "archived_templates_not_active": true,
+      "prepared_records_preserved": true,
+      "prepared_header_content": true,
+      "prepared_navigation_identity": true,
+      "prepared_theme_taxonomy": true,
+      "core_resolves_prepared_header": true,
+      "core_resolves_prepared_front": true,
+      "markdown_original_present": true,
+      "guest_cannot_read_embedded_member_doc": true,
+      "member_can_read_embedded_doc": true,
+      "embedded_unknown_shortcode_inert": true,
+      "admin_can_read_embedded_doc": true,
+      "invalid_embed_attributes_rejected": true,
+      "earlier_access_denial_preserved": true,
+      "code_example_not_executable": true,
+      "markdown_original_unchanged": true
+    },
+    "pass": true,
+    "document": 154,
+    "page": 155
+  },
+  "second_content": {
+    "checks": {
+      "archived_templates_not_active": true,
+      "prepared_records_preserved": true,
+      "prepared_header_content": true,
+      "prepared_navigation_identity": true,
+      "prepared_theme_taxonomy": true,
+      "core_resolves_prepared_header": true,
+      "core_resolves_prepared_front": true,
+      "markdown_original_present": true,
+      "guest_cannot_read_embedded_member_doc": true,
+      "member_can_read_embedded_doc": true,
+      "embedded_unknown_shortcode_inert": true,
+      "admin_can_read_embedded_doc": true,
+      "invalid_embed_attributes_rejected": true,
+      "earlier_access_denial_preserved": true,
+      "code_example_not_executable": true,
+      "markdown_original_unchanged": true
+    },
+    "pass": true,
+    "document": 154,
+    "page": 155
+  },
+  "http": [
+    {
+      "overlap_request": {
+        "status": 200,
+        "seconds": 0.07191665295977145
+      },
+      "case": "cold-overlap",
+      "status": 200,
+      "seconds": 12.128948711091653,
+      "marker_in_response": true,
+      "error": null,
+      "marker_committed": true,
+      "state": {
+        "pending": false,
+        "post_pending": false,
+        "shared_pending": 0,
+        "capture_error": false
+      }
+    },
+    {
+      "overlap_request": null,
+      "case": "single-settled",
+      "status": 200,
+      "seconds": 7.230646788957529,
+      "marker_in_response": true,
+      "error": null,
+      "marker_committed": true,
+      "state": {
+        "pending": false,
+        "post_pending": false,
+        "shared_pending": 0,
+        "capture_error": false
+      }
+    }
+  ],
+  "post_test_zip_match": true,
+  "baseline": {
+    "files": 360,
+    "through": 0
+  },
+  "same_content": true,
+  "same_file_content_and_conditions": true,
+  "same_membership": true,
+  "supported_records_compared": 46,
+  "file_states": {
+    "held": 39,
+    "public": 12
+  },
+  "file_originals_missing": 0,
+  "original_and_rc20_append_present": true,
+  "second_history": 5,
+  "no_pending": true,
+  "fixed_source_objects": 638,
+  "fixed_source_hashes_unchanged": true,
+  "php_server_errors": {
+    "first": 0,
+    "second": 0
+  },
+  "transport_operations_including_preflight_attempts": 1243,
+  "transport_failures": 0
+}

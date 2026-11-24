@@ -2,6 +2,8 @@
 
 **0.3.3 rc.21 is a new candidate, not yet deployed to community or submitted to WordPress.org. Submitted rc.20 is preserved. We are awaiting the reviewer's response; publication has NOT been approved.**
 
+[rc.21 verification, compatibility and candidate ZIP](docs/releases/wordpress-org-033-rc21.md).
+
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
 English | [日本語](RAADME-jp.md)

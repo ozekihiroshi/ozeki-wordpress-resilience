@@ -1,0 +1,11 @@
+{
+  "research_changes_preserved": true,
+  "fixed_source_objects": 638,
+  "production_unchanged": true,
+  "new_trial_prefix_only": true,
+  "existing_originals_history_read_only": true,
+  "rc20_zip_sha256": "90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610",
+  "no_submission_or_email": true,
+  "rc20_tag_object": "8111b17c2b5e4c26bcc53890e2a90c04e3114cef",
+  "isolated_containers_removed": true
+}
