@@ -26,6 +26,7 @@ final class AttachmentHistory {
         foreach($data['deleted_media']??[] as $paths){
             if(!is_array($paths))throw new \RuntimeException('Invalid deleted media record.');
             foreach($paths as $path){SiteSnapshot::safePath($path);if(!str_starts_with($path,'uploads/'))throw new \RuntimeException('Invalid deleted media path.');
+                // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception data, not HTML output; existing admin renderers escape diagnostics and REST responses encode them.
                 if(!isset($install[$path])&&file_exists($root.'/'.substr($path,8)))throw new \RuntimeException(SetupReadiness::text('A previously recovered, deleted file remains. Prepare a clean uploads directory before recovery: ','以前に復旧した削除済みファイルが残っています。空のアップロード領域を用意してから再確認してください: ').$path);
             }
         }

@@ -58,6 +58,7 @@ final class CoreStateHistory {
         }finally{self::unlock($lock);}
     }
     private static function rows(string $sql): array {
+        // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared -- Private helper: callers use fixed SQL with trusted wpdb table names and literal taxonomy lists; variable IDs are prepared at the call site.
         global $wpdb;$rows=$wpdb->get_results($sql,ARRAY_A);
         if($wpdb->last_error)throw new \RuntimeException('Cannot capture core information.');
         return $rows;

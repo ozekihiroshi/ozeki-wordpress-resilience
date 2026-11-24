@@ -26,7 +26,7 @@ final class UpdateContract {
         if(array_keys($values)!==self::OPTIONS)throw new \RuntimeException('Incomplete core settings.');
         foreach($values as $key=>$value){
             if($key==='sticky_posts'){
-                if(!is_array($value)||!array_is_list($value))throw new \RuntimeException('Invalid sticky list.');
+                if(!is_array($value)||array_values($value)!==$value)throw new \RuntimeException('Invalid sticky list.');
                 foreach($value as $id)if((!is_int($id)&&!is_string($id))||!ctype_digit((string)$id)||(int)$id<=0)throw new \RuntimeException('Invalid sticky identity.');
             }elseif(in_array($key,['default_category','wp_page_for_privacy_policy'],true)){
                 if((!is_int($value)&&!is_string($value))||!ctype_digit((string)$value))throw new \RuntimeException('Invalid reference setting.');
@@ -81,9 +81,11 @@ final class UpdateContract {
         if($u){
             if($u->roles||$u->caps)throw new \RuntimeException('Recovery author conflicts with a prepared account.');
             $updated=wp_update_user(['ID'=>$u->ID,'display_name'=>$author['display_name'],'user_nicename'=>$author['user_nicename']]);
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Preserve error data; existing admin renderers escape diagnostics and REST responses encode them.
             if(is_wp_error($updated))throw new \RuntimeException($updated->get_error_message());
         }
         $uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$author['display_name'],'user_nicename'=>$author['user_nicename'],'role'=>'']);
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Preserve error data; existing admin renderers escape diagnostics and REST responses encode them.
         if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());
         return (int)$uid;
     }
