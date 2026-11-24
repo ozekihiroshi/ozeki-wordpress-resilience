@@ -1,0 +1,16 @@
+{
+  "files": 3820,
+  "bytes": 8320939,
+  "sha256": "90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610",
+  "changes_from_rc19": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/src/FileScope.php"
+  ],
+  "removed": [],
+  "vendor_unchanged": true,
+  "user_guides": 8,
+  "relative_links_checked": 86,
+  "development_files_absent": true
+}

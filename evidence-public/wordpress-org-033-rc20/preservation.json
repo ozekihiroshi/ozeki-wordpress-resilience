@@ -1,0 +1,11 @@
+{
+  "source_versions": 635,
+  "source_bytes": 10991173,
+  "source_inventory_unchanged": true,
+  "remaining_trial_resources": {
+    "containers": [],
+    "networks": [],
+    "volumes": []
+  },
+  "unchanged_rc19_zip_sha256": "6651029403cabd57c69e5aba7febe582b5784cfa800687ca7dc8e0182c2a6d9d"
+}
