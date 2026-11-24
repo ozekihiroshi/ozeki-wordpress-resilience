@@ -1,0 +1,14 @@
+[
+  {
+    "file": "RecoveryWorkspace.php",
+    "exit": 0,
+    "stdout": "No syntax errors detected in /tmp/owr-review-safe-20261124/src/RecoveryWorkspace.php\n",
+    "sha256": "6ab4792964168567ab31d724433c5097e217f8251d48954123b5ee375205e927"
+  },
+  {
+    "file": "SiteSnapshot.php",
+    "exit": 0,
+    "stdout": "No syntax errors detected in /tmp/owr-review-safe-20261124/src/SiteSnapshot.php\n",
+    "sha256": "9358da45d94477fca6069d66879205bd234f455cc8ac100c703aa65873ce5982"
+  }
+]

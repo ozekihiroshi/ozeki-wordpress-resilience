@@ -1,0 +1,65 @@
+Editor and process-interruption follow-up — 2026-11-24 JST
+
+Scope
+Unreleased candidate in codex/review-safe-recovery. Synthetic WordPress on dm,
+dedicated DB/containers and fresh S3 lab prefixes only. No production deployment,
+existing source archive/history mutation, ZIP/tag change, submission or email.
+This report supersedes the earlier statement that all block editing is flattened.
+
+Confirmed defect and correction
+A real browser edit of a recovered classic paragraph converted escaped shortcode
+brackets back to normal brackets. Saving and viewing executed the registered
+harmless review_probe callback, including a code example. Escaping only during
+recovery therefore did not maintain the execution boundary during later use.
+
+Recovered post/page content now passes through the shared application policy before
+WordPress block/shortcode execution. Whole-site recovery sets the already-recognized
+origin metadata for restored articles; individual recovery already uses this marker.
+The marker survives capture/recovery. No new S3 record format is introduced.
+Unrelated newly authored articles retain their ordinary shortcode behavior.
+This safeguard requires Resilience to remain active and the normal the_content
+rendering path; it is not a guarantee about a third-party direct content renderer.
+
+Block editing
+A small explicit static-core set retains block structure: paragraph, heading, code,
+preformatted, list/list-item, quote, table and separator. Attributes are restricted;
+bindings and arbitrary dynamic instructions are not reactivated. This is not full
+restoration of all block features. Actual browser verification covered heading,
+paragraph and code: they appeared as separate editable blocks with no validation
+warning. A paragraph was edited and saved; public display retained literal shortcode
+text, both in the paragraph and in the code example. Other listed block types have
+not received the same browser editing check.
+
+Lifecycle checks
+review-editor-contract.php covers decoded brackets, execution through the_content,
+origin marking, static block structure and unrestricted unrelated new content.
+review-roundtrip.php now includes editable block/shortcode content, editor-style
+entity normalization, use after saving, recapture and second recovery. Both recovery
+steps compare original S3 object/version fingerprints. Markdown source remains exact.
+Supported integration checks also run in this fixture. See editor-real-s3-result.json.
+
+Actual SIGKILL tests
+review-kill.php paused only a dedicated CLI PHP recovery process at three boundaries:
+before START TRANSACTION, inside the DB transaction, and just after COMMIT. Each
+process was killed by verified PID, never the web server or database service.
+All three retained a detectable unlocked private recovery workspace (0700), preserved
+rollback evidence, and could repeat recovery from the same manifest successfully.
+The fixture's running attempt was not converted to success. See kill-results.json.
+The first two cases retained pre-recovery DB content; the committed case retained
+recovered content. Files can already be installed before DB commit. SIGKILL does not
+provide automatic whole-site rollback or atomic file-and-DB completion. The recovery
+site must stay private until the retry and checks finish. This was not a browser
+job-controller interruption test, power-loss test, disk-full test or concurrent-user
+test. Retained synthetic evidence was explicitly inspected and removed by the fixture.
+
+Regression results
+44 standalone package contracts passed; safe-content and editor WordPress regressions
+passed. Plugin Check: 0 errors, 123 warnings (not a warning-free release assessment).
+Evidence files are editor-contracts.json, editor-regressions.json and
+editor-plugin-check-summary.json. candidate-source-hashes.json records the earlier
+checkpoint; editor-source-hashes.json identifies this follow-up's source.
+
+Next release decisions
+Review non-basic block editing expectations and the remaining warning report before
+packaging. No claim is made that every third-party rendering or crash path is covered.
+Existing ZIPs do not acquire these changes. Submission and email remain on hold.

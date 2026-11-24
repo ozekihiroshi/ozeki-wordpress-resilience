@@ -1,0 +1,106 @@
+[
+  {
+    "file": "AcfHistory.php",
+    "sha256": "e4e9eae61007a335d26c897c00ff5ebea024dd5503e8e7ad24ec3ce51a2df12d"
+  },
+  {
+    "file": "AdminText.php",
+    "sha256": "bb05b9ac59f3717f230fc9d3c19cf620d0bd1206f869496102cf85dd12a43cc7"
+  },
+  {
+    "file": "AssetFormat.php",
+    "sha256": "9359286f580c4e43401a2db9662c45ddad91f2a801f04dfcee8bf284bb922a70"
+  },
+  {
+    "file": "AttachmentHistory.php",
+    "sha256": "91815fe17c22294853f69e99d55e5121ee5bd4e0ff8107faa1d4bfa89a3103f7"
+  },
+  {
+    "file": "CheckpointSchedule.php",
+    "sha256": "20ab3e37a017deda61aa28ff3c48a2be4a0e642b7325846941caf1d29e938a64"
+  },
+  {
+    "file": "CommentHistory.php",
+    "sha256": "37623bf22824aaa98543603d65ba82ba65d60737b8b83bdc10569d830319da4b"
+  },
+  {
+    "file": "FileScope.php",
+    "sha256": "bf7bf6ec36aedac6f2d5072b35ad58c8a60ba770d93f6570253ca39b5033c1a2"
+  },
+  {
+    "file": "FormHistory.php",
+    "sha256": "0ae15c1476d7673b9d2ddde5c1b685867ceaad853972a69dbcc412df38c199ee"
+  },
+  {
+    "file": "GfsPolicy.php",
+    "sha256": "ea646e7d584956a92351dd6e5ec816e7576592f237a0bae5f95ba2a78bd05c7e"
+  },
+  {
+    "file": "Identifiers.php",
+    "sha256": "6a4bc14d4fcc4729bec5a6f237744a93aaac02aeb6fd424b5eb4ed0cc93f4706"
+  },
+  {
+    "file": "MediaAccess.php",
+    "sha256": "0229ce7e2e31d6e5259b9271031ded4365a4e5250cb06d132f5664e8b0aae421"
+  },
+  {
+    "file": "MemberHistory.php",
+    "sha256": "a3eb60d95e0ae5229d13d4d052b47dcc1df08b24fe325e54dbc5f0e4c89a5db7"
+  },
+  {
+    "file": "NativeHistory.php",
+    "sha256": "c3fe8cb60e88d4af4a18895f2e88a0ca19e0a7a3acafcf9c6a6e2a568d11b646"
+  },
+  {
+    "file": "Plugin.php",
+    "sha256": "271aee964274396e73819b3aa078bb1fbef0192535553a189faa69aa2515b12d"
+  },
+  {
+    "file": "RecoveryContent.php",
+    "sha256": "8431b0881bb1ac1b303d9bbff9769c26cef1297b23aa47301c40d3ce2dd6ad2a"
+  },
+  {
+    "file": "RecoveryPreparation.php",
+    "sha256": "10e7c36360202651e52cf9784b7c3bb4f9e1c676374adf66d4816ba81b30a743"
+  },
+  {
+    "file": "RecoveryRules.php",
+    "sha256": "f9730641bbfa89b6f29c77bbc6eecee369cbba9219393ff3deca66777416d926"
+  },
+  {
+    "file": "RecoverySettings.php",
+    "sha256": "87a14381b86fc56283582005714c006630a60f785b5bd0bedb6a2496f80a98e5"
+  },
+  {
+    "file": "RecoveryWorkspace.php",
+    "sha256": "97f85c7b19aebce05fdf8f416384b5254720f57f2d802d943a98e958f270ce73"
+  },
+  {
+    "file": "ReferenceContext.php",
+    "sha256": "8936aa3b2cdd305118cb7ab1b2cb7dd7b6ae546a7a9abe1a7526e0ed98bda3ab"
+  },
+  {
+    "file": "SaveFailure.php",
+    "sha256": "0187fbb6d69ff0b5a6691aa2a19c5d973c0130934fa2c729e9f8042a3b2897e4"
+  },
+  {
+    "file": "SetupReadiness.php",
+    "sha256": "0205504a8fbc63811ddf7869d73da77bd1cdfdf53d9dfd359f6ddf72c10cc0d9"
+  },
+  {
+    "file": "SiteSnapshot.php",
+    "sha256": "f48bfb69bb47db1dfa3f04c4dd5002cc47ca21d7d405e5cf262d8a2c8ac38bb6"
+  },
+  {
+    "file": "Startup.php",
+    "sha256": "4fa4820957847bd03e04f0472e4fbb45a5f8d7fa43d31e54f31946da4a9937e4"
+  },
+  {
+    "file": "Store.php",
+    "sha256": "699cd59d885f43365a08f374710b42541c1f3556c2be53e4b6e7c4dd869f58f2"
+  },
+  {
+    "file": "TableHistory.php",
+    "sha256": "72b978972daff853c617a7b9c71abc85fcda80c2cea2ed4a144ced3696840668"
+  }
+]

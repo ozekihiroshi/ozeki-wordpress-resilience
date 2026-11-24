@@ -73,11 +73,30 @@ final class MediaAccess {
         foreach(['wp_after_insert_post','deleted_post'] as $hook)add_action($hook,function(){$this->dirty=true;},PHP_INT_MAX);
         add_action('shutdown',function(){if($this->dirty)SaveFailure::run('Media access capture',fn()=>self::record());},PHP_INT_MAX);
     }
-    public static function record(): void {
+    public static function record(bool $force=false): void {
         $config=(new Plugin())->config();
         if(empty($config['protect'])||($config['setup_role']??'source')==='recovery')return;
-        if(!AttachmentHistory::reconcile())return;
+        global $wpdb;$lock='ozeki-resilience-'.$wpdb->prefix;
+        if((int)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 10)',$lock))!==1)throw new \RuntimeException('Media access capture is busy; retry.');
+        try {
+        wp_cache_delete('ozeki_resilience_media_capture_state','options');
+        $rules=self::current();
+        $scope=hash('sha256',serialize(array_intersect_key($config,array_flip(['bucket','prefix','region','owner']))));
+        $previous=get_option('ozeki_resilience_media_capture_state',null);
+        if(!is_array($previous)||($previous['scope']??null)!==$scope)$previous=null;
+        // This is a local completion hint, not a new archive format. An absent hint
+        // requires a complete reconciliation, including after an upgrade.
+        if(!$force&&is_array($previous)&&($previous['rules']??null)===$rules
+            &&!get_option('ozeki_resilience_m1_pending',[])&&!get_option(AttachmentHistory::PENDING,[])&&!get_option(CommentHistory::PENDING,[]))return;
+        $changed=null;
+        if(!$force&&is_array($previous)&&is_array($previous['rules']??null)){
+            $changed=[];
+            foreach($rules+$previous['rules'] as $path=>$_)if(($rules[$path]??null)!==($previous['rules'][$path]??null))$changed[]=$path;
+        }
+        if(!AttachmentHistory::reconcile($changed))return;
         (new CommentHistory())->enqueueCurrent('media-access',fn()=>Store::json(['schema'=>self::SCHEMA,'rules'=>self::current()]),['post_type'=>'owr_media_access','content_format'=>'media-access-json','media_access_schema'=>self::SCHEMA]);
+        if(!get_option(CommentHistory::PENDING,[])&&!get_option(AttachmentHistory::PENDING,[]))update_option('ozeki_resilience_media_capture_state',['rules'=>$rules,'scope'=>$scope],false);
+        } finally {$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock));}
     }
     public static function replay(array &$data,string $source): void {
         $v=json_decode($source,true,512,JSON_THROW_ON_ERROR);

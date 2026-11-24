@@ -1,0 +1,266 @@
+[
+  {
+    "test": "prepared-settings.php",
+    "exit": 0,
+    "output": "PASS prepared settings, source application, absent/empty, identity collision, widget placement and read-only planning\n",
+    "stderr": ""
+  },
+  {
+    "test": "checkpoint.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\n",
+    "stderr": ""
+  },
+  {
+    "test": "separated-assets.php",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "acf.php",
+    "exit": 0,
+    "output": "PASS ACF separated originals, comparison failure, history, projection, removed value, independent Checkpoint (simulated S3).\n",
+    "stderr": ""
+  },
+  {
+    "test": "acf-definitions.php",
+    "exit": 0,
+    "output": "PASS ACF separated originals, comparison failure, history, projection, removed value, independent Checkpoint (simulated S3).\nPASS independent ACF definitions, deletion, no articles, delayed article, legacy originals and Checkpoint.\n",
+    "stderr": ""
+  },
+  {
+    "test": "acf-readiness.php",
+    "exit": 0,
+    "output": "PASS unused/inactive/free, legacy marker, initial capture, changed version/destination and bilingual next steps.\n",
+    "stderr": ""
+  },
+  {
+    "test": "acf-readiness.php",
+    "exit": 0,
+    "output": "PASS ACF PRO exclusion, bilingual display and unchanged article eligibility.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-checkpoint-verification.php",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS initial common save and Checkpoint: data/metadata/image/software mismatches and unavailable versions stop before manifest; same fixed versions verified on retry; normal load/tail retained; existing objects unchanged\n",
+    "stderr": ""
+  },
+  {
+    "test": "retention-extension.php",
+    "exit": 0,
+    "output": "PASS retention: new/reused/delayed confirmation, insufficient/read/extension failure, reread, same versions/modes, latest Checkpoint+tail renewal, no old content mutation or rollback; memory storage only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "checkpoint-lifecycle.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\n",
+    "stderr": ""
+  },
+  {
+    "test": "gfs.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS lifecycle: independent unchanged points, complete copied originals, retention boundary, scoped version deletion, lock wait, stale/denied stop, independent AWS lock, calendar month/week. In-memory S3, no cloud writes.\nPASS GFS: W/M/Y schedule collision, separate times, calendar month, validation, S3 labels, all-label retention, no archive history pin, independent manual point. Memory S3 only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "gfs-admin.php",
+    "exit": 0,
+    "output": "PASS GFS actual admin action: W/M/Y form persistence, next-slot registration, optional lock disabled, invalid input preserves config. WordPress API fixture; no cloud.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-checkpoint-admin-failure.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS actual admin action with WordPress/S3 fixtures: verification failure recorded with cause, prior snapshot unchanged, no manifest or new success. No browser/real AWS claim.\n",
+    "stderr": ""
+  },
+  {
+    "test": "application-rules.php",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\nFlamingo application contract passed\n",
+    "stderr": ""
+  },
+  {
+    "test": "reference-context.php",
+    "exit": 0,
+    "output": "PASS: reference provenance, unchanged document, independent URL expectations, negative boundaries and missing-provenance detection\n",
+    "stderr": ""
+  },
+  {
+    "test": "reference-format.php",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS: old originals readable, contextual original/snapshot format guards, byte-identical Markdown and Checkpoint provenance\n",
+    "stderr": ""
+  },
+  {
+    "test": "capture-failure.php",
+    "exit": 0,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\nPASS optional history display metadata\nPASS prequeue failure, original exception, no synthetic pending payload, unrelated-success retention, status distinction and diagnostic-write failure\n",
+    "stderr": "Resilience: capture failure diagnostic could not be persisted.\n"
+  },
+  {
+    "test": "commit-verification.php",
+    "exit": 0,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\nPASS definition capture lock, frozen retry, deduplication and capture-failure boundary\nPASS source/metadata/split-part/media hash mismatch and read failure prevent history PUT; pending retained; same operation resumes after verification; fixed versions and originals preserved\n",
+    "stderr": ""
+  },
+  {
+    "test": "recovery-result.php",
+    "exit": 0,
+    "output": "PASS success/legacy/failure/unfinished/empty/missing-point/no-tail/escaping and preserved JSON\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-point-time.php",
+    "exit": 0,
+    "output": "PASS exact boundaries, full update, deletion, Checkpoint-only, incompatible Checkpoint, missing end/gap/resource, later records excluded. Memory S3 only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "recovery-errors.php",
+    "exit": 0,
+    "output": "PASS unchanged/empty/false/zero/array options; failed write/read; failed START/COMMIT. Synthetic DB failures, not interruption/restart acceptance.\n",
+    "stderr": ""
+  },
+  {
+    "test": "save-status.php",
+    "exit": 0,
+    "output": "PASS confirmed/empty/unreadable/pending/reasons/stale-error/escaping/no-body\nPASS optional history display metadata\n",
+    "stderr": ""
+  },
+  {
+    "test": "editor-save.php",
+    "exit": 0,
+    "output": "PASS confirmed-body and media/state equality; changed/unconfirmed data retained; editor error reason.\n",
+    "stderr": ""
+  },
+  {
+    "test": "editor-nonce.php",
+    "exit": 0,
+    "output": "PASS editor nonce missing/invalid/array and partial source rejected before side effects; valid and non-editor paths retained; capability independently required.\n",
+    "stderr": ""
+  },
+  {
+    "test": "comments.php",
+    "exit": 0,
+    "output": "PASS comment addition/edit/moderation/delete/reparent/count, complete JSON, failed original exclusion, independent checkpoint.\nPASS pending article/comment history prevents storage reconfiguration.\n",
+    "stderr": ""
+  },
+  {
+    "test": "forms.php",
+    "exit": 0,
+    "output": "PASS complete form/inquiry JSON, idempotent replay, channels, identity rejection, failed original exclusion.\nPASS receipt/form tombstones and channel counts.\nPASS form deletion does not cascade to inquiry.\n",
+    "stderr": ""
+  },
+  {
+    "test": "tablepress.php",
+    "exit": 0,
+    "output": "TablePress replay checks PASS\nTablePress unpersisted defaults check PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "member-prepared-settings.php",
+    "exit": 0,
+    "output": "Prepared settings contract PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "no-software-install.php",
+    "exit": 0,
+    "output": "No software installation or initialization dependencies PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-workspace.php",
+    "exit": 0,
+    "output": "Workspace cleanup and rollback retention PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-media-cost.php",
+    "exit": 0,
+    "output": "Unchanged media: no attachment read and no S3 request PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "tablepress-capture.php",
+    "exit": 0,
+    "output": "TablePress queue identity and frozen settings checks PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "upload-guard.php",
+    "exit": 0,
+    "output": "PASS CF7 deny-only upload guard and executable rejection\n",
+    "stderr": ""
+  },
+  {
+    "test": "file-scope.php",
+    "exit": 0,
+    "output": "File ownership and access boundary PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "media-access.php",
+    "exit": 0,
+    "output": "Media access contract PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "attachment-contract.php",
+    "exit": 0,
+    "output": "Attachment complete / missing original / missing preview / missing access / orphan rule PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "attachment-pending.php",
+    "exit": 0,
+    "output": "Attachment deletion survives subsequent metadata callbacks PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "media-access-format.php",
+    "exit": 0,
+    "output": "PASS: actual legacy originals and snapshots read unchanged; new access contracts round-trip; old resources stay unknown\n",
+    "stderr": ""
+  },
+  {
+    "test": "native-details.php",
+    "exit": 0,
+    "output": "PASS native state thumbnail removal, terms/counts, delete relations, unrelated records, repeat and identity\n",
+    "stderr": ""
+  },
+  {
+    "test": "native-queue.php",
+    "exit": 0,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\nPASS definition capture lock, frozen retry, deduplication and capture-failure boundary\n",
+    "stderr": ""
+  },
+  {
+    "test": "members.php",
+    "exit": 0,
+    "output": "membership replay checks PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "cleanup.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-retention.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\n",
+    "stderr": ""
+  },
+  {
+    "test": "site-retention-fallback.php",
+    "exit": 0,
+    "output": "PASS: common initial/Checkpoint format; complete raw files; partial-write resume; idempotence; all ancestor objects removed; tail replay; sequence after pruning; gap rejection; second independent generation; hash checks. Storage is an in-memory test double, not AWS.\nPASS: latest baseline; window; complete tail; exact version deletion; no bypass; Object Lock; Legal Hold; stale plan; partial deletion recovery/resume; unrelated keys; repeat; duplicate versions; gap. In-memory S3 only.\nPASS complete-site retention: independent baselines, fixed-version time, media tail, holds, unknowns, missing history, ambiguity, no writes/deletion, display.\nPASS both pending queues prevent calculation and replace stale preview.\nPASS missing version-list permission: fixed-version read fallback, retained assets, blocked reasons, no candidates or mutations.\n",
+    "stderr": ""
+  }
+]

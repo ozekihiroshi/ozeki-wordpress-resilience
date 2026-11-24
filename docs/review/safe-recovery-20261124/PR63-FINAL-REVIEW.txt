@@ -1,0 +1,43 @@
+PR #63 最終確認（2026-11-24 JST）
+
+対象PR: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/pull/63
+base: 6bc172b19be27e00174bf105a0b2a5caef12c20a
+コード最終確認対象: c5e52b10d13db0126165356d61cc98b21f8b29e0
+判定: mainへの取り込みを妨げる差分・記録の不整合は、今回の確認では見つからなかった。
+利用者がmainマージを指示済み。公開・審査承認の判定ではない。
+
+確認した最終状態
+- RecoveryContentは記事などのHTMLと、構造化されたプラグインデータを区別する。
+  会員・ACF・受信情報を再帰的にHTML変換しない。TablePressは表示用コピーを処理する。
+- 原本の保存形式や既存の正式履歴を変更しない。復旧先ソフトウェアをインストール・
+  初期化する処理を追加していない。
+- 編集後のショートコード実行防止、基本ブロック編集、一時領域の所有・後始末、
+  退避書込み失敗で置換前に停止する処理、不要な添付原本/S3読み出しの回避を確認。
+- diff --checkに問題なし。PR以外の研究側未コミット変更は取り込まない。
+
+証拠の読み方（古い記録を最新結果と混同しない）
+1. 最終の構造化データ修正と実S3往復:
+   STRUCTURED-DATA-BOUNDARY.txt / structured-boundary-real-s3.json /
+   structured-boundary-checks.json。既存原本の指紋一致、利用・再保存・再復旧を確認。
+2. 編集・強制終了の確認:
+   EDITOR-AND-INTERRUPTION.txt / kill-results.json。HTML境界の限定より前の確認。
+   記事・Markdownの安全処理は限定後も既存回帰確認を再実行し成功。
+3. 退避書込み失敗:
+   backup-preflight-results.json。3退避箇所で置換前停止・一時領域整理を確認。
+4. Plugin Check:
+   premerge-plugin-check-summary.jsonはHTML適用境界を限定する前の候補。
+   0 errors / 123 warningsはその時点の結果であり、最終ZIPの検査済みという意味ではない。
+   新候補ZIPの作成時に、その同梱内容でPlugin Checkと導入・更新確認を行う。
+5. 最終コードのGitHub Actions:
+   https://github.com/ozekihiroshi/ozeki-wordpress-resilience/actions/runs/45308667969
+   Offline recovery contracts成功。マージ後のmain Actionsも別途確認する。
+
+保持する制約
+すべてのブロック・独自描画経路・障害形態を保証するものではない。
+復旧先は確認完了まで非公開とする。強制終了はファイルとDBの原子的切戻しではない。
+Markdown原文の保全と安全な適用・表示の区別はREVIEW-REPLY-DRAFT.txtで説明予定。
+審査担当者の了解を得たとは扱わない。返信案は未送信。
+
+今回の取り込み作業では本番に接続・配備せず、原本・履歴への書込みもしない。
+既存ZIP・タグを保全し、新しい公開用ZIP、リリース、申請、メール送信は行わない。
+既存Actionsの開発配布物ビルドはCI確認の一部であり、公開用ZIPを発行する作業ではない。

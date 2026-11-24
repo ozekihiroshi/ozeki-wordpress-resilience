@@ -1,0 +1,54 @@
+Draft only — not sent. This branch has not been submitted to WordPress.org.
+Recheck the candidate ZIP and update this introduction before sending.
+
+Hello Plugin Review Team,
+
+Thank you for identifying these issues. We have prepared changes that separate
+preservation of source information from its application on the recovery site.
+
+For archived article content, recovery now applies WordPress HTML filtering and
+restricts shortcode and block instructions. Unsupported shortcodes remain readable
+text. We also reproduced and fixed a case where normal editing decoded their escaped
+brackets: recovered articles now retain the display policy before WordPress executes
+blocks and shortcodes. Basic heading, paragraph and code blocks remain editable.
+
+HTML processing is limited to presentation fields. Typed member/ACF values and
+definitions, receipt data, and table storage are not recursively HTML-filtered.
+Recovered TablePress cells are checked on a render-only copy before shortcode
+execution, preserving normal values for editing and later preservation. Existing
+integration examples with brackets and angle-bracket text passed both recoveries.
+
+Regarding Markdown, we have intentionally kept the independent original unchanged.
+It is source data, not an instruction to execute its contents. Changing it before
+preservation would lose the original document, including legitimate code examples.
+Size and encoding validation remain in place. The recovered Markdown presentation
+is filtered before the normal WordPress shortcode stage; the original is not deployed
+as executable software. We would appreciate your confirmation of this distinction,
+or clarification if a further change is required. We are not claiming that this
+point has already been accepted by the review team.
+
+Recovery uses an owned private temporary directory outside the WordPress root.
+Successful recovery and ordinary failure paths clean it up. Interrupted recovery or
+an incomplete rollback retains private evidence and reports it for review rather
+than deleting material needed for recovery. Backup writes and permissions must
+succeed before content replacement starts. Recovery is performed on a private,
+prepared destination; an interruption does not imply an atomic file-and-DB rollback.
+
+Routine edits with unchanged file access conditions no longer reread every attachment
+original and S3 history. Changed conditions and pending work are reconciled, while an
+explicit recheck remains available. Attachment metadata enumeration still occurs.
+
+Isolated checks covered editing, preservation, recovery, use, recapture and a second
+recovery using real S3, with original object/version fingerprints unchanged. We also
+tested recovery-process termination at three DB boundaries and injected backup-write
+failures. The current source passed 45 standalone package contracts. Plugin Check
+reported zero errors and 123 warnings; these are documented, not represented as a
+warning-free result. Final package checks will be repeated before submission.
+
+The recovery process does not install or initialize third-party software. The
+administrator prepares trusted software separately, and recovery preserves its
+prepared settings while applying supported information assets.
+
+Thank you for your continued review.
+
+Ozeki Hiroshi

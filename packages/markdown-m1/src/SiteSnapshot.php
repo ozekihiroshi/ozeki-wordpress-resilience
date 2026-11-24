@@ -305,6 +305,13 @@ final class SiteSnapshot
         return ['requirements'=>array_intersect_key($m,array_flip(['wordpress','plugins','software_inventory','source_url','required_form_plugins','required_tablepress_version'])),'language'=>$data['options']['WPLANG']??'','through'=>$m['through']];
     }
     public function restore(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
+        require_once __DIR__.'/RecoveryWorkspace.php';
+        $workspace=new RecoveryWorkspace($work);
+        try {return $this->restoreInWorkspace($ref,$replace,$workspace->path(),$targetThrough);}
+        catch(RecoveryRollbackIncomplete $e){$workspace->retain();throw $e;}
+        finally {$workspace->finish();}
+    }
+    private function restoreInWorkspace(array $ref,bool $replace,string $work,?int $targetThrough=null): array {
         global $wpdb;
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
         if(!empty((new Plugin())->config()['protect'])||get_option('ozeki_resilience_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
@@ -327,7 +334,9 @@ final class SiteSnapshot
         foreach($allowedFiles as $path=>$_)if(($mediaRules[$path]['state']??'unknown')!=='public')unset($allowedFiles[$path]);
         foreach($m['excluded_files']??[] as $excludedFile)unset($allowedFiles[$excludedFile['item']]);
         if(($d['options']['WPLANG']??null)===false)$d['options']['WPLANG']='';
-        $application=RecoveryRules::project($d,self::OPTIONS);$d=$application['data'];
+        $application=RecoveryRules::project($d,self::OPTIONS);
+        require_once __DIR__.'/RecoveryContent.php';
+        $d=RecoveryContent::project($application['data'],$application['report']['not_applied']);
         $application['report']['missing_originals']=AttachmentHistory::missing($d,$files);
         $application['report']['attachment_complete']=!$application['report']['missing_originals'];
         $memberPlan=isset($d['membership'])?MemberHistory::plan($d['membership'],$from):[];
@@ -370,19 +379,19 @@ final class SiteSnapshot
         foreach($heldMedia['files'] as $path=>$_)if(file_exists($uploadRoot.'/'.substr($path,8)))throw new \RuntimeException('A held media path already exists at the destination. Use a clean uploads directory before recovery.');
         if(!is_dir($uploadRoot)&&!wp_mkdir_p($uploadRoot))throw new \RuntimeException('Cannot create uploads directory.');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        file_put_contents($work.'/before-content.json',Store::json($this->data()));chmod($work.'/before-content.json',0600);
+        RecoveryWorkspace::writeBackup($work,'before-content.json',Store::json($this->data()));
         $backups=[];
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped, WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it. Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
         foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);$parent=dirname($target);if(!is_dir($parent)&&!wp_mkdir_p($parent))throw new \RuntimeException('Cannot create resource directory.');if(is_link($target)||!str_starts_with(realpath($parent).'/',realpath($uploadRoot).'/'))throw new \RuntimeException('Resource escapes destination.');$before=is_file($target)?file_get_contents($target):null;if($before===$body){unset($install[$p]);continue;}if(!is_writable($parent))throw new \RuntimeException('Destination resource directory is not writable: '.$p);$backups[$target]=$before;}
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        file_put_contents($work.'/before-files.json',Store::json(array_map(fn($v)=>$v===null?null:base64_encode($v),$backups)));chmod($work.'/before-files.json',0600);
+        RecoveryWorkspace::writeBackup($work,'before-files.json',Store::json(array_map(fn($v)=>$v===null?null:base64_encode($v),$backups)));
         $oldOptions=[];foreach($d['options'] as $k=>$v)$oldOptions[$k]=get_option($k);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        file_put_contents($work.'/before-options.json',Store::json($oldOptions));chmod($work.'/before-options.json',0600);
+        RecoveryWorkspace::writeBackup($work,'before-options.json',Store::json($oldOptions));
         $touched=[];
         try {
         // phpcs:ignore PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite, WordPress.WP.AlternativeFunctions.rename_rename -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-            foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');$touched[]=$target;}
+            foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);$touched[]=$target;if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');}
             // Imported authors have no login identity from the lost system and no capabilities.
             $authors=[];foreach($d['authors'] as $id=>$a){$login='owr-author-'.substr(hash('sha256',$from.'|'.$id),0,20);$u=get_user_by('login',$login);$uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$a['display_name'],'user_nicename'=>$a['user_nicename'],'role'=>'']);if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());$authors[(string)$id]=$uid;}
             self::transaction('START TRANSACTION');
@@ -398,6 +407,9 @@ final class SiteSnapshot
             foreach($settingsPlan['local_posts'] as $row)if($wpdb->insert($wpdb->posts,$row)===false)throw new \RuntimeException('Cannot preserve prepared theme CSS.');
             foreach($settingsPlan['local_postmeta'] as $row)if($wpdb->insert($wpdb->postmeta,$row)===false)throw new \RuntimeException('Cannot preserve prepared theme CSS metadata.');
             AcfHistory::install($d['acf_restore_groups']??[]);
+            // Existing origin metadata also identifies articles whose presentation
+            // must retain the recovery execution boundary after ordinary editing.
+            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],['post','page','tablepress_table'],true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
             foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');self::writeOption($k,$v);}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){
@@ -408,7 +420,20 @@ final class SiteSnapshot
             self::writeOption(MediaAccess::OPTION,$heldMedia,false);
             self::transaction('COMMIT');wp_cache_flush();delete_option('rewrite_rules');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        }catch(\Throwable $e){$wpdb->query('ROLLBACK');foreach($touched as $p){$body=$backups[$p];if($body===null){if(is_file($p))unlink($p);}else file_put_contents($p,$body);}wp_cache_flush();throw $e;}
+        }catch(\Throwable $e){
+            $rolledBack=$wpdb->query('ROLLBACK')!==false;
+            foreach($touched as $p){
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Rollback requires a checked deletion result for validated local recovery paths.
+                if(is_file($p.'.owr-tmp')&&!unlink($p.'.owr-tmp'))$rolledBack=false;
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Rollback requires a checked deletion result for validated local recovery paths.
+                $body=$backups[$p];if($body===null){if(is_file($p)&&!unlink($p))$rolledBack=false;}
+                elseif(file_put_contents($p,$body)!==strlen($body))$rolledBack=false;
+            }
+            wp_cache_flush();
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data and exception chaining; UI renderers escape the message.
+            if(!$rolledBack)throw new RecoveryRollbackIncomplete('Recovery rollback incomplete; private evidence retained at '.$work,0,$e);
+            throw $e;
+        }
         // Raw Markdown stays byte-identical; URLs in rendered output are rebased, not originals.
         self::writeOption('ozeki_resilience_site_origin_url',$from,false);
         self::writeOption('ozeki_resilience_origin_upload_url',$fromUploads,false);

@@ -1,0 +1,25 @@
+[
+  {
+    "check": "review-safe-content.php",
+    "exit": 0,
+    "output": "Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS\n",
+    "stderr": ""
+  },
+  {
+    "check": "review-roundtrip.php",
+    "exit": 0,
+    "output": "{\n    \"safe_article\": true,\n    \"markdown_original_unchanged\": true,\n    \"use_edit_recapture_recover\": true,\n    \"source_objects_unchanged\": true,\n    \"workspace_empty\": true,\n    \"not_applied\": 109,\n    \"storage\": \"network-isolated local SDK transport\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "check": "review-media-live.php",
+    "exit": 0,
+    "output": "{\"new_fixture_attachments\":20,\"total_attachments\":20,\"no_op_sdk_requests\":0,\"one_access_change_preserved\":true,\"change_put_requests\":7,\"history_failure_retry\":true}\n",
+    "stderr": ""
+  },
+  {
+    "check": "Plugin Check",
+    "ERROR": 0,
+    "WARNING": 123
+  }
+]

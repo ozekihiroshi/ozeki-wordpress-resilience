@@ -1,0 +1,77 @@
+[
+  {
+    "test": "application-rules",
+    "exit": 0,
+    "output": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS common baseline/tail rules, originals preserved, core adapter settings, unknown withholding, invalid known type stops, value-free result report.\nFlamingo application contract passed\n"
+  },
+  {
+    "test": "reference-context",
+    "exit": 0,
+    "output": "PASS: reference provenance, unchanged document, independent URL expectations, negative boundaries and missing-provenance detection\n"
+  },
+  {
+    "test": "prepared-settings",
+    "exit": 0,
+    "output": "PASS prepared settings, source application, absent/empty, identity collision, widget placement and read-only planning\n"
+  },
+  {
+    "test": "member-prepared-settings",
+    "exit": 0,
+    "output": "Prepared settings contract PASS\n"
+  },
+  {
+    "test": "no-software-install",
+    "exit": 0,
+    "output": "No software installation or initialization dependencies PASS\n"
+  },
+  {
+    "test": "tablepress",
+    "exit": 0,
+    "output": "TablePress replay checks PASS\nTablePress unpersisted defaults check PASS\n"
+  },
+  {
+    "test": "file-scope",
+    "exit": 0,
+    "output": "File ownership and access boundary PASS\n"
+  },
+  {
+    "test": "media-access",
+    "exit": 0,
+    "output": "Media access contract PASS\n"
+  },
+  {
+    "test": "attachment-contract",
+    "exit": 0,
+    "output": "Attachment complete / missing original / missing preview / missing access / orphan rule PASS\n"
+  },
+  {
+    "test": "attachment-pending",
+    "exit": 0,
+    "output": "Attachment deletion survives subsequent metadata callbacks PASS\n"
+  },
+  {
+    "test": "native-details",
+    "exit": 0,
+    "output": "PASS native state thumbnail removal, terms/counts, delete relations, unrelated records, repeat and identity\n"
+  },
+  {
+    "test": "native-queue",
+    "exit": 0,
+    "output": "PASS frozen resource failure, resume, lost response, same-state suppression and read-failure preservation\nPASS definition capture lock, frozen retry, deduplication and capture-failure boundary\n"
+  },
+  {
+    "test": "members",
+    "exit": 0,
+    "output": "membership replay checks PASS\n"
+  },
+  {
+    "test": "review-media-cost",
+    "exit": 0,
+    "output": "Unchanged media: no attachment read and no S3 request PASS\n"
+  },
+  {
+    "test": "review-workspace",
+    "exit": 0,
+    "output": "Workspace cleanup and rollback retention PASS\n"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "test": "review-workspace",
+    "exit": 0,
+    "stdout": "Workspace cleanup and rollback retention PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-media-cost",
+    "exit": 0,
+    "stdout": "Unchanged media: no attachment read and no S3 request PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "no-software-install",
+    "exit": 0,
+    "stdout": "No software installation or initialization dependencies PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "prepared-settings",
+    "exit": 0,
+    "stdout": "PASS prepared settings, source application, absent/empty, identity collision, widget placement and read-only planning\n",
+    "stderr": ""
+  },
+  {
+    "test": "member-prepared-settings",
+    "exit": 0,
+    "stdout": "Prepared settings contract PASS\n",
+    "stderr": ""
+  }
+]
