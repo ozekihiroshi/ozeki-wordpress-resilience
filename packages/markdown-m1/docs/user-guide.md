@@ -83,7 +83,7 @@ These checks complete initial setup and the post-save check. Next, check the inq
 
 Only confirmed history is available after source loss. If an original save failed before being queued, resolve the cause and save again through the normal editor.
 
-For supported attachments and adapter operations, check formal-history confirmation. After changing plugin versions or settings outside daily tracking, pause editing and create a new trusted initial save. A scheduled Checkpoint cannot capture untracked changes. See the [changes table](start-here.md) for the distinction between submitted candidates and the next candidate's source.
+For supported attachments and adapter operations, check formal-history confirmation. After changing plugin versions or settings outside daily tracking, pause editing and create a new trusted initial save. A scheduled Checkpoint cannot capture untracked changes. See the [changes table](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/start-here.md) for the distinction between submitted candidates and the next candidate's source.
 
 After the initial save, keep the version list from **Prepare the recovery destination** outside the source site, together with bucket, region, prefix and owner.
 
