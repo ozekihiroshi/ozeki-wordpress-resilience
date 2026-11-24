@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.18 has been accepted as an update to the existing WordPress.org application, and the review-email reply has been sent. Awaiting the reviewer response; publication has not been approved.** [Distribution status](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/packages/markdown-m1/docs/wordpress-org-candidate.md).
+**0.3.3 rc.19 is a candidate for community validation before submission. Submitted rc.18 remains under review; publication has not been approved.**
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
@@ -18,6 +18,8 @@ Prepare a fresh WordPress destination, then separately install and activate the 
 Recovery does not install or initialize plugins. Complete their normal setup beforehand. For WP-Members, recovery keeps prepared runtime settings and schema versions, then applies supported member information, field definitions and access conditions. Missing preparation is shown before replacement; complete it and recheck.
 
 TablePress table content and supported table options are restored while its prepared global settings remain unchanged. Recovery retains the selected theme, its prepared Additional CSS and other non-restored settings. Prepared widget configurations remain available; unverifiable placements are held for administrator review. See the recovery guide for supported references.
+
+Preserved originals and safe presentation are separate. Markdown source remains unchanged; recovery filters executable HTML and keeps unrecognized shortcodes and dynamic blocks as text. Supported form definitions, table cells, member fields and ACF values retain their data meaning. Normal editing of recovered content keeps this boundary; prepare any additional executable behaviour separately on the trusted destination.
 
 The aim is not to minimize storage or make restoration as fast as possible. Independent originals and additional recovery points provide reserves and room to recover when needed, so information can remain usable. Storage, transfers and read-back time are part of maintaining that reserve.
 
