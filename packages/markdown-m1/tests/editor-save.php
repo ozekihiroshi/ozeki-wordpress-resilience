@@ -9,6 +9,10 @@ ok(OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'body',$a),'Same confirmed
 ok(!OzekiResilience\M1\Plugin::sameConfirmedArticle(null,'body',$a),'Never trust only local state');
 ok(!OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'changed',$a),'Changed body');
 foreach(['title','status','slug','origin_id'] as $key){$b=$a;$b[$key]='changed';ok(!OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'body',$b),'Changed '.$key);}
+$a['author']=['display_name'=>'Author A','user_nicename'=>'author-a'];$a['post_password']='private';$r['attributes']=$a;
+ok(OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'body',$a),'Structured author equality without array-to-string conversion');
+$a['author']['display_name']='Author B';ok(!OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'body',$a),'Changed author description must not be deduplicated');
+$a=$r['attributes'];$a['post_password']='';ok(!OzekiResilience\M1\Plugin::sameConfirmedArticle($r,'body',$a),'Password removal must not be deduplicated');
 $attrs=['post_type'=>'owr_native','media'=>[['id'=>1,'files'=>['uploads/a.png'=>null]]]];
 $resources=['uploads/a.png'=>['body'=>base64_encode('image')]];
 $row=['original'=>['source'=>['sha256'=>hash('sha256','state')]],'attributes'=>$attrs];

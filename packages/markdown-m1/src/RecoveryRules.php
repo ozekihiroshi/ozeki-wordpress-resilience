@@ -113,7 +113,7 @@ final class RecoveryRules
             if(isset($receiptRules[$id]))throw new \RuntimeException('Duplicate Flamingo field map.');
             $receiptRules[$id]=FormHistory::receiptFieldRules($row['meta_value']);
         }
-        $base=['_ozeki_resilience_m1_asset'=>'text','_ozeki_resilience_m1_origin_url'=>'text','_ozeki_resilience_m1_origin'=>'text','_ozeki_resilience_m1_origin_id'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
+        $base=['_ozeki_resilience_m1_asset'=>'text','_ozeki_resilience_m1_origin_url'=>'text','_ozeki_resilience_m1_origin'=>'text','_ozeki_resilience_m1_origin_id'=>'text','_wpmem_block'=>'text','_thumbnail_id'=>'number','_wp_page_template'=>'text','_wp_trash_meta_status'=>'text','_wp_trash_meta_time'=>'number','_wp_trash_meta_comments_status'=>'plain','_wp_desired_post_slug'=>'text','_wp_old_slug'=>'text','_wp_old_date'=>'text'];
         $out=[];
         foreach($d['tables']['postmeta']??[] as $row){
             $type=$types[(string)$row['post_id']]??'';$key=$row['meta_key'];$rules=$base;

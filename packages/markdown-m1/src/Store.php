@@ -7,12 +7,13 @@ require_once __DIR__.'/GfsPolicy.php';
 require_once __DIR__.'/ReferenceContext.php';
 require_once __DIR__.'/MediaAccess.php';
 require_once __DIR__.'/AttachmentHistory.php';
+require_once __DIR__.'/UpdateContract.php';
 
 /** S3 is the authority. The database is never used to discover recovery history. */
 final class Store
 {
-    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
-    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
+    private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json','core-state-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
+    private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json','core-state-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
     public function mediaScope(): string { return MediaAccess::scope($this->config); }
     private function requireWriter(): void {
@@ -218,7 +219,7 @@ final class Store
         $r=$this->s3->getObject($this->args($key));
         if (empty($r['VersionId']) || $r['VersionId']==='null') throw new \RuntimeException('Snapshot requires versioning.');
         $cp=json_decode((string)$r['Body'],true,512,JSON_THROW_ON_ERROR);
-        if (!in_array($cp['schema']??'',['owr-md-snapshot-2',AttachmentHistory::INDEX_FORMAT],true) || ($cp['through']??null)!==(int)$m[2]
+        if (!in_array($cp['schema']??'',['owr-md-snapshot-2',AttachmentHistory::INDEX_FORMAT,UpdateContract::INDEX_FORMAT],true) || ($cp['through']??null)!==(int)$m[2]
             || !is_array($cp['assets']??null) || !$cp['assets']
             || !hash_equals((string)($cp['inventory_sha256']??''),hash('sha256',self::json($cp['assets'])))) throw new \RuntimeException('Invalid independent snapshot inventory.');
         foreach ($cp['assets'] as $asset=>$row) {
@@ -270,6 +271,7 @@ final class Store
         $body=['schema'=>'owr-md-snapshot-2','through'=>$through,'origin'=>$origin,'created_at'=>$plan['created_at'],'retain_until'=>$plan['retain_until'],
             'assets'=>$assets,'inventory_sha256'=>hash('sha256',self::json($assets))];
         foreach($assets as $row)if(($row['original']['schema']??'')===AttachmentHistory::ORIGINAL_FORMAT)$body['schema']=AttachmentHistory::INDEX_FORMAT;
+        foreach($assets as $row)if(($row['original']['schema']??'')===UpdateContract::ORIGINAL_FORMAT)$body['schema']=UpdateContract::INDEX_FORMAT;
         $ref=$this->put($key,self::json($body),'application/json',$plan['retain_until']);
         $this->get($ref);
         return $ref+['through'=>$through,'assets'=>count($assets),'unchanged'=>false];
@@ -561,7 +563,7 @@ final class Store
             unset($layout['files']);$meta['structure']=$layout;
             $body=self::json(['schema'=>AssetFormat::SCHEMA,'data'=>$parts]);
         }
-        return ['schema'=>isset($attributes['attachment_schema'])?AttachmentHistory::ORIGINAL_FORMAT: (isset($attributes['media_access_schema'])||!empty($attributes['media'])?MediaAccess::ORIGINAL_FORMAT:(isset($attributes['reference_origins'])?ReferenceContext::ORIGINAL_FORMAT:'owr-md-original-2')),'asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
+        return ['schema'=>isset($attributes['update_contract'])?UpdateContract::ORIGINAL_FORMAT:(isset($attributes['attachment_schema'])?AttachmentHistory::ORIGINAL_FORMAT: (isset($attributes['media_access_schema'])||!empty($attributes['media'])?MediaAccess::ORIGINAL_FORMAT:(isset($attributes['reference_origins'])?ReferenceContext::ORIGINAL_FORMAT:'owr-md-original-2'))),'asset'=>$asset,'operation'=>$operation,'retain_until'=>$until,
             'source_sha256'=>hash('sha256',$source),'parts'=>$parts,
             'source'=>$this->put($base.self::sourceName($attributes),$body,self::sourceType($attributes).'; charset=utf-8',$until),
             'metadata'=>$this->put($base.'metadata.json',self::json($meta),'application/json',$until)];
@@ -569,14 +571,20 @@ final class Store
     /** Decode only for existing typed replay; S3 stores readable independent originals. */
     public function originalSource(array $original): string {
         if(($original['schema']??'owr-md-original-1')==='owr-md-original-1')return $this->get($original['source']);
-        if(!in_array($original['schema']??'',['owr-md-original-2',ReferenceContext::ORIGINAL_FORMAT,MediaAccess::ORIGINAL_FORMAT,AttachmentHistory::ORIGINAL_FORMAT],true))throw new \RuntimeException('Unsupported original format.');
+        if(!in_array($original['schema']??'',['owr-md-original-2',ReferenceContext::ORIGINAL_FORMAT,MediaAccess::ORIGINAL_FORMAT,AttachmentHistory::ORIGINAL_FORMAT,UpdateContract::ORIGINAL_FORMAT],true))throw new \RuntimeException('Unsupported original format.');
         $meta=json_decode($this->get($original['metadata']),true,512,JSON_THROW_ON_ERROR);
         if(($meta['schema']??'')!==AssetFormat::SCHEMA)throw new \RuntimeException('Invalid original metadata.');
+        if(($original['schema']??'')===UpdateContract::ORIGINAL_FORMAT){
+            $a=$meta['attributes'];
+            if(($a['update_contract']??'')!==UpdateContract::SCHEMA)throw new \RuntimeException('Missing core update contract.');
+            if(in_array($a['post_type']??'',['post','page','ozmd_document'],true))UpdateContract::validate($a);
+            elseif(!in_array($a['post_type']??'',['owr_core','owr_native'],true))throw new \RuntimeException('Unexpected core update type.');
+        }
         if(($original['schema']??'')===AttachmentHistory::ORIGINAL_FORMAT){
             if(($meta['attributes']['attachment_schema']??'')!==AttachmentHistory::SCHEMA||($meta['attributes']['post_type']??'')!=='owr_attachment')throw new \RuntimeException('Missing attachment bundle contract.');
             foreach($meta['attributes']['media']??[] as $media)AttachmentHistory::validate($media);
         }
-        if(($original['schema']??'')===MediaAccess::ORIGINAL_FORMAT){
+        if(in_array($original['schema']??'',[MediaAccess::ORIGINAL_FORMAT,UpdateContract::ORIGINAL_FORMAT],true)){
             $a=$meta['attributes'];
             if(($a['post_type']??'')==='owr_media_access'&&($a['media_access_schema']??'')!==MediaAccess::SCHEMA)throw new \RuntimeException('Missing media access history contract.');
             foreach($a['media']??[] as $media){

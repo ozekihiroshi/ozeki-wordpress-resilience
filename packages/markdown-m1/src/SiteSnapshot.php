@@ -13,6 +13,8 @@ require_once __DIR__.'/MediaAccess.php';
 require_once __DIR__.'/AttachmentHistory.php';
 require_once __DIR__.'/RecoverySettings.php';
 require_once __DIR__.'/RecoveryTemplates.php';
+require_once __DIR__.'/UpdateContract.php';
+require_once __DIR__.'/CoreStateHistory.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -36,7 +38,7 @@ final class SiteSnapshot
     }
     private function data(): array {
         global $wpdb;
-        $data=['tables'=>[],'options'=>[],'authors'=>[]];
+        $data=['tables'=>[],'options'=>[],'authors'=>[],'update_contract'=>UpdateContract::SCHEMA];
         foreach(self::TABLES as $t) {
             $data['tables'][$t]=$wpdb->get_results('SELECT * FROM `'.$wpdb->$t.'`',ARRAY_A);
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
@@ -44,8 +46,9 @@ final class SiteSnapshot
         }
         $data['tables']['postmeta']=array_values(array_filter($data['tables']['postmeta'],fn($r)=>!in_array($r['meta_key'],['_edit_lock','_edit_last'],true)));
         foreach(self::OPTIONS as $k)$data['options'][$k]=get_option($k);
+        $data['options']=array_replace($data['options'],UpdateContract::options());
         foreach($wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'widget_%' OR option_name LIKE 'theme_mods_%'") as $k)$data['options'][$k]=get_option($k);
-        foreach(array_unique(array_column($data['tables']['posts'],'post_author')) as $id){$u=get_userdata((int)$id);if($u)$data['authors'][(string)$id]=['display_name'=>$u->display_name,'user_nicename'=>$u->user_nicename];}
+        foreach(array_unique(array_column($data['tables']['posts'],'post_author')) as $id){$author=UpdateContract::author((int)$id);if($author)$data['authors'][(string)$id]=$author;}
         if(TableHistory::enabled())TableHistory::baseline($data);
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         AcfHistory::baseline($data);
@@ -89,6 +92,7 @@ final class SiteSnapshot
     }
     public function capture(bool $trusted,array $plugins): array {
         if(!$trusted)throw new \RuntimeException('Administrator must trust the initial site and pause editing.');
+        if(get_option(CoreStateHistory::PENDING))throw new \RuntimeException('Resume pending core changes before the initial save.');
         if(get_option('ozeki_resilience_m1_pending')||get_option('ozeki_resilience_m1_comment_pending'))throw new \RuntimeException('Resume pending history first.');
         if(get_option(AttachmentHistory::PENDING))throw new \RuntimeException('Attachment preservation is incomplete. Restore missing source files and retry before creating a complete recovery point.');
         // Include active supported runtimes; native-only sites do not require Markdown Documents.
@@ -145,6 +149,7 @@ final class SiteSnapshot
             $manifest['requires_reference_context']=true;
         }
         $manifest['asset_format']=AttachmentHistory::SNAPSHOT_FORMAT;
+        if(($content['update_contract']??'')===UpdateContract::SCHEMA)$manifest['asset_format']=UpdateContract::SNAPSHOT_FORMAT;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -175,18 +180,19 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
             if(($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT||!empty($m['requires_reference_context']))&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
             if(isset($m['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']);
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
         }
-        if(in_array($m['asset_format']??'',[MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT],true)){
+        if(in_array($m['asset_format']??'',[MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true)){
             $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
+            if($m['asset_format']===UpdateContract::SNAPSHOT_FORMAT&&($content['update_contract']??'')!==UpdateContract::SCHEMA)throw new \RuntimeException('Missing core update snapshot contract.');
             if(!is_array($content['media_access']??null))throw new \RuntimeException('Missing mandatory media access contract.');
             MediaAccess::validate($content['media_access']);
-            if($m['asset_format']===AttachmentHistory::SNAPSHOT_FORMAT)AttachmentHistory::assertComplete($content,$files);
+            if(in_array($m['asset_format'],[AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true))AttachmentHistory::assertComplete($content,$files);
         }
         ksort($files);
         return [$m,$files];
@@ -204,6 +210,9 @@ final class SiteSnapshot
         $target??=$rows?(int)$rows[count($rows)-1]['sequence']:$through;
         foreach($rows as $r){
             if($r['sequence']!==++$through)throw new \RuntimeException('History gap.');
+            if(($r['attributes']['post_type']??'')==='owr_core'){
+                CoreStateHistory::replay($d,$this->store->originalSource($r['original']));continue;
+            }
             if(($r['attributes']['post_type']??'')==='owr_attachment'){
                 AttachmentHistory::replay($d,$files,$this->store->originalSource($r['original']),$r['attributes'],$this->store);continue;
             }
@@ -241,10 +250,11 @@ final class SiteSnapshot
             if(isset($a['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']??[],$a['reference_origins']);
             if(!in_array($type,['ozmd_document','page','post'],true)||!in_array($a['status'],['publish','private','draft','pending','trash'],true))throw new \RuntimeException('Unsupported history type or state.');
             $raw=$this->store->originalSource($r['original']);$this->store->get($r['original']['metadata']);
+            if(!isset($a['update_contract']))$m['legacy_incomplete_article_conditions']=true;
             self::applyMedia($d,$files,$a['media']??[],$this->store);
             $values=['post_title'=>$a['title'],'post_name'=>$a['slug'],'post_status'=>$a['status'],'post_date'=>$a['date'],'post_date_gmt'=>$a['date_gmt']];
             if($type!=='ozmd_document')$values['post_content']=$raw;
-            foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)if(isset($a[$key]))$values[$key]=$a[$key];
+            $values+=UpdateContract::apply($a,$d);
             foreach($d['tables']['posts'] as &$p)if((string)$p['ID']===$id){if($p['post_type']!==$type)throw new \RuntimeException('History identity conflicts with baseline.');$p=array_replace($p,$values);$found=true;}unset($p);
             if(!$found){
                 $d['tables']['posts'][]=array_replace(['ID'=>$id,'post_author'=>'0','post_date'=>$a['date'],'post_date_gmt'=>$a['date_gmt'],'post_content'=>'','post_title'=>$a['title'],'post_excerpt'=>'','post_status'=>$a['status'],'comment_status'=>'closed','ping_status'=>'closed','post_password'=>'','post_name'=>$a['slug'],'to_ping'=>'','pinged'=>'','post_modified'=>$a['date'],'post_modified_gmt'=>$a['date_gmt'],'post_content_filtered'=>'','post_parent'=>'0','guid'=>$a['origin_url'],'menu_order'=>'0','post_type'=>$type,'post_mime_type'=>'','comment_count'=>'0'],$values);
@@ -305,6 +315,7 @@ final class SiteSnapshot
     /** Load and replay without changing destination content or S3. Also works with existing originals. */
     public function recoveryPreparation(array $ref,?int $targetThrough=null): array {
         [$m,$files]=$this->load($ref,true);[$m,$files]=$this->replay($m,$files,$targetThrough);
+        if(!empty($m['legacy_incomplete_article_conditions']))UpdateContract::requireArticleConditions([]);
         $data=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
         return ['requirements'=>array_intersect_key($m,array_flip(['wordpress','plugins','software_inventory','source_url','required_form_plugins','required_tablepress_version'])),'language'=>$data['options']['WPLANG']??'','through'=>$m['through']];
     }
@@ -320,6 +331,7 @@ final class SiteSnapshot
         if(!$replace)throw new \RuntimeException('Explicit replacement of destination content required.');
         if(!empty((new Plugin())->config()['protect'])||get_option('ozeki_resilience_m1_pending'))throw new \RuntimeException('Use a recovery destination with writing protection disabled and no pending history.');
         [$m,$files]=$this->load($ref,true);$base=(int)$m['through'];[$m,$files]=$this->replay($m,$files,$targetThrough);$to=home_url();$from=$m['source_url'];
+        if(!empty($m['legacy_incomplete_article_conditions']))UpdateContract::requireArticleConditions([]);
         RecoveryPreparation::requireReady($m,json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR));
         if(rtrim($from,'/')===rtrim($to,'/'))throw new \RuntimeException('Refusing to replace the source site.');
         foreach($m['required_form_plugins']??[] as $plugin=>$version){
@@ -401,7 +413,7 @@ final class SiteSnapshot
         // phpcs:ignore PluginCheck.CodeAnalysis.WriteFile.PluginDirectoryWrite, WordPress.WP.AlternativeFunctions.rename_rename -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
             foreach($install as $p=>$body){$target=$uploadRoot.'/'.substr($p,8);$touched[]=$target;if(file_put_contents($target.'.owr-tmp',$body)!==strlen($body)||!rename($target.'.owr-tmp',$target))throw new \RuntimeException('Resource installation failed.');}
             // Imported authors have no login identity from the lost system and no capabilities.
-            $authors=[];foreach($d['authors'] as $id=>$a){$login='owr-author-'.substr(hash('sha256',$from.'|'.$id),0,20);$u=get_user_by('login',$login);$uid=$u?$u->ID:wp_insert_user(['user_login'=>$login,'user_pass'=>wp_generate_password(64,true,true),'display_name'=>$a['display_name'],'user_nicename'=>$a['user_nicename'],'role'=>'']);if(is_wp_error($uid))throw new \RuntimeException($uid->get_error_message());$authors[(string)$id]=$uid;}
+            $authors=[];foreach($d['authors'] as $id=>$a)$authors[(string)$id]=UpdateContract::authorId($from,(int)$id,$a);
             self::transaction('START TRANSACTION');
             if(isset($d['membership']))$authors=MemberHistory::install($d['membership'],$memberPlan,$from,$to)+$authors;
             foreach(array_reverse(self::TABLES) as $t)if($wpdb->query('DELETE FROM `'.$wpdb->$t.'`')===false)throw new \RuntimeException('Cannot replace destination content.');

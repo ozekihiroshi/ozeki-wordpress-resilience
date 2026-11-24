@@ -1,0 +1,125 @@
+{
+  "base_commit": "4053e1d883f203225998e7da035cd468054588d5",
+  "files": [
+    {
+      "file": "ozeki-wordpress-resilience.php",
+      "sha256": "735a7dc5408680c731edda14e9b1fd7c72bcb4c8e7d74ced57218fdd31a8ce25"
+    },
+    {
+      "file": "src/AcfHistory.php",
+      "sha256": "a0556b8f73ec08054cadf1a6f38da8fdc69e064eb4736b71d4405db0addb701d"
+    },
+    {
+      "file": "src/AdminText.php",
+      "sha256": "bb05b9ac59f3717f230fc9d3c19cf620d0bd1206f869496102cf85dd12a43cc7"
+    },
+    {
+      "file": "src/AssetFormat.php",
+      "sha256": "9359286f580c4e43401a2db9662c45ddad91f2a801f04dfcee8bf284bb922a70"
+    },
+    {
+      "file": "src/AttachmentHistory.php",
+      "sha256": "c304bfdc1b7382bedc370329de549f2a0414ff474ed139b4eeddf0814c951c2c"
+    },
+    {
+      "file": "src/CheckpointSchedule.php",
+      "sha256": "20ab3e37a017deda61aa28ff3c48a2be4a0e642b7325846941caf1d29e938a64"
+    },
+    {
+      "file": "src/CommentHistory.php",
+      "sha256": "65db7412053dae3471414a06e5b02c238b4b5ec6dd21e152ab89b574303d397c"
+    },
+    {
+      "file": "src/CoreStateHistory.php",
+      "sha256": "be79146712fbd73b3b0385b8231b8573a20786fa4fc0a57718e9cf474b015514"
+    },
+    {
+      "file": "src/FileScope.php",
+      "sha256": "6271b06084356719c74ea53afaba5f66abc4998f42165d695d4d76c006f337a0"
+    },
+    {
+      "file": "src/FormHistory.php",
+      "sha256": "0ae15c1476d7673b9d2ddde5c1b685867ceaad853972a69dbcc412df38c199ee"
+    },
+    {
+      "file": "src/GfsPolicy.php",
+      "sha256": "ea646e7d584956a92351dd6e5ec816e7576592f237a0bae5f95ba2a78bd05c7e"
+    },
+    {
+      "file": "src/Identifiers.php",
+      "sha256": "6a4bc14d4fcc4729bec5a6f237744a93aaac02aeb6fd424b5eb4ed0cc93f4706"
+    },
+    {
+      "file": "src/MediaAccess.php",
+      "sha256": "9939d5d824d1a03c6b8bc70d048d8b44fd2c04e791d20539cc2399783c166718"
+    },
+    {
+      "file": "src/MemberHistory.php",
+      "sha256": "c9c45f3b56c9148ce4e97e0b2d6baba08f946092edd647d22e834f7857de75c4"
+    },
+    {
+      "file": "src/NativeHistory.php",
+      "sha256": "3af188bdd45743a13325b1a729dcab18025ef5b1f5f61d329cdf925ca219e669"
+    },
+    {
+      "file": "src/Plugin.php",
+      "sha256": "585e5fd94e5a77e42276a557b9fc0f3810d73abd41d1ed4c29fd6a3515867ecf"
+    },
+    {
+      "file": "src/RecoveryContent.php",
+      "sha256": "f9e54f4b829bc1a002cc5f5b4ae5d83bd4b392ef426c1a750bae86d7e3ef3c73"
+    },
+    {
+      "file": "src/RecoveryPreparation.php",
+      "sha256": "10e7c36360202651e52cf9784b7c3bb4f9e1c676374adf66d4816ba81b30a743"
+    },
+    {
+      "file": "src/RecoveryRules.php",
+      "sha256": "be7b31da1dda66b7302e776512dd2e63b45a529526fac18c0037373750973da3"
+    },
+    {
+      "file": "src/RecoverySettings.php",
+      "sha256": "87a14381b86fc56283582005714c006630a60f785b5bd0bedb6a2496f80a98e5"
+    },
+    {
+      "file": "src/RecoveryTemplates.php",
+      "sha256": "a24a624db78f0c0098697b62cbc7ea151c09f784d3366666f839123ea157418d"
+    },
+    {
+      "file": "src/RecoveryWorkspace.php",
+      "sha256": "6ab4792964168567ab31d724433c5097e217f8251d48954123b5ee375205e927"
+    },
+    {
+      "file": "src/ReferenceContext.php",
+      "sha256": "8936aa3b2cdd305118cb7ab1b2cb7dd7b6ae546a7a9abe1a7526e0ed98bda3ab"
+    },
+    {
+      "file": "src/SaveFailure.php",
+      "sha256": "0187fbb6d69ff0b5a6691aa2a19c5d973c0130934fa2c729e9f8042a3b2897e4"
+    },
+    {
+      "file": "src/SetupReadiness.php",
+      "sha256": "0205504a8fbc63811ddf7869d73da77bd1cdfdf53d9dfd359f6ddf72c10cc0d9"
+    },
+    {
+      "file": "src/SiteSnapshot.php",
+      "sha256": "840f21b433da3ef6992250932f64b6d89de9a3ffeec6a995d5ec2cea91bbd4e6"
+    },
+    {
+      "file": "src/Startup.php",
+      "sha256": "4fa4820957847bd03e04f0472e4fbb45a5f8d7fa43d31e54f31946da4a9937e4"
+    },
+    {
+      "file": "src/Store.php",
+      "sha256": "d00c6d47f306ad9ed99dd34648c15fae8553c20d626a55dce6e6932c6cce7ef2"
+    },
+    {
+      "file": "src/TableHistory.php",
+      "sha256": "72b978972daff853c617a7b9c71abc85fcda80c2cea2ed4a144ced3696840668"
+    },
+    {
+      "file": "src/UpdateContract.php",
+      "sha256": "7293fb87171d4b32a91d66ee8e0b46268a3e89bf01551fd4b00be83553c42a5d"
+    }
+  ]
+}

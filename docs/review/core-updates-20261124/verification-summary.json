@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-24",
+  "environment": "Disposable WordPress 7.1.4 / PHP 8.3 containers, separate databases, internal-only network, file-backed S3 SDK test transport",
+  "production_access": false,
+  "real_s3_test": false,
+  "cases": {
+    "verified-properties": {
+      "all_equal": true,
+      "operations": {
+        "author": {
+          "equal": true,
+          "restored": true
+        },
+        "excerpt": {
+          "equal": true,
+          "restored": true
+        },
+        "discussion": {
+          "equal": true,
+          "restored": true
+        },
+        "parent": {
+          "equal": true,
+          "restored": true
+        },
+        "order": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "84c38d37cf3108b0be90a0bd0c2f4c516d4c4698de2780203fd8f774980f04a5"
+    },
+    "verified-lifecycle": {
+      "all_equal": true,
+      "operations": {
+        "private": {
+          "equal": true,
+          "restored": true
+        },
+        "password": {
+          "equal": true,
+          "restored": true
+        },
+        "trash": {
+          "equal": true,
+          "restored": true
+        },
+        "untrash": {
+          "equal": true,
+          "restored": true
+        },
+        "password-clear": {
+          "equal": true,
+          "restored": true
+        },
+        "delete": {
+          "equal": true,
+          "restored": true
+        },
+        "recreate": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "79146eb1960e1ce2f3d39bacd28d3530b99aee353c03adbf061a13bcec9281ed"
+    },
+    "verified-options": {
+      "all_equal": true,
+      "operations": {
+        "front-page": {
+          "equal": true,
+          "restored": true
+        },
+        "site-title": {
+          "equal": true,
+          "restored": true
+        },
+        "timezone": {
+          "equal": true,
+          "restored": true
+        },
+        "reading": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "9f6d329cf1cff4da2ce86e2ec6907b213d04259dc6e0da855a508038f0223ae6"
+    },
+    "verified-password": {
+      "all_equal": true,
+      "operations": {
+        "private": {
+          "equal": true,
+          "restored": true
+        },
+        "password": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "c6baab0eb9f1a467a14c04e2b4ce2ac15668bf264c750f516f0a785441891386"
+    },
+    "final-taxonomy": {
+      "all_equal": true,
+      "operations": {
+        "tag-name": {
+          "equal": true,
+          "restored": true
+        },
+        "tag-slug": {
+          "equal": true,
+          "restored": true
+        },
+        "tag-description": {
+          "equal": true,
+          "restored": true
+        },
+        "ancestor-name": {
+          "equal": true,
+          "restored": true
+        },
+        "ancestor-parent": {
+          "equal": true,
+          "restored": true
+        },
+        "delete-tag": {
+          "equal": true,
+          "restored": true
+        },
+        "delete-child": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "cef902a9b8f3ed8a275e97e06dd4ffcf17fd2b840f52f4bd09b0fcacf9e128d3"
+    },
+    "failure-resume": {
+      "all_equal": true,
+      "operations": {
+        "front-page": {
+          "equal": true,
+          "restored": true
+        },
+        "site-title": {
+          "equal": true,
+          "restored": true
+        },
+        "timezone": {
+          "equal": true,
+          "restored": true
+        },
+        "reading": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": {
+        "unconfirmed_before_resume": true,
+        "frozen_originals_unchanged": true
+      },
+      "restored_untrash_usable": null,
+      "raw_result_sha256": "8efb8ffc2c1a3f302dce2d71466a01d0a22ae1dd4de9e708907305e5879e3915"
+    },
+    "restored-untrash": {
+      "all_equal": true,
+      "operations": {
+        "private": {
+          "equal": true,
+          "restored": true
+        },
+        "password": {
+          "equal": true,
+          "restored": true
+        },
+        "trash": {
+          "equal": true,
+          "restored": true
+        },
+        "untrash": {
+          "equal": true,
+          "restored": true
+        },
+        "roundtrip": {
+          "equal": true,
+          "restored": true
+        }
+      },
+      "failure_resume": null,
+      "restored_untrash_usable": true,
+      "raw_result_sha256": "2797c7437a0cd82eaebf911670d5adde9d3dd46d192f95955b65716624ca57de"
+    }
+  },
+  "old_reader": {
+    "version": "rc.21",
+    "original_rejected": true,
+    "baseline_rejected": true,
+    "index_rejected": true,
+    "legacy_control_readable": true
+  },
+  "offline_php_versions": [
+    "8.1.2",
+    "8.3.6"
+  ],
+  "preserved_zip_sha256": "ec0b5cbedd7855054d87ef5656ffcfbde25335c25d4e939b0291d73acf0874de",
+  "preserved_tag_object": "515f13f167e80cd7da4c3a1c129aad35452cb6de"
+}

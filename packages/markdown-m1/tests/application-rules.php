@@ -15,10 +15,15 @@ $add(10,'_additional_settings',"skip_mail: on\nextension_action: private-command
 $add(11,'_fields',serialize(['your-name'=>'Alice','your-message'=>'Saved content']));$add(11,'_recaptcha',serialize(['private'=>'token']));
 $add(12,'_tablepress_table_options','{"table_head":1,"datatables_sort":true,"datatables_paginate":true,"datatables_paginate_entries":10,"datatables_custom_commands":"private-js"}');$add(12,'_tablepress_table_visibility','{"rows":[1,1],"columns":[1,1]}');
 $add(13,'_ozmd_source',"# Source\n```mermaid\ngraph LR; A-->B\n```");
+$state['tables']['posts'][]=['ID'=>'14','post_type'=>'page','post_content'=>''];
+$add(14,'_wp_desired_post_slug','original-page');
+$add(14,'_wp_trash_meta_comments_status',serialize(['21'=>'1','22'=>'0']));
 $state['tables']['commentmeta'][]=['comment_id'=>'1','meta_key'=>'_wp_trash_meta_status','meta_value'=>'1'];
 $before=Store::json($state);$first=RecoveryRules::project($state,['blogname']);
 check(Store::json($state)===$before,'Projection must not mutate original input');
 $find=function($d,$id,$key){foreach($d['tables']['postmeta'] as $m)if($m['post_id']==$id&&$m['meta_key']===$key)return $m['meta_value'];return null;};
+check($find($first['data'],14,'_wp_desired_post_slug')==='original-page','Untrash must restore the original slug');
+check($find($first['data'],14,'_wp_trash_meta_comments_status')===serialize(['21'=>'1','22'=>'0']),'Untrash needs the original comment approval states');
 check($find($first['data'],13,'_ozmd_source')===$find($state,13,'_ozmd_source'),'MD unchanged');
 $textState=$state;foreach($textState['tables']['postmeta'] as &$meta)if($meta['meta_key']==='_ozmd_source')$meta['meta_value']='a:1:{i:0;s:4:"text";}';unset($meta);
 check($find(RecoveryRules::project($textState,['blogname'])['data'],13,'_ozmd_source')==='a:1:{i:0;s:4:"text";}','Serialization-looking Markdown remains text');

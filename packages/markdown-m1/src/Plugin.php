@@ -10,6 +10,8 @@ require_once __DIR__.'/AdminText.php';
 require_once __DIR__.'/RecoveryPreparation.php';
 require_once __DIR__.'/ReferenceContext.php';
 require_once __DIR__.'/AttachmentHistory.php';
+require_once __DIR__.'/UpdateContract.php';
+require_once __DIR__.'/CoreStateHistory.php';
 
 final class Plugin
 {
@@ -327,9 +329,11 @@ final class Plugin
         $client=new \Aws\S3\S3Client($options);
         return new Store($client,$c);
     }
-    private function fingerprint(int $id): string {
+    private function fingerprint(int $id,bool $complete=true): string {
         $p=get_post($id);
-        return hash('sha256',Store::json([$p?->post_title,$p?->post_name,$p?->post_status,$p?->post_modified_gmt,$p?->post_content,(string)get_post_meta($id,self::SOURCE,true)]));
+        $values=[$p?->post_title,$p?->post_name,$p?->post_status,$p?->post_modified_gmt,$p?->post_content,(string)get_post_meta($id,self::SOURCE,true)];
+        if($complete)foreach(UpdateContract::FIELDS as $key)$values[]=(string)($p->$key??'');
+        return hash('sha256',Store::json($values));
     }
     public function token($post): void {
         if ($post->post_type==='ozmd_document' && !empty($this->config()['protect']))
@@ -407,7 +411,7 @@ final class Plugin
                 $origins=ReferenceContext::capture();
                 if($origins)$attributes['reference_origins']=$origins;
             }
-            foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)$attributes[$key]=wp_unslash($data[$key]);
+            $attributes+=UpdateContract::capture(wp_unslash($data));
             // Gutenberg separately posts legacy meta boxes after REST body saving.
             // Skip only a matching, already-confirmed body; metadata hooks still run.
             if(!$markdown && isset($_GET['meta-box-loader']) && sanitize_key(wp_unslash($_POST['action']??''))==='editpost'
@@ -423,7 +427,12 @@ final class Plugin
     }
     public static function sameConfirmedArticle(?array $row,string $source,array $attributes): bool {
         if(!$row || ($row['original']['source']['sha256']??'')!==hash('sha256',$source))return false;
-        foreach($attributes as $key=>$value)if(!array_key_exists($key,$row['attributes']??[]) || (string)$row['attributes'][$key] !== (string)$value)return false;
+        foreach($attributes as $key=>$value){
+            if(!array_key_exists($key,$row['attributes']??[]))return false;
+            $old=$row['attributes'][$key];
+            if(is_array($value)||is_array($old)){if(!is_array($value)||!is_array($old)||Store::json($old)!==Store::json($value))return false;}
+            elseif((string)$old!==(string)$value)return false;
+        }
         return true;
     }
     public function after(int $id,\WP_Post $post,bool $update,?\WP_Post $before): void {
@@ -431,6 +440,7 @@ final class Plugin
         try {
             $a=$this->active;$source=$post->post_type==='ozmd_document'?(string)get_post_meta($id,self::SOURCE,true):$post->post_content;
             if (hash('sha256',$source)!==$a['original']['source']['sha256'] || $post->post_title!==$a['attributes']['title'] || $post->post_status!==$a['attributes']['status'] || $post->post_name!==$a['attributes']['slug']) throw new \RuntimeException('WordPress did not apply the saved original exactly.');
+            foreach(UpdateContract::FIELDS as $key)if((string)$post->$key!==$a['attributes'][$key])throw new \RuntimeException('WordPress did not apply the preserved article fields.');
             update_post_meta($id,self::ID,$a['original']['asset']);
             $attrs=$a['attributes'];$attrs['origin_url']=get_permalink($id);$attrs['origin_id']=$id;
             $record=['schema'=>'owr-md-history-1','sequence'=>$a['sequence'],'original'=>$a['original'],'attributes'=>$attrs,'confirmed_at'=>gmdate('c')];
@@ -447,7 +457,7 @@ final class Plugin
             $pending=get_option(self::PENDING);
             if (!$pending) return;
             clean_post_cache($pending['id']);
-            if (!hash_equals($pending['fingerprint'],$this->fingerprint($pending['id']))) throw new \RuntimeException('Pending content no longer matches WordPress. Do not certify it as successful.');
+            if (!hash_equals($pending['fingerprint'],$this->fingerprint($pending['id'],isset($pending['record']['attributes']['update_contract'])))) throw new \RuntimeException('Pending content no longer matches WordPress. Do not certify it as successful.');
             $this->store()->commit($pending['record']);delete_option(self::PENDING);delete_option('ozeki_resilience_m1_notice');
         } finally {$this->release();}
     }
@@ -455,7 +465,7 @@ final class Plugin
         if (!class_exists('OzekiMarkdownDocuments\\Content\\MarkdownSource')) throw new \RuntimeException('Install and activate Ozeki Markdown Documents first.');
         $store=$this->store();$selected=[];
         foreach ($store->history() as $row) if (in_array((string)$row['sequence'],$sequences,true)) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment','owr_core'],true))throw new \RuntimeException('Use complete site recovery for comments, forms, memberships, tables, article relationships and ACF fields.');
             $asset=$row['original']['asset'];
             if (isset($selected[$asset])) throw new \RuntimeException('Select only one version per document.');
             $source=$store->originalSource($row['original']);
@@ -469,7 +479,7 @@ final class Plugin
     public function restoreSite(?string $checkpoint): array {
         $store=$this->store();$state=$store->recoveryState($checkpoint);$selected=[];
         foreach ($state['assets'] as $asset=>$row) {
-            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
+            if(in_array($row['attributes']['post_type']??'',['owr_comment','owr_form','owr_member','owr_table','owr_native','owr_acf','owr_media_access','owr_attachment','owr_core'],true))throw new \RuntimeException('Use complete site recovery for comment/form/member/table/ACF history.');
             $source=$store->originalSource($row['original']);$store->get($row['original']['metadata']);
             if (strlen($source)>5*1024*1024 || !preg_match('//u',$source) || str_contains($source,"\0")) throw new \RuntimeException('Invalid Markdown original.');
             $selected[$asset]=[$row,$source];
@@ -484,6 +494,7 @@ final class Plugin
             $this->begin();
             foreach ($selected as $asset=>[$row,$source]) {
                 $attr=$row['attributes'];
+                UpdateContract::requireArticleConditions($attr);
                 if (!in_array($attr['status'],['publish','private','draft','pending','trash'],true)) throw new \RuntimeException('Unsupported recorded status.');
                 $type=$attr['post_type']??'ozmd_document';
                 if(!in_array($type,['ozmd_document','page','post'],true))throw new \RuntimeException('Unsupported post type.');
@@ -492,7 +503,8 @@ final class Plugin
                 $args=['post_type'=>$type,'post_title'=>$attr['title'],'post_name'=>$attr['slug'],'post_status'=>$attr['status'],'post_date'=>$attr['date'],'post_date_gmt'=>$attr['date_gmt']];
                 require_once __DIR__.'/RecoveryContent.php';$applicationNotes=[];
                 if($type!=='ozmd_document')$args['post_content']=RecoveryContent::html($source,'posts.'.$asset.'.post_content',$applicationNotes);
-                foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)if(isset($attr[$key]))$args[$key]=$attr[$key];
+                $authorData=['authors'=>[]];$args+=UpdateContract::apply($attr,$authorData);
+                if(isset($attr['update_contract']))$args['post_author']=UpdateContract::authorId((string)($attr['reference_origins'][0]['site']??$attr['origin_url']),(int)$attr['post_author'],$attr['author']??[]);
                 foreach(['post_title','post_excerpt'] as $key)if(isset($args[$key]))$args[$key]=RecoveryContent::html($args[$key],'posts.'.$asset.'.'.$key,$applicationNotes);
                 if ($existing) $args['ID']=$existing[0];
                 $id=wp_insert_post(wp_slash($args),true);
@@ -633,7 +645,7 @@ final class Plugin
             } elseif ($action==='media_recheck') {
                 if(empty($this->config()['protect']))throw new \RuntimeException('Enable protection before recording access changes.');
                 MediaAccess::record(true);
-            } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); AttachmentHistory::flush(); }
+            } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); AttachmentHistory::flush(); CoreStateHistory::flush(); }
             elseif ($action==='restore') {
                 if(!isset($_POST['sequences']) || !is_array($_POST['sequences']))throw new \RuntimeException('Select valid history numbers.');
                 $sequences=array_map('sanitize_text_field',wp_unslash($_POST['sequences']));
@@ -839,7 +851,7 @@ final class Plugin
         $history=null;$historyReadError='';
         try{$history=$this->store()->history();}catch(\Throwable $e){$historyReadError=$e->getMessage();}
         self::renderSaveStatus($history,$historyReadError,(array)get_option(self::PENDING,[]),(array)get_option('ozeki_resilience_m1_comment_pending',[]),(string)get_option('ozeki_resilience_m1_notice',''),(string)get_option('ozeki_resilience_m1_comment_error',''),!empty($this->config()['protect']),(array)get_option(SaveFailure::OPTION,[]));
-        if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if(($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING)||get_option(CoreStateHistory::PENDING))){$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if(!empty($this->config()['protect'])){
             echo '<p>'.esc_html(SetupReadiness::text('File access conditions are recorded separately from page membership rules. After changing access-control files in uploads directories, recheck here. Unrecognized or inherited unresolved file conditions remain on hold after recovery; this does not publish those files.','ファイルの閲覧条件はページの会員制限とは別に記録します。uploads内のディレクトリ制限ファイルを変更したら、ここで再確認してください。認識できない条件や復旧時に保留した条件は引き続き保留し、ファイルを公開しません。')).'</p>';
             $this->form('media_recheck');submit_button(SetupReadiness::text('Record file access conditions','ファイルの閲覧条件を再確認・記録'));echo '</form>';
@@ -913,7 +925,7 @@ final class Plugin
             echo '</select>';submit_button(AdminText::text('Restore assets from Checkpoint + later history'));echo '</form>';
         } catch (\Throwable $e) {echo '<p>'.esc_html($e->getMessage()).'</p>';}
         echo '</details>';
-        if (($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING))) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
+        if (($this->config()['setup_role']??'source')!=='recovery'&&(get_option(self::PENDING)||get_option('ozeki_resilience_m1_comment_pending')||get_option(AttachmentHistory::PENDING)||get_option(CoreStateHistory::PENDING))) {$this->form('resume');submit_button(AdminText::text('Resume history'));echo '</form>';}
         if(get_option('ozeki_resilience_m1_comment_pending'))echo '<p role="alert">'.esc_html(AdminText::text('WordPress comment/form changes applied; S3 history pending. These operations are excluded from recovery until confirmed.')).'</p>';
         if($error=get_option('ozeki_resilience_m1_comment_error'))echo '<p role="alert">'.esc_html(AdminText::message($error)).'</p>';
         echo '<p>'.esc_html(AdminText::text('Comments use a frozen copy of the successful WordPress operation payload. WordPress persistence, S3 original storage and S3 formal history must all succeed before an operation is confirmed for recovery. Pending operations are not confirmed; Resume history retries the frozen payload, not the current comment. The core insert/status callbacks supply a persisted-result snapshot; this is not a pre-write interception. Use complete site recovery for comments.')).'</p>';

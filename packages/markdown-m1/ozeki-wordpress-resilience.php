@@ -44,5 +44,8 @@ add_action('plugins_loaded',static function () { if (\OzekiResilience\M1\Startup
 require_once __DIR__.'/src/NativeHistory.php';
 add_action('plugins_loaded',static function () { if (\OzekiResilience\M1\Startup::ready()) (new \OzekiResilience\M1\NativeHistory())->boot(); });
 
+require_once __DIR__.'/src/CoreStateHistory.php';
+add_action('plugins_loaded',static function () { if (\OzekiResilience\M1\Startup::ready()) (new \OzekiResilience\M1\CoreStateHistory())->boot(); });
+
 require_once __DIR__.'/src/AcfHistory.php';
 add_action('plugins_loaded',static function () { if (\OzekiResilience\M1\Startup::ready()) (new \OzekiResilience\M1\AcfHistory())->boot(); });
