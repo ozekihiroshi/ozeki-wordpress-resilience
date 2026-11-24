@@ -49,6 +49,8 @@ Offline checks passed: `media-autosave.php` (new revision/real-access-change/loc
 
 ## Preserved resources
 
+Main integration: merge commit `c42a11b`. The first Actions run stopped in the existing offline `review-media-cost.php` fixture because it lacked WordPress's `delete_option()` substitute. The fixture now permits only deletion of the media pending flag and asserts that the no-op path clears it; the attachment-read/S3-request rejection remains unchanged. This follow-up changes the test fixture, not the product's validated implementation.
+
 The fixed source's 638 hashes are unchanged. Submitted rc.20 ZIP SHA-256 remains `90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610`; tag object remains `8111b17c2b5e4c26bcc53890e2a90c04e3114cef`. The research worktree is preserved; main integration is limited to the reviewed source, guides, tests and this record. No production update, candidate ZIP build, submission or email was performed.
 
 Evidence: [non-content result JSONs](content-usability-20261124/); local browser proof `content-usability-rerecovery-20261124.png`. Private fixture/logs remain on dm under `/tmp/owr-content-fix-20261124`; do not publish them. Disposable containers were removed after verification. New test S3 assets were retained; existing source assets were never written.
