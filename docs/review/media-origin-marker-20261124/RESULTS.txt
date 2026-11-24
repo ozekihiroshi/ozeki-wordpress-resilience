@@ -1,0 +1,73 @@
+Recovery provenance and media access boundary — 2026-11-24 JST
+
+Base: main 219fe0d. Work branch: codex/recovery-media-origin-boundary.
+No production deployment, rc.19 ZIP/tag replacement, WP.org submission or email.
+
+Cause
+rc.19 marks recovered attachments with _ozeki_resilience_m1_origin_url so their
+presentation can retain the execution boundary. FileScope's attachment metadata
+allowlist did not recognize this own provenance key. Recovery placed 12 files as
+public, but the next MediaAccess::current classification treated them as held.
+The 39 held originals remained privately retained; the observed defect was a
+classification disagreement introduced by our metadata, not permission granted
+by that metadata. The uncorrected test stopped before recapture.
+
+Fix
+Recognize exactly _ozeki_resilience_m1_origin_url as access-neutral metadata.
+Do not permit all keys with a Resilience prefix and do not override unknown keys,
+private attachment status, inherited held/unknown conditions or directory guards.
+This is a FileScope correction; archive formats, originals and history do not change.
+
+Regression first
+Extended the existing tests/file-scope.php before changing production code.
+RED: public file scope changed after adding only our provenance marker.
+GREEN: identical file scope with the marker; public remains public; inherited held
+and unknown states, directory guards, private status and unknown metadata continue
+to restrict placement. Both ordinary unknown keys and a lookalike Resilience key
+are covered. Existing media-access.php and attachment-contract.php also pass.
+
+Integration method
+Use the same fixed-version community initial Baseline and formal history through 76.
+Dedicated dm Docker sites, internal network only; trusted software prepared separately.
+Install the unchanged rc.19 ZIP, then overlay only corrected FileScope.php in the test
+sites. This is verification of the working fix, NOT a claim that rc.19 already includes it.
+Source originals are a hash-verified read-only fixed-version copy. Resave uses a fresh
+random prefix in the existing isolated S3 bucket through a scoped host broker; source
+credentials are not supplied to the trial WordPress. No source writes or deletions.
+Normal WordPress APIs/hooks and internal HTTP checks are used, not browser automation.
+
+Integration result: PASS within this scope
+- First recovery through source history 76: 94 posts; confirmed page append present.
+- 51 registered paths have original bytes: 12 public (HTTP 200), 39 held (HTTP 404).
+- A new isolated S3 Baseline and page edit were saved; second recovery through trial
+  history 26 preserved the original append and the isolated append over internal HTTP.
+- File hashes/access states, selected content and membership conditions match across
+  resave and second recovery. Prepared settings, table loading and widget rendering pass.
+- No software changes or installer inclusion during either recovery; guarded WP-Members
+  initialization was not invoked. No pending saves or attachment errors at observations.
+- Original 635 S3 versions / 10,991,173 bytes unchanged before/after the experiment.
+- 480 new versions in the fresh trial prefix; version inventory unchanged by recovery.
+- Owned trial containers/networks/volumes removed; original and trial assets retained.
+- rc.19 ZIP unchanged; fixed FileScope SHA-256 is recorded in preservation.json.
+
+Scope and next step
+This does not certify every plugin renderer or all real member logins, inquiry delivery,
+or theme appearance. The 272 first-recovery and 133 second-recovery non-applied entries
+are retained as application reports, not reclassified as restored settings.
+The 51-path result concerns this community recovery set, not every possible file.
+No new ZIP, tag, main merge, push, production update, submission or email in this task.
+Review the limited diff and recorded results before integration/release decisions.
+
+Final integration review — 2026-11-24 JST
+Reviewed the exact-key allowlist change and regression cases against main 219fe0d.
+The change does not grant access: private status, unknown metadata, unknown-plugin
+ownership, inherited holds and filesystem guards remain checked independently.
+The tested FileScope hash matches the working source. No additional code change was
+needed after the recorded passing round trip. The existing Actions workflow already
+runs file-scope.php, media-access.php and attachment-contract.php on PHP 8.1/8.3.
+The user subsequently authorized main integration and pushing this record. This
+supersedes the earlier no-merge/no-push checkpoint; all deployment/release restrictions
+remain. No new release ZIP or tag is produced. CI may run its existing transient build
+check; that is not a release publication or a replacement of rc.19.
+The legacy field name submitted_zip_sha256 in roundtrip.json identifies the unchanged
+base rc.19 candidate; it does not mean rc.19 was submitted to WordPress.org.

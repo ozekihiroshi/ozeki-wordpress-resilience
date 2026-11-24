@@ -7,6 +7,23 @@ $d=['tables'=>['posts'=>[['ID'=>1,'post_type'=>'attachment','post_status'=>'inhe
 checkScope(class_exists(FileScope::class),'Shared file scope contract missing');
 $allowed=FileScope::paths($d);
 checkScope(isset($allowed['uploads/2026/11/public.png']),'Normal registered media must survive');
+// Recovery provenance describes where data came from, not who may view a file.
+$marked=$d;$marked['tables']['postmeta'][]=['post_id'=>1,'meta_key'=>'_ozeki_resilience_m1_origin_url','meta_value'=>'https://source.invalid/?p=1'];
+checkScope(FileScope::paths($marked)===$allowed,'Our recovery origin marker must not change public file scope');
+$rules=\OzekiResilience\M1\MediaAccess::classify($marked,[]);
+checkScope($rules['uploads/2026/11/public.png']['state']==='public','Recovered public file must stay public on resave');
+foreach(['held','unknown'] as $state){
+    $inherited=['uploads/2026/11/public.png'=>['state'=>$state]];
+    checkScope(\OzekiResilience\M1\MediaAccess::classify($marked,[],$inherited)===$inherited,'Origin marker must not relax inherited restrictions');
+}
+$guarded=\OzekiResilience\M1\MediaAccess::classify($marked,['uploads/2026/11/public.png']);
+checkScope($guarded['uploads/2026/11/public.png']['state']==='held','Origin marker must not override directory protection');
+foreach(['_members_only','_ozeki_resilience_unknown_access'] as $key){
+    $unknown=$marked;$unknown['tables']['postmeta'][]=['post_id'=>1,'meta_key'=>$key,'meta_value'=>'yes'];
+    checkScope(!FileScope::paths($unknown),'Only the exact provenance key is neutral, not unknown access metadata');
+}
+$marked['tables']['posts'][0]['post_status']='private';
+checkScope(!FileScope::paths($marked),'Origin marker must not publish private attachments');
 foreach(['C:private.pdf',"bad\\private.pdf","bad\0.pdf",'../private.pdf'] as $bad){
  $invalid=$d;$invalid['tables']['postmeta'][0]['meta_value']=$bad;
  checkScope(!FileScope::paths($invalid),'Invalid attachment paths must be excluded without blocking other content');
