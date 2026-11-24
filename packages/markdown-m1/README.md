@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.19 is a candidate for community validation before submission. Submitted rc.18 remains under review; publication has not been approved.**
+**0.3.3 rc.20 is a candidate for validation before community deployment and WordPress.org submission. It is not submitted; publication has not been approved.**
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 

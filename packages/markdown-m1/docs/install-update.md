@@ -103,3 +103,9 @@ This change adds no recording format or migration. The rc.17 attachment compatib
 rc.19 does not change the archive format. Update recovery destinations to apply the safe-display and edit/save rules. Previously recovered unmarked block documents are not retroactively migrated. Existing attachment/reference compatibility requirements still apply.
 
 rc.19は保存形式を変更しません。安全な表示と編集・保存時の規則を適用するため、復旧先も更新してください。以前に復旧済みで識別情報のないブロック文書へは遡って適用しません。添付・参照情報の互換性条件は引き続き必要です。
+
+## rc.20 media classification / ファイルの閲覧条件判定
+
+rc.20 recognizes Resilience's own recovery-origin marker without changing file access conditions. It adds no archive format and does not rewrite originals or history. Use rc.20 on recovery destinations before recovery and resaving. Existing private, held and unknown conditions remain restricted.
+
+rc.20はResilience自身の復旧元識別情報によってファイルの閲覧条件が変わる問題を修正します。保存形式の追加や原本・履歴の書換えはありません。復旧と再保存には復旧先もrc.20へ更新してください。既存の非公開・保留・不明な条件は引き続き制限します。
