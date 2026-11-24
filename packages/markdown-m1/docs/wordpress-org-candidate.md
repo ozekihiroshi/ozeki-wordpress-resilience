@@ -1,8 +1,8 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.20 is a GitHub candidate, before WordPress.org submission. It is not submitted; publication is not approved. Installed on community on 2026-11-24; saving and bilingual history through 77 were verified. Submitted rc.18 remains preserved under review.**
+**0.3.3 rc.20 was accepted as an update to the existing WordPress.org application on 2026-11-24, and the original review email has been answered. Awaiting the reviewer’s response; publication has NOT been approved.**
 
-**0.3.3 rc.20は申請前のGitHub候補です。未提出で、公開承認済みではありません。2026-11-24にcommunityへ導入し、保存・日英の履歴77件を確認しました。提出済みrc.18は審査中の記録として保全しています。**
+**0.3.3 rc.20は2026-11-24にWordPress.orgの既存申請への更新が受け付けられ、元の審査メールへの返信も完了しました。審査担当者の回答待ちであり、公開承認済みではありません。**
 
 - [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.20/ozeki-resilience-0.3.3.zip)
 - [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.20)

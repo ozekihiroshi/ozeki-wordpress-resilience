@@ -1,0 +1,16 @@
+Ozeki Resilience 0.3.3 rc.20 — update to the existing application
+
+This candidate addresses the latest review of rc.18. Archived originals are separated from what may be applied or executed on the recovery destination. Restored HTML is filtered; unrecognized shortcodes and dynamic block instructions remain text, including after normal editing/resaving. Supported structured values are not processed as HTML.
+
+Markdown originals remain bounded, validated UTF-8 source so recovery can preserve documents exactly. They are not emitted as executable HTML. Recovered Markdown display is filtered before the normal WordPress shortcode stage. The safeguards require Resilience to remain active and the normal WordPress content-rendering path; arbitrary third-party renderers are outside this scope.
+
+Recovery owns a private temporary workspace and cleans its files after normal completion or ordinary failure. Interrupted/failed rollback evidence is retained and reported for retry rather than silently removed. Routine unchanged media conditions avoid repeated binary reconciliation and S3 requests. rc.20 also fixes our own provenance marker incorrectly changing a public file's classification after recovery.
+
+Trusted WordPress, themes and plugins are installed and normally set up separately. Recovery does not install/initialize plugins or deploy archived software. Existing S3 originals/history and archive formats are unchanged relative to rc.18; update recovery destinations for the application safeguards.
+
+The exact ZIP passed fresh installation, rc.19 update and Plugin Check 2.2.0 (0 errors, 123 recorded warnings). It was installed on our production site with settings/history preserved; a normal page save was confirmed at sequence 77. Isolated recovery through 77, real-S3 resave and second recovery passed: 94 posts, 51 file originals, with 12 public and 39 held. These are scoped API/HTTP checks, not a guarantee of every third-party path.
+
+ZIP SHA-256: 90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610
+Source: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.20
+Checks: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc20.md
+Production-data recovery check: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc20-history77-20261124.md

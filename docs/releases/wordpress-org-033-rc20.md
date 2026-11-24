@@ -1,6 +1,6 @@
-# Ozeki Resilience 0.3.3 rc.20 — 本番導入前の候補
+# Ozeki Resilience 0.3.3 rc.20 — 提出済み・審査担当者の回答待ち
 
-2026-11-24。**GitHub候補配布です。候補作成時点ではcommunity本番に未導入でした。WordPress.orgには未提出で、公開承認済みではありません。** その後、同日中にcommunityをrc.20へ更新し、履歴77まで確認しました（末尾追記）。提出済みrc.18、rc.19を含む既存ZIP・タグを保全しています。申請更新・審査メール返信は保留です。
+2026-11-24。**0.3.3 rc.20は2026-11-24にWordPress.orgの既存申請への更新が受け付けられ、元の審査メールへの返信も完了しました。審査担当者の回答待ちであり、公開承認済みではありません。** community本番で履歴77までの保存と、隔離環境で履歴77からの復旧・再保存・再復旧を確認した同じZIPを提出しました。既存ZIP・タグは保全しています。以下の候補作成・本番導入時の記録は、各時点の経過として残しています。
 
 ## 今回の修正
 
@@ -13,7 +13,7 @@ rc.19が復旧した添付へ付ける自身の識別情報を、閲覧制限を
 - [導入ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.20/ozeki-resilience-0.3.3.zip)
 - [対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.20)
 - SHA-256: `90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610`
-- 8,320,939 bytes / 3,820ファイル。ビルド元 `a4bb22f`。後続変更は配布対象外の確認記録のみです。
+- 8,320,939 bytes / 3,820ファイル。ビルド元 `a4bb22f`。提出済みZIPと対応タグは固定しています。mainの後続変更には確認記録と提出状況の文書更新が含まれますが、ZIPは再作成していません。
 - rc.19との差分はFileScope.php、日英README、更新ガイドの4ファイル。依存ライブラリは不変。8ガイドと相対リンク86件を確認し、開発資料・試験は同梱していません。
 
 ## 完成ZIPの確認
@@ -54,3 +54,17 @@ The exact ZIP passed fresh installation, rc.19 update, Japanese/English admin re
 同じZIPをcommunity本番へ導入しました。既存設定・履歴76件を維持し、確認ページの追記は77で確定、S3本文一致と日英の履歴77件表示を確認しました。[運用記録](../operations/community-rc20-20261124.md)。WordPress.org送信・メール返信は保留です。ZIP・タグは変更していません。
 
 Production follow-up: community now runs the same rc.20 ZIP; saving and bilingual history through 77 were verified. See the operation record above. Submission and review reply remain on hold.
+
+## 申請更新・返信完了（2026-11-24）
+
+既存申請へのアップロード後、画面に「New version of Ozeki Resilience uploaded for review.」と表示され、提出一覧の2026-11-24の項目にrc.20の補足説明・ファイル名・SHA-256が表示されることを確認しました。元の「Re: [WordPress Plugin Directory] Review in Progress: Ozeki Resilience」スレッドでplugins@wordpress.orgへ返信し、Gmailの「メッセージを送信しました」を確認しました。
+
+**更新受付とメール送信の完了であり、公開承認ではありません。審査担当者の回答待ちです。** Markdown原文の保全と表示時の安全化を区別し、対応する構造化データの値をHTMLとして変換しないこと、復旧時のインストール・初期化を行わないことも説明しました。
+
+- [実際に提出した補足説明](wordpress-org-033-rc20-additional-information.txt)
+- [実際に送信した返信文](wordpress-org-033-rc20-review-reply.txt)
+- [履歴77からの隔離復旧・再保存・再復旧の確認範囲](../operations/community-rc20-history77-20261124.md)
+
+この申請・記録更新では本番サイト、既存の原本・履歴、ZIP・タグを変更していません。mainのREADME等だけを現在の申請状況へ更新しており、提出済みZIP内の文書は作成時点のスナップショットのままです。
+
+Submission follow-up: the rc.20 upload was accepted on November 24, 2026, and the reply to the original review thread was sent and confirmed in Gmail. We are awaiting the reviewer’s response; publication has not been approved. The submitted ZIP, tag, production site and existing originals/history are unchanged. Current main documentation records the submission; packaged documents remain the original candidate snapshot.

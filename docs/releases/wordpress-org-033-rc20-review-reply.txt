@@ -1,0 +1,20 @@
+Hello Plugin Review Team,
+
+Thank you for the detailed review. I have uploaded Ozeki Resilience 0.3.3 rc.20 to the existing application.
+
+We addressed the recovery execution boundary, private-workspace cleanup and repeated media reconciliation. Restored HTML is filtered, and unrecognized shortcodes/dynamic instructions remain text even after normal editing and resaving. Structured values such as table cells and member fields are handled separately. Temporary files are cleaned on completion and ordinary failure; interrupted or incomplete rollback evidence is retained and reported for retry.
+
+One clarification concerns Markdown: we preserve the validated, size-bounded UTF-8 original in S3 as an independent document, rather than applying HTML filtering to its source text. For example, a code example must remain a code example in the original. Recovered display is filtered before WordPress shortcode execution, and this protection persists after editing/resaving while Resilience is active on the standard content-rendering path. Preserving an original does not authorize executing its contents. If this distinction does not meet the requirement, please let us know which storage/application boundary needs further adjustment.
+
+Recovery continues to use separately installed and normally configured trusted software; it does not install or initialize third-party plugins or restore their executable code. Existing originals/history are not rewritten.
+
+Plugin Check 2.2.0 reports 0 errors and 123 documented warnings. The exact ZIP passed isolated installation/update, production saving, and isolated recovery/resave/recovery using real S3 through our production history 77. File content and access conditions remained consistent; prepared settings were preserved.
+
+ZIP/source and verification:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.20
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc20-history77-20261124.md
+
+SHA-256: 90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610
+
+Best regards,
+Hiroshi Ozeki
