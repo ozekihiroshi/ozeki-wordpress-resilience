@@ -1,0 +1,44 @@
+[
+  {
+    "test": "member-prepared-settings.php",
+    "exit": 0,
+    "stdout": "Prepared settings contract PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "members.php",
+    "exit": 0,
+    "stdout": "membership replay checks PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "prepared-settings.php",
+    "exit": 0,
+    "stdout": "PASS prepared settings, source application, absent/empty, identity collision, widget placement and read-only planning\n",
+    "stderr": ""
+  },
+  {
+    "test": "reference-context.php",
+    "exit": 0,
+    "stdout": "PASS: reference provenance, unchanged document, independent URL expectations, negative boundaries and missing-provenance detection\n",
+    "stderr": ""
+  },
+  {
+    "test": "editor-save.php",
+    "exit": 0,
+    "stdout": "PASS confirmed-body and media/state equality; changed/unconfirmed data retained; editor error reason.\n",
+    "stderr": ""
+  },
+  {
+    "test": "editor-nonce.php",
+    "exit": 0,
+    "stdout": "PASS editor nonce missing/invalid/array and partial source rejected before side effects; valid and non-editor paths retained; capability independently required.\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-editor-contract.php",
+    "exit": 0,
+    "stdout": "Recovered editor normalization guarded; unrelated content unchanged; static blocks retained PASS\n",
+    "stderr": ""
+  }
+]

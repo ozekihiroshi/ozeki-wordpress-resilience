@@ -22,6 +22,10 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        add_filter('wp_insert_post_data',static function($data,$postarr){
+            require_once __DIR__.'/RecoveryContent.php';
+            return RecoveryContent::editedBlock($data,$postarr);
+        },9,2);
         add_filter('tablepress_table_raw_render_data',static function($table){
             require_once __DIR__.'/RecoveryContent.php';
             return RecoveryContent::tablePresentation($table);
@@ -29,7 +33,7 @@ final class Plugin
         // Editors normalize character references on save. Re-apply the content
         // boundary before block/shortcode callbacks, only for recovered articles.
         add_filter('the_content',static function($html){
-            if(!in_array(get_post_type(),['post','page'],true)||!get_post_meta(get_the_ID(),'_ozeki_resilience_m1_origin_url',true))return $html;
+            if(!in_array(get_post_type(),['post','page','attachment'],true)||!get_post_meta(get_the_ID(),'_ozeki_resilience_m1_origin_url',true))return $html;
             require_once __DIR__.'/RecoveryContent.php';$notes=[];
             return RecoveryContent::html($html,'article.rendered',$notes);
         },8);

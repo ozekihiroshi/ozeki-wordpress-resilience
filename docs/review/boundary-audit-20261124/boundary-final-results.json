@@ -1,0 +1,26 @@
+[
+  {
+    "test": "review-safe-content.php",
+    "exit": 0,
+    "stdout": "Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-editor-contract.php",
+    "exit": 0,
+    "stdout": "Recovered editor normalization guarded; unrelated content unchanged; static blocks retained PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "native-details.php",
+    "exit": 0,
+    "stdout": "PASS native state thumbnail removal, terms/counts, delete relations, unrelated records, repeat and identity\n",
+    "stderr": ""
+  },
+  {
+    "test": "reference-format.php",
+    "exit": 0,
+    "stdout": "PASS independent Markdown/HTML/table/inquiry/comment data, lossless unknown fields, separate metadata, legacy read, independent Checkpoint and structured tail, corruption/partial write rejection. Memory S3 only.\nPASS: old originals readable, contextual original/snapshot format guards, byte-identical Markdown and Checkpoint provenance\n",
+    "stderr": ""
+  }
+]

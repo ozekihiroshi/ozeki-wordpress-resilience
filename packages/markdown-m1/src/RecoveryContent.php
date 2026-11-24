@@ -5,6 +5,16 @@ if (!defined('ABSPATH')) exit;
 
 /** Application policy, never a transformation of the archived original. */
 final class RecoveryContent {
+    public const EDITED_BLOCK_TYPES=['wp_block','wp_template','wp_template_part','wp_navigation'];
+    public static function editedBlock(array $data,array $postarr): array {
+        $id=(int)($postarr['ID']??0);$type=$data['post_type']??'';
+        if($type==='revision'){$id=(int)($data['post_parent']??0);$type=get_post_type($id);}
+        if(!$id||!in_array($type,self::EDITED_BLOCK_TYPES,true)||!get_post_meta($id,'_ozeki_resilience_m1_origin_url',true))return $data;
+        // Standard block/template rendering can bypass the_content. Keep the
+        // already-applied boundary when the editor normalizes the restored text.
+        $notes=[];$data['post_content']=wp_slash(self::html(wp_unslash($data['post_content']),'edited.block',$notes));
+        return $data;
+    }
     public static function html(string $input,string $path,array &$report): string {
         $text=$input;
         // A restored block must not invoke an arbitrary server-side render callback.
@@ -65,6 +75,28 @@ final class RecoveryContent {
         if($clean!==$value)$report[]=['item'=>$path,'reason'=>'Unsafe form HTML omitted; original retained'];
         return $clean;
     }
+    private static function formTemplate(string $value,string $path,array &$report): string {
+        // Use CF7's grammar rather than interpreting quoted input values as HTML.
+        $manager=clone \WPCF7_FormTagsManager::get_instance();
+        $masked=$manager->replace_with_placeholders($value);
+        $tags=[];$nonce=bin2hex(random_bytes(16));
+        $masked=preg_replace_callback('~<('.preg_quote(\WPCF7_HTMLFormatter::placeholder_block,'~').'|'.preg_quote(\WPCF7_HTMLFormatter::placeholder_inline,'~').')\b[^>]*>~',static function($m)use($manager,$path,&$report,&$tags,$nonce){
+            $original=$manager->restore_from_placeholders($m[0]);
+            // CF7's grammar separates the opening tag at the first closing bracket.
+            // Acceptance-style body HTML must still be filtered, not hidden by masking.
+            $end=strpos($original,']');
+            if($end===false)return '';
+            $token='owrcf7'.$nonce.count($tags);
+            $tags[$token]=substr($original,0,$end+1).self::formHtml(substr($original,$end+1),$path.'.body',$report);
+            return $token;
+        },$masked);
+        $literalTags=array_map(static fn($tag)=>str_replace(['[',']'],['&#91;','&#93;'],esc_attr($tag)),$tags);
+        $parts=wp_html_split(wp_kses_post($masked));
+        foreach($parts as &$part)$part=strtr($part,str_starts_with($part,'<')?$literalTags:$tags);
+        unset($part);$clean=implode('',$parts);
+        if($clean!==$value)$report[]=['item'=>$path,'reason'=>'Unsafe form HTML omitted; recognized input values retained'];
+        return $clean;
+    }
     public static function tablePresentation(array $table): array {
         $mapping=get_option('tablepress_tables',[]);
         if(is_string($mapping))$mapping=json_decode($mapping,true);
@@ -108,7 +140,7 @@ final class RecoveryContent {
                     if(!empty($value['use_html'])&&isset($value['body']))$value['body']=self::formHtml($value['body'],$path.'.body',$report);
                     foreach(['sender','recipient','subject'] as $header)if(isset($value[$header])&&strpbrk($value[$header],"\r\n")!==false){$value[$header]=str_replace(["\r","\n"],'',$value[$header]);$report[]=['item'=>$path.'.'.$header,'reason'=>'Unexpected mail header line breaks omitted'];}
                     if(!empty($value['attachments'])){$value['attachments']='';$report[]=['item'=>$path.'.attachments','reason'=>'Archived local mail attachment paths require destination review'];}
-                }elseif($key==='_form'&&is_string($value))$value=self::formHtml($value,$path,$report);
+                }elseif($key==='_form'&&is_string($value))$value=self::formTemplate($value,$path,$report);
             }
             $data['tables']['postmeta'][$i]['meta_value']=$serialized?serialize($value):$value;
         }

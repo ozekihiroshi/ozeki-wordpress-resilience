@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "{\n    \"safe_article\": true,\n    \"markdown_original_unchanged\": true,\n    \"use_edit_recapture_recover\": true,\n    \"source_objects_unchanged\": true,\n    \"workspace_empty\": true,\n    \"not_applied\": 68,\n    \"storage\": \"network-isolated local SDK transport\"\n}\n",
+  "stderr": ""
+}

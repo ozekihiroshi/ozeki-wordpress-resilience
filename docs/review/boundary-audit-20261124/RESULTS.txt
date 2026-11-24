@@ -1,0 +1,94 @@
+Limited recovery boundary audit — 2026-11-24 (JST)
+
+Base: main 4de1ebd7ad2d0209ad12b7fd92a6ee73d0334638 (PR #63 merged)
+Work branch: codex/recovery-boundary-audit. Local changes only; not merged or published.
+
+Purpose / stopping rule
+Trace common transformation callers and supported normal WordPress usage. Reuse
+existing examples only for concrete suspicions. This is not an exhaustive adapter,
+third-party renderer, or security certification exercise. The finite caller review
+and targeted checks below are complete; no further scope expansion is planned.
+
+Boundary map
+- RecoveryContent::project/html: application copies of post HTML, selected HTML
+  dialogs and mail bodies. Raw archived originals are not rewritten.
+- CF7 _form: mixed HTML and CF7 input grammar; now uses CF7's existing parser to
+  protect recognized input parameters while filtering surrounding/body HTML.
+- TablePress: stored cells remain structured values; existing raw-render-data
+  hook filters the presentation copy before shortcode execution.
+- Member / ACF definitions, values, inquiry fields: ordinary structured data is
+  not passed through general HTML cleanup. Consumer-specific validation remains.
+- SiteSnapshot database import: URL relocation is now limited to guid,
+  comment_author_url and menu URL metadata, using ReferenceContext::url.
+  Other literals/serialized values and recognized options are preserved.
+- MemberHistory preparedSettings: field definitions are not recursively rebased.
+  Existing handling of actual user-page/dialog settings is retained.
+- Plugin the_content guard: recovered articles/pages/attachments keep the applied
+  execution boundary. Existing presentation URL adjustment rewrites recognized
+  HTML attributes, not arbitrary text values.
+- Recovered wp_block/template/template_part/navigation records: standard save and
+  revision paths now retain the same applied content policy because their block
+  rendering can bypass the_content. Unmarked new documents are unaffected.
+- RecoveryRules / RecoverySettings: allowlisted application and prepared-destination
+  settings remain distinct; no software installer or initialization is introduced.
+
+Concrete findings and limited fixes
+1. CF7 [text sample "<PLC>"] became [text sample ""] under general HTML filtering.
+   Preserve the recognized input grammar; continue filtering surrounding HTML and
+   acceptance body HTML. Attribute contexts do not receive raw injected form tags.
+2. Recursive source-to-destination URL substitution changed literal field definitions
+   and ordinary database values. Restrict relocation to explicit URL fields.
+   Existing ACF round-trip example now includes a source URL as literal text and
+   requires exact equality across both recoveries.
+3. A recovered synced pattern could become executable after an ordinary decoded
+   edit/save, since core/block renders outside the_content. Mark restored standard
+   block documents and retain the content boundary on normal saves/revisions.
+   Actual synced-pattern edit/render was exercised; template/navigation share the
+   guard but did not receive a new full browser or adapter round-trip matrix.
+
+Negative finding
+A script-containing blogdescription was rejected by the existing WordPress
+sanitize_option + exact persistence verification (Cannot persist recovery option),
+not silently installed. The diagnostic restored its temporary option in finally.
+
+Verification / evidence
+boundary-probe-red.json: reproductions before fixes.
+boundary-probe-green.json: targeted reproductions after the initial fixes.
+boundary-related-results.json: seven existing related checks passed.
+boundary-roundtrip.json: existing integration fixture passed recovery, use/edit,
+recapture and second recovery; original objects unchanged, workspace empty.
+The fixture includes supported article, Markdown and adapter examples; 68 planned
+non-applied entries are reported, not counted as fully restored settings.
+boundary-final-results.json: safe-content, editor-contract, native-details and
+reference-format checks passed after the final URL-boundary change.
+All are dedicated dm Docker tests with synthetic data and network-isolated local
+SDK transport / memory storage. No real-S3 rerun, new Plugin Check, browser matrix,
+or GitHub Actions run was performed for this local audit.
+
+Compatibility and limits
+No archive schema change or rewrite of existing originals/history. Application
+values are distinguished from presentation. Literal source URLs intentionally
+remain literal; recognized article HTML attributes use existing display relocation.
+This does not promise rebasing of arbitrary plugin fields, excerpts or custom
+renderers. The block guard requires the origin marker added by this recovery;
+it does not retroactively migrate previously recovered unmarked documents.
+Editing marked recovered block documents retains the static-content policy;
+unknown dynamic instructions are not enabled merely by editor normalization.
+
+Production, existing originals/history, submitted ZIPs/tags, main, WordPress.org
+submission and review email were not changed. Dedicated test containers are stopped
+at completion. Review this local diff before any merge or release decision.
+
+Final integration review — 2026-11-24 (JST)
+User authorized final review and main integration after the local audit.
+Reviewed all four changed source files, the two existing regression fixtures and
+red/green/round-trip evidence against main 4de1ebd. No additional blocking defect
+was identified in this bounded review. No source changes followed the recorded
+passing tests other than a comment clarification in SiteSnapshot.
+The existing tests show the concrete failures before and after correction; the
+round trip preserves literal ACF source URLs and existing synthetic originals.
+No new tests or real-S3 rerun were added for integration. Main CI will verify the
+merged commit separately; its workflow results are authoritative for CI status.
+This addendum supersedes the earlier local-only/main-unchanged status upon merge.
+Production, originals/history, submitted ZIPs/tags and application/email remain
+outside this change. No release artifact or WordPress.org submission is authorized.

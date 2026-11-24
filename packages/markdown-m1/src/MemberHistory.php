@@ -111,7 +111,9 @@ final class MemberHistory
             // Absence in the source is not permission to erase prepared destination settings.
             if($value===false)continue;
             // Relocate archived values only. Prepared destination values are not source data.
-            if($from!==''&&$to!=='')$value=SiteSnapshot::relocate($value,$from,$to);
+            // Field definitions contain literal choices, defaults and patterns,
+            // not relocatable site links. Member values are preserved verbatim too.
+            if($key!=='wpmembers_fields'&&$from!==''&&$to!=='')$value=SiteSnapshot::relocate($value,$from,$to);
             if($key==='wpmembers_settings'){
                 if(!is_array($value))throw new \RuntimeException('Invalid membership settings.');
                 unset($value['version'],$value['db_version']);
