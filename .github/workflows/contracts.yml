@@ -64,6 +64,9 @@ jobs:
           php packages/markdown-m1/tests/tablepress.php
           php packages/markdown-m1/tests/member-prepared-settings.php
           php packages/markdown-m1/tests/no-software-install.php
+          php packages/markdown-m1/tests/review-workspace.php
+          php packages/markdown-m1/tests/review-backup-write.php
+          php packages/markdown-m1/tests/review-media-cost.php
           php packages/markdown-m1/tests/tablepress-capture.php
           php packages/markdown-m1/tests/upload-guard.php
           php packages/markdown-m1/tests/file-scope.php

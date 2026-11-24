@@ -1,0 +1,30 @@
+[
+  {
+    "file": "packages\\markdown-m1\\src\\Plugin.php",
+    "sha256": "554215f4016de863d8956bcf46ed4317fa52f0ab3ba318f38ad8b0f47e411458"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\SiteSnapshot.php",
+    "sha256": "7d92f458130a531106431f4c80e8679426dc66b50365a130953bfe58eb276b8e"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\RecoveryContent.php",
+    "sha256": "84e18bc34ad3fc0804cf1a0021f411975fc7cf8a854584e82d6db47f8913f42b"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\RecoveryWorkspace.php",
+    "sha256": "97f85c7b19aebce05fdf8f416384b5254720f57f2d802d943a98e958f270ce73"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\MediaAccess.php",
+    "sha256": "0229ce7e2e31d6e5259b9271031ded4365a4e5250cb06d132f5664e8b0aae421"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\AttachmentHistory.php",
+    "sha256": "91815fe17c22294853f69e99d55e5121ee5bd4e0ff8107faa1d4bfa89a3103f7"
+  },
+  {
+    "file": "packages\\markdown-m1\\src\\AdminText.php",
+    "sha256": "bb05b9ac59f3717f230fc9d3c19cf620d0bd1206f869496102cf85dd12a43cc7"
+  }
+]

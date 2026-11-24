@@ -152,7 +152,7 @@ final class AdminText
         'Checkpoint' => '復旧ポイント',
         'Formal history end' => '復旧に含める履歴の最終番号',
         'Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.' => '選択した復旧ポイント以降の番号を選んでください。その番号までの確定済み履歴を適用し、それ以降は含めません。選択した番号はこの操作中は固定されます。履歴の1件は編集操作全体の1回とは限りません。',
-        'Replace all destination content with this site (a private local rollback copy is retained).' => '復旧先の内容を、このサイトの内容に置き換えます（戻すためのコピーを非公開の作業場所に残します）。',
+        'Replace destination content. Private rollback files are removed after success; incomplete recovery requires review.' => '復旧先の内容を置き換えます。切戻し用の非公開ファイルは成功後に削除します。復旧が完了しなかった場合は結果の確認が必要です。',
         'Next complete-site Checkpoint (UTC):' => '次回のサイト全体の定期保存（UTC）：',
         'Delete only the previewed expired Checkpoints and resources, preserving retained recovery points' => '残すべき復旧ポイントを保持し、表示した期限切れの復旧ポイントと素材だけを削除します',
         'Legacy asset-only cleanup — not complete-site cleanup' => '旧方式：個別データの整理',

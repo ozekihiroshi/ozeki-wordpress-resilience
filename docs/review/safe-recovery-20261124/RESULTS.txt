@@ -1,0 +1,131 @@
+Review fixes — implementation checkpoint, 2026-11-24 JST
+
+CONTINUATION (same date; supersedes remaining-check statements below where noted)
+Real S3 roundtrip PASSED with the host-only broker on community and isolated WordPress
+on dm. dm's reader role correctly denied the unrelated lab bucket; no IAM was changed.
+community's existing EC2 role accessed only a fresh random lab prefix. Credentials
+stayed on that host. S3 version fingerprints matched before/after each recovery.
+Evidence: real-s3-result.json. This was synthetic data, not the production archive.
+
+Further tests found and corrected application-boundary mistakes in this candidate:
+- Flamingo sender "Review <reader@example.invalid>" was misread as HTML. Receipt
+  metadata is plain correspondence, escaped by Flamingo's UI; it is now kept exact.
+- CF7's generated shortcode ID is hexadecimal, not necessarily numeric. Recognized
+  form/table IDs now permit alphanumeric identifiers; arbitrary tags remain blocked.
+- CF7's non-public flattened search copy must not be treated as an article with WP
+  shortcodes. The actual form template is sanitized separately, retaining form tags.
+Added integration assertions detect sender loss and disabled generated CF7 references.
+They failed before the adjustment and passed across both real-S3 recoveries afterwards.
+No archive format changes or original/history rewrites were needed.
+
+Additional executable-syntax regression: a multiline shortcode bypassed the original
+candidate's matcher (RED observed). The matcher now covers WordPress's tag-name
+grammar, multiline attributes and nested bracket text; rejected matches escape all
+brackets, not just the outer pair. Block markers with alternate whitespace are also
+recognized. Tests pass with the actual WordPress shortcode/block engines, including
+registered malicious callbacks, numeric tag names, multiline and nested forms.
+The final real-S3 rerun includes this correction.
+
+First recovery's 67 omitted-item notices: ACF field/group settings outside the existing
+basic-field contract 18; excluded software-customization post types 3; metadata/settings
+outside existing rules 22; regenerated Markdown hash 1; theme/widget-specific settings
+19; unsafe article HTML 1; unsafe CF7 form HTML 1; prepared TablePress global settings
+retained 1; source widget layout omitted 1. No Flamingo sender loss remains in these
+notices. These counts describe the synthetic fixture, not community's real 177 items.
+
+Browser observations (Chrome via SSH loopback, no public test endpoint):
+- Recovered page displayed headings/table/code as text; Classic editor append/save
+  succeeded and the view showed the appended text.
+- Unedited Markdown Update preserved the exact source. Edited Markdown Update showed
+  the appended text, including after the real-S3 restoration.
+- Admin history selection restored both a page and Markdown, retaining draft status.
+  Raw originals were unchanged; executable article HTML was omitted with a result note.
+- Browser-edited Markdown was captured again and restored byte-identically in a further
+  local-transport recovery. This closes the browser-edit-to-next-recovery check.
+- The whole-site replacement checkbox still promised a retained rollback copy. Its
+  English/Japanese wording now matches cleanup-on-success behavior.
+
+Fault injection during the DB replacement phase verified posts were rolled back,
+owned staging removed, and a subsequent retry completed. A WP-Members REMOTE_ADDR
+warning was from CLI fixture setup, corrected by supplying the synthetic loopback
+address in the runner; it was not a browser warning or a product code change.
+
+Still open before release: acceptance of flattened block editing/dynamic block limits;
+OS termination during file/DB replacement; the broader failure/rollback-incomplete
+matrix; packaging and final review. No claim of total third-party path coverage.
+In particular, ordinary article editor normalization of readable escaped shortcode
+examples through a further edit should be tested; Markdown's rendered guard does not
+by itself establish that guarantee for every ordinary article editor.
+The test containers and tunnels are stopped after verification. No production change,
+merge, push, ZIP, tag, submission, or email is part of this checkpoint.
+
+ORIGINAL CHECKPOINT (retained below as chronological evidence)
+
+Branch: codex/review-safe-recovery (base 6bc172b).
+Not merged, packaged, submitted, or emailed. Production and submitted artifacts unchanged.
+
+1. Recovery application boundary
+Archived originals are unchanged. Whole-site and individual article application use
+RecoveryContent. Executable HTML is filtered. Unrecognized shortcodes are readable
+text; supported table/form references remain available. Code examples do not run
+shortcodes. Source block instructions do not execute: stored presentation HTML is
+used, or an instruction without stored HTML is shown as text for review.
+CF7 input/mail placeholders are handled separately from WordPress shortcodes.
+Archived mail attachment paths are not activated. TablePress cells, navigation URLs,
+comments and supported metadata are included in the application review.
+
+2. Temporary files
+Each recovery owns a random private directory outside the web root. Normal completion
+and ordinary failure clean its known files only. Failed rollback retains evidence;
+an admin notice reports abandoned workspaces. Files belonging to the caller are not
+deleted. Interrupted upload replacement removes its temporary file during rollback.
+Tests cover ownership, active lock detection, retained evidence and abandoned state.
+An OS kill during actual DB/file replacement has not been exercised.
+
+3. Routine media checks
+Unchanged access rules with no pending work avoid binary reconciliation and S3 calls.
+Changes target affected attachment paths. Scope includes destination bucket/prefix/
+region/owner. Explicit recheck forces reconciliation. The hint is local WP state,
+not a new S3 record format. Metadata enumeration still occurs; this is not an O(1)
+index or a large-site performance certification.
+
+4. Markdown
+The original Markdown stays byte-identical. Recovered rendered content is filtered
+before the normal WordPress shortcode stage. Code examples remain text. This does
+not modify the upstream Markdown plugin or claim safety of every external renderer.
+
+Evidence
+final-results.json: isolated WordPress/PHP 8.3 + MariaDB; test DB rebuilt per case.
+Storage: local SDK transport, network disabled, synthetic information only; not AWS.
+Article safe display markup, edit/resave/second recovery and unedited Markdown exact
+source passed. Integration assertions passed for CF7 form/mail placeholders, Flamingo
+receipt, TablePress cells, member password and prepared settings, ACF definition/value.
+Source object hashes unchanged. Normal recovery left no owned workspace.
+20 attachments: unchanged rules caused zero SDK requests; one access change persisted;
+injected history-write failure retained pending work and completed on retry.
+Plugin Check: 0 errors, 123 warnings. This is not a warning-free release assessment.
+Local staging operations intentionally use OS locks/permissions and checked return
+values; their PHPCS exceptions document why a remote filesystem abstraction is unsuitable.
+Standalone PHP syntax and no-install/prepared-settings regressions passed.
+Older recorded results are retained separately; final-results is the clean-DB rerun.
+
+Compatibility / limits
+No S3 schema or existing original/history rewrite. An older implementation can read
+the same records but does not gain these application safeguards.
+Static block visual HTML survives, but block editor structure is flattened. Dynamic
+blocks without stored presentation are not reconstructed. Review before release:
+this is a deliberate execution boundary, not identical feature restoration.
+The full roundtrip used plugin APIs and stored/rendered content assertions. It did
+not include human browser operation, real SMTP delivery, real AWS latency/permissions,
+or destructive OS interruption. Individual restoration uses the shared sanitizer but
+its complete admin workflow still needs a dedicated end-to-end check.
+Prepared destination software is neither installed nor initialized by recovery.
+Do not interpret this checkpoint as completion of every external-plugin safety path.
+
+Rerun requirements
+review-safe-content.php: wp eval-file, disposable candidate WordPress activated.
+review-roundtrip.php / review-media-live.php: /lab isolated fixture with local SDK
+transport and fresh DB per test; never point at production or an existing recovery DB.
+review-workspace.php / review-media-cost.php: standalone PHP.
+Remaining release checks: real S3 isolated roundtrip, browser editing of filtered
+content, exact omitted-item review, individual restoration, failure/interrupt matrix.

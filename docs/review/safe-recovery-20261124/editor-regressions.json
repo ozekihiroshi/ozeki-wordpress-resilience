@@ -1,0 +1,14 @@
+[
+  {
+    "test": "review-safe-content.php",
+    "exit": 0,
+    "stdout": "Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-editor-contract.php",
+    "exit": 0,
+    "stdout": "Recovered editor normalization guarded; unrelated content unchanged; static blocks retained PASS\n",
+    "stderr": ""
+  }
+]

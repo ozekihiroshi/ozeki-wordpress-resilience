@@ -56,12 +56,20 @@ final class AttachmentHistory {
         });
     }
     /** Reconcile access-only changes and newly recognised registered media too. */
-    public static function reconcile(): bool {
+    public static function reconcile(?array $changedPaths=null): bool {
         if(!self::enabled())return true;
         global $wpdb;
         $ids=$wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type='attachment'");
         if($wpdb->last_error)throw new \RuntimeException('Cannot inspect registered attachments.');
-        foreach($ids as $id)self::mark((int)$id);
+        foreach($ids as $id){
+            if($changedPaths!==null){
+                $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->postmeta} WHERE post_id=%d",$id),ARRAY_A);
+                if($wpdb->last_error)throw new \RuntimeException('Cannot inspect changed attachment paths.');
+                $paths=FileScope::paths(['tables'=>['posts'=>[['ID'=>$id,'post_type'=>'attachment']],'postmeta'=>$rows]],true);
+                if(!array_intersect(array_keys($paths),$changedPaths))continue;
+            }
+            self::mark((int)$id);
+        }
         self::flush();return !(array)get_option(self::PENDING,[]);
     }
     public static function flush(): void {

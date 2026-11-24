@@ -1,0 +1,19 @@
+[
+  {
+    "test": [
+      "/lab/tests/review-kill.php",
+      "prepare"
+    ],
+    "exit": 0,
+    "stdout": "prepared\n",
+    "stderr": ""
+  },
+  {
+    "test": [
+      "/lab/tests/review-backup-preflight.php"
+    ],
+    "exit": 0,
+    "stdout": "[\n    {\n        \"file\": \"before-content.json\",\n        \"stopped_before_replacement\": true,\n        \"cleanup\": true\n    },\n    {\n        \"file\": \"before-files.json\",\n        \"stopped_before_replacement\": true,\n        \"cleanup\": true\n    },\n    {\n        \"file\": \"before-options.json\",\n        \"stopped_before_replacement\": true,\n        \"cleanup\": true\n    }\n]\n",
+    "stderr": ""
+  }
+]

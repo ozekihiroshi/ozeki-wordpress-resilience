@@ -1,0 +1,9 @@
+{
+    "safe_article": true,
+    "markdown_original_unchanged": true,
+    "use_edit_recapture_recover": true,
+    "source_objects_unchanged": true,
+    "workspace_empty": true,
+    "not_applied": 67,
+    "storage": "real S3 scoped host broker"
+}

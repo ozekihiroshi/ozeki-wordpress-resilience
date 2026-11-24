@@ -1,0 +1,13 @@
+{
+  "exit": 0,
+  "errors": 0,
+  "warnings": 123,
+  "codes": {
+    "unexpected_markdown_file": 1,
+    "WordPress.PHP.DevelopmentFunctions.error_log_error_log": 2,
+    "WordPress.DB.DirectDatabaseQuery.DirectQuery": 45,
+    "WordPress.DB.DirectDatabaseQuery.NoCaching": 41,
+    "WordPress.DB.SlowDBQuery.slow_db_query_meta_key": 15,
+    "WordPress.DB.SlowDBQuery.slow_db_query_meta_value": 19
+  }
+}

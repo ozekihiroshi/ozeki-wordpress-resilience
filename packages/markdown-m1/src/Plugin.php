@@ -22,6 +22,28 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        // Editors normalize character references on save. Re-apply the content
+        // boundary before block/shortcode callbacks, only for recovered articles.
+        add_filter('the_content',static function($html){
+            if(!in_array(get_post_type(),['post','page'],true)||!get_post_meta(get_the_ID(),'_ozeki_resilience_m1_origin_url',true))return $html;
+            require_once __DIR__.'/RecoveryContent.php';$notes=[];
+            return RecoveryContent::html($html,'article.rendered',$notes);
+        },8);
+        add_action('admin_notices',static function(){
+            if(!current_user_can('manage_options'))return;
+            require_once __DIR__.'/RecoveryWorkspace.php';
+            $left=RecoveryWorkspace::unfinished(sys_get_temp_dir());
+            if($left)echo '<div class="notice notice-warning"><p>'.esc_html(SetupReadiness::text('Recovery temporary data remains. Check the recovery result before removing it; an incomplete rollback may need these files. Private directories: ','復旧用の一時データが残っています。切戻しに必要な場合があるため、復旧結果を確認してから整理してください。非公開の作業場所: ').implode(', ',$left)).'</p></div>';
+        });
+        // Markdown remains archival text. Check the generated presentation before
+        // WordPress's priority-11 shortcode execution, not after it has run.
+        add_action('wp_loaded',static function(){
+            add_filter('the_content',static function($html){
+                if(get_post_type()!=='ozmd_document'||(!get_option('ozeki_resilience_site_origin_url')&&!get_post_meta(get_the_ID(),'_ozeki_resilience_m1_origin_url',true)))return $html;
+                require_once __DIR__.'/RecoveryContent.php';$notes=[];
+                return RecoveryContent::html($html,'markdown.rendered',$notes);
+            },10);
+        });
         (new AttachmentHistory())->boot();
         (new MediaAccess())->boot();
         add_filter('wp_handle_upload_prefilter',[$this,'protectUpload']);
@@ -456,8 +478,10 @@ final class Plugin
                 $existing=get_posts(['post_type'=>$type,'post_status'=>['publish','private','draft','pending','trash'],'meta_key'=>self::ID,'meta_value'=>$asset,'fields'=>'ids','posts_per_page'=>2]);
                 if (count($existing)>1) throw new \RuntimeException('Duplicate document identity.');
                 $args=['post_type'=>$type,'post_title'=>$attr['title'],'post_name'=>$attr['slug'],'post_status'=>$attr['status'],'post_date'=>$attr['date'],'post_date_gmt'=>$attr['date_gmt']];
-                if($type!=='ozmd_document')$args['post_content']=$source;
+                require_once __DIR__.'/RecoveryContent.php';$applicationNotes=[];
+                if($type!=='ozmd_document')$args['post_content']=RecoveryContent::html($source,'posts.'.$asset.'.post_content',$applicationNotes);
                 foreach(['post_excerpt','post_parent','menu_order','comment_status','ping_status'] as $key)if(isset($attr[$key]))$args[$key]=$attr[$key];
+                foreach(['post_title','post_excerpt'] as $key)if(isset($args[$key]))$args[$key]=RecoveryContent::html($args[$key],'posts.'.$asset.'.'.$key,$applicationNotes);
                 if ($existing) $args['ID']=$existing[0];
                 $id=wp_insert_post(wp_slash($args),true);
                 if (is_wp_error($id)) throw new \RuntimeException($id->get_error_message());
@@ -466,8 +490,8 @@ final class Plugin
                 update_post_meta($id,'_ozeki_resilience_m1_origin_url',$attr['origin_url']);
                 update_post_meta($id,'_ozeki_resilience_m1_origin_id',$attr['origin_id']);
                 $p=get_post($id);
-                if ($p->post_title!==$attr['title'] || $p->post_status!==$attr['status'] || $p->post_name!==$attr['slug'] || ($type==='ozmd_document'?get_post_meta($id,self::SOURCE,true):$p->post_content)!==$source) throw new \RuntimeException('Restore did not match the selected original (possibly a slug collision).');
-                $result[]=['asset'=>$asset,'sequence'=>$row['sequence'],'post_id'=>$id,'sha256'=>hash('sha256',$source),'status'=>$p->post_status];
+                if ($p->post_title!==$args['post_title'] || $p->post_status!==$attr['status'] || $p->post_name!==$attr['slug'] || ($type==='ozmd_document'?get_post_meta($id,self::SOURCE,true):$p->post_content)!==($type==='ozmd_document'?$source:$args['post_content'])) throw new \RuntimeException('Restore did not match the safe application result (possibly a slug collision).');
+                $result[]=['asset'=>$asset,'sequence'=>$row['sequence'],'post_id'=>$id,'sha256'=>hash('sha256',$source),'status'=>$p->post_status,'not_applied'=>$applicationNotes];
             }
             update_option('ozeki_resilience_m1_restore_result',$result,false);$this->commitDb();
         } finally {$this->restoring=false;$this->release();}
@@ -596,7 +620,7 @@ final class Plugin
                 update_option('ozeki_resilience_setup_storage',$r,false);
             } elseif ($action==='media_recheck') {
                 if(empty($this->config()['protect']))throw new \RuntimeException('Enable protection before recording access changes.');
-                MediaAccess::record();
+                MediaAccess::record(true);
             } elseif ($action==='resume') { $this->resume(); (new CommentHistory())->resume(); AttachmentHistory::flush(); }
             elseif ($action==='restore') {
                 if(!isset($_POST['sequences']) || !is_array($_POST['sequences']))throw new \RuntimeException('Select valid history numbers.');
@@ -654,7 +678,7 @@ final class Plugin
                     if(!is_array($ref))throw new \RuntimeException('Invalid snapshot reference.');
                     $attempt['manifest']=$ref;SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',$attempt,false);
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-                    $work=sys_get_temp_dir().'/owr-site-restore-'.bin2hex(random_bytes(8));if(!mkdir($work,0700))throw new \RuntimeException('Cannot create private staging directory.');
+                    $work=sys_get_temp_dir(); // restore owns and cleans a unique private child directory.
                     $result=(new SiteSnapshot($this->store()))->restore($ref,isset($_POST['replace_site']),$work,$target);
                     SiteSnapshot::writeOption('ozeki_resilience_site_restore_attempt',['status'=>'success']+$result,false);
                 } catch (\Throwable $e) {
@@ -837,7 +861,7 @@ final class Plugin
                     echo '<label>'.esc_html(AdminText::text('Formal history end')).' <select name="site_through" required>';
                     foreach($ends as $number=>$description)echo '<option value="'.(int)$number.'"'.($number===$selectedEnd?' selected':'').'>'.esc_html($number.' / '.$description).'</option>';
                     echo '</select></label><p>'.esc_html(AdminText::text('Choose an end at or after the selected Checkpoint. Only confirmed records through that number are applied; later changes are excluded. The displayed end is fixed for this request. History records are not necessarily complete user editing sessions.')).'</p>';
-                    if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace all destination content with this site (a private local rollback copy is retained).')).'</label>';
+                    if($op==='whole_restore')echo '<label><input type="checkbox" name="replace_site" required>'.esc_html(AdminText::text('Replace destination content. Private rollback files are removed after success; incomplete recovery requires review.')).'</label>';
                 }
                 submit_button($label);echo '</form>';
             }

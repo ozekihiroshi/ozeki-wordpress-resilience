@@ -1,0 +1,17 @@
+{
+  "date_jst": "2026-11-24",
+  "environment": "dm isolated synthetic WordPress through SSH loopback, Chrome",
+  "observation_source": "browser actions and followup PHP fixture stdout",
+  "article_classic_editor_append_save_view": true,
+  "unedited_markdown_source_unchanged": true,
+  "markdown_browser_append_save_view": true,
+  "individual_admin_restore_page_and_markdown": true,
+  "individual_draft_status_preserved": true,
+  "individual_originals_unchanged": true,
+  "browser_edited_markdown_recaptured_and_recovered": true,
+  "injected_db_replacement_failure_rolled_back_posts": true,
+  "owned_workspace_removed_and_retry_succeeded": true,
+  "followup_cli_warning": "WP-Members REMOTE_ADDR missing in test process; runner now supplies a synthetic loopback value",
+  "real_s3_during_browser_followup": false,
+  "os_kill_tested": false
+}

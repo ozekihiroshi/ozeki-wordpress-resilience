@@ -1,0 +1,23 @@
+[
+  {
+    "phase": "before-sql",
+    "killed_exit": 137,
+    "check_exit": 0,
+    "stdout": "{\"phase\":\"before-sql\",\"interrupted_detected\":true,\"success_not_claimed\":true,\"db_commit_state_correct\":true,\"files_may_precede_db_commit\":true,\"private_evidence_retained\":true,\"same_point_retry_succeeded\":true}",
+    "stderr": ""
+  },
+  {
+    "phase": "during-sql",
+    "killed_exit": 137,
+    "check_exit": 0,
+    "stdout": "{\"phase\":\"during-sql\",\"interrupted_detected\":true,\"success_not_claimed\":true,\"db_commit_state_correct\":true,\"files_may_precede_db_commit\":true,\"private_evidence_retained\":true,\"same_point_retry_succeeded\":true}",
+    "stderr": ""
+  },
+  {
+    "phase": "after-commit",
+    "killed_exit": 137,
+    "check_exit": 0,
+    "stdout": "{\"phase\":\"after-commit\",\"interrupted_detected\":true,\"success_not_claimed\":true,\"db_commit_state_correct\":true,\"files_may_precede_db_commit\":true,\"private_evidence_retained\":true,\"same_point_retry_succeeded\":true}",
+    "stderr": ""
+  }
+]
