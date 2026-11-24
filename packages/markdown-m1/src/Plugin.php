@@ -22,6 +22,10 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        add_filter('tablepress_table_raw_render_data',static function($table){
+            require_once __DIR__.'/RecoveryContent.php';
+            return RecoveryContent::tablePresentation($table);
+        });
         // Editors normalize character references on save. Re-apply the content
         // boundary before block/shortcode callbacks, only for recovered articles.
         add_filter('the_content',static function($html){

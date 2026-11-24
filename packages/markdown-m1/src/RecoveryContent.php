@@ -59,50 +59,44 @@ final class RecoveryContent {
         }
         return $out;
     }
-    public static function tree(mixed $value,string $path,array &$report): mixed {
-        if(is_array($value)){foreach($value as $k=>&$v)$v=self::tree($v,$path.'.'.$k,$report);unset($v);return $value;}
-        return is_string($value)?self::html($value,$path,$report):$value;
-    }
-    private static function formValue(mixed $value,string $path,array &$report): mixed {
-        if(is_array($value)){foreach($value as $k=>&$v)$v=self::formValue($v,$path.'.'.$k,$report);unset($v);return $value;}
-        if(!is_string($value))return $value;
-        // Plain field values (for example "current < 5 A") are not HTML.
-        // Do not entity-encode ordinary data merely because it contains '<'.
-        if(!preg_match('/<\/?[a-zA-Z][^>]*>/s',$value))return $value;
+    private static function formHtml(string $value,string $path,array &$report): string {
+        // Only known HTML templates, never recursive structured-data transforms.
         $clean=wp_kses_post($value);
         if($clean!==$value)$report[]=['item'=>$path,'reason'=>'Unsafe form HTML omitted; original retained'];
         return $clean;
     }
+    public static function tablePresentation(array $table): array {
+        $mapping=get_option('tablepress_tables',[]);
+        if(is_string($mapping))$mapping=json_decode($mapping,true);
+        $postId=$mapping['table_post'][(string)($table['id']??'')]??0;
+        if(!$postId||!get_post_meta($postId,'_ozeki_resilience_m1_origin_url',true))return $table;
+        $notes=[];
+        // This hook precedes TablePress shortcode execution. Only change the render
+        // copy; cell values, options and later exports remain unchanged.
+        foreach($table['data']??[] as $r=>$row)foreach($row as $c=>$cell)
+            if(is_string($cell))$table['data'][$r][$c]=self::html($cell,'table.cell',$notes);
+        foreach(['name','description'] as $key)if(isset($table[$key]))$table[$key]=self::html($table[$key],'table.'.$key,$notes);
+        return $table;
+    }
     public static function project(array $data,array &$report): array {
         $types=[];foreach($data['tables']['posts']??[] as $p)$types[(string)$p['ID']]=$p['post_type'];
         foreach($data['tables']['posts']??[] as $i=>$post){
+            if(in_array($post['post_type'],['tablepress_table','wpcf7_contact_form','flamingo_inbound'],true))continue;
             foreach(['post_content','post_excerpt','post_title'] as $key){
                 if(!isset($post[$key]))continue;$path='posts.'.$post['ID'].'.'.$key;
-                // TablePress stores structured cell data in post_content, not a HTML document.
-                if($key==='post_content'&&$post['post_type']==='tablepress_table'){
-                    $json=json_decode($post[$key],true);
-                    if(is_array($json))$data['tables']['posts'][$i][$key]=Store::json(self::tree($json,$path,$report));
-                    else $data['tables']['posts'][$i][$key]=self::html($post[$key],$path,$report);
-                }elseif($key==='post_content'&&$post['post_type']==='wpcf7_contact_form'){
-                    // CF7 keeps a flattened search copy of its properties here.
-                    // Input/mail tags are not WordPress executable shortcodes.
-                    // This non-public search text is not a rendered form template.
-                    // The actual _form property is filtered separately below.
-                    $data['tables']['posts'][$i][$key]=$post[$key];
-                }else $data['tables']['posts'][$i][$key]=self::html($post[$key],$path,$report);
+                $data['tables']['posts'][$i][$key]=self::html($post[$key],$path,$report);
             }
         }
         foreach(['comments'=>['comment_content','comment_author'],'terms'=>['name'],'term_taxonomy'=>['description']] as $table=>$keys)
             foreach($data['tables'][$table]??[] as $i=>$row)foreach($keys as $key)if(isset($row[$key]))$data['tables'][$table][$i][$key]=self::html($row[$key],$table.'.'.$i.'.'.$key,$report);
         foreach($data['tables']['postmeta']??[] as $i=>$row){
-            $key=$row['meta_key'];if($key==='_ozmd_source')continue;
+            $key=$row['meta_key'];$type=$types[(string)$row['post_id']]??'';
+            if($key!=='_menu_item_url'&&($type!=='wpcf7_contact_form'||!in_array($key,['_form','_mail','_mail_2'],true)))continue;
             // Flamingo receipt fields are plain correspondence data, escaped by
             // Flamingo's own UI. A sender's <address> is not an HTML element.
             if(($types[(string)$row['post_id']]??'')==='flamingo_inbound')continue;
             $raw=$row['meta_value'];$path='postmeta.'.$row['post_id'].'.'.$key;
             $serialized=is_serialized($raw);$value=$serialized?unserialize($raw,['allowed_classes'=>false]):$raw;
-            $json=($types[(string)$row['post_id']]??'')==='tablepress_table'&&str_starts_with($key,'_tablepress_');
-            if($json)$value=json_decode($raw,true,512,JSON_THROW_ON_ERROR);
             if($key==='_menu_item_url'&&is_string($value)){
                 $url=esc_url_raw($value);
                 if($url!==$value)$report[]=['item'=>$path,'reason'=>'Unsafe navigation URL omitted'];
@@ -111,17 +105,27 @@ final class RecoveryContent {
             // CF7 form tags are a separate, recognised input grammar, not WordPress shortcodes.
             if(($types[(string)$row['post_id']]??'')==='wpcf7_contact_form'){
                 if(in_array($key,['_mail','_mail_2'],true)&&is_array($value)){
-                    if(!empty($value['use_html'])&&isset($value['body']))$value['body']=self::formValue($value['body'],$path.'.body',$report);
+                    if(!empty($value['use_html'])&&isset($value['body']))$value['body']=self::formHtml($value['body'],$path.'.body',$report);
                     foreach(['sender','recipient','subject'] as $header)if(isset($value[$header])&&strpbrk($value[$header],"\r\n")!==false){$value[$header]=str_replace(["\r","\n"],'',$value[$header]);$report[]=['item'=>$path.'.'.$header,'reason'=>'Unexpected mail header line breaks omitted'];}
                     if(!empty($value['attachments'])){$value['attachments']='';$report[]=['item'=>$path.'.attachments','reason'=>'Archived local mail attachment paths require destination review'];}
-                }else $value=self::formValue($value,$path,$report);
+                }elseif($key==='_form'&&is_string($value))$value=self::formHtml($value,$path,$report);
             }
-            elseif(($types[(string)$row['post_id']]??'')==='tablepress_table')$value=self::tree($value,$path,$report);
-            else $value=self::formValue($value,$path,$report);
-            $data['tables']['postmeta'][$i]['meta_value']=$json?Store::json($value):($serialized?serialize($value):$value);
+            $data['tables']['postmeta'][$i]['meta_value']=$serialized?serialize($value):$value;
         }
-        if(isset($data['membership']))$data['membership']=self::formValue($data['membership'],'membership',$report);
-        if(isset($data['acf_restore_groups']))$data['acf_restore_groups']=self::formValue($data['acf_restore_groups'],'acf.definitions',$report);
+        // Member values/definitions and ACF values/definitions are typed data.
+        // Only explicit member HTML messages and terms are presentation fields.
+        foreach(['options','membership'] as $section){
+            if($section==='membership'){
+                if(!isset($data['membership']['settings']))continue;
+                $settings=&$data['membership']['settings'];
+            }else{
+                if(!isset($data['options']))continue;
+                $settings=&$data['options'];
+            }
+            foreach($settings['wpmembers_dialogs']??[] as $key=>$value)if(is_string($value))$settings['wpmembers_dialogs'][$key]=self::html($value,'member.dialog.'.$key,$report);
+            if(isset($settings['wpmembers_tos'])&&is_string($settings['wpmembers_tos']))$settings['wpmembers_tos']=self::html($settings['wpmembers_tos'],'member.terms',$report);
+            unset($settings);
+        }
         return $data;
     }
 }

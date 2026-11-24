@@ -1,0 +1,32 @@
+[
+  {
+    "test": "review-safe-content.php",
+    "exit": 0,
+    "stdout": "Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "review-editor-contract.php",
+    "exit": 0,
+    "stdout": "Recovered editor normalization guarded; unrelated content unchanged; static blocks retained PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "RecoveryContent.php",
+    "exit": 0,
+    "stdout": "No syntax errors detected in /var/www/html/wp-content/plugins/ozeki-resilience/src/RecoveryContent.php\n",
+    "stderr": ""
+  },
+  {
+    "test": "Plugin.php",
+    "exit": 0,
+    "stdout": "No syntax errors detected in /var/www/html/wp-content/plugins/ozeki-resilience/src/Plugin.php\n",
+    "stderr": ""
+  },
+  {
+    "test": "SiteSnapshot.php",
+    "exit": 0,
+    "stdout": "No syntax errors detected in /var/www/html/wp-content/plugins/ozeki-resilience/src/SiteSnapshot.php\n",
+    "stderr": ""
+  }
+]

@@ -409,7 +409,7 @@ final class SiteSnapshot
             AcfHistory::install($d['acf_restore_groups']??[]);
             // Existing origin metadata also identifies articles whose presentation
             // must retain the recovery execution boundary after ordinary editing.
-            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],['post','page'],true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
+            foreach($d['tables']['posts'] as $row)if(in_array($row['post_type'],['post','page','tablepress_table'],true))self::writeMeta((int)$row['ID'],'_ozeki_resilience_m1_origin_url',$from.'/?p='.(int)$row['ID']);
             foreach($d['options'] as $k=>$v){if(!in_array($k,self::OPTIONS,true)&&!in_array($k,TableHistory::OPTIONS,true)&&!str_starts_with($k,'widget_')&&!str_starts_with($k,'theme_mods_'))throw new \RuntimeException('Disallowed option.');self::writeOption($k,$v);}
             // Re-render sources with the recorded installed Markdown implementation.
             wp_cache_flush();foreach($files as $p=>$raw)if(preg_match('~^markdown/([0-9]+)\.md$~D',$p,$match)&&get_post_type((int)$match[1])==='ozmd_document'){

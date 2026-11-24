@@ -12,6 +12,12 @@ text. We also reproduced and fixed a case where normal editing decoded their esc
 brackets: recovered articles now retain the display policy before WordPress executes
 blocks and shortcodes. Basic heading, paragraph and code blocks remain editable.
 
+HTML processing is limited to presentation fields. Typed member/ACF values and
+definitions, receipt data, and table storage are not recursively HTML-filtered.
+Recovered TablePress cells are checked on a render-only copy before shortcode
+execution, preserving normal values for editing and later preservation. Existing
+integration examples with brackets and angle-bracket text passed both recoveries.
+
 Regarding Markdown, we have intentionally kept the independent original unchanged.
 It is source data, not an instruction to execute its contents. Changing it before
 preservation would lose the original document, including legitimate code examples.
