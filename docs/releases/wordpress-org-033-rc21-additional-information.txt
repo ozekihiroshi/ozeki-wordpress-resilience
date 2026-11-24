@@ -1,0 +1,16 @@
+Ozeki Resilience 0.3.3 rc.21 — update to the existing application
+
+This update retains the previous review-response fixes and addresses three common issues found during ordinary browser use after recovery:
+1. Preserve the destination's prepared templates and navigation rather than activating archived layout instructions.
+2. Check the referenced Markdown document's own viewing conditions before safe rendering. Authorized members can read headings and tables; guests cannot read member-only documents. Embedded unknown commands remain text, and Markdown originals remain unchanged.
+3. Avoid unnecessary full media reconciliation for revision autosaves and editor lock metadata. Genuine access-condition changes remain tracked; contention retains pending work and retry diagnostics.
+
+Recovery does not install or initialize third-party software or deploy archived executable code. Administrators prepare trusted software separately. Existing originals/history and archive formats are unchanged. Previously textified references are not automatically decoded into executable commands.
+
+The exact ZIP passed fresh installation, rc.20 update, Japanese/English admin rendering, and isolated real-S3 recovery through source history 77, browser use, resaving and second recovery. All 46 compared content records, 51 file originals and their access conditions matched. Plugin Check 2.2.0: 0 errors, 124 documented warnings. One additional warning flags an in-memory meta_value assignment, not a database query.
+
+The same ZIP is now installed on our production site. Existing settings and history were preserved; a normal WordPress API/hook save was confirmed at sequence 78 with matching S3 readback. Both language history lists displayed all 78 entries without warnings. Recovery through the new production sequence 78 has not yet been tested.
+
+ZIP SHA-256: ec0b5cbedd7855054d87ef5656ffcfbde25335c25d4e939b0291d73acf0874de
+Source: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.21
+Verification: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc21.md

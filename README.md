@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.21 is a new candidate, not yet deployed to community or submitted to WordPress.org. Submitted rc.20 is preserved. We are awaiting the reviewer's response; publication has NOT been approved.**
+**0.3.3 rc.21: update accepted by WordPress.org and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. The same ZIP is deployed to community.**
 
 [rc.21 verification, compatibility and candidate ZIP](docs/releases/wordpress-org-033-rc21.md).
 

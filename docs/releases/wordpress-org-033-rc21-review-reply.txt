@@ -1,0 +1,17 @@
+Hello Plugin Review Team,
+
+I have uploaded Ozeki Resilience 0.3.3 rc.21 to the existing application. It retains the previous review-response fixes and corrects issues found during ordinary use after recovery: preserving prepared destination templates/navigation, checking the referenced Markdown document's own viewing conditions before safe rendering, and preventing autosave/editor-lock updates from triggering unnecessary media reconciliation.
+
+The distinction between preserved originals and permitted execution remains unchanged. Markdown originals are preserved; rendered output is filtered, and unknown embedded commands remain text. Recovery does not install or initialize third-party software or deploy archived executable code. Existing originals/history and archive formats are not rewritten.
+
+The exact ZIP passed isolated installation/update, browser member/admin use, and real-S3 recovery/resave/recovery through production history 77. Plugin Check 2.2.0 reports 0 errors and 124 documented warnings; the extra warning concerns an in-memory meta_value assignment, not a database query. The same ZIP is now running on our production site, where a normal API/hook save was confirmed at sequence 78 with matching S3 readback and warning-free Japanese/English history display. Isolated recovery through the newly added sequence 78 is not included in these results.
+
+ZIP/source and verification:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.21
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc21.md
+SHA-256: ec0b5cbedd7855054d87ef5656ffcfbde25335c25d4e939b0291d73acf0874de
+
+Thank you for your continued review.
+
+Best regards,
+Hiroshi Ozeki

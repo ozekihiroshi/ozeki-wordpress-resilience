@@ -1,0 +1,14 @@
+{
+  "method": "WordPress API/hooks; separate-request S3 readback, not browser editor automation",
+  "post_id": 144,
+  "existing_history_count": 77,
+  "sequence": 78,
+  "history_count": 78,
+  "last_sequence": 78,
+  "original_readback_matches": true,
+  "other_existing_rows_unchanged": true,
+  "configuration_unchanged": true,
+  "existing_history_unchanged": true,
+  "public_append_visible": true,
+  "pending": false
+}

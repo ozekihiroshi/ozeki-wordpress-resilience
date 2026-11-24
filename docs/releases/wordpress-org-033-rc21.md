@@ -1,6 +1,6 @@
 # Ozeki Resilience 0.3.3 rc.21 — candidate verification
 
-2026-11-24。**community本番への導入前の候補です。WordPress.orgへの送信・審査メール返信は行っていません。提出済みrc.20は審査担当者の回答待ちであり、公開承認済みではありません。**
+**0.3.3 rc.21は2026-11-24に更新受付・審査メールへの返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。同じZIPをcommunity本番へ導入済みです。**
 
 ## 今回の向上
 
@@ -54,13 +54,27 @@ Plugin Check 2.2.0はエラー0、警告124。rc.20の123件に加え、`Recover
 
 保存元と同じデザインを自動再現する変更ではありません。復旧先で準備した表示構成を使います。識別できない参照は適用結果に残します。未知の外部プラグイン・任意の描画処理・すべての同時編集負荷まで確認したという意味ではありません。
 
-本番への導入は次の別途確認段階です。本番サイト・既存原本と履歴・提出済みrc.20を含む既存ZIPとタグは変更していません。研究側の未コミット変更も保全しています。
+上記は候補作成時の確認です。その後の結果は下記に追記しています。
 
 ## English summary
 
-rc.21 is a GitHub prerelease candidate, not deployed to community and not submitted to WordPress.org. Submitted rc.20 remains awaiting the reviewer’s response, not approved.
+**0.3.3 rc.21: update accepted by WordPress.org and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. The same ZIP is deployed to community.**
 
 This candidate preserves prepared destination templates/navigation, checks the referenced Markdown document’s own viewing conditions before safe rendering, and prevents revision autosaves/editor locks from triggering unnecessary media reconciliation. Original Markdown, archive formats and existing history remain unchanged. Recovery does not install or initialize third-party software. Previously textified references are not automatically decoded into executable commands.
 
 See the results and evidence above for exact-ZIP installation/update, Plugin Check, browser use and isolated real-S3 resave/recovery scope. Production installation is the next separately reviewed step.
 
+
+## 2026-11-24 本番導入・申請更新
+
+同一ZIPの全3,821ファイル一致、設定・既存履歴77件の維持を確認。許可済み確認ページ144の追記は正式履歴78へ確定し、別リクエストでS3原本との一致を確認しました。他の既存コンテンツ・設定・履歴1〜77は不変です。日英の履歴78件はPHP警告0、未完了・保存エラーなし。保護はオン、定期保存・自動削除はオフです。
+
+保存確認はWordPress APIと通常フックによるもので、本番ブラウザエディター操作ではありません。公開ページHTTP 200、フォーム・ログイン表示と非会員へのログイン案内を確認しました。問い合わせ送信・メール配送・会員ログインは今回再試験していません。隔離復旧・利用・再保存・再復旧は履歴77まで確認済みで、新しい履歴78の復旧は未確認です。
+
+WordPress.orgで「New version of Ozeki Resilience uploaded for review」と最新提出欄のrc.21・ZIP名・SHA-256を確認。元の審査スレッドへ返信し、Gmailの「メッセージを送信しました」を確認しました。公開承認ではなく、審査担当者の回答待ちです。
+
+- [送信した補足説明](wordpress-org-033-rc21-additional-information.txt)
+- [送信した返信本文](wordpress-org-033-rc21-review-reply.txt)
+- [本番確認の集計証跡](../../evidence-public/community-rc21-20261124/)
+
+提出済みZIP・タグ・対応ソースは不変です。受付・送信画面、本番の切戻し用DB・プラグインコピーは非公開領域に保管しています。
