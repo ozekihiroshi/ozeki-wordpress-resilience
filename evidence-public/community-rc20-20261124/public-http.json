@@ -1,0 +1,32 @@
+{
+  "/": {
+    "status": 200,
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": false
+  },
+  "/contact/": {
+    "status": 200,
+    "php_error_visible": false,
+    "cf7_form": true,
+    "member_login_form": false
+  },
+  "/member-login/": {
+    "status": 200,
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  },
+  "/technical-library/": {
+    "status": 200,
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  },
+  "/technical-materials-example/": {
+    "status": 200,
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  }
+}

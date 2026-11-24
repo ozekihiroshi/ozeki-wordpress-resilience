@@ -1,6 +1,6 @@
 # Ozeki Resilience 0.3.3 rc.20 — 本番導入前の候補
 
-2026-11-24。**GitHub候補配布です。community本番には未導入、WordPress.orgにも未提出で、公開承認済みではありません。** communityはrc.19のままです。提出済みrc.18、rc.19を含む既存ZIP・タグを保全しています。申請更新・審査メール返信は保留です。
+2026-11-24。**GitHub候補配布です。候補作成時点ではcommunity本番に未導入でした。WordPress.orgには未提出で、公開承認済みではありません。** その後、同日中にcommunityをrc.20へ更新し、履歴77まで確認しました（末尾追記）。提出済みrc.18、rc.19を含む既存ZIP・タグを保全しています。申請更新・審査メール返信は保留です。
 
 ## 今回の修正
 
@@ -48,3 +48,9 @@ rc.19が復旧した添付へ付ける自身の識別情報を、閲覧制限を
 rc.20 is a prerelease candidate, not deployed to community and not submitted to WordPress.org. It recognizes only our exact attachment provenance key as access-neutral. Private status, unknown metadata and inherited restrictions remain enforced. Archive formats and existing originals/history are unchanged; update recovery destinations too.
 
 The exact ZIP passed fresh installation, rc.19 update, Japanese/English admin rendering, Plugin Check (0 errors, the same 123 warnings), and isolated real-S3 recovery/resave/recovery using community history through 76. All 51 registered file originals remain available: 12 public and 39 held. Content, media and page restrictions matched after the second recovery. Prepared settings remained intact without plugin installation or initialization. These are API/HTTP checks, not a complete human browser acceptance test. Production deployment is the next separately reviewed step.
+
+## 本番導入後の追記（2026-11-24）
+
+同じZIPをcommunity本番へ導入しました。既存設定・履歴76件を維持し、確認ページの追記は77で確定、S3本文一致と日英の履歴77件表示を確認しました。[運用記録](../operations/community-rc20-20261124.md)。WordPress.org送信・メール返信は保留です。ZIP・タグは変更していません。
+
+Production follow-up: community now runs the same rc.20 ZIP; saving and bilingual history through 77 were verified. See the operation record above. Submission and review reply remain on hold.

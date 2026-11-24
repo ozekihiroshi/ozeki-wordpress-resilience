@@ -1,0 +1,15 @@
+{
+  "method": "WordPress API/hooks; separate-request S3 readback, not browser editor automation",
+  "post_id": 144,
+  "existing_history_count": 76,
+  "sequence": 77,
+  "history_count": 77,
+  "last_sequence": 77,
+  "original_readback_matches": true,
+  "other_existing_rows_unchanged": true,
+  "configuration_unchanged": true,
+  "existing_history_unchanged": true,
+  "public_append_visible": true,
+  "pending": false,
+  "verification_note": "Comparison excludes source/verified readback annotations; original check stopped on these added observation fields, not a stored history change. No second edit performed."
+}

@@ -1,0 +1,20 @@
+{
+  "admin_render": {
+    "en_US": {
+      "all_history_rows_displayed": true,
+      "records": 77
+    },
+    "ja": {
+      "all_history_rows_displayed": true,
+      "records": 77
+    }
+  },
+  "php_warnings": 0,
+  "formal_history_unchanged": true,
+  "history_count": 77,
+  "last_sequence": 77,
+  "no_form_submitted": true,
+  "protect": true,
+  "gfs": [],
+  "cleanup": false
+}
