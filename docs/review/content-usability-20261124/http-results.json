@@ -1,0 +1,35 @@
+[
+  {
+    "overlap_request": {
+      "status": 200,
+      "seconds": 0.750742296106182
+    },
+    "case": "cold-overlap",
+    "status": 200,
+    "seconds": 6.017937371041626,
+    "marker_in_response": true,
+    "error": null,
+    "marker_committed": true,
+    "state": {
+      "pending": false,
+      "post_pending": false,
+      "shared_pending": 0,
+      "capture_error": false
+    }
+  },
+  {
+    "overlap_request": null,
+    "case": "single-settled",
+    "status": 200,
+    "seconds": 3.5085986950434744,
+    "marker_in_response": true,
+    "error": null,
+    "marker_committed": true,
+    "state": {
+      "pending": false,
+      "post_pending": false,
+      "shared_pending": 0,
+      "capture_error": false
+    }
+  }
+]

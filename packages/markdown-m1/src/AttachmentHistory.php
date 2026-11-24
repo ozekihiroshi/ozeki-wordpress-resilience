@@ -47,7 +47,10 @@ final class AttachmentHistory {
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,function($mid,$id,$key){
             if(get_post_type($id)==='attachment'&&!in_array($key,['_edit_lock','_edit_last'],true))self::mark((int)$id);
         },PHP_INT_MAX,3);
-        add_action('shutdown',fn()=>self::flush(),PHP_INT_MAX);
+        add_action('shutdown',static function(){
+            try{SaveFailure::run('Attachment capture',fn()=>self::flush());}
+            catch(\Throwable $e){/* Pending originals remain; the existing notice and Resume history handle retry. */}
+        },PHP_INT_MAX);
         add_action('admin_notices',function(){
             $pending=(array)get_option(self::PENDING,[]);if(!$pending||!current_user_can('manage_options'))return;
             echo '<div class="notice notice-error"><p>'.esc_html(SetupReadiness::text('Attachment preservation is incomplete. Restore the missing source files, then use Resume history in Tools → Resilience. Attachment IDs: ','添付ファイルの保全が未完了です。保存元の不足ファイルを戻し、ツール → Resilienceの「履歴を再開」を実行してください。添付ID: ').implode(', ',array_map('intval',array_keys($pending)))).'</p><ul>';
@@ -73,7 +76,7 @@ final class AttachmentHistory {
         self::flush();return !(array)get_option(self::PENDING,[]);
     }
     public static function flush(): void {
-        if(!self::enabled()||self::$running)return;
+        if(!self::enabled()||self::$running||!get_option(self::PENDING,[]))return;
         $lock=self::lock();
         self::$running=true;
         try {

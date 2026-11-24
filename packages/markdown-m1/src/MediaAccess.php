@@ -10,7 +10,16 @@ final class MediaAccess {
     public const ORIGINAL_FORMAT='owr-md-original-media-access-1';
     public const SCHEMA='owr-media-access-1';
     public const OPTION='ozeki_resilience_media_hold';
+    public const PENDING='ozeki_resilience_media_capture_pending';
     private bool $dirty=false;
+    public static function scope(array $config): string {
+        return hash('sha256',serialize(array_intersect_key($config,array_flip(['bucket','prefix','region','owner']))));
+    }
+    public static function baselineComplete(array $rules,string $scope): void {
+        if($scope!==self::scope((new Plugin())->config())||get_option('ozeki_resilience_m1_pending')||get_option(AttachmentHistory::PENDING)||get_option(CommentHistory::PENDING))return;
+        update_option('ozeki_resilience_media_capture_state',['rules'=>self::validate($rules),'scope'=>$scope],false);
+        delete_option(self::PENDING);
+    }
     public static function validate(array $rules): array {
         foreach($rules as $path=>$rule){
             if(!is_string($path)||!SiteSnapshot::isInformationFile($path)||!is_array($rule)||array_keys($rule)!==['state']||!in_array($rule['state'],['public','held','unknown'],true))throw new \RuntimeException('Invalid media access contract.');
@@ -68,10 +77,20 @@ final class MediaAccess {
     }
     public function boot(): void {
         foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,function($mid,$id,$key){
-            if(!str_starts_with($key,'_ozeki_resilience')&&!in_array($key,['_edit_lock','_edit_last'],true))$this->dirty=true;
+            // Revisions cannot change FileScope's registered attachment conditions.
+            if(get_post_type($id)!=='revision'&&!str_starts_with($key,'_ozeki_resilience')&&!in_array($key,['_edit_lock','_edit_last'],true))$this->dirty=true;
         },PHP_INT_MAX,3);
-        foreach(['wp_after_insert_post','deleted_post'] as $hook)add_action($hook,function(){$this->dirty=true;},PHP_INT_MAX);
-        add_action('shutdown',function(){if($this->dirty)SaveFailure::run('Media access capture',fn()=>self::record());},PHP_INT_MAX);
+        add_action('wp_after_insert_post',function($id,$post){if($post->post_type!=='revision')$this->dirty=true;},PHP_INT_MAX,2);
+        add_action('deleted_post',function($id,$post){if($post->post_type!=='revision')$this->dirty=true;},PHP_INT_MAX,2);
+        add_action('shutdown',function(){
+            if(!$this->dirty||empty((new Plugin())->config()['protect']))return;
+            update_option(self::PENDING,true,false);
+            try{SaveFailure::run('Media access capture',fn()=>self::record());}
+            catch(\Throwable $e){/* Durable pending flag + diagnostic remain for explicit retry. */}
+        },PHP_INT_MAX);
+        add_action('admin_notices',static function(){
+            if(get_option(self::PENDING)&&current_user_can('manage_options'))echo '<div class="notice notice-warning"><p>'.esc_html(SetupReadiness::text('File access preservation is incomplete. Use Recheck file access in Tools → Resilience before relying on the new recovery point.','ファイル閲覧条件の保全が未完了です。「ツール → Resilience」で閲覧条件を再確認してから、新しい復旧点を利用してください。')).'</p></div>';
+        });
     }
     public static function record(bool $force=false): void {
         $config=(new Plugin())->config();
@@ -81,13 +100,13 @@ final class MediaAccess {
         try {
         wp_cache_delete('ozeki_resilience_media_capture_state','options');
         $rules=self::current();
-        $scope=hash('sha256',serialize(array_intersect_key($config,array_flip(['bucket','prefix','region','owner']))));
+        $scope=self::scope($config);
         $previous=get_option('ozeki_resilience_media_capture_state',null);
         if(!is_array($previous)||($previous['scope']??null)!==$scope)$previous=null;
         // This is a local completion hint, not a new archive format. An absent hint
         // requires a complete reconciliation, including after an upgrade.
         if(!$force&&is_array($previous)&&($previous['rules']??null)===$rules
-            &&!get_option('ozeki_resilience_m1_pending',[])&&!get_option(AttachmentHistory::PENDING,[])&&!get_option(CommentHistory::PENDING,[]))return;
+            &&!get_option('ozeki_resilience_m1_pending',[])&&!get_option(AttachmentHistory::PENDING,[])&&!get_option(CommentHistory::PENDING,[])){delete_option(self::PENDING);return;}
         $changed=null;
         if(!$force&&is_array($previous)&&is_array($previous['rules']??null)){
             $changed=[];
@@ -95,7 +114,9 @@ final class MediaAccess {
         }
         if(!AttachmentHistory::reconcile($changed))return;
         (new CommentHistory())->enqueueCurrent('media-access',fn()=>Store::json(['schema'=>self::SCHEMA,'rules'=>self::current()]),['post_type'=>'owr_media_access','content_format'=>'media-access-json','media_access_schema'=>self::SCHEMA]);
-        if(!get_option(CommentHistory::PENDING,[])&&!get_option(AttachmentHistory::PENDING,[]))update_option('ozeki_resilience_media_capture_state',['rules'=>$rules,'scope'=>$scope],false);
+        if(!get_option(CommentHistory::PENDING,[])&&!get_option(AttachmentHistory::PENDING,[])){
+            update_option('ozeki_resilience_media_capture_state',['rules'=>$rules,'scope'=>$scope],false);delete_option(self::PENDING);
+        }
         } finally {$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock));}
     }
     public static function replay(array &$data,string $source): void {

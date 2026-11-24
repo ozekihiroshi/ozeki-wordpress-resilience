@@ -15,14 +15,14 @@ final class RecoveryContent {
         $notes=[];$data['post_content']=wp_slash(self::html(wp_unslash($data['post_content']),'edited.block',$notes));
         return $data;
     }
-    public static function html(string $input,string $path,array &$report): string {
+    public static function html(string $input,string $path,array &$report,bool $references=true): string {
         $text=$input;
         // A restored block must not invoke an arbitrary server-side render callback.
         if(preg_match('/<!--\s+wp:/',$text))$text=self::blocks(parse_blocks($text),$path,$report);
         // Code examples remain text, including otherwise supported shortcodes.
         $text=preg_replace_callback('~<(pre|code)\b[^>]*>.*?</\1\s*>~is',static fn($m)=>str_replace(['[',']'],['&#91;','&#93;'],$m[0]),$text);
         // Preserve only supported references, not arbitrary executable shortcodes.
-        $text=preg_replace_callback('~\[(/?)([^\s<>&/\[\]=]+)([^\]]*)\]~',static function($m)use($path,&$report){
+        $text=preg_replace_callback('~\[(/?)([^\s<>&/\[\]=]+)([^\]]*)\]~',static function($m)use($path,&$report,$references){
             $allowed=false;
             if(!$m[1]&&in_array($m[2],['table','contact-form-7'],true)){
                 $attrs=shortcode_parse_atts(trim($m[3]));
@@ -31,6 +31,11 @@ final class RecoveryContent {
             }
             if(!$m[1]&&$m[2]==='wpmem_form'&&preg_match('/^\s+(login|user_edit|password)\s*\/?$/D',$m[3]))$allowed=true;
             if(!$m[1]&&$m[2]==='wpmem_profile'&&trim($m[3])==='')$allowed=true;
+            if(!$m[1]&&$m[2]==='ozeki_markdown_document'){
+                $attrs=shortcode_parse_atts(trim($m[3]));
+                $allowed=is_array($attrs)&&array_keys($attrs)===['id']&&preg_match('/^[1-9][0-9]*$/D',(string)$attrs['id']);
+            }
+            if(!$references)$allowed=false;
             if($allowed)return $m[0];
             $report[]=['item'=>$path,'reason'=>'Unrecognized shortcode retained as readable text, not executed'];
             return str_replace(['[',']'],['&#91;','&#93;'],$m[0]);
@@ -38,6 +43,39 @@ final class RecoveryContent {
         $safe=wp_kses_post($text);
         if($safe!==$text)$report[]=['item'=>$path,'reason'=>'Unsafe HTML omitted from application; original retained'];
         return $safe;
+    }
+    /** A recovered document reference is not permission to bypass its own viewing rules. */
+    public static function markdownEmbed($output,string $tag,$attrs,array $match): mixed {
+        if($tag!=='ozeki_markdown_document')return $output;
+        $context=get_post();$id=is_array($attrs)?($attrs['id']??null):null;
+        $doc=is_scalar($id)&&preg_match('/^[1-9][0-9]*$/D',(string)$id)?get_post((int)$id):null;
+        $recovered=get_option('ozeki_resilience_site_origin_url')
+            ||($context&&get_post_meta($context->ID,'_ozeki_resilience_m1_origin_url',true))
+            ||($doc&&get_post_meta($doc->ID,'_ozeki_resilience_m1_origin_url',true));
+        if(!$recovered)return $output;
+        if(!is_array($attrs)||array_keys($attrs)!==['id'])return '';
+        if(!$doc||$doc->post_type!=='ozmd_document')return self::missingDocument((int)$id);
+        if(in_array($doc->post_status,['trash','auto-draft'],true)||($doc->post_status!=='publish'&&!current_user_can('read_post',$doc->ID))||post_password_required($doc))return '';
+        global $shortcode_tags,$post;
+        $callback=$shortcode_tags[$tag]??null;
+        if(!is_array($callback)||!($callback[0] instanceof \OzekiMarkdownDocuments\Frontend\DocumentShortcode)||$callback[1]!=='render')return self::missingDocument((int)$id);
+        $old=$post;$post=$doc;
+        try {
+            $restriction=(string)get_post_meta($doc->ID,'_wpmem_block',true);
+            $blocked=function_exists('wpmem_is_blocked')?wpmem_is_blocked($doc->ID):in_array($restriction,['1','2'],true);
+            if(($blocked||$restriction==='2')&&!is_user_logged_in())return '';
+            // Unknown membership extensions must not silently grant a document read.
+            if(($blocked||$restriction==='2')&&(!empty($GLOBALS['wpmem']->use_exp)
+                ||(function_exists('wpmem_get_post_memberships')&&wpmem_get_post_memberships($doc->ID))))return '';
+            $html=$output===false?call_user_func($callback,$attrs):$output;$notes=[];
+            if(!is_string($html))return '';
+            // Never recursively execute commands contained in the referenced document.
+            return self::html($html,'markdown.embed.'.$doc->ID,$notes,false);
+        } finally {$post=$old;}
+    }
+    private static function missingDocument(int $id): string {
+        if(!current_user_can('manage_options'))return '';
+        return '<p>'.esc_html(sprintf(SetupReadiness::text('Markdown document %d is unavailable. Check the document reference and activate Markdown Documents.','Markdown文書 %d を表示できません。参照先の文書とMarkdown Documentsの有効化を確認してください。'),$id)).'</p>';
     }
     private static function blocks(array $blocks,string $path,array &$report): string {
         $out='';

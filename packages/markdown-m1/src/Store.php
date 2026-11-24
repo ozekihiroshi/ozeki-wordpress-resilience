@@ -14,6 +14,7 @@ final class Store
     private static function sourceName(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json'=>'source.json','wordpress-block-html'=>'source.html',default=>'source.md'};}
     private static function sourceType(array $a): string {return match($a['content_format']??'markdown'){'comment-json','form-json','member-json','table-json','native-state-json','acf-json','media-access-json','attachment-json'=>'application/json','wordpress-block-html'=>'text/html',default=>'text/markdown'};}
     public function __construct(private object $s3, private array $config) {}
+    public function mediaScope(): string { return MediaAccess::scope($this->config); }
     private function requireWriter(): void {
         if (($this->config['setup_role']??'source')==='recovery') {
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Localized diagnostic; escaped by admin renderers.

@@ -1,0 +1,10 @@
+{
+  "operations_measured": 1782,
+  "seconds_median": 0.12859390955418348,
+  "seconds_p95": 0.2520954010542482,
+  "seconds_max": 7.207258723094128,
+  "transport_failures": 0,
+  "fixed_source_count": 638,
+  "fixed_source_hashes_unchanged": true,
+  "candidate_sha256": "90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610"
+}

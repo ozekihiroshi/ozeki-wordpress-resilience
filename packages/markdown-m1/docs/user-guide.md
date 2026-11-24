@@ -153,3 +153,5 @@ These application rules do not change stored originals/history or require a new 
 ## Originals and safe use after recovery
 
 Preserved originals and safe presentation are separate. Markdown source remains unchanged; recovery filters executable HTML and keeps unrecognized shortcodes and dynamic blocks as text. Supported form definitions, table cells, member fields and ACF values retain their data meaning. Normal editing of recovered content keeps this boundary; prepare any additional executable behaviour separately on the trusted destination.
+
+Templates and block navigation use the configuration prepared on the destination. Archived custom layouts are not activated automatically. Prepare a template that displays page content, then check menu destinations after recovery. Embedded Markdown follows the referenced document's own viewing conditions. Embeds converted to text by an earlier recovery are not decoded in bulk; recover from the original or have an administrator set the correct document reference.

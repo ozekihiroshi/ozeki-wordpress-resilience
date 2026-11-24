@@ -22,6 +22,10 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        add_filter('pre_do_shortcode_tag',static function($output,$tag,$attrs,$match){
+            require_once __DIR__.'/RecoveryContent.php';
+            return RecoveryContent::markdownEmbed($output,$tag,$attrs,$match);
+        },PHP_INT_MAX,4);
         add_filter('wp_insert_post_data',static function($data,$postarr){
             require_once __DIR__.'/RecoveryContent.php';
             return RecoveryContent::editedBlock($data,$postarr);
