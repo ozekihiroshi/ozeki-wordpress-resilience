@@ -1,0 +1,37 @@
+{
+  "/": {
+    "status": 200,
+    "final_url": "https://www.community-energy.jp/",
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": false
+  },
+  "/contact/": {
+    "status": 200,
+    "final_url": "https://www.community-energy.jp/contact/",
+    "php_error_visible": false,
+    "cf7_form": true,
+    "member_login_form": false
+  },
+  "/member-login/": {
+    "status": 200,
+    "final_url": "https://www.community-energy.jp/member-login/",
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  },
+  "/technical-library/": {
+    "status": 200,
+    "final_url": "https://www.community-energy.jp/technical-library/",
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  },
+  "/technical-materials-example/": {
+    "status": 200,
+    "final_url": "https://www.community-energy.jp/technical-materials-example/",
+    "php_error_visible": false,
+    "cf7_form": false,
+    "member_login_form": true
+  }
+}

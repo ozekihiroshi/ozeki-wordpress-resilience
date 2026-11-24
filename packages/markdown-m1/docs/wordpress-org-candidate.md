@@ -1,8 +1,8 @@
 # Current distribution status / 現行版の配布状況
 
-**0.3.3 rc.19 is a GitHub candidate for community production validation before submission. It has NOT been submitted to WordPress.org or installed on community. Publication is not approved. Submitted rc.18 remains preserved under review.**
+**0.3.3 rc.19 is a GitHub candidate for community production validation before submission. It has NOT been submitted to WordPress.org. Installed on community on 2026-11-24; normal-use validation is ongoing. Publication is not approved. Submitted rc.18 remains preserved under review.**
 
-**0.3.3 rc.19は申請前のcommunity本番確認用候補です。WordPress.orgへは未提出、community本番へも未導入です。公開承認済みではありません。提出済みrc.18は審査中の記録として保全しています。**
+**0.3.3 rc.19は申請前のcommunity本番確認用候補です。WordPress.orgへは未提出です。2026-11-24にcommunity本番へ導入し、通常利用での確認を進めています。公開承認済みではありません。提出済みrc.18は審査中の記録として保全しています。**
 
 - [Installable ZIP / 導入用ZIP](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/download/wporg-0.3.3-rc.19/ozeki-resilience-0.3.3.zip)
 - [Matching source / 対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/tree/wporg-0.3.3-rc.19)
@@ -16,3 +16,5 @@ Originals remain unchanged. Recovery applies safe presentation rules and preserv
 Use the installable ZIP, not GitHub source archives. See [updating](install-update.md), [setup](user-guide.md) / [導入ガイド](user-guide-ja.md).
 
 [Submitted rc.18 / 提出済みrc.18の記録](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/releases/wordpress-org-033-rc18.md). Existing ZIP and tag are unchanged / 既存ZIP・タグは変更していません。
+
+[Community rc.19 operation record / 本番更新・保存・日英履歴76件の確認](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/blob/main/docs/operations/community-rc19-20261124.md)
