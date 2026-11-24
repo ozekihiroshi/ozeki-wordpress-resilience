@@ -1,0 +1,62 @@
+{
+  "first_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 77,
+    "posts": 94,
+    "files": 12,
+    "not_applied": 272
+  },
+  "first_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "initial_media_states": {
+    "public": 12,
+    "held": 39,
+    "unknown": 0
+  },
+  "new_baseline": {
+    "files": 346,
+    "through": 0
+  },
+  "resave": {
+    "updated": true
+  },
+  "resaved_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "second_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 26,
+    "posts": 94,
+    "files": 12,
+    "not_applied": 133
+  },
+  "second_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "roundtrip_completed": true,
+  "all_registered_files_recovered": true,
+  "missing_byte_count": 0,
+  "media_roundtrip_equal": true,
+  "content_roundtrip_equal": true,
+  "page_restrictions_equal": true,
+  "test_s3_versions": 480,
+  "source_data_used_fixed_version_copy": true,
+  "source_write_credentials_transferred": false,
+  "second_history_through": 26,
+  "candidate_zip_sha256": "90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610",
+  "candidate_not_submitted": true,
+  "production_append_and_trial_append_present": {
+    "first": true,
+    "second": true
+  },
+  "method": "Isolated Docker, fixed-version source copy from read-only S3, fresh scoped real-S3 resave and second recovery; WordPress API/hooks and internal HTTP, not browser automation."
+}

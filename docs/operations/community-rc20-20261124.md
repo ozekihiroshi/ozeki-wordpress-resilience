@@ -43,3 +43,9 @@ Only existing verification page 144 was appended. Its body was confirmed at sequ
 Japanese and English administration rendering displayed all 77 history rows without PHP warnings. Public contact/login forms and anonymous login prompts on the technical pages were present. Saving used WordPress APIs/hooks, not browser editor automation. No inquiry delivery or member-login test was performed. Isolated recovery through the newly added sequence 77 remains outside this record; candidate validation had covered recovery/resave/recovery through source sequence 76.
 
 This documentation update does not access production or modify originals, history, ZIPs or tags. rc.20 has not been submitted to WordPress.org, no review reply was sent, and publication is not approved.
+
+## 後続の隔離復旧確認 / Subsequent isolated recovery
+
+同日、履歴77までを使ったrc.20の隔離復旧・実S3への再保存・再復旧を完了しました。[結果と確認範囲](community-rc20-history77-20261124.md)。上記の本番保存確認とは別の作業で、本番への追加変更はありません。
+
+Recovery/resave/recovery through source history 77 subsequently passed in isolation. See the linked record for scope and preservation checks; no further production change was made.

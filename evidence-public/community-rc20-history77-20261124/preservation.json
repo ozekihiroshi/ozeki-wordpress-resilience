@@ -1,0 +1,12 @@
+{
+  "source_versions": 638,
+  "source_bytes": 10993297,
+  "source_inventory_unchanged": true,
+  "remaining_trial_resources": {
+    "containers": [],
+    "networks": [],
+    "volumes": []
+  },
+  "rc20_zip_sha256": "90849e809d215b9472fba3c36226a171fffb432922cf7aaf6eb14ea1a516e610",
+  "production_site_modified": false
+}
