@@ -1,0 +1,26 @@
+{
+  "files": 3820,
+  "bytes": 8320663,
+  "sha256": "6651029403cabd57c69e5aba7febe582b5784cfa800687ca7dc8e0182c2a6d9d",
+  "changes_from_rc18": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/docs/user-guide-ja.md",
+    "ozeki-resilience/docs/user-guide.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/AdminText.php",
+    "ozeki-resilience/src/AttachmentHistory.php",
+    "ozeki-resilience/src/MediaAccess.php",
+    "ozeki-resilience/src/MemberHistory.php",
+    "ozeki-resilience/src/Plugin.php",
+    "ozeki-resilience/src/RecoveryContent.php",
+    "ozeki-resilience/src/RecoveryWorkspace.php",
+    "ozeki-resilience/src/SiteSnapshot.php"
+  ],
+  "removed": [],
+  "vendor_unchanged": true,
+  "user_guides": 8,
+  "relative_links_checked": 86,
+  "development_files_absent": true
+}
