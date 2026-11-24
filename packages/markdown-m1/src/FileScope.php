@@ -37,7 +37,8 @@ final class FileScope {
             if(!in_array($p['post_status'],['inherit','publish'],true)||!empty($p['post_password'])){$denied+=$paths;continue;}
             $ownedElsewhere=false;foreach($unknownReferences as $references)foreach($paths as $path=>$_)if($references===false||str_contains($references,substr($path,8))){$ownedElsewhere=true;break 2;}
             if($ownedElsewhere){$denied+=$paths;continue;}
-            $known=['_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt','_wp_attachment_backup_sizes','_wp_attachment_context','_wp_attachment_is_custom_header','_wp_attachment_is_custom_background','_edit_lock','_edit_last'];
+            // Our exact provenance marker carries no access permission. Unknown metadata still fails closed.
+            $known=['_ozeki_resilience_m1_origin_url','_wp_attached_file','_wp_attachment_metadata','_wp_attachment_image_alt','_wp_attachment_backup_sizes','_wp_attachment_context','_wp_attachment_is_custom_header','_wp_attachment_is_custom_background','_edit_lock','_edit_last'];
             if(array_diff(array_keys($m),$known)){$denied+=$paths;continue;}
             // A page password, draft state or membership rule does not protect its file URL.
             $out+=$paths;

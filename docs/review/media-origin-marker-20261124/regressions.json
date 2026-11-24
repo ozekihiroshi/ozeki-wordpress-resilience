@@ -1,0 +1,20 @@
+[
+  {
+    "test": "file-scope.php",
+    "exit": 0,
+    "stdout": "File ownership and access boundary PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "media-access.php",
+    "exit": 0,
+    "stdout": "Media access contract PASS\n",
+    "stderr": ""
+  },
+  {
+    "test": "attachment-contract.php",
+    "exit": 0,
+    "stdout": "Attachment complete / missing original / missing preview / missing access / orphan rule PASS\n",
+    "stderr": ""
+  }
+]
