@@ -1,0 +1,137 @@
+{
+  "date_jst": "2026-11-28",
+  "candidate": "0.3.3 rc.23",
+  "zip_sha256": "062a8c423c4ecca40b0075dc65d4d783e27ed884024fc66c5933f341e7de5447",
+  "source_commit": "ebac41426b3dd09c9b3c93c2fedddabcfb841618",
+  "production_baseline": {
+    "stored_resources": 438,
+    "through": 81,
+    "reassembled_files": 58,
+    "wordpress": "7.1.5"
+  },
+  "production_preservation": {
+    "content_unchanged": true,
+    "configuration_unchanged": true,
+    "history_unchanged": true,
+    "history_count": 81,
+    "protect": true,
+    "gfs": [],
+    "cleanup": false,
+    "baseline_recorded": true
+  },
+  "first_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 81,
+    "posts": 115,
+    "files": 12,
+    "not_applied": 345
+  },
+  "first_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "media": {
+    "count": 51,
+    "states": {
+      "public": 12,
+      "held": 39,
+      "unknown": 0
+    },
+    "missing_originals": 0,
+    "public_http_status": 200,
+    "held_direct_http_status": 404,
+    "bytes_and_access_roundtrip_equal": true
+  },
+  "member_test_account": "Created only in isolation; production had no subscriber",
+  "usage": {
+    "second": {
+      "member_login_succeeded": true,
+      "member_pages_checked": 2,
+      "member_http_statuses": [
+        200,
+        200
+      ],
+      "guest_output_differs": true,
+      "markdown_embeds_checked": 3
+    },
+    "first": {
+      "member_login_succeeded": true,
+      "member_pages_checked": 2,
+      "member_http_statuses": [
+        200,
+        200
+      ],
+      "guest_output_differs": true,
+      "markdown_embeds_checked": 3
+    }
+  },
+  "trial_baseline": {
+    "files": 393,
+    "through": 0
+  },
+  "confirmed_trial_history": {
+    "4": {
+      "type": "owr_acf",
+      "format": "acf-json",
+      "confirmed": true
+    },
+    "2": {
+      "type": "owr_native",
+      "format": "native-state-json",
+      "confirmed": true
+    },
+    "1": {
+      "type": "page",
+      "format": "wordpress-block-html",
+      "confirmed": true
+    },
+    "3": {
+      "type": "owr_acf",
+      "format": "acf-json",
+      "confirmed": true
+    }
+  },
+  "resaved_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "second_restore": {
+    "software_unchanged": true,
+    "no_installer_included": true,
+    "through": 4,
+    "posts": 115,
+    "files": 12,
+    "not_applied": 140
+  },
+  "second_prepared": {
+    "settings_preserved": true,
+    "widget_rendered": true,
+    "table_load_checked": true
+  },
+  "roundtrip_completed": true,
+  "selected_content_equal": true,
+  "page_restrictions_equal": true,
+  "memory": {
+    "initial_cli_limit_mb": 128,
+    "initial_cli_result": "memory exhaustion",
+    "successful_cli_limit_mb": 256,
+    "observed_wp_max_memory_limit": "256M",
+    "recovery_via_browser_button_tested": false
+  },
+  "transport": {
+    "production_read_operations": 686,
+    "production_mutations": 0,
+    "isolated_put_operations": 410,
+    "writes_only_in_new_test_prefix": true,
+    "source_write_credentials_transferred": false
+  },
+  "scope_notes": [
+    "Recorded Markdown Documents version was 0.1.2.",
+    "Non-applied entries were counted, not reclassified.",
+    "No full browser-editor walkthrough or inquiry/mail-delivery test.",
+    "Original content, account data and storage identifiers are omitted."
+  ]
+}

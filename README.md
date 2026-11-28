@@ -2,7 +2,7 @@
 
 [rc.23 candidate download](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23) · [ZIP verification and review status](docs/review/path-startup-20261128/RC23-PACKAGE.txt).
 
-**0.3.3 rc.23 was accepted as an update to the existing WordPress.org application on November 28, 2026, and the review email reply was sent. We are awaiting the review team's response; publication has NOT been approved. rc.23 has not been deployed to production.**
+**0.3.3 rc.23 was accepted as an update to the existing WordPress.org application on November 28, 2026, and the review email reply was sent. We are awaiting the review team's response; publication has NOT been approved. rc.23 is deployed on community; its new Baseline and isolated recovery/re-save checks are recorded with their [scope and memory conditions](docs/operations/community-rc23-roundtrip-20261128.md).**
 
 [rc.22 submission, compatibility and verification](docs/review/core-updates-20261124/RC22-PACKAGE.ja.md).
 
