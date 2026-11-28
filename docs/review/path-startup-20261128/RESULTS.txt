@@ -1,0 +1,84 @@
+2026-11-28: 作業領域の境界判定と設定移行失敗の影響範囲
+
+今回取り込む修正
+1. SiteSnapshotとRecoveryWorkspaceが同じrealpath・ディレクトリ境界判定を使用する。
+   WordPressと同じ文字列で始まる隣接ディレクトリを誤って拒否しない。
+   WordPress内部と直接のシンボリックリンクを拒否する従来の条件は維持する。
+2. 設定移行失敗時に、無関係な投稿・ユーザー・分類・REST操作まで止める全体ガードを撤去する。
+   Resilienceの起動だけを止め、WordPressの通常の権限確認は維持する。
+3. 正常移行では保護設定、初回保存の確認状態、未完了保存を維持する。
+   移行が必要という理由だけでは保全中断の記録を作らない。
+4. 起動に失敗して保全できない場合だけ、DBに中断の可能性を記録する。
+   再試行の成功、無効化・再有効化では消さない。別リクエストが記録した中断も読み直す。
+   再試行成功後は保護オフとし、未完了保存・停止中の変更の確認、新しい初回保存、
+   明示的な保護開始を案内する。削除するのはローカルの初回保存確認マーカーであり、S3原本ではない。
+5. 初回保存の成功後に中断マーカーを解除するが、それだけでは保護をオンにしない。
+
+方針の訂正
+開発途中では、移行開始時に中断マーカーを作り、正常移行でも初回保存を要求していた。
+これは移行実施と保全中断を混同した過剰な動作だったため撤回した。この文書はその最終方針を示す。
+中断マーカーは「変更が実際に失われた証拠」ではなく、保全しないまま通常操作を許可した可能性の記録。
+新しい初回保存はその時点の状態を保全するもので、停止期間中の全変更履歴を後から再現するものではない。
+
+確認結果
+A. 限定した回帰確認
+   startup-boundary.php: 変更前に正常移行の維持条件で失敗、変更後に成功。
+   正常移行、失敗時の影響限定、再試行時の停止、明示再開、記録書込み自体の失敗を確認。
+   workspace-boundary.php: 隣接ディレクトリの許可、内部・リンクの拒否を確認。
+   review-workspace.php / review-backup-write.php: 作業領域の所有・整理・切戻し資料の保持を確認。
+   新しい2件の回帰確認は既存ActionsのPHP 8.1/8.3ジョブに追加した。
+
+B. 最終Startup修正を使った実WordPress / MariaDBの隔離確認
+   根拠: startup-lifecycle-result.json（合成データのみ）。
+   ・実際の旧識別名からの移行後、protect=true、初回保存確認、未完了保存が一致。
+     中断マーカーはなく、次の起動でも同じ状態。
+   ・移行失敗後の次の起動・無効化・再有効化でもpendingを保持。
+   ・再試行成功後はpausedとprotect=false。再有効化しても維持。
+   ・実DBの移行ロックを使い、2個のPHPプロセスを並行実行した。
+     失敗記録が先: 成功側が記録を読み、保護を停止する。
+     成功が先: 成功した処理は一旦保護を維持するが、後から入る失敗記録は消えず、次の起動で停止する。
+     既に実行中の処理を遡って止める保証ではない。
+   ・移行失敗中も通常の投稿・ユーザー・分類操作が成立。日英の管理者向け表示を確認。
+   ・使い捨てDockerのDB、コンテナ、ボリューム、ネットワークを削除し、後片付けエラーなし。
+
+C. 実S3での初回保存→明示再開→正式履歴（正常移行の扱いを絞る前に実施）
+   根拠: s3-restart-summary.json。今回変更していない初回保存・再開の処理を通した確認。
+   ・新規の試験専用プレフィックスを使用し、実S3への作成専用書込みとバージョン指定読取りを実施。
+   ・初回保存前の保護開始は拒否。12資産の保存・読み戻しとmanifest作成後に中断マーカーを解除。
+     この時点では保護オフ。明示的な設定保存後にオン。
+   ・通常のwp_update_postによる追記を含む正式履歴をS3から確認。記録2件、本文の記録はsequence=1。
+     未確定保存・処理エラーなし。次の起動も保護オン。
+   ・最終19バージョン。初回保存13バージョンのETag・サイズ・最新フラグは不変。
+   ・試験中継のAWS CLI引数不備による失敗は成功に数えていない。その時には中断記録と保護オフを維持。
+     最後の版一覧取得は中継の非原子的なファイル公開と競合したため、同じ試験範囲の読取り専用取得で補完。
+   ・WordPressへ認証情報を渡さない試験用中継を使用。標準SDK認証経路の検証や性能測定ではない。
+   ・管理画面と同じ権限・nonce付きactionをPHPから呼び出した確認であり、ブラウザクリックの確認ではない。
+   ・最終Startupの正常移行修正後に実S3全工程を再実行した、とは扱わない。
+
+限界と残る扱い
+・DB自体が中断記録を書き込めなければ、その記録の永続性は保証できない。
+  当該リクエストで保全を起動せず、専用の警告と固定文言のサーバーログを出すことを確認した。
+・強制終了、DB巻戻し、管理者による記録削除等まで今回の永続性確認に含めない。
+・新しいZIP、Plugin Check、全復旧工程、全規模での性能は今回の最終確認の対象外。
+・一時領域のWP_CONTENT_DIR自動代替は未実装。全Web公開領域の外にある書込み可能な領域を優先する。
+  ランダム名、0700、index.php、.htaccessだけで全サーバーの非公開性が確定するとは扱わない。
+・Markdown原本保存は変更しない。独立原本と安全な適用・表示を区別する審査返信案は未送信。
+  以上をもって、今回の審査指摘がすべて承認されたとは扱わない。
+
+保全と公開状態
+本番、既存S3原本・履歴、提出済みZIP、既存タグは変更しない。
+提出済みrc.22のSHA256: 59db41d96e210e892c2a0cf53f85d5d581436a2d86a84d362986d852249fbeba
+この取り込みはソースと確認記録のみ。新ZIPの作成、WordPress.orgへの更新、審査メール返信は行わない。
+
+English summary
+Successful identifier migration preserves existing protection, baseline readiness and pending work.
+Only a failed preservation startup records an interruption. A successful retry or plugin reactivation
+does not erase it. Fresh reads account for a failure recorded by a concurrent request; both completion
+orders were checked with separate PHP processes and actual MariaDB locks. A delayed failure is acted
+on at the next startup, not by retroactively cancelling a running successful request.
+Unrelated WordPress operations keep their core permission checks. Failure to persist the interruption
+itself is explicitly reported; durability through a database write outage is not claimed.
+The shared workspace path check fixes sibling-prefix rejection without introducing a web-root fallback.
+The actual-S3 restart evidence predates the final successful-migration refinement; its unchanged admin
+action path passed, with the test-transport limitations described above. No release artifact or review
+submission is produced by this source merge.

@@ -1,0 +1,28 @@
+{
+  "scope": "Fresh synthetic-only prefix in existing isolated S3 test bucket",
+  "source_note": "rc.22 plus initial startup/path fixes; before normal-migration refinement",
+  "initial_resources": 12,
+  "initial_versions": 13,
+  "initial_completed_marker": false,
+  "initial_completed_protect": false,
+  "explicit_start_protect": true,
+  "history": {
+    "count": 2,
+    "pages": [
+      {
+        "sequence": 1,
+        "confirmed_at": "2026-11-28T11:46:39+09:00",
+        "contains_edit": true
+      }
+    ],
+    "pending": false,
+    "error": false,
+    "failure": false
+  },
+  "next_boot_protect": true,
+  "final_version_count": 19,
+  "initial_versions_unchanged": true,
+  "cleanup_errors": [],
+  "supplemental_read": "Final fingerprint obtained read-only after test relay request-file race",
+  "no_performance_claim": true
+}

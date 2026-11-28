@@ -606,6 +606,8 @@ final class Plugin
                 $c['terms_confirmed_at']=gmdate('c');
                 $c['terms_confirmed_by']=get_current_user_id();
                 $c['protect']=isset($_POST['protect']);
+                // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Localized diagnostic escaped by the action handler.
+                if($c['protect'] && get_option('ozeki_resilience_startup_gap'))throw new \RuntimeException(SetupReadiness::text('Resolve pending saves and create a new trusted complete initial snapshot after the settings migration before enabling protection.','設定移行後は未完了保存を確認し、新しい信頼済みの初回保存を作成してから保護を開始してください。'));
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal diagnostic data; the admin output escapes the message at its HTML sink.
                 if($c['protect'] && $c['setup_role']==='recovery')throw new \RuntimeException(SetupReadiness::text('Keep protection disabled on a recovery destination.','復旧先では保護を無効にしてください。'));
                 if($c['protect'] && (empty($old['protect']) || SetupReadiness::identity($c)!==SetupReadiness::identity($old))){
@@ -672,6 +674,7 @@ final class Plugin
                 $this->store()->checkSetupStorage();
                 $result=(new SiteSnapshot($this->store()))->capture(isset($_POST['trust_initial']),[]);
                 update_option('ozeki_resilience_setup_baseline',SetupReadiness::baselineRecord($c,$result['manifest']),false);
+                if(SetupReadiness::baseline($c))delete_option('ozeki_resilience_startup_gap');
                 update_option('ozeki_resilience_site_snapshot_result',$result,false);
             }
             elseif ($action==='whole_checkpoint') {

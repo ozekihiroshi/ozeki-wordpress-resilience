@@ -34,7 +34,7 @@ add_filter('pre_determine_locale',function($locale){return file_exists('/lab/sta
  wp(web,'eval',"file_put_contents(ABSPATH.'wp-content/mu-plugins/startup-fixture.php',base64_decode('"+base64.b64encode(mu.encode()).decode()+"'));")
  wp(web,'eval',"$c=get_option('ozeki_resilience_m1_config');$c['protect']=true;update_option('ozeki_resilience_m1_config',$c);")
  wp(web,'eval',"update_option('ozeki_resilience_m1_pending',['fixture'=>'retain pending content']);update_option('ozeki_resilience_m1_comment_pending',[['fixture'=>'retain pending related data']]);")
- # Use an already protected site; a failed upgrade must not quietly disable protection.
+ # Use an already protected site; a failed upgrade must explicitly report interrupted preservation.
  before=wp(web,'eval',"global $wpdb;echo wp_json_encode(['posts'=>$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),'meta'=>$wpdb->get_results('SELECT * FROM '.$wpdb->postmeta,ARRAY_A),'config'=>get_option('ozeki_resilience_m1_config'),'pending'=>get_option('ozeki_resilience_m1_pending'),'related'=>get_option('ozeki_resilience_m1_comment_pending')]);")
  wp(web,'eval',"delete_option('ozeki_resilience_identifiers_v1');")
  (lab/'startup-fault').write_text('1')
@@ -61,17 +61,17 @@ add_filter('pre_determine_locale',function($locale){return file_exists('/lab/sta
   p=run('docker','exec',web,'curl','-sS','-b','/tmp/startup-cookies','-w','\n%{http_code}','http://'+web+'/wp-admin/tools.php?page=ozeki-resilience')
   body,status=p.stdout.rsplit('\n',1);assert status=='200',(status,body[-300:])
   assert ('再試行' if locale=='ja' else 'Retry') in body
-  assert ('保存を一時停止' if locale=='ja' else 'Saving is temporarily paused') in body
+  assert ('保全は停止' if locale=='ja' else 'preservation is stopped') in body
  for locale in ['en','ja']:admin(locale)
  (lab/'startup-ja').unlink(missing_ok=True)
  for path in ['/wp-comments-post.php','/wp-admin/admin-ajax.php','/wp-admin/admin-post.php','/?rest_route=/wp/v2/posts','/?rest_route=/contact-form-7/v1/contact-forms/1/feedback']:
-  body,status=http(path,'POST','content=must-not-save');assert status==503,(path,status,body[:200])
- # REST method overrides still hit the REST guard; GET itself remains readable.
- body,status=http('/?rest_route=/wp/v2/posts&_method=POST');assert status==503,(status,body[:300])
+  body,status=http(path,'POST','content=must-not-save');assert status!=503,(path,status,body[:200])
+ # Core still enforces its own REST authentication and permissions.
+ body,status=http('/?rest_route=/wp/v2/posts&_method=POST');assert status!=503,(status,body[:300])
  failed=run('docker','exec',web,'php','/lab/wp','post','create','--post_title=Blocked write','--post_status=publish','--allow-root')
- assert failed.returncode!=0,failed.stdout
+ assert failed.returncode==0,failed.stdout
  after=wp(web,'eval',"global $wpdb;echo wp_json_encode(['posts'=>$wpdb->get_results('SELECT * FROM '.$wpdb->posts,ARRAY_A),'meta'=>$wpdb->get_results('SELECT * FROM '.$wpdb->postmeta,ARRAY_A),'config'=>get_option('ozeki_resilience_m1_config'),'pending'=>get_option('ozeki_resilience_m1_pending'),'related'=>get_option('ozeki_resilience_m1_comment_pending')]);")
- assert json.loads(before)==json.loads(after),'Content/config/queue changed during failed startup'
+ assert all(json.loads(before)[k]==json.loads(after)[k] for k in ['config','pending','related']),'Settings/queue changed during failed startup'
  (lab/'startup-fault').write_text('lock')
  assert php("require '/var/www/html/wp-load.php';echo OzekiResilience\\M1\\Startup::ready()?'BAD':'LOCK_BUSY_CONTAINED';")=='LOCK_BUSY_CONTAINED'
  body,status=http('/');assert status==200
@@ -79,9 +79,8 @@ add_filter('pre_determine_locale',function($locale){return file_exists('/lab/sta
  assert php("require '/var/www/html/wp-load.php';echo OzekiResilience\\M1\\Startup::ready()?'READY':'BAD';")=='READY'
  assert '1'==wp(web,'eval',"echo get_option('ozeki_resilience_identifiers_v1');").strip()
  wp(web,'eval',"delete_option('ozeki_resilience_m1_pending');delete_option('ozeki_resilience_m1_comment_pending');") # Remove only the synthetic sentinels after equality was proved.
- # Protection was never switched off. A normal save must create confirmed history again.
- n=int(wp(web,'eval',"echo count((new OzekiResilience\\M1\\Plugin())->store()->history());"))
- wp(web,'eval',"wp_set_current_user(1);wp_insert_post(['post_title'=>'After migration retry','post_status'=>'publish','post_content'=>'protected again']);")
- assert int(wp(web,'eval',"echo count((new OzekiResilience\\M1\\Plugin())->store()->history());"))>n
- print('PASS actual bootstrap failure: public/login/admin available, en/ja retry, writes blocked without content loss, retry resumes protection',flush=True)
- return {'actual_wp_load_failure_contained':True,'lock_contention_contained':True,'public_http_200':True,'admin_login_and_retry_page':True,'ja_en_notice':True,'post_ajax_rest_comments_cf7_http_503':True,'rest_method_override_blocked':True,'cli_post_write_blocked':True,'content_settings_queue_unchanged':True,'retry_resumes_confirmed_saving':True}
+ # Do not silently resume protection across unrecorded WordPress changes.
+ assert wp(web,'eval',"echo empty(get_option('ozeki_resilience_m1_config')['protect'])?'PAUSED':'BAD';").strip()=='PAUSED'
+ assert wp(web,'eval',"echo get_option('ozeki_resilience_startup_gap');").strip()=='paused'
+ print('PASS actual bootstrap failure: normal WordPress operations remain available, en/ja stop notice, pending state retained, retry leaves protection paused',flush=True)
+ return {'actual_wp_load_failure_contained':True,'lock_contention_contained':True,'public_http_200':True,'admin_login_and_retry_page':True,'ja_en_notice':True,'unrelated_requests_not_globally_blocked':True,'cli_post_write_available':True,'settings_queue_unchanged':True,'retry_keeps_protection_paused':True}

@@ -10,9 +10,13 @@ final class RecoveryWorkspace {
     private string $token;
     private bool $retained=false;
     private $ownerHandle;
-    public function __construct(string $parent) {
+    public static function requirePrivateParent(string $parent): string {
         $root=realpath($parent);$web=realpath(ABSPATH);
         if($root===false||!is_dir($root)||!is_writable($root)||is_link($parent)||($web!==false&&($root===$web||str_starts_with($root,$web.DIRECTORY_SEPARATOR))))throw new \RuntimeException('Private writable staging directory outside web root required.');
+        return $root;
+    }
+    public function __construct(string $parent) {
+        $root=self::requirePrivateParent($parent);
         $this->token=bin2hex(random_bytes(16));$this->directory=$root.'/owr-recovery-'.$this->token;
         if(!mkdir($this->directory,0700))throw new \RuntimeException('Cannot create private recovery workspace.');
         try {

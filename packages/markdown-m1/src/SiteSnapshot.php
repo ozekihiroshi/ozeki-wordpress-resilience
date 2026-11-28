@@ -348,7 +348,7 @@ final class SiteSnapshot
         $runtime=$GLOBALS['wp_version'];
         if(implode('.',array_slice(explode('.',$m['wordpress']),0,2))!==implode('.',array_slice(explode('.',$runtime),0,2))||version_compare($runtime,$m['wordpress'],'<'))throw new \RuntimeException('Use the recorded WordPress release line with the same or a newer maintenance patch.');
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Recovery uses private local staging, restrictive OS permissions and same-filesystem replacement/rollback; paths are validated. These are restored resources, not plugin operational data.
-        if(!is_dir($work)||!is_writable($work)||realpath($work)===false||str_starts_with(realpath($work),realpath(ABSPATH)))throw new \RuntimeException('Private writable staging directory outside web root required.');
+        RecoveryWorkspace::requirePrivateParent($work);
         $d=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
         $origins=ReferenceContext::merge($m['reference_origins']??[],[['site'=>$from,'uploads'=>$m['source_upload_url']??$from.'/wp-content/uploads']]);
         AcfHistory::check($d);
