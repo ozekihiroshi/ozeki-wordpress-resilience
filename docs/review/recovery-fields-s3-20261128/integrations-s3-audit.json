@@ -1,0 +1,13 @@
+{
+  "real_s3": true,
+  "operations_before_final_readback": {
+    "PutObject": 202,
+    "GetObject": 402,
+    "ListObjectsV2": 6
+  },
+  "fixed_versions_read_back": 202,
+  "all_written_bytes_match": true,
+  "production_operations": 0,
+  "create_only_encrypted_writes": true,
+  "credentials_in_wordpress": false
+}

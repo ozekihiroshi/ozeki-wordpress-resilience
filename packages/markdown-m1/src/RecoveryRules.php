@@ -10,6 +10,7 @@ final class RecoveryRules
 {
     public const VERSION='owr-application-rules-1';
     private array $skipped=[];
+    private array $formFields=[];
     private function omit(string $path,string $reason='No recognized application rule'): void {
         $this->skipped[]=['item'=>$path,'reason'=>$reason];
     }
@@ -25,6 +26,12 @@ final class RecoveryRules
         }
         if($rule==='plain'&&self::plain($v))return $v;
         if($rule==='text'&&is_string($v))return $v;
+        if($rule==='markdown-filename'&&is_string($v)){
+            $name=sanitize_file_name(wp_basename(str_replace('\\','/',$v)));
+            if(strtolower(pathinfo($name,PATHINFO_EXTENSION))!=='md')$name='';
+            if($name!==$v)$this->omit($path,'Unsafe filename parts omitted; original retained');
+            return $name;
+        }
         // WP-Members stores a selected page ID or a custom URL (and an empty unset value).
         if($rule==='page-reference'&&(is_string($v)||(is_int($v)&&$v>=0)))return $v;
         // Version identifiers are not decimal numbers; preserve legacy numeric encodings too.
@@ -41,6 +48,7 @@ final class RecoveryRules
             $out=[];foreach(preg_split('/\r\n|\r|\n/',$v) as $i=>$line){
                 if(trim($line)===''){$out[]=$line;continue;}
                 if(preg_match('/^\s*(skip_mail|demo_mode|acceptance_as_validation|subscribers_only)\s*:\s*(on|off|true|false)\s*$/i',$line))$out[]=$line;
+                elseif(preg_match('/^\s*(flamingo_email|flamingo_name|flamingo_subject)\s*:\s*(["\']?)\[([A-Za-z][A-Za-z0-9_:.-]*)\]\2\s*$/D',$line,$m)&&in_array($m[3],$this->formFields,true))$out[]=$line;
                 else $this->omit($path.'.line'.($i+1),'Additional directive is outside recognized core rules');
             }return implode("\n",$out);
         }
@@ -105,7 +113,15 @@ final class RecoveryRules
             if(in_array((string)$row['comment_post_ID'],$removed,true)){$removedComments[]=(string)$row['comment_ID'];return false;}return true;
         }));
         $d['tables']['commentmeta']=array_values(array_filter($d['tables']['commentmeta']??[],fn($row)=>!in_array((string)$row['comment_id'],$removedComments,true)));
-        foreach($d['tables']['posts']??[] as $post)$types[(string)$post['ID']]=$post['post_type'];
+        $parents=[];$formFields=[];
+        foreach($d['tables']['posts']??[] as $post){$types[(string)$post['ID']]=$post['post_type'];$parents[(string)$post['ID']]=(string)($post['post_parent']??0);}
+        foreach($d['tables']['postmeta']??[] as $row)if(($types[(string)$row['post_id']]??'')==='wpcf7_contact_form'&&$row['meta_key']==='_form'){
+            // Scan the prepared CF7 grammar without rendering form controls.
+            if(class_exists('WPCF7_FormTagsManager')){
+                $manager=clone \WPCF7_FormTagsManager::get_instance();
+                $formFields[(string)$row['post_id']]=array_values(array_filter(array_map(static fn($tag)=>(string)$tag->name,$manager->scan($row['meta_value']))));
+            }
+        }
         $receiptRules=[];
         foreach($d['tables']['postmeta']??[] as $row){
             $id=(string)$row['post_id'];
@@ -117,7 +133,8 @@ final class RecoveryRules
         $out=[];
         foreach($d['tables']['postmeta']??[] as $row){
             $type=$types[(string)$row['post_id']]??'';$key=$row['meta_key'];$rules=$base;
-            if($type==='ozmd_document')$rules+=['_ozmd_source'=>'text'];
+            if($type==='ozmd_document')$rules+=['_ozmd_source'=>'text','_ozmd_original_filename'=>'markdown-filename'];
+            if($type==='revision'&&($types[$parents[(string)$row['post_id']]??'']??'')==='ozmd_document')$rules+=['_ozmd_source'=>'text'];
             if($type==='attachment')$rules+=['_wp_attached_file'=>'text','_wp_attachment_image_alt'=>'text','_wp_attachment_metadata'=>'plain','_wp_attachment_backup_sizes'=>'plain'];
             if($type==='nav_menu_item')$rules+=array_fill_keys(['_menu_item_type','_menu_item_menu_item_parent','_menu_item_object_id','_menu_item_object','_menu_item_target','_menu_item_xfn','_menu_item_url'],'text')+['_menu_item_classes'=>'plain'];
             if(in_array($type,['wpcf7_contact_form','flamingo_inbound'],true))$rules+=FormHistory::recoveryMeta($type);
@@ -125,6 +142,7 @@ final class RecoveryRules
             if($type==='tablepress_table')$rules+=TableHistory::recoveryMeta();
             $path='postmeta.'.$row['post_id'].'.'.$key;
             if(!array_key_exists($key,$rules)){$self->omit($path,$key==='_ozmd_source_sha256'?'Derived from restored Markdown; regenerated, not imported':'No recognized application rule');continue;}
+            $self->formFields=$formFields[(string)$row['post_id']]??[];
             $row['meta_value']=$self->metadata($row['meta_value'],$rules[$key],$path,$type==='tablepress_table'&&str_starts_with($key,'_tablepress_'));
             if($type==='tablepress_table'&&$key==='_tablepress_table_options')$row['meta_value']=Store::json(TableHistory::runtimeOptions(json_decode($row['meta_value'],true,512,JSON_THROW_ON_ERROR)));
             $out[]=$row;

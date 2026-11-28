@@ -1,0 +1,56 @@
+{
+  "revision_before": {
+    "revision_exists": true,
+    "revision_source_present": true,
+    "restore_returned_success": true,
+    "restored_old_markdown": true,
+    "restored_source_empty": false,
+    "current_original_present": true
+  },
+  "default_before": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "custom_before": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "capture": "Captured",
+  "restore": "Restored",
+  "revision_after": {
+    "revision_exists": true,
+    "revision_source_present": false,
+    "restore_returned_success": true,
+    "restored_old_markdown": false,
+    "restored_source_empty": true,
+    "current_original_present": true
+  },
+  "default_after": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "custom_after": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "[your-name]",
+    "email": "[your-email]",
+    "subject": "[your-subject]",
+    "receipt_subject": "[your-subject]",
+    "receipt_from": "[your-name] <[your-email]>"
+  }
+}

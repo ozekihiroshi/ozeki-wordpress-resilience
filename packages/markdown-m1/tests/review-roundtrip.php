@@ -69,4 +69,4 @@ review_editor_render($id);
 review_assert(get_post_meta($doc,'_ozmd_source',true)===$md,'Unedited Markdown changed in second recovery');
 review_assert(glob('/lab/work/owr-recovery-*')===[],'Second recovery left private files');
 file_put_contents('/lab/review-fixture-ids.json',json_encode(['article'=>$id,'markdown'=>$doc,'integrations'=>$integrations,'manifest'=>$ref2['manifest']]));
-echo json_encode(['safe_article'=>true,'markdown_original_unchanged'=>true,'use_edit_recapture_recover'=>true,'source_objects_unchanged'=>true,'workspace_empty'=>true,'not_applied'=>count($r['application_report']['not_applied']),'storage'=>is_file('/lab/live')?'real S3 scoped host broker':'network-isolated local SDK transport'],JSON_PRETTY_PRINT).PHP_EOL;
+echo json_encode(['safe_article'=>true,'markdown_original_unchanged'=>true,'table_page_rendered_and_edited_after_both_recoveries'=>true,'use_edit_recapture_recover'=>true,'source_objects_unchanged'=>true,'workspace_empty'=>true,'not_applied'=>count($r['application_report']['not_applied']),'storage'=>is_file('/lab/live')?'real S3 scoped host broker':'network-isolated local SDK transport'],JSON_PRETTY_PRINT).PHP_EOL;

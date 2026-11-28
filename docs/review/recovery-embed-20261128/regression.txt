@@ -1,0 +1,42 @@
+[28-Nov-2026 05:07:22 UTC] PHP Fatal error:  Uncaught RuntimeException: Supported self-closing reference disabled in phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code:5
+Stack trace:
+#0 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code(9): safe_check(false, 'Supported self-...')
+#1 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85): eval()
+#2 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(59): EvalFile_Command::execute_eval('/lab/tests/revi...', Array, false)
+#3 [internal function]: EvalFile_Command->__invoke(Array, Array)
+#4 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Dispatcher/CommandFactory.php(100): call_user_func(Array, Array, Array)
+#5 [internal function]: WP_CLI\Dispatcher\CommandFactory::WP_CLI\Dispatcher\{closure}(Array, Array)
+#6 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Dispatcher/Subcommand.php(497): call_user_func(Object(Closure), Array, Array)
+#7 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(470): WP_CLI\Dispatcher\Subcommand->invoke(Array, Array, Array)
+#8 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(493): WP_CLI\Runner->run_command(Array, Array)
+#9 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(136): WP_CLI\Runner->run_command_and_exit()
+#10 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(1228): WP_CLI\Runner->do_early_invoke('before_wp_load')
+#11 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Bootstrap/LaunchRunner.php(28): WP_CLI\Runner->start()
+#12 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/bootstrap.php(84): WP_CLI\Bootstrap\LaunchRunner->process(Object(WP_CLI\Bootstrap\BootstrapState))
+#13 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/wp-cli.php(35): WP_CLI\bootstrap()
+#14 phar:///tmp/wp.phar/php/boot-phar.php(20): include('phar:///tmp/wp....')
+#15 /tmp/wp.phar(4): include('phar:///tmp/wp....')
+#16 {main}
+  thrown in phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code on line 5
+Fatal error: Uncaught RuntimeException: Supported self-closing reference disabled in phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code:5
+Stack trace:
+#0 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code(9): safe_check(false, 'Supported self-...')
+#1 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85): eval()
+#2 phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(59): EvalFile_Command::execute_eval('/lab/tests/revi...', Array, false)
+#3 [internal function]: EvalFile_Command->__invoke(Array, Array)
+#4 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Dispatcher/CommandFactory.php(100): call_user_func(Array, Array, Array)
+#5 [internal function]: WP_CLI\Dispatcher\CommandFactory::WP_CLI\Dispatcher\{closure}(Array, Array)
+#6 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Dispatcher/Subcommand.php(497): call_user_func(Object(Closure), Array, Array)
+#7 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(470): WP_CLI\Dispatcher\Subcommand->invoke(Array, Array, Array)
+#8 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(493): WP_CLI\Runner->run_command(Array, Array)
+#9 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(136): WP_CLI\Runner->run_command_and_exit()
+#10 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Runner.php(1228): WP_CLI\Runner->do_early_invoke('before_wp_load')
+#11 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/WP_CLI/Bootstrap/LaunchRunner.php(28): WP_CLI\Runner->start()
+#12 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/bootstrap.php(84): WP_CLI\Bootstrap\LaunchRunner->process(Object(WP_CLI\Bootstrap\BootstrapState))
+#13 phar:///tmp/wp.phar/vendor/wp-cli/wp-cli/php/wp-cli.php(35): WP_CLI\bootstrap()
+#14 phar:///tmp/wp.phar/php/boot-phar.php(20): include('phar:///tmp/wp....')
+#15 /tmp/wp.phar(4): include('phar:///tmp/wp....')
+#16 {main}
+  thrown in phar:///tmp/wp.phar/vendor/wp-cli/eval-command/src/EvalFile_Command.php(85) : eval()'d code on line 5
+Error: There has been a critical error on this website.Learn more about troubleshooting WordPress. There has been a critical error on this website.
+Safe content: executable HTML, unknown shortcodes/blocks, useful text, idempotence, original PASS

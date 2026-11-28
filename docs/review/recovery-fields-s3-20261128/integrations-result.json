@@ -1,0 +1,10 @@
+{
+    "safe_article": true,
+    "markdown_original_unchanged": true,
+    "table_page_rendered_and_edited_after_both_recoveries": true,
+    "use_edit_recapture_recover": true,
+    "source_objects_unchanged": true,
+    "workspace_empty": true,
+    "not_applied": 93,
+    "storage": "real S3 scoped host broker"
+}

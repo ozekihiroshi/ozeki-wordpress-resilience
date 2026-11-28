@@ -3,6 +3,15 @@
 use OzekiResilience\M1\RecoveryContent;
 require_once WP_PLUGIN_DIR.'/ozeki-resilience/src/RecoveryContent.php';
 function safe_check($ok,$why){if(!$ok)throw new RuntimeException($why);}
+// Standard closing slash is shortcode grammar, not an application attribute.
+foreach(['[table id="1" /]','[table id="1"/]','[table id="1"]',"[table\n id='1' /]",'[contact-form-7 id="abc123" /]','[ozeki_markdown_document id="1" /]'] as $reference){
+    $notes=[];
+    safe_check(RecoveryContent::html($reference,'self-closing-reference',$notes)===$reference&&$notes===[],'Supported self-closing reference disabled');
+}
+foreach(['[table id="1" arbitrary="x" /]','[table id="1" / extra]','[table id="1" //]','[table id="1" "extra" /]','[table id="1/" /]','[table id="1" / ]'] as $reference){
+    $notes=[];
+    safe_check(RecoveryContent::html($reference,'invalid-reference',$notes)!==$reference&&count($notes)>0,'Invalid reference allowed');
+}
 $original='<h2>技術資料</h2><table><tr><td>24 V</td></tr></table><pre><code>&lt;script&gt;example&lt;/script&gt;</code></pre><img src="https://example.invalid/a.png" onerror="alert(1)"><script>alert(2)</script><a href="javascript:alert(3)">link</a>';
 $hash=hash('sha256',$original);$report=[];
 $clean=RecoveryContent::html($original,'fixture',$report);

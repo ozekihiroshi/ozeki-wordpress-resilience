@@ -6,6 +6,8 @@
 
 [rc.22 submission, compatibility and verification](docs/review/core-updates-20261124/RC22-PACKAGE.ja.md).
 
+The development source includes further recovery corrections for table embeds, Markdown revisions/export names, CF7 field mappings and ACF instructions. See the [isolated real-S3 verification](docs/review/recovery-fields-s3-20261128.md). These changes are not in the submitted rc.23 ZIP or the production deployment.
+
 **Before the first public release:** Saved-data compatibility between prerelease candidates is not guaranteed. Use the same supported version on the source and recovery sites, and follow the version-specific update instructions. rc.22 → rc.23 does not require a new Baseline after a successful uninterrupted update. Existing originals and history are not rewritten.
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.

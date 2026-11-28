@@ -18,6 +18,8 @@ The latest representative protected page/image test used real original PUTs, fix
 
 ## Verification map / 検証の索引
 
+[Recovery field and embed corrections / 復旧項目・埋込みの修正と実S3確認](../review/recovery-fields-s3-20261128.md): development-source round trips for Markdown revisions/export names, CF7 mappings, ACF instructions and TablePress page embeds; submitted rc.23 remains unchanged. / 開発ソースの利用・再保存・再復旧。提出済みrc.23は不変。
+
 [rc.23 production Baseline and isolated round trip / rc.23本番の新しい初回保存と隔離往復](../operations/community-rc23-roundtrip-20261128.md): state through history 81, member HTTP access, 51 file originals, trial re-save/recovery, and the 128MB/256MB memory conditions. / 履歴81までの状態、会員HTTP利用、51件の原本、再保存・再復旧、メモリ条件と確認範囲。
 
 [User-guide onboarding / 利用ガイドでの初回導入](user-guide-onboarding.md): browser installation, Baseline, native edit/history and separate recovery; prerequisite gaps and existing-role versus exact-policy deployment distinguished. / 必須前提の不足と既存ロールによる検証範囲を区別。

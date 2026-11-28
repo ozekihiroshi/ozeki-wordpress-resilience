@@ -24,15 +24,21 @@ final class RecoveryContent {
         // Preserve only supported references, not arbitrary executable shortcodes.
         $text=preg_replace_callback('~\[(/?)([^\s<>&/\[\]=]+)([^\]]*)\]~',static function($m)use($path,&$report,$references){
             $allowed=false;
+            // WordPress consumes a final slash as self-closing syntax before
+            // parsing attributes. Apply the same boundary; retain the original
+            // reference and continue rejecting unknown attributes and commands.
+            $attributeText=$m[3];
+            if(str_ends_with($attributeText,'/'))$attributeText=substr($attributeText,0,-1);
+            $attributeText=trim($attributeText);
             if(!$m[1]&&in_array($m[2],['table','contact-form-7'],true)){
-                $attrs=shortcode_parse_atts(trim($m[3]));
+                $attrs=shortcode_parse_atts($attributeText);
                 $allowed=is_array($attrs)&&isset($attrs['id'])&&preg_match('/^[A-Za-z0-9_-]+$/D',(string)$attrs['id']);
                 foreach((array)$attrs as $key=>$v)if(!in_array($key,['id','title'],true)||!is_string($v)||strpbrk($v,'<>[]')!==false)$allowed=false;
             }
             if(!$m[1]&&$m[2]==='wpmem_form'&&preg_match('/^\s+(login|user_edit|password)\s*\/?$/D',$m[3]))$allowed=true;
             if(!$m[1]&&$m[2]==='wpmem_profile'&&trim($m[3])==='')$allowed=true;
             if(!$m[1]&&$m[2]==='ozeki_markdown_document'){
-                $attrs=shortcode_parse_atts(trim($m[3]));
+                $attrs=shortcode_parse_atts($attributeText);
                 $allowed=is_array($attrs)&&array_keys($attrs)===['id']&&preg_match('/^[1-9][0-9]*$/D',(string)$attrs['id']);
             }
             if(!$references)$allowed=false;
@@ -149,6 +155,10 @@ final class RecoveryContent {
         return $table;
     }
     public static function project(array $data,array &$report): array {
+        // Instructions are displayed as HTML by ACF; field values and the rest
+        // of the definition remain typed data, not HTML input.
+        foreach($data['acf_restore_groups']??[] as $g=>$group)foreach($group['fields']??[] as $f=>$field)
+            if(isset($field['instructions']))$data['acf_restore_groups'][$g]['fields'][$f]['instructions']=self::html($field['instructions'],'acf.instructions.'.$field['key'],$report,false);
         $types=[];foreach($data['tables']['posts']??[] as $p)$types[(string)$p['ID']]=$p['post_type'];
         foreach($data['tables']['posts']??[] as $i=>$post){
             if(in_array($post['post_type'],['tablepress_table','wpcf7_contact_form','flamingo_inbound'],true))continue;

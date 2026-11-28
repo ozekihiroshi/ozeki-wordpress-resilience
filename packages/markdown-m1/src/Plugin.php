@@ -24,6 +24,14 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        add_action('wp_restore_post_revision',static function($postId){
+            if(get_post_type($postId)!=='ozmd_document'||(!get_option('ozeki_resilience_site_origin_url')&&!get_post_meta($postId,'_ozeki_resilience_m1_origin_url',true)))return;
+            if(!metadata_exists('post',$postId,'_ozmd_source'))return;
+            // Core restores revision-enabled source metadata after saving the
+            // post. Regenerate its derived state, never rewrite the original.
+            update_post_meta($postId,'_ozmd_source_sha256',hash('sha256',(string)get_post_meta($postId,'_ozmd_source',true)));
+            delete_post_meta($postId,'_ozmd_rendered_html');delete_post_meta($postId,'_ozmd_render_hash');
+        },20);
         add_filter('pre_do_shortcode_tag',static function($output,$tag,$attrs,$match){
             require_once __DIR__.'/RecoveryContent.php';
             return RecoveryContent::markdownEmbed($output,$tag,$attrs,$match);

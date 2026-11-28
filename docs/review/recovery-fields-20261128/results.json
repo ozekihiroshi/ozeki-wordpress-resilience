@@ -1,0 +1,90 @@
+{
+  "source_revision": {
+    "revision_exists": true,
+    "revision_source_present": true,
+    "restore_returned_success": true,
+    "restored_old_markdown": true,
+    "derived_hash_matches": false,
+    "current_original_present": true
+  },
+  "source_custom": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "capture": "Captured",
+  "first_restore": "Restored",
+  "first_revision": {
+    "revision_exists": true,
+    "revision_source_present": true,
+    "restore_returned_success": true,
+    "restored_old_markdown": true,
+    "derived_hash_matches": true,
+    "current_original_present": true
+  },
+  "first_use": {
+    "instructions_retained": true,
+    "instructions_html_safe": true,
+    "acf_value_unchanged": true,
+    "filename": "technical-source.md"
+  },
+  "first_your": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "first_custom": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "recapture": "Captured",
+  "second_restore": "Restored",
+  "second_revision": {
+    "revision_exists": true,
+    "revision_source_present": true,
+    "restore_returned_success": true,
+    "restored_old_markdown": true,
+    "derived_hash_matches": true,
+    "current_original_present": true
+  },
+  "second_use": {
+    "instructions_retained": true,
+    "instructions_html_safe": true,
+    "acf_value_unchanged": true,
+    "filename": "technical-source.md"
+  },
+  "second_your": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "second_custom": {
+    "status": "mail_sent",
+    "received": true,
+    "name": "Fixture Reader",
+    "email": "reader@example.invalid",
+    "subject": "Fixture subject",
+    "receipt_subject": "Fixture subject",
+    "receipt_from": "Fixture Reader <reader@example.invalid>"
+  },
+  "existing_trial_originals_unchanged": true,
+  "storage": "isolated local SDK transport",
+  "external_email_sent": false
+}
