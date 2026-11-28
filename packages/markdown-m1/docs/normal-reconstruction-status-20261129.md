@@ -2,6 +2,8 @@
 
 [日本語](normal-reconstruction-status-20261129.ja.md)
 
+See the subsequent [management, preservation and worker integration record](construction-management-20261129.md). The evidence below describes the earlier integration boundary.
+
 This branch preserves the implementation and evidence accumulated on November 28–29, 2026. It is **not a release, a replacement of the production recovery screen, or a WordPress.org submission**. Existing release ZIPs/tags remain unchanged. This is the current entry point; earlier documents are dated experiment records, not cumulative guarantees.
 
 ## Principle and implementation

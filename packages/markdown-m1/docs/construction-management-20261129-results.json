@@ -1,0 +1,13 @@
+{
+  "bad_nonce_rejected": true,
+  "initial_confirmed": true,
+  "formal_through": 2,
+  "worker_exit": 0,
+  "japanese_management": true,
+  "passed": true,
+  "ordinary_edit": true,
+  "no_duplicate_retry": true,
+  "management_to_worker": true,
+  "cleanup_errors": [],
+  "seconds": 40.086
+}

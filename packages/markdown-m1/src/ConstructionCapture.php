@@ -8,6 +8,7 @@ require_once __DIR__.'/ConstructionResultReferences.php';
 
 /** Opt-in isolated observer of actual requests; never invoked by a test driver per operation. */
 final class ConstructionCapture {
+    private static bool $booted=false;
     private ?int $active=null;
     private array $effects=[];
     private ?string $kind=null;
@@ -17,18 +18,42 @@ final class ConstructionCapture {
     private array $importedGroups=[];
     public function boot(): void {
         if(!defined('OWR_CONSTRUCTION_ISOLATED') || OWR_CONSTRUCTION_ISOLATED!==true)throw new \RuntimeException('Isolated construction experiment only');
+        if(self::$booted)return;self::$booted=true;
         add_filter('rest_request_before_callbacks',[$this,'restBefore'],PHP_INT_MAX,3);
         add_filter('rest_request_after_callbacks',[$this,'restAfter'],PHP_INT_MAX,3);
         // WP-Members executes field updates from load_admin() on init, before
         // core admin_init. Capture the request before any normal handler runs.
         add_action('init',[$this,'adminBefore'],PHP_INT_MIN);
-        add_action('wp_after_insert_post',function($id,$p){$this->effect('post',['id'=>$id,'post_type'=>$p->post_type]);},PHP_INT_MAX,2);
+        add_action('wp_after_insert_post',function($id,$p,$update,$before){
+            if($p->post_type==='revision'||$p->post_status==='auto-draft')return;
+            if($this->active===null&&!in_array($p->post_status,['publish','private','inherit'],true)&&(!$before||!in_array($before->post_status,['publish','private','inherit'],true)))return;
+            $this->effect('post',['id'=>$id,'post_type'=>$p->post_type]);
+        },PHP_INT_MAX,4);
         add_action('delete_attachment',fn($id)=>$this->effect('attachment-delete-attempt',['id'=>$id]),PHP_INT_MAX);
+        add_action('deleted_post',function($id,$p){if($p&&$p->post_type!=='revision')$this->effect('post-delete',['id'=>$id,'post_type'=>$p->post_type]);},PHP_INT_MAX,2);
         add_action('user_register',fn($id)=>$this->effect('user',['id'=>$id]),PHP_INT_MAX);
         add_action('profile_update',fn($id)=>$this->effect('user',['id'=>$id]),PHP_INT_MAX);
         add_action('acf/import_field_group',[$this,'acfImported'],PHP_INT_MAX);
         add_action('tablepress_event_saved_table',fn($id)=>$this->effect('table-saved',['id'=>(string)$id]),PHP_INT_MAX);
         foreach(['added_option','updated_option'] as $hook)add_action($hook,function($key){if(in_array($key,['wpmembers_settings','wpmembers_fields'],true))$this->effect('option',['name'=>$key]);},PHP_INT_MAX);
+        foreach(['created_term','edited_term','delete_term'] as $hook)add_action($hook,function($id,$tt,$taxonomy){
+            if(in_array($taxonomy,['category','post_tag','nav_menu'],true))$this->effect('taxonomy',['id'=>(int)$id,'taxonomy'=>$taxonomy]);
+        },PHP_INT_MAX,3);
+        add_action('set_object_terms',function($id,$terms,$tt,$taxonomy){
+            if($this->active===null&&in_array(get_post_status($id),['publish','private','inherit'],true)&&in_array($taxonomy,['category','post_tag','nav_menu'],true))$this->effect('term-relationship',['id'=>(int)$id,'taxonomy'=>$taxonomy]);
+        },PHP_INT_MAX,4);
+        foreach(['added_user_meta','updated_user_meta','deleted_user_meta'] as $hook)add_action($hook,function($unused,$id,$key){
+            if($this->active!==null||in_array($key,['session_tokens','community-events-location','dismissed_wp_pointers'],true)||str_starts_with($key,'_ozeki_resilience'))return;
+            $keys=['first_name','last_name','nickname','description','active','wpmem_block'];
+            foreach((array)get_option('wpmembers_fields',[]) as $f)if(is_array($f)&&isset($f[2]))$keys[]=$f[2];
+            if(in_array($key,$keys,true))$this->effect('member-meta',['id'=>(int)$id,'key'=>$key]);
+        },PHP_INT_MAX,3);
+        foreach(['added_post_meta','updated_post_meta','deleted_post_meta'] as $hook)add_action($hook,function($unused,$id,$key){
+            if(str_starts_with($key,'_ozeki_resilience')||in_array($key,['_edit_lock','_edit_last'],true))return;
+            if(!in_array(get_post_type($id),['post','page','attachment','ozmd_document','wpcf7_contact_form','flamingo_inbound','acf-field','acf-field-group'],true))return;
+            if(!in_array(get_post_status($id),['publish','private','inherit'],true))return;
+            if($this->active===null)$this->effect('unrecorded-meta',['id'=>(int)$id,'key'=>(string)$key]);
+        },PHP_INT_MAX,3);
         add_filter('wp_redirect',function($url){if($this->active!==null){$this->redirect=true;$this->redirectUrl=$url;}return $url;},PHP_INT_MAX);
         add_action('shutdown',[$this,'shutdown'],PHP_INT_MAX);
         add_filter('wpcf7_flamingo_inbound_message_parameters',[$this,'receiptBefore'],PHP_INT_MAX);
@@ -39,7 +64,14 @@ final class ConstructionCapture {
         foreach(array_keys($p) as $key)if(preg_match('/nonce|^password$|^pass[12]$|^pwd$|^user_pass$|^_wp_http_referer$/i',(string)$key))unset($p[$key]);
         return $p;
     }
-    private function effect(string $type,array $data): void {if($this->active!==null)$this->effects[]=['type'=>$type]+$data;}
+    private function effect(string $type,array $data): void {
+        if($this->active!==null){$this->effects[]=['type'=>$type]+$data;return;}
+        // A prepared recovery destination is not yet a protected source. Its
+        // normal preparation is covered by a NEW baseline before source use.
+        $config=(array)get_option('ozeki_resilience_m1_config',[]);
+        $protected=get_option('ozeki_resilience_construction_preservation_v1',null)!==null||get_option('ozeki_resilience_construction_preservation_v1_capture',null)!==null;
+        if(ConstructionJournal::enabled()&&$protected&&($config['setup_role']??'source')==='source')ConstructionJournal::gap('unrecorded_change',['type'=>$type]+$data);
+    }
     public function acfImported(array $group): void {
         if($this->active===null||$this->kind!=='admin'||empty($group['ID'])||empty($group['key']))return;
         $this->importedGroups[$group['key']]=(int)$group['ID'];
@@ -59,7 +91,10 @@ final class ConstructionCapture {
         $route=$request->get_route();
         if(!preg_match('~^/(wp/v2/(posts|pages|media|categories)(/\d+)?|wp/v2/media/\d+/edit|contact-form-7/v1/contact-forms(/\d+)?)$~D',$route))return $response;
         $this->kind='rest';$this->restRequest=spl_object_id($request);$this->effects=[];$p=$request->get_json_params()??$request->get_body_params();
-        $input=['actor'=>get_current_user_id(),'route'=>$route,'method'=>$request->get_method(),'body'=>self::withoutCredentials($p)];
+        $body=self::withoutCredentials($p);
+        // REST posts/pages use "password" for content access, not account login.
+        if(preg_match('~^/wp/v2/(posts|pages)(/\d+)?$~D',$route)&&array_key_exists('password',$p))$body['password']=$p['password'];
+        $input=['actor'=>get_current_user_id(),'route'=>$route,'method'=>$request->get_method(),'body'=>$body];
         if($request->get_method()==='DELETE')$input['query']=self::withoutCredentials($request->get_query_params());
         if($route==='/wp/v2/media'){
             $raw=$request->get_body();$disposition=$request->get_header('content-disposition');

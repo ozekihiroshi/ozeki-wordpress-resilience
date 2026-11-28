@@ -1,0 +1,32 @@
+<?php
+// Deterministic isolated option-store failures, no WordPress/network required.
+require __DIR__.'/construction-operations.php';
+define('OWR_CONSTRUCTION_PERSISTENT',true);
+use OzekiResilience\M1\{ConstructionJournal as J,ConstructionOperations as O};
+$legacy=$options;check(rejects(fn()=>O::read()),'Legacy journal was silently converted');
+$options=[];
+$n=O::begin('rest',['actor'=>7,'route'=>'/wp/v2/posts','body'=>['title'=>'Original']]);
+$input=$options[J::KEY.'_input_1'];
+check(O::read()['entries'][0]['state']==='attempting','Pending input missing');
+O::finish($n,['response'=>['id'=>31]]);
+check($options[J::KEY.'_input_1']===$input,'Completion rewrote original input');
+check(J::status()['state']==='transfer_pending','Local registration called protected');
+$first=O::read();$n=O::begin('rest',['actor'=>7,'route'=>'/wp/v2/posts/31','body'=>['title'=>'Edited']]);
+O::finish($n,['response'=>['id'=>31]]);
+check(O::read()['entries'][0]===$first['entries'][0],'Later operation changed earlier input/result');
+$clean=$options;J::gap('unrecorded_change',['type'=>'post','id'=>31]);$gap=get_option(J::KEY.'_gap');
+J::gap('another_change',['type'=>'post','id'=>32]);
+check(get_option(J::KEY.'_gap')===$gap,'First interruption lost');
+check(rejects(fn()=>O::stable()),'Gap allowed a complete baseline');
+check(J::status()['state']==='gap','Gap hidden after read/restart');
+$options=$clean;add_option(O::KEY.'_lock','other-owner');
+check(rejects(fn()=>O::begin('rest',[])),'Concurrent writer accepted');
+check(get_option(O::KEY.'_lock')==='other-owner','Other writer lock removed');delete_option(O::KEY.'_lock');
+$options[J::KEY.'_input_3']=['orphan'=>'uncertain write'];
+check(rejects(fn()=>O::read()),'Interrupted head update silently ignored');
+$options=$clean;unset($options[J::KEY.'_input_1']);
+check(rejects(fn()=>O::read()),'Missing input silently ignored');
+$options=$clean;$options[J::KEY.'_result_1']['result']['response']['id']=999;
+check(rejects(fn()=>O::read()),'Changed completion accepted');
+$options=$clean;
+echo "PASS segmented immutable input/result, legacy refusal, sticky gap, lock ownership, orphan/missing/tampered record refusal\n";

@@ -3,17 +3,20 @@ declare(strict_types=1);
 namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/ConstructionContract.php';
+require_once __DIR__.'/ConstructionJournal.php';
 
 /** Development-only local journal. Not enabled by Plugin::boot or an S3 format. */
 final class ConstructionOperations {
     public const KEY='ozeki_resilience_construction_experiment_v5';
     public const SCHEMA='owr-observed-construction-experiment-5';
     private static function write(array $s): void {
+        if(ConstructionJournal::enabled()){ConstructionJournal::write($s);return;}
         $raw=wp_json_encode($s,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         if($raw===false || strlen($raw)>8*1024*1024)throw new \RuntimeException('Construction journal limit; operation not confirmed');
         if(get_option(self::KEY,null)!==$s&&!update_option(self::KEY,$s,false))throw new \RuntimeException('Construction journal write failed');
     }
     public static function read(): array {
+        if(ConstructionJournal::enabled())return ConstructionJournal::read();
         return get_option(self::KEY,['schema'=>self::SCHEMA,'source'=>home_url(),'entries'=>[]]);
     }
     private static function locked(callable $fn): mixed {
@@ -35,9 +38,11 @@ final class ConstructionOperations {
             $s=self::read();$e=$s['entries'][$n-1]??null;
             if(!$e || $e['state']!=='attempting')throw new \RuntimeException('Unexpected construction completion');
             $row=&$s['entries'][$n-1];$row['result']=$result;$row['outputs']=ConstructionContract::outputs($e['contract'],$result,$accepted);$row['state']=$accepted?'registered':'rejected';$row['completion_sha256']=ConstructionContract::hash([$row['state'],$row['result'],$row['outputs']]);unset($row);self::write($s);
+            if(ConstructionJournal::enabled()&&class_exists(ConstructionAdmin::class))ConstructionAdmin::scheduleTransfer();
         });
     }
     public static function stable(): array {
+        if(ConstructionJournal::enabled())ConstructionJournal::assertContinuous();
         $s=self::read();foreach($s['entries'] as $e)if($e['state']==='attempting')throw new \RuntimeException('Pending construction cannot seed an initial save');return $s;
     }
     /** A new sidecar; never alters the existing manifest/files or fabricates old operations. */

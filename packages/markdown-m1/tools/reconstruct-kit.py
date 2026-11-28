@@ -94,22 +94,24 @@ class Reconstruction:
                 item={'title':x['post_title'],'slug':x['post_name'],'status':x['post_status'],'password':x['post_password'],'date':x['post_date'],'author_destination':self.mapped('authors',x['post_author'])}
                 self.call('document-save:'+old,lambda:core.save(new,raw,item))
             # ACF's ordinary editor requires unpublished owners during this stage.
-            ar=self.call('acf',lambda:self.c['acf'].rebuild(p['acf'],self.s['posts'],str(self.path)+'.acf'))
-            if ar['held']:raise ValueError('Normal ACF registration holds: '+str(ar['held']))
+            if p['acf'] is not None:
+                ar=self.call('acf',lambda:self.c['acf'].rebuild(p['acf'],self.s['posts'],str(self.path)+'.acf'))
+                if ar['held']:raise ValueError('Normal ACF registration holds: '+str(ar['held']))
             # Only saved login/profile/register pages are published before normal selectors.
-            member=p['members'];userpages=member['settings']['wpmembers_settings'].get('user_pages',{})
+            member=p['members'];userpages=member['settings']['wpmembers_settings'].get('user_pages',{}) if member is not None else {}
             early=set(str(i) for i in userpages.values() if i)
-            restrictions={str(x['origin_id']):x for x in member['restrictions']}
+            restrictions={str(x['origin_id']):x for x in member['restrictions']} if member is not None else {}
             for old in early:
                 x=posts[old]
                 if restrictions[old]['value']!='0':raise ValueError('Member entry page is restricted; no alternative page invented')
                 if x['post_content'] not in ('[wpmem_form login]','[wpmem_profile]'):raise ValueError('Member entry page has additional dependencies')
                 self.call('entry-page:'+old,lambda:core.rest('pages/'+str(self.mapped('posts',old)),{'content':self.content(p,old)['content'],'status':x['post_status']}))
-            mr=self.call('member-settings',lambda:self.c['members'].rebuild(member,self.s['posts'],str(self.path)+'.members',password_reset=True))
-            if mr['held']:raise ValueError('Normal member registration holds: '+str(mr['held']))
-            for old,new in mr['users'].items():
-                if old in self.s['authors']:raise ValueError('Member/author identity already allocated')
-                self.s['authors'][old]=new
+            if member is not None:
+                mr=self.call('member-settings',lambda:self.c['members'].rebuild(member,self.s['posts'],str(self.path)+'.members',password_reset=True))
+                if mr['held']:raise ValueError('Normal member registration holds: '+str(mr['held']))
+                for old,new in mr['users'].items():
+                    if old in self.s['authors']:raise ValueError('Member/author identity already allocated')
+                    self.s['authors'][old]=new
             self.record()
             for old,x in posts.items():
                 if x['post_type'] not in ('post','page') or old in early:continue

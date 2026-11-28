@@ -30,6 +30,10 @@ jobs:
       - name: Independent M1 package contracts
         run: |
           php packages/markdown-m1/tests/construction-initial-content.php
+          php packages/markdown-m1/tests/construction-management.php
+          php packages/markdown-m1/tests/construction-recording-boundary.php
+          php packages/markdown-m1/tests/construction-safety.php
+          python3 -B packages/markdown-m1/tests/construction-shipping.py
           python3 packages/markdown-m1/tests/construction-normal-dispatch.py
           python3 packages/markdown-m1/tests/construction-record-test.py
           php packages/markdown-m1/tests/prepared-settings.php

@@ -31,10 +31,10 @@ final class ConstructionBundle {
             if(!$material||($material['contract']['coverage']??'')!=='complete')$out['held']['content-reference:'.$p['ID']]=['reason'=>'Initial content contract missing/incomplete','details'=>$material['contract']['reasons']??[]];
         }
         foreach($out['posts'] as $p)if($p['post_type']==='attachment'&&empty($out['initial_references']['media'][(string)$p['ID']]['image-url:full']))$out['held']['image-reference:'.$p['ID']]='Missing source baseline reference material; do not infer it at reconstruction';
-        $out['tables']=TableReconstruction::plan($m,$f);
+        $out['tables']=array_key_exists('tablepress_tables',$d['options'])?TableReconstruction::plan($m,$f):['tables'=>[],'held'=>[]];
         $out['forms']=ContactFormReconstruction::plan($m,$f);
-        $out['members']=MemberReconstruction::plan($m,$f);
-        $out['acf']=AcfReconstruction::plan($m,$f);
+        $out['members']=isset($d['membership'])?MemberReconstruction::plan($m,$f):null;
+        $out['acf']=isset($d['acf'])?AcfReconstruction::plan($m,$f):null;
         // Captured normal receipt inputs can accompany a baseline that predates
         // ReceiptInputs preservation. Never recreate input from stored output.
         $out['receipts']=[];

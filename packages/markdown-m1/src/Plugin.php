@@ -24,6 +24,9 @@ final class Plugin
     private const CONFIG='ozeki_resilience_m1_config';
     private const PENDING='ozeki_resilience_m1_pending';
     public function boot(): void {
+        if(defined('OWR_CONSTRUCTION_ISOLATED')&&OWR_CONSTRUCTION_ISOLATED===true&&defined('OWR_CONSTRUCTION_PERSISTENT')&&OWR_CONSTRUCTION_PERSISTENT===true){
+            require_once __DIR__.'/ConstructionAdmin.php';ConstructionAdmin::boot();
+        }
         add_action('wp_restore_post_revision',static function($postId){
             if(get_post_type($postId)!=='ozmd_document'||(!get_option('ozeki_resilience_site_origin_url')&&!get_post_meta($postId,'_ozeki_resilience_m1_origin_url',true)))return;
             if(!metadata_exists('post',$postId,'_ozmd_source'))return;
