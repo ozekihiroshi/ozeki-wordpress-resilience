@@ -1,0 +1,9 @@
+Ozeki Resilience 0.3.3 rc.24 — candidate for the existing application.
+
+Retains rc.23 directory-boundary and migration fixes. Corrects supported embeds, Markdown revision sources/export names, declared CF7 Flamingo mappings, and ACF presentation instructions. No storage/history format change or dependency update. Recovery uses prepared trusted software without installing or initializing it.
+
+Existing originals/history remain unchanged. Recover from an earlier original containing information if a previous incomplete recovery was already re-saved. See the release record for exact ZIP installation/update and Plugin Check results, and the linked synthetic real-S3 recovery/use/resave/second-recovery evidence and limits.
+
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.24
+
+This text is prepared for submission; no submission or email has been sent for rc.24.

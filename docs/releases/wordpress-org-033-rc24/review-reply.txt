@@ -1,0 +1,15 @@
+Hello Plugin Review Team,
+
+We have prepared Ozeki Resilience 0.3.3 rc.24 as a follow-up to rc.23. It retains the directory-boundary and migration fixes already explained.
+
+Follow-up recovery checks corrected supported TablePress/Markdown/CF7 embed syntax, Markdown revision sources and safe export names, declared CF7-to-Flamingo field mappings, and ACF field instructions. Only the ACF presentation field receives HTML safety processing; other structured data is not treated as HTML. Existing originals and history are not rewritten. Recovery still requires trusted software to be installed and configured separately; it does not install or initialize third-party software.
+
+The recorded isolated real-S3 checks covered recovery, use, resaving and a second recovery. The exact release ZIP was separately checked for fresh installation and replacement update from rc.23. Please see the release verification record for versions, results and scope.
+
+Our rc.23 clarification questions concerning private staging outside served web roots and preservation of Markdown source as an independent original remain unchanged. This candidate does not add a WP_CONTENT_DIR fallback or authorize execution of archived source.
+
+Candidate and matching source:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.24
+
+Thank you for your guidance.
+Hiroshi Ozeki

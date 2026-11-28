@@ -1,0 +1,20 @@
+{
+  "files": 3823,
+  "bytes": 8338659,
+  "sha256": "e5c808e2c51ebcdf1e33f8bef3f7438fb1625747e94c8bc9b928cf877e9cc3dc",
+  "changes_from_rc23": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/AcfHistory.php",
+    "ozeki-resilience/src/Plugin.php",
+    "ozeki-resilience/src/RecoveryContent.php",
+    "ozeki-resilience/src/RecoveryRules.php"
+  ],
+  "removed": [],
+  "vendor_unchanged": true,
+  "user_guides": 8,
+  "relative_links_checked": 86,
+  "development_files_absent": true
+}
