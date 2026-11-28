@@ -6,6 +6,8 @@ require_once __DIR__.'/ConstructionPreservation.php';
 require_once __DIR__.'/ConstructionCapture.php';
 require_once __DIR__.'/ConstructionJob.php';
 require_once __DIR__.'/SetupReadiness.php';
+require_once __DIR__.'/ConstructionFollow.php';
+require_once __DIR__.'/FlamingoReconstruction.php';
 
 /** Explicitly isolated management entry. Never enables itself on existing sites. */
 final class ConstructionAdmin {

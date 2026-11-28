@@ -31,6 +31,7 @@ jobs:
         run: |
           php packages/markdown-m1/tests/construction-initial-content.php
           php packages/markdown-m1/tests/construction-management.php
+          php packages/markdown-m1/tests/construction-bootstrap.php
           php packages/markdown-m1/tests/construction-recording-boundary.php
           php packages/markdown-m1/tests/construction-safety.php
           python3 -B packages/markdown-m1/tests/construction-shipping.py
