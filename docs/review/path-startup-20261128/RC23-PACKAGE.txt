@@ -1,11 +1,28 @@
 Ozeki Resilience 0.3.3 rc.23 — 2026-11-28
 
 Status / 状態
-GitHub review candidate; NOT submitted to WordPress.org, NOT deployed to production,
-and NOT approved for publication. rc.22 remains the submitted artifact. The latest
-review still requires a response. No review email is sent as part of this preparation.
-GitHub上の審査用候補です。WordPress.org未提出・本番未導入・公開未承認。
-提出済みはrc.22のままです。今回の補足説明・返信文は未送信です。
+Submitted to the existing WordPress.org application on 2026-11-28; upload acceptance
+and the reply to the original review email were confirmed in the browser.
+Awaiting the review team's response. NOT approved for publication and NOT deployed
+to production. Temporary-storage and Markdown questions remain with the reviewer.
+2026年11月28日、既存申請へのrc.23更新受付と元の審査メールへの返信送信を確認。
+審査担当者の回答待ちです。公開承認済みではなく、本番導入も行っていません。
+一時作業領域とMarkdown原本保全については説明・確認依頼を送り、回答を待ちます。
+
+Submission evidence / 受付・送信の確認
+- Application displayed: New version of Ozeki Resilience uploaded for review.
+- Submitted files: November 28, 2026; ozeki-resilience-0.3.3.zip; version 0.3.3;
+  supplementary text identifies rc.23, source ebac414 and the SHA256 below.
+- Replied to: Re: [WordPress Plugin Directory] Review in Progress: Ozeki Resilience
+  (plugins@wordpress.org), the November 28 review, not an upload-notification email.
+- Gmail displayed: メッセージを送信しました.
+- After reply, the application displayed: Being Reviewed — We've got your email.
+  This plugin is currently waiting on action from our plugins team.
+- Sent text: RC23-REPLY-SENT.txt. The draft's opening was updated to report confirmed
+  upload acceptance; the technical explanation and clarification requests are unchanged.
+- Application: https://wordpress.org/plugins/developers/add/
+- ZIP, tag and source below remain exactly as packaged; only status documentation
+  and the GitHub release description are updated after submission.
 
 Artifact / 成果物
 Source: ebac41426b3dd09c9b3c93c2fedddabcfb841618
@@ -56,10 +73,10 @@ Still to discuss with the reviewer / 審査への補足
 The protected WP_CONTENT_DIR fallback remains unimplemented: guidance prefers a private writable
 PHP temporary directory outside every served web root. Random names or .htaccess alone do not
 establish privacy on every host. Markdown originals remain unchanged archival text; safe presentation
-is a separate boundary. The unsent reply explains these choices and requests clarification rather
+is a separate boundary. The sent reply explains these choices and requests clarification rather
 than claiming all concerns accepted. No claim is made that arbitrary third-party renderers are safe.
 
 Preservation / 保全
 No production installation/configuration change; no existing S3 original/history changes.
 Submitted rc.22 SHA256 remains 59db41d96e210e892c2a0cf53f85d5d581436a2d86a84d362986d852249fbeba.
-Existing ZIPs/tags and research-side uncommitted work retained. New candidate release only.
+Existing ZIPs/tags and research-side uncommitted work retained. Submission uses the existing rc.23 ZIP.
