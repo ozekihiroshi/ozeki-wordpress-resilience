@@ -1,5 +1,13 @@
 # Current distribution status / 現行版の配布状況
 
+**rc.24: new candidate, not submitted or deployed. rc.23 remains submitted and deployed; awaiting reviewer response, not approved.**
+
+**rc.24は未提出・本番未導入の候補です。提出済み・本番稼働中はrc.23で、審査担当者の回答待ちです。公開承認済みではありません。**
+
+[rc.24 ZIP and corresponding source / ZIP・対応ソース](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.24). See [update instructions / 更新手順](install-update.md).
+
+## Historical rc.22 record / rc.22当時の記録
+
 **0.3.3 rc.22: update accepted and original review email answered on 2026-11-24. Awaiting reviewer response; NOT approved for publication. Not deployed to production.**
 
 **0.3.3 rc.22は2026-11-24に更新受付・審査メール返信が完了しました。審査担当者の回答待ちであり、公開承認済みではありません。本番未導入です。**

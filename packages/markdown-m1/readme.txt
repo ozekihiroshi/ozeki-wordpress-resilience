@@ -110,6 +110,7 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Keep supported TablePress, Markdown and CF7 embeds usable; preserve Markdown revision source and safe export filenames, declared CF7 Flamingo field mappings and ACF field instructions. Existing originals and history are not rewritten.
 * Share the private workspace path boundary check; allow sibling directories without permitting WordPress-internal staging.
 * Keep protection and initial-save readiness after successful settings migration. On failure, stop only Resilience preservation, retain interruption evidence across retries/reactivation, and guide explicit restart after a new trusted initial save.
 * Keep prepared destination templates and navigation; check the referenced document's viewing conditions when displaying embedded Markdown.

@@ -1,6 +1,6 @@
 # Ozeki Resilience
 
-**0.3.3 rc.23 is a review candidate, not submitted to WordPress.org or deployed to production. rc.22 remains the submitted version; publication has NOT been approved.**
+**0.3.3 rc.24 is a new candidate, not submitted or deployed. rc.23 remains submitted and deployed; we await the reviewer response. Publication has NOT been approved.**
 
 Preserve the articles, images and inquiries your site has accumulated, so you can resume publishing and serving users after a cyberattack. Ozeki Resilience saves supported content and provides a path to recovering it on a separate WordPress.
 
