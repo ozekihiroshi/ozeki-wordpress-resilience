@@ -1,5 +1,7 @@
 # Ozeki Resilience
 
+[rc.23候補のダウンロード](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23)・[ZIP確認と審査対応の記録](docs/review/path-startup-20261128/RC23-PACKAGE.txt)。
+
 **正式公開前の保存データについて：** 公開前の候補版をまたぐ保存データの互換性は保証しません。保存元と復旧先を同じ対応版に揃え、版ごとの更新手順に従ってください。rc.22からrc.23への正常な更新では、保全の中断がなければ初回保存のやり直しは不要です。既存の原本・履歴は書き換えません。
 
 **0.3.3 rc.23は審査用の候補です。WordPress.orgへの提出・本番導入はまだ行っていません。提出済みはrc.22のままであり、公開承認済みではありません。**

@@ -1,0 +1,12 @@
+Ozeki Resilience 0.3.3 rc.23 — candidate update
+
+Source: ebac41426b3dd09c9b3c93c2fedddabcfb841618
+ZIP SHA256: 062a8c423c4ecca40b0075dc65d4d783e27ed884024fc66c5933f341e7de5447
+
+This candidate fixes the sibling-directory prefix check and removes global write guards installed after a failed settings migration. Unrelated WordPress operations retain their core permission checks. Successful migration preserves protection and initial-save readiness. Failed preservation startup records an interruption that survives retries and reactivation; concurrent success/failure completion orders were checked. A new trusted initial save and explicit protection start are required after an interruption, not after every successful update.
+
+The exact ZIP passed isolated fresh installation and rc.22 replacement update on WordPress 7.1.4/PHP 8.3. Protection settings, baseline readiness and pending records were retained on normal update, and all 3,823 installed files matched the ZIP. Plugin Check 2.2.0: 0 errors, 134 documented warnings. No archive format or dependency changes.
+
+Temporary storage remains outside WordPress and must also be outside other served roots. We have not introduced a silent WP_CONTENT_DIR fallback because a random name or .htaccess alone cannot ensure privacy on every server.
+
+Markdown originals remain archival text; safe display is enforced separately. Please see the accompanying review reply for the rationale and request for clarification. This candidate does not claim those remaining design questions have already been accepted.

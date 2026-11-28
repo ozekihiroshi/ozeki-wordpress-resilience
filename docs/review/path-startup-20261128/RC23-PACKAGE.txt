@@ -1,0 +1,65 @@
+Ozeki Resilience 0.3.3 rc.23 — 2026-11-28
+
+Status / 状態
+GitHub review candidate; NOT submitted to WordPress.org, NOT deployed to production,
+and NOT approved for publication. rc.22 remains the submitted artifact. The latest
+review still requires a response. No review email is sent as part of this preparation.
+GitHub上の審査用候補です。WordPress.org未提出・本番未導入・公開未承認。
+提出済みはrc.22のままです。今回の補足説明・返信文は未送信です。
+
+Artifact / 成果物
+Source: ebac41426b3dd09c9b3c93c2fedddabcfb841618
+Tag: wporg-0.3.3-rc.23 (new tag; existing tags retained)
+ZIP: ozeki-resilience-0.3.3.zip
+Internal plugin version: 0.3.3
+SHA256: 062a8c423c4ecca40b0075dc65d4d783e27ed884024fc66c5933f341e7de5447
+Size: 8,337,496 bytes; files: 3,823
+Release: https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23
+Local evidence: D:/workspace/wp-rescue/release-readiness/wordpress-org-033-rc23/
+
+Changes / 修正
+- Shared private staging-directory boundary check; a sibling name prefix no longer causes rejection.
+- A failed migration stops Resilience preservation rather than unrelated WordPress operations.
+- Normal migration preserves protection, baseline readiness and pending saves. Only failed startup
+  records an interruption; retries/reactivation retain it. Both concurrent completion orders checked.
+- English/Japanese candidate and update instructions now distinguish normal rc.22 → rc.23 updates
+  from recovery after an interruption. readme.txt changelog updated; archive format unchanged.
+- 開発途中の「正常移行にも初回保存を要求する」方針は撤回済み。RESULTS.txt参照。
+
+Exact ZIP validation / ZIP自体の確認
+Disposable internal-only Docker on dm: WordPress 7.1.4, PHP 8.3, MariaDB 10.11.
+External HTTP, scheduled WordPress cron and automatic updates disabled; synthetic data only; no S3.
+- Fresh installation/activation passed; all 3,823 installed files match the ZIP.
+- rc.22 replacement update passed; protection-on configuration, baseline sentinel, pending sentinel,
+  active plugins and posts retained the identical comparison hash; all installed files match.
+- Neither fresh install nor normal update produced an interruption marker.
+- Plugin Check 2.2.0: exit 0, ERROR 0, WARNING 134 (same count/categories as rc.22).
+- Warning breakdown: direct queries 47, uncached queries 43, meta_value queries 23, meta_key queries 18,
+  error_log advisories 2, Japanese Markdown filename advisory 1. Zero errors is not review approval
+  or a performance guarantee; these warnings are not represented as fully resolved.
+- All dependency files unchanged from rc.22. No files removed.
+- Maintained user guides: 8; valid relative links: 86; development/test scripts excluded.
+- Existing basic-settings, navigation-state, reference-settings, core-update-contract and
+  attachment-deletion-state checks passed against the matching package sources. The test-only
+  relative src directory was supplied separately under /tmp; installed product files were not edited.
+- Cleanup of test containers, volumes and network succeeded.
+- The preceding final runtime commit d0b373e passed Actions on PHP 8.1/8.3. rc.23 changes after that
+  commit are documentation only. The pushed main's Actions result is available in GitHub Actions.
+
+Earlier evidence and boundaries / 既存確認との関係
+RESULTS.txt and startup-lifecycle-result.json record final migration/lifecycle/concurrency tests.
+s3-restart-summary.json records actual-S3 initial save, explicit restart and formal-history readback
+on the unchanged restart action path before the successful-migration refinement. It is not an
+exact-rc.23 ZIP real-S3 round trip. No new full recovery or browser-interaction claim is made here.
+
+Still to discuss with the reviewer / 審査への補足
+The protected WP_CONTENT_DIR fallback remains unimplemented: guidance prefers a private writable
+PHP temporary directory outside every served web root. Random names or .htaccess alone do not
+establish privacy on every host. Markdown originals remain unchanged archival text; safe presentation
+is a separate boundary. The unsent reply explains these choices and requests clarification rather
+than claiming all concerns accepted. No claim is made that arbitrary third-party renderers are safe.
+
+Preservation / 保全
+No production installation/configuration change; no existing S3 original/history changes.
+Submitted rc.22 SHA256 remains 59db41d96e210e892c2a0cf53f85d5d581436a2d86a84d362986d852249fbeba.
+Existing ZIPs/tags and research-side uncommitted work retained. New candidate release only.

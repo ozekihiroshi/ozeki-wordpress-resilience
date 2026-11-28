@@ -1,0 +1,20 @@
+{
+  "files": 3823,
+  "bytes": 8337496,
+  "sha256": "062a8c423c4ecca40b0075dc65d4d783e27ed884024fc66c5933f341e7de5447",
+  "changes_from_rc22": [
+    "ozeki-resilience/RAADME-jp.md",
+    "ozeki-resilience/README.md",
+    "ozeki-resilience/docs/install-update.md",
+    "ozeki-resilience/readme.txt",
+    "ozeki-resilience/src/Plugin.php",
+    "ozeki-resilience/src/RecoveryWorkspace.php",
+    "ozeki-resilience/src/SiteSnapshot.php",
+    "ozeki-resilience/src/Startup.php"
+  ],
+  "removed": [],
+  "vendor_unchanged": true,
+  "user_guides": 8,
+  "relative_links_checked": 86,
+  "development_files_absent": true
+}

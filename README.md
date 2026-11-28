@@ -1,5 +1,7 @@
 # Ozeki Resilience
 
+[rc.23 candidate download](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23) · [ZIP verification and review status](docs/review/path-startup-20261128/RC23-PACKAGE.txt).
+
 **0.3.3 rc.23 is a review candidate, not submitted to WordPress.org or deployed to production. rc.22 remains the submitted version; publication has NOT been approved.**
 
 [rc.22 submission, compatibility and verification](docs/review/core-updates-20261124/RC22-PACKAGE.ja.md).

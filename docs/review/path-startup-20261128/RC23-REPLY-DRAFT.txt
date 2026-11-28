@@ -1,0 +1,19 @@
+Hello Plugin Review Team,
+
+Thank you for the detailed review. We have prepared Ozeki Resilience 0.3.3 rc.23 with corrections for the directory-prefix check and the global guards after a failed migration.
+
+Both recovery checks now share the directory-boundary rule. A sibling directory is allowed without admitting staging inside WordPress. Failed migration stops only Resilience preservation; normal WordPress operations retain their usual permissions. Successful migration keeps protection and initial-save readiness. Failure evidence survives retry and reactivation; both concurrent completion orders were checked. After an interruption, the administrator reviews pending work, creates a new trusted initial save and explicitly restarts protection.
+
+The exact ZIP passed isolated installation and update from rc.22, with all installed files matching and existing configuration, posts, baseline readiness and pending records preserved. Plugin Check 2.2.0 reports 0 errors and 134 documented warnings. The package changes no saved-data format or dependencies.
+
+For temporary storage, we retain a private writable directory outside served web roots. We have not added the suggested WP_CONTENT_DIR fallback: random names, file permissions and .htaccess alone cannot guarantee non-public access across different server configurations. We would prefer explicit host preparation to a fallback whose access protection cannot be established. Please let us know whether this requirement is acceptable or which server-enforced fallback you expect.
+
+For Markdown, unchanged source is preserved as text/markdown in S3; archival preservation does not authorize execution. Source checks cover type, size, UTF-8 and NUL bytes, with permission/nonce checks separately. Those checks are not described as HTML sanitization. Legitimate source can contain HTML/script code examples, so sanitizing the independent original would remove information.
+
+Presentation is a separate boundary. Existing isolated checks with Resilience active and Markdown Documents 0.1.3 covered standard content and document embeds: script examples remained text, unsafe URL schemes were removed and tested shortcodes did not execute. We do not claim that arbitrary third-party rendering paths are safe. Could you clarify whether the concern is the unchanged private archive itself or a specific path producing executable output? We will address any missed display path while retaining the independent source.
+
+The corrected ZIP and corresponding source are available here:
+https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23
+
+Thank you for your guidance.
+Hiroshi Ozeki

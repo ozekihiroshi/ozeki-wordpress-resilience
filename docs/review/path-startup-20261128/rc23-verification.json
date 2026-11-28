@@ -1,0 +1,24 @@
+{
+  "source": "ebac41426b3dd09c9b3c93c2fedddabcfb841618",
+  "zip_sha256": "062a8c423c4ecca40b0075dc65d4d783e27ed884024fc66c5933f341e7de5447",
+  "fresh": {
+    "files_matched": 3823,
+    "state_preserved": false,
+    "wordpress": "7.1.4",
+    "plugin": "0.3.3"
+  },
+  "update": {
+    "files_matched": 3823,
+    "state_preserved": true,
+    "wordpress": "7.1.4",
+    "plugin": "0.3.3"
+  },
+  "plugin_check": {
+    "errors": 0,
+    "warnings": 134,
+    "exit": 0,
+    "version": "2.2.0"
+  },
+  "regression_checks": 5,
+  "cleanup_errors": []
+}
