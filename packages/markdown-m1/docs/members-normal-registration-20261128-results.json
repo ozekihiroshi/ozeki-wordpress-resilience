@@ -1,0 +1,339 @@
+{
+  "source_field": {
+    "key": "company",
+    "mode": "add",
+    "order": "not asserted; existing order maintained"
+  },
+  "source_user": 2,
+  "material": {
+    "baseline": {
+      "users": 1,
+      "fields": 17
+    },
+    "hash_in_original": true,
+    "original_unchanged": true,
+    "through": 1,
+    "users": 1
+  },
+  "no_password": {
+    "state": "completed_with_holds",
+    "fields": [
+      {
+        "key": "username",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [
+          "add_display",
+          "add_required",
+          "add_profile"
+        ],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "first_name",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "last_name",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_address_1",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_address_2",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_city",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_state",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_postcode",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_country",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_phone",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "user_email",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [
+          "add_display",
+          "add_required",
+          "add_profile"
+        ],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "confirm_email",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "user_url",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "description",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "password",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "confirm_password",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "company",
+        "mode": "add",
+        "order": "not asserted; existing order maintained"
+      }
+    ],
+    "users": {},
+    "restrictions": {
+      "6": 11,
+      "7": 12,
+      "8": 13,
+      "9": 14
+    },
+    "held": {
+      "user:2": "new-password-required; saved hash cannot be passed to normal registration"
+    },
+    "credential_policy": "Passwords are not restored. Use the standard WordPress password reset process.",
+    "password_reset_required": [],
+    "settings": {
+      "controls": {
+        "wpmem_block_post": "1",
+        "wpmem_block_page": "0",
+        "wpmem_show_excerpt_post": "0",
+        "wpmem_show_excerpt_page": "0",
+        "wpmem_show_login_post": "1",
+        "wpmem_show_login_page": "1",
+        "wpmem_show_reg_post": "1",
+        "wpmem_show_reg_page": "1",
+        "wpmem_autoex_post": "0",
+        "wpmem_autoex_page": "0",
+        "wpmem_settings_mspage": "12",
+        "wpmem_settings_regpage": "",
+        "wpmem_settings_logpage": "11"
+      },
+      "other_prepared_controls_preserved": false,
+      "other_changed_controls": [
+        "wpmem_settings_logurl",
+        "wpmem_settings_msurl"
+      ]
+    }
+  },
+  "rebuild": {
+    "state": "completed",
+    "fields": [
+      {
+        "key": "username",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [
+          "add_display",
+          "add_required",
+          "add_profile"
+        ],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "first_name",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "last_name",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_address_1",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_address_2",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_city",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_state",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_postcode",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_country",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "billing_phone",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "user_email",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [
+          "add_display",
+          "add_required",
+          "add_profile"
+        ],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "confirm_email",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "user_url",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "description",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "password",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "confirm_password",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      },
+      {
+        "key": "company",
+        "mode": "prepared-definition-retained",
+        "fixed_controls": [],
+        "order": "existing order maintained"
+      }
+    ],
+    "users": {
+      "2": 3
+    },
+    "restrictions": {
+      "6": 11,
+      "7": 12,
+      "8": 13,
+      "9": 14
+    },
+    "held": {},
+    "credential_policy": "Passwords are not restored. Use the standard WordPress password reset process.",
+    "password_reset_required": [
+      "2"
+    ],
+    "settings": {
+      "controls": {
+        "wpmem_block_post": "1",
+        "wpmem_block_page": "0",
+        "wpmem_show_excerpt_post": "0",
+        "wpmem_show_excerpt_page": "0",
+        "wpmem_show_login_post": "1",
+        "wpmem_show_login_page": "1",
+        "wpmem_show_reg_post": "1",
+        "wpmem_show_reg_page": "1",
+        "wpmem_autoex_post": "0",
+        "wpmem_autoex_page": "0",
+        "wpmem_settings_mspage": "12",
+        "wpmem_settings_regpage": "",
+        "wpmem_settings_logpage": "11"
+      },
+      "other_prepared_controls_preserved": true,
+      "other_changed_controls": []
+    }
+  },
+  "password_reset": {
+    "standard_email_link": true,
+    "external_mail_sent": false,
+    "new_password_set_through_standard_form": true
+  },
+  "checks": {
+    "password_not_restored": true,
+    "new_password_login": true,
+    "saved_company_from_history": true,
+    "member_allowed": true,
+    "guest_denied": true,
+    "public_visible": true,
+    "profile_edit_visible": true,
+    "company_definition_equal": true,
+    "prepared_versions_retained": true,
+    "plugins_unchanged": true,
+    "source_material_unchanged": true,
+    "fl-contract-1795862645-source-no-initializer": true,
+    "fl-contract-1795862645-target-no-initializer": true
+  },
+  "all_checks_passed": true,
+  "s3_used": false,
+  "plugin_version": "3.5.8.3",
+  "cleanup_errors": [],
+  "elapsed_seconds": 45.58
+}

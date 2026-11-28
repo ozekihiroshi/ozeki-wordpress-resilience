@@ -58,11 +58,15 @@ final class CommentHistory
     public function enqueueCurrent(string $asset,callable $capture,array $attrs): void {
         SaveFailure::run('Shared queue current-state registration',fn()=>$this->enqueueOperation($asset,'',$attrs,[],$capture));
     }
-    private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[],?callable $capture=null): void {
+    public function enqueueOnce(string $asset,string $source,array $attrs,string $operation): void {
+        if(!preg_match('/^[a-f0-9-]{36}$/D',$operation)||($attrs['post_type']??'')!=='owr_form_input')throw new \RuntimeException('Invalid receipt operation.');
+        $this->enqueueOperation($asset,$source,$attrs,[],null,$operation);
+    }
+    private function enqueueOperation(string $asset,string $source,array $attrs,array $resources=[],?callable $capture=null,?string $fixed=null): void {
         if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
         if($resources && !in_array($attrs['post_type']??'',['owr_native','owr_attachment','post','page','ozmd_document'],true))throw new \RuntimeException('Unexpected operation resources.');
         if(strlen(Store::json($resources))>128*1024*1024)throw new \RuntimeException('Operation resources exceed 128 MiB encoded.');
-        $name=$this->lock();$operation=wp_generate_uuid4();
+        $name=$this->lock();$operation=$fixed??wp_generate_uuid4();
         try {
             if($capture!==null)$source=$capture();
             if(strlen($source)>5*1024*1024)throw new \RuntimeException('Operation record exceeds 5 MiB; not confirmed.');
@@ -78,7 +82,19 @@ final class CommentHistory
                     // A failed optimization must never lose the pending payload.
                 }
             }
-            $queue[$operation]=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs,'resources'=>$resources];
+            $entry=['asset'=>$asset,'operation'=>$operation,'source'=>$source,'attributes'=>$attrs,'resources'=>$resources];
+            if($fixed!==null){
+                if(isset($queue[$operation])){
+                    if($queue[$operation]['source']!==$source||$queue[$operation]['attributes']!==$attrs)throw new \RuntimeException('Receipt retry changed immutable input.');
+                    try{$this->flushLocked();}catch(\Throwable $e){update_option('ozeki_resilience_m1_comment_error',$e->getMessage(),false);}return;
+                }
+                $state=(new Plugin())->store()->latestState();$existing=$state['assets'][$asset]??null;
+                if($existing){
+                    if((new Plugin())->store()->originalSource($existing['original'])!==$source)throw new \RuntimeException('Receipt operation collision.');
+                    ReceiptInputs::committed($entry);return;
+                }
+            }
+            $queue[$operation]=$entry;
             if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment history pending state.');
             try{$this->flushLocked();}catch(\Throwable $e){update_option('ozeki_resilience_m1_comment_error',$e->getMessage(),false);}
         } finally {$this->unlock($name);}
@@ -111,7 +127,9 @@ final class CommentHistory
                 $entry['record']=['schema'=>'owr-md-history-1','sequence'=>$store->latestState()['through']+1,'original'=>$original,'attributes'=>$entry['attributes'],'confirmed_at'=>gmdate('c')];
                 $queue[$key]=$entry;if(!update_option(self::PENDING,$queue,false))throw new \RuntimeException('Cannot persist comment confirmation.');
             }
-            $store->commit($entry['record']);unset($queue[$key]);
+            $store->commit($entry['record']);
+            if(($entry['attributes']['post_type']??'')==='owr_form_input')ReceiptInputs::committed($entry);
+            unset($queue[$key]);
             if($queue)update_option(self::PENDING,$queue,false);else delete_option(self::PENDING);
         }
         delete_option('ozeki_resilience_m1_comment_error');

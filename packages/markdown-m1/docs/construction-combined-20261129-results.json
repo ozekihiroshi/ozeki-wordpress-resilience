@@ -1,0 +1,447 @@
+{
+  "environment_seconds": 0.236,
+  "fast_contract": "PASS: before-operation input, unresolved outcome, initial-save cutoff, unchanged originals, changed-prefix refusal, capture drift, credential boundary, partial failure\n{\n    \"checks\": 601,\n    \"seconds\": 0.0153,\n    \"source_input_unchanged\": true,\n    \"order_followed\": true,\n    \"incomplete_capture_rejected\": true\n}\n{\"plugin_contract_checks\":17,\"seconds\":0.0004,\"scope\":\"pure contract checks; not a substitute for normal plugin operations\"}\n{\"source_reference_checks\":14,\"seconds\":0.00053}\n{\"block_and_media_checks\":9}\n",
+  "contract_process_seconds": 0.124,
+  "form_contract": "{'form_participants_exact': True, 'checks': 4, 'seconds': 0.00027}\n",
+  "plugins": {
+    "passed": true,
+    "baseline": {
+      "files": [
+        "content.json",
+        "markdown/12.md",
+        "markdown/13.md",
+        "uploads/2026/11/diagram-11-150x150.png",
+        "uploads/2026/11/diagram-11-300x225.png",
+        "uploads/2026/11/diagram-11-768x576.png",
+        "uploads/2026/11/diagram-11.png",
+        "construction/authors.json",
+        "construction/initial-references.json"
+      ],
+      "cutoff": 8,
+      "snapshot_schema": "owr-site-snapshot-1"
+    },
+    "transfer": {
+      "outage_stopped": true,
+      "outage_no_commit": true,
+      "retry_same_commit": true,
+      "no_duplicate_objects": true,
+      "tampered_read_rejected": true,
+      "old_objects_unchanged": true,
+      "tail_count": 21,
+      "ref": {
+        "key": "construction-experiment/1b5848b4af6faffd78b553438cb314a94782aac516dd8a3b2c81f52a9b8ddbd4/commits/380db5354334be482a804b612813870b8eec0fa9de0e809d1989cc8778a31b21.json",
+        "version": "380db5354334be482a804b612813870b8eec0fa9de0e809d1989cc8778a31b21",
+        "sha256": "380db5354334be482a804b612813870b8eec0fa9de0e809d1989cc8778a31b21"
+      }
+    },
+    "image_lifecycle": true,
+    "member_password_reset_login_access": true,
+    "receipt_view_without_resending": true,
+    "stages": [
+      {
+        "sequence": 1,
+        "command": "wordpress.media-upload",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 8
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 9
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 10
+          }
+        ]
+      },
+      {
+        "sequence": 4,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 5,
+        "command": "tablepress.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "table",
+            "id": "1"
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "command": "markdown.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 12
+          }
+        ]
+      },
+      {
+        "sequence": 7,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 12
+          }
+        ]
+      },
+      {
+        "sequence": 8,
+        "command": "/contact-form-7/v1/contact-forms",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 9,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 12
+          }
+        ]
+      },
+      {
+        "sequence": 10,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 9
+          }
+        ]
+      },
+      {
+        "sequence": 11,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 17
+          }
+        ]
+      },
+      {
+        "sequence": 12,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 17
+          }
+        ]
+      },
+      {
+        "sequence": 13,
+        "command": "acf.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 14,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 17
+          }
+        ]
+      },
+      {
+        "sequence": 15,
+        "command": "tablepress.save",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "table",
+            "id": "1"
+          }
+        ]
+      },
+      {
+        "sequence": 16,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 17
+          }
+        ]
+      },
+      {
+        "sequence": 17,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 18,
+        "command": "members.create",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "user",
+            "id": 2
+          }
+        ]
+      },
+      {
+        "sequence": 19,
+        "command": "members.profile",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "user",
+            "id": 2
+          }
+        ]
+      },
+      {
+        "sequence": 20,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 21,
+        "command": "/contact-form-7/v1/contact-forms",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 22,
+        "command": "flamingo.add",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 25
+          }
+        ]
+      },
+      {
+        "sequence": 23,
+        "command": "wordpress.media-edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 26
+          }
+        ]
+      },
+      {
+        "sequence": 24,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 27
+          }
+        ]
+      },
+      {
+        "sequence": 25,
+        "command": "wordpress.media-upload",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 28
+          }
+        ]
+      },
+      {
+        "sequence": 26,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 27
+          }
+        ]
+      },
+      {
+        "sequence": 27,
+        "command": "/wp/v2/media",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 28
+          }
+        ]
+      },
+      {
+        "sequence": 28,
+        "command": "wordpress.media-delete",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 29,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 27
+          }
+        ]
+      }
+    ],
+    "completed": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "seconds": 50.619,
+    "image_original_and_thumbnail": true,
+    "cf7_hash_embeds": true,
+    "external_url_unchanged": true,
+    "normal_rendering": true,
+    "source_image_sha256": "74a5bf5f0b48c918a04a596f21a24adb536220992c121aa4df58ce6706f1851d",
+    "typed_embeds": true,
+    "settings_references": true,
+    "structured_values_unchanged": true,
+    "ordinary_resave": true,
+    "identities_from_actual_results": {
+      "post:1": 16,
+      "post:2": 17,
+      "post:9": 18,
+      "post:10": 19,
+      "post:8": 20,
+      "user:1": 2,
+      "category:1": 1,
+      "post:12": 24,
+      "post:4": 22,
+      "post:14": 23,
+      "table:1": "2",
+      "image-url:full:8": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11.png",
+      "image-url:medium:8": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-300x225.png",
+      "image-url:thumbnail:8": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-150x150.png",
+      "image-url:medium_large:8": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-768x576.png",
+      "cf7-hash:4": "efbcd4d",
+      "cf7-hash:14": "35a6304",
+      "post:17": 33,
+      "user:2": 3,
+      "post:25": 39,
+      "post:26": 40,
+      "image-url:full:26": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-edited.png",
+      "image-url:medium:26": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-edited-225x300.png",
+      "image-url:thumbnail:26": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-11-edited-150x150.png",
+      "post:27": 41,
+      "post:28": 42,
+      "image-url:full:28": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-10.png",
+      "image-url:medium:28": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-10-300x225.png",
+      "image-url:thumbnail:28": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-10-150x150.png",
+      "image-url:medium_large:28": "http://172.18.0.4/wp-content/uploads/2026/11/diagram-10-768x576.png",
+      "deleted:26": true
+    }
+  },
+  "passed": true,
+  "kept": false,
+  "cleanup_errors": [],
+  "total_seconds": 57.281,
+  "postflight": {
+    "source_plugin_sources_unchanged": true,
+    "target_plugin_sources_unchanged": true,
+    "archive_file_count": 2703
+  },
+  "integration_contract_checks": {
+    "ordinary_block_spacing_accepted": true,
+    "missing_initial_references_held": true,
+    "unsafe_html_held": true,
+    "input_unchanged": true
+  }
+}

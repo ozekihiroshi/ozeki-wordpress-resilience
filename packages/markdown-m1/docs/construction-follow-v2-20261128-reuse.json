@@ -1,0 +1,25 @@
+{
+  "environment_seconds": 0.267,
+  "fast_contract": "PASS: before-operation input, unresolved outcome, initial-save cutoff, unchanged originals, changed-prefix refusal, capture drift, credential boundary, partial failure\n{\n    \"checks\": 601,\n    \"seconds\": 0.0113,\n    \"source_input_unchanged\": true,\n    \"order_followed\": true,\n    \"incomplete_capture_rejected\": true\n}\n",
+  "contract_process_seconds": 0.114,
+  "source": {
+    "seconds": 0.053379058837890625,
+    "recorded": 4
+  },
+  "target": {
+    "seconds": 0.13852190971374512,
+    "sequence": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "new_ids": true,
+    "parent_then_update_then_unlink": true,
+    "input_unchanged": true
+  },
+  "passed": true,
+  "kept": false,
+  "cleanup_errors": [],
+  "total_seconds": 3.266
+}

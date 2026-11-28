@@ -1,0 +1,76 @@
+{
+  "material": {
+    "baseline_unchanged": true,
+    "through": 1,
+    "groups": 1,
+    "fields": 16
+  },
+  "negative_plans": {
+    "unsupported_type": "held before writes",
+    "missing_value": "held before writes"
+  },
+  "registration": {
+    "state": "completed",
+    "groups": [
+      "group_native_acf_trial"
+    ],
+    "posts": {
+      "23": 30
+    },
+    "held": {},
+    "through": 1
+  },
+  "collision": "rejected without overwrite",
+  "first_comparison": {
+    "definitions": true,
+    "values": true,
+    "references": true
+  },
+  "ids": {
+    "page": [
+      23,
+      30
+    ],
+    "group": [
+      6,
+      33
+    ],
+    "field_ids_differ": true
+  },
+  "checks": {
+    "portable_definition_equal": true,
+    "values_and_references_equal": true,
+    "frontend_display_equal": true,
+    "editor_contains_all_fields": true,
+    "instructions_present": true,
+    "resave_unchanged": true,
+    "edited_values_displayed": true,
+    "edited_resave_unchanged": true,
+    "plugins_unchanged": true,
+    "material_unchanged": true
+  },
+  "all_checks_passed": true,
+  "s3_used": false,
+  "acf_version": "6.8.10",
+  "wp_version": "7.1.5",
+  "tested_types": [
+    "text",
+    "textarea",
+    "number",
+    "range",
+    "email",
+    "url",
+    "select",
+    "checkbox",
+    "radio",
+    "button_group",
+    "true_false",
+    "date_picker",
+    "date_time_picker",
+    "time_picker",
+    "color_picker"
+  ],
+  "direct_database_writes": false,
+  "cleanup_errors": [],
+  "elapsed_seconds": 44.0
+}

@@ -15,6 +15,7 @@ require_once __DIR__.'/RecoverySettings.php';
 require_once __DIR__.'/RecoveryTemplates.php';
 require_once __DIR__.'/UpdateContract.php';
 require_once __DIR__.'/CoreStateHistory.php';
+require_once __DIR__.'/ReceiptInputs.php';
 
 /** Portable, complete content baseline. No SQL dump, credentials or source-host dependency. */
 final class SiteSnapshot
@@ -53,6 +54,7 @@ final class SiteSnapshot
         if(TableHistory::enabled())TableHistory::baseline($data);
         if(MemberHistory::enabled())$data['membership']=MemberHistory::baseline();
         AcfHistory::baseline($data);
+        ReceiptInputs::baseline($data);
         $data['media_access']=MediaAccess::current($data);
         $data['deleted_media']=AttachmentHistory::deletedPaths();
         return $data;
@@ -152,6 +154,7 @@ final class SiteSnapshot
         }
         $manifest['asset_format']=AttachmentHistory::SNAPSHOT_FORMAT;
         if(($content['update_contract']??'')===UpdateContract::SCHEMA)$manifest['asset_format']=UpdateContract::SNAPSHOT_FORMAT;
+        if(!empty($content['flamingo_inputs']))$manifest['asset_format']=ReceiptInputs::SNAPSHOT_FORMAT;
         ksort($files);$identity=[];foreach($files as $p=>$body){self::safePath($p);$identity[$p]=hash('sha256',$body);}
         unset($manifest['resources'],$manifest['created_at'],$manifest['gfs'],$manifest['scheduled_at'],$manifest['gfs_timezone']);
         // A new recovery point owns a complete copy even when its content is unchanged.
@@ -182,19 +185,23 @@ final class SiteSnapshot
         $base=dirname($ref['key']).'/resources/';$files=[];
         foreach($m['resources'] as $p=>$r){self::safePath($p);if($r['key']!==$base.$p)throw new \RuntimeException('Site snapshot depends on another snapshot.');if($informationOnly&&($p==='software.zip'||str_starts_with($p,'themes/')||str_starts_with($p,'plugins/')))continue;$files[$p]=$this->store->get($r);}
         if(isset($m['asset_format'])){
-            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
+            if(!in_array($m['asset_format'],[AssetFormat::SCHEMA,AcfHistory::SNAPSHOT_FORMAT,ReferenceContext::SNAPSHOT_FORMAT,MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT,ReceiptInputs::SNAPSHOT_FORMAT],true)||isset($files['content.json'])||!isset($files['assets/metadata.json']))throw new \RuntimeException('Invalid separated site resources.');
             if(($m['asset_format']===ReferenceContext::SNAPSHOT_FORMAT||!empty($m['requires_reference_context']))&&empty($m['reference_origins']))throw new \RuntimeException('Missing required reference context.');
             if(isset($m['reference_origins']))$m['reference_origins']=ReferenceContext::merge($m['reference_origins']);
             $layout=json_decode($files['assets/metadata.json'],true,512,JSON_THROW_ON_ERROR);$data=[];
             foreach(array_keys($files) as $path)if(str_starts_with($path,'assets/data/')){$data[substr($path,7)]=$files[$path];unset($files[$path]);}
             $files['content.json']=Store::json(AssetFormat::join($layout,$data));unset($files['assets/metadata.json']);
         }
-        if(in_array($m['asset_format']??'',[MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true)){
+        if(in_array($m['asset_format']??'',[MediaAccess::SNAPSHOT_FORMAT,AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT,ReceiptInputs::SNAPSHOT_FORMAT],true)){
             $content=json_decode($files['content.json'],true,512,JSON_THROW_ON_ERROR);
-            if($m['asset_format']===UpdateContract::SNAPSHOT_FORMAT&&($content['update_contract']??'')!==UpdateContract::SCHEMA)throw new \RuntimeException('Missing core update snapshot contract.');
+            if(in_array($m['asset_format'],[UpdateContract::SNAPSHOT_FORMAT,ReceiptInputs::SNAPSHOT_FORMAT],true)&&($content['update_contract']??'')!==UpdateContract::SCHEMA)throw new \RuntimeException('Missing core update snapshot contract.');
+            if($m['asset_format']===ReceiptInputs::SNAPSHOT_FORMAT){
+                if(empty($content['flamingo_inputs'])||!is_array($content['flamingo_inputs']))throw new \RuntimeException('Missing receipt inputs in snapshot.');
+                foreach($content['flamingo_inputs'] as $receipt)ReceiptInputs::validate($receipt);
+            }
             if(!is_array($content['media_access']??null))throw new \RuntimeException('Missing mandatory media access contract.');
             MediaAccess::validate($content['media_access']);
-            if(in_array($m['asset_format'],[AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT],true))AttachmentHistory::assertComplete($content,$files);
+            if(in_array($m['asset_format'],[AttachmentHistory::SNAPSHOT_FORMAT,UpdateContract::SNAPSHOT_FORMAT,ReceiptInputs::SNAPSHOT_FORMAT],true))AttachmentHistory::assertComplete($content,$files);
         }
         ksort($files);
         return [$m,$files];
@@ -238,6 +245,11 @@ final class SiteSnapshot
             if(($r['attributes']['post_type']??'')==='owr_member'){
                 $this->store->get($r['original']['metadata']);
                 MemberHistory::replay($d,$this->store->originalSource($r['original']),$r['attributes']);continue;
+            }
+            if(($r['attributes']['post_type']??'')==='owr_form_input'){
+                $this->store->get($r['original']['metadata']);
+                ReceiptInputs::replay($d,$this->store->originalSource($r['original']),$r['attributes']);
+                $m['required_form_plugins']=$r['attributes']['dependencies'];continue;
             }
             if(($r['attributes']['post_type']??'')==='owr_form'){
                 $this->store->get($r['original']['metadata']);
@@ -318,6 +330,53 @@ final class SiteSnapshot
         global $wpdb;
         // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it. Private transaction helper receives only literal START TRANSACTION or COMMIT from this class; no input interpolation.
         if($wpdb->query($sql)===false)throw new \RuntimeException('Recovery database '.$sql.' failed: '.$wpdb->last_error);
+    }
+    /** Material selection is independent of the destination writer and transport. */
+    public function reconstructionMaterials(array $ref,?int $targetThrough=null): array {
+        [$m,$files]=$this->load($ref,true);
+        return $this->replay($m,$files,$targetThrough);
+    }
+    /** Read-only inputs for normal Markdown import/editor HTTP operations. */
+    public function markdownRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/MarkdownReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return MarkdownReconstruction::plan($manifest,$files);
+    }
+    /** Read-only inputs for TablePress's ordinary JSON import and editor. */
+    public function tablepressRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/TableReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return TableReconstruction::plan($manifest,$files);
+    }
+    /** Read-only inputs for Contact Form 7's normal registration API. */
+    public function contactFormRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/ContactFormReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return ContactFormReconstruction::plan($manifest,$files);
+    }
+    /** Select inbound originals for Flamingo's existing add() interface. */
+    public function flamingoRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/FlamingoReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return FlamingoReconstruction::plan($manifest,$files);
+    }
+    /** Read-only material selection for WP-Members' normal administrator forms. */
+    public function memberRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/MemberReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return MemberReconstruction::plan($manifest,$files);
+    }
+    /** Select ACF material through the installed plugin's ordinary export preparation. */
+    public function acfRegistrationPlan(array $ref,?int $targetThrough=null): array {
+        require_once __DIR__.'/AcfReconstruction.php';
+        [$manifest,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return AcfReconstruction::plan($manifest,$files);
+    }
+    /** Explicit native registration entry; never falls back to database replacement. */
+    public function reconstructNative(array $ref,array $destination,?int $targetThrough=null): array {
+        require_once __DIR__.'/NativeReconstruction.php';
+        [$m,$files]=$this->reconstructionMaterials($ref,$targetThrough);
+        return (new NativeReconstruction())->run($m,$files,$destination);
     }
     /** Load and replay without changing destination content or S3. Also works with existing originals. */
     public function recoveryPreparation(array $ref,?int $targetThrough=null): array {

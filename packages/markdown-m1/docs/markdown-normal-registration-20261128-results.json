@@ -1,0 +1,76 @@
+{
+  "wordpress": "7.1.5",
+  "markdown": "0.1.3",
+  "baseline": {
+    "baseline_posts": 19
+  },
+  "history": {
+    "through": 3
+  },
+  "report": {
+    "state": "completed",
+    "through": 3,
+    "plan_sha256": "b563dbae9742b4c83a1b35deac3ee33b0b2a57fa1ad24340baebbc2f753a148d",
+    "documents": {
+      "7": 27,
+      "9": 29,
+      "16": 31
+    },
+    "images": {
+      "6": 26
+    },
+    "pages": {
+      "18": 33
+    },
+    "held": {
+      "21": "Original filename is missing; choose an import filename explicitly",
+      "14": "Missing public image original or unresolved image URL: http://172.18.0.3/wp-content/uploads/missing.png",
+      "19": "Referenced document was not registered"
+    },
+    "excluded": {
+      "11": "Not a formal current publication",
+      "13": "Not a formal current publication"
+    },
+    "image_urls": {
+      "http://172.18.0.3/wp-content/uploads/2026/11/wiring.png": "http://172.18.0.4/wp-content/uploads/2026/11/wiring.png"
+    }
+  },
+  "checks": {
+    "baseline_and_formal_selection": true,
+    "tail_bytes": true,
+    "baseline_bytes": true,
+    "filename": true,
+    "new_ids": true,
+    "withdrawn_excluded": true,
+    "draft_excluded": true,
+    "missing_image_held": true,
+    "new_document_filename_missing_reported": true,
+    "withdrawn_embed_held": true,
+    "direct_and_embed_views": true,
+    "image_bytes": true,
+    "private_not_public": true,
+    "normal_edit_resave": true,
+    "normal_publication_fields": true,
+    "source_original_unchanged": true,
+    "plugin_files_unchanged": true,
+    "prepared_setting_preserved": true
+  },
+  "publication_readback": {
+    "title": "技術資料 \"A\" & B",
+    "date": "2026-11-20 10:11:12",
+    "status": "publish",
+    "author": "1"
+  },
+  "all_checks_passed": true,
+  "s3_used": false,
+  "cleanup_errors": [],
+  "elapsed_seconds": 41.75,
+  "source_sha256": {
+    "tools/reconstruct-markdown.py": "850C28781D6B3220DE263B6D65843926039B12D3F6B6799EAB334EAFDB68CE3B",
+    "tests/markdown-reconstruction-run.py": "8F3DF612961F92DB8E884AFACE904707EFAD5FA0073B3296C1B10F5385DB5424",
+    "src/SiteSnapshot.php": "384B65462C32840CEE842406C802F66EE0B6181F067D054D8AAD9B8255D8970C",
+    "tests/markdown-reconstruction.php": "7E30DDCD5BC3F4A40EE422309A29CCAC5D276E365E97AB900DD6B96FD2695772",
+    "src/MarkdownReconstruction.php": "C16D5140899F14FD2B0A83CC39B5686C87B90A98255745A7B1541534184403F6"
+  },
+  "plugin_zip_sha256": "039F5C110C5125D3751FB11DE8376F358B0DF5D61D25CC15A932C4F004D35C21"
+}

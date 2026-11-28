@@ -1,0 +1,266 @@
+{
+  "environment_seconds": 0.217,
+  "fast_contract": "PASS: before-operation input, unresolved outcome, initial-save cutoff, unchanged originals, changed-prefix refusal, capture drift, credential boundary, partial failure\n{\n    \"checks\": 601,\n    \"seconds\": 0.0147,\n    \"source_input_unchanged\": true,\n    \"order_followed\": true,\n    \"incomplete_capture_rejected\": true\n}\n{\"plugin_contract_checks\":17,\"seconds\":0.0003,\"scope\":\"pure contract checks; not a substitute for normal plugin operations\"}\n",
+  "contract_process_seconds": 0.121,
+  "form_contract": "{'form_participants_exact': True, 'checks': 4, 'seconds': 0.00025}\n",
+  "plugins": {
+    "passed": true,
+    "stages": [
+      {
+        "sequence": 1,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 8
+          }
+        ]
+      },
+      {
+        "sequence": 2,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 9
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 4,
+        "command": "tablepress.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "table",
+            "id": "1"
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "command": "markdown.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 11
+          }
+        ]
+      },
+      {
+        "sequence": 6,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 11
+          }
+        ]
+      },
+      {
+        "sequence": 7,
+        "command": "/contact-form-7/v1/contact-forms",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 13
+          }
+        ]
+      },
+      {
+        "sequence": 8,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 9,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 10,
+        "command": "acf.import",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 11,
+        "command": "wordpress.edit",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 12,
+        "command": "tablepress.save",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "table",
+            "id": "1"
+          }
+        ]
+      },
+      {
+        "sequence": 13,
+        "command": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 14
+          }
+        ]
+      },
+      {
+        "sequence": 14,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 15,
+        "command": "members.create",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "user",
+            "id": 2
+          }
+        ]
+      },
+      {
+        "sequence": 16,
+        "command": "members.profile",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "user",
+            "id": 2
+          }
+        ]
+      },
+      {
+        "sequence": 17,
+        "command": "members.settings",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": []
+      },
+      {
+        "sequence": 18,
+        "command": "/contact-form-7/v1/contact-forms",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 13
+          }
+        ]
+      },
+      {
+        "sequence": 19,
+        "command": "flamingo.add",
+        "coverage": "complete",
+        "reasons": [],
+        "outputs": [
+          {
+            "type": "post",
+            "id": 22
+          }
+        ]
+      }
+    ],
+    "completed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "seconds": 22.984,
+    "typed_embeds": true,
+    "settings_references": true,
+    "structured_values_unchanged": true,
+    "ordinary_resave": true,
+    "identities_from_actual_results": {
+      "user:1": 2,
+      "post:8": 15,
+      "post:9": 16,
+      "table:1": "2",
+      "post:11": 18,
+      "post:13": 20,
+      "post:14": 21,
+      "user:2": 3,
+      "post:22": 28
+    }
+  },
+  "passed": true,
+  "kept": false,
+  "cleanup_errors": [],
+  "total_seconds": 29.42,
+  "postflight": {
+    "source_plugin_sources_unchanged": true,
+    "target_plugin_sources_unchanged": true,
+    "normal_member_definition_edit": true,
+    "archive_file_count": 2703
+  }
+}

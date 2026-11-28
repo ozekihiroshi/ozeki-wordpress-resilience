@@ -1,0 +1,172 @@
+{
+  "environment_seconds": 0.328,
+  "fast_contract": "PASS: before-operation input, unresolved outcome, initial-save cutoff, unchanged originals, changed-prefix refusal, capture drift, credential boundary, partial failure\n{\n    \"checks\": 601,\n    \"seconds\": 0.0143,\n    \"source_input_unchanged\": true,\n    \"order_followed\": true,\n    \"incomplete_capture_rejected\": true\n}\n{\"plugin_contract_checks\":17,\"seconds\":0.0009,\"scope\":\"pure contract checks; not a substitute for normal plugin operations\"}\n{\"source_reference_checks\":14,\"seconds\":0.00103}\n{\"block_and_media_checks\":9}\n",
+  "contract_process_seconds": 0.131,
+  "form_contract": "{'form_participants_exact': True, 'checks': 4, 'seconds': 0.00025}\n",
+  "plugins": {
+    "passed": true,
+    "seconds": 35.26,
+    "stages": [
+      {
+        "sequence": 1,
+        "endpoint": "wordpress.media-upload",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 2,
+        "endpoint": "/wp/v2/media",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 3,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 4,
+        "endpoint": "wordpress.media-edit",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 5,
+        "endpoint": "wordpress.media-edit",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 6,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 7,
+        "endpoint": "wordpress.media-upload",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 8,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 9,
+        "endpoint": "/wp/v2/media",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 10,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 11,
+        "endpoint": "wordpress.media-delete",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 12,
+        "endpoint": "wordpress.media-delete",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 13,
+        "endpoint": "wordpress.media-delete",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 14,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 15,
+        "endpoint": "wordpress.media-delete",
+        "coverage": "complete",
+        "reasons": []
+      },
+      {
+        "sequence": 16,
+        "endpoint": "/wp/v2/pages",
+        "coverage": "complete",
+        "reasons": []
+      }
+    ],
+    "completed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "image_checks": [
+      {
+        "operation": 1,
+        "normal_image_size": [
+          320,
+          240
+        ]
+      },
+      {
+        "operation": 4,
+        "normal_image_size": [
+          240,
+          320
+        ]
+      },
+      {
+        "operation": 5,
+        "normal_image_size": [
+          192,
+          256
+        ]
+      },
+      {
+        "operation": 7,
+        "normal_image_size": [
+          320,
+          240
+        ]
+      }
+    ],
+    "block_numbers_unchanged": true,
+    "new_edit_id_not_forced_to_old": true,
+    "normal_replacement": true,
+    "normal_removal_and_deletion": true,
+    "deleted_reference_recorded_not_repaired": true,
+    "prepared_file_unchanged": true,
+    "source_original_sha256": "122f948dfedbc7e83360c71db539f1ccefbbf08f381d3e6d9cdc9f9ea2b3fc41"
+  },
+  "passed": true,
+  "kept": false,
+  "cleanup_errors": [],
+  "total_seconds": 37.983,
+  "postflight": {
+    "source_plugin_sources_unchanged": true,
+    "target_plugin_sources_unchanged": true,
+    "archive_file_count": 2703
+  }
+}

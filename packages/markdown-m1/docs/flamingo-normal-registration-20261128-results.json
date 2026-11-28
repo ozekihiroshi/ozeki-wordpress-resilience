@@ -1,0 +1,143 @@
+{
+  "wordpress": "7.1.5",
+  "cf7": "6.2.5",
+  "flamingo": "2.6.4",
+  "source_receipts": {
+    "normal": {
+      "id": 10,
+      "fields": {
+        "equipment-code": "PLC-24",
+        "choices": [
+          "solar",
+          "monitor"
+        ],
+        "details": "一行目\n二行目",
+        "zero": "0",
+        "empty": ""
+      },
+      "date": "2026-11-06 21:20:00"
+    },
+    "spam": {
+      "id": 11,
+      "fields": {
+        "equipment-code": "PLC-24",
+        "choices": [
+          "solar",
+          "monitor"
+        ],
+        "details": "一行目\n二行目",
+        "zero": "0",
+        "empty": ""
+      },
+      "date": "2026-11-06 21:20:00"
+    },
+    "slashes": {
+      "id": 12,
+      "fields": {
+        "equipment-code": "PLC-24",
+        "choices": [
+          "solar",
+          "monitor"
+        ],
+        "details": "C:\\docs",
+        "zero": "0",
+        "empty": ""
+      },
+      "date": "2026-11-06 21:20:00"
+    }
+  },
+  "baseline": {
+    "baseline_posts": 12
+  },
+  "history": {
+    "through": 1
+  },
+  "report": {
+    "state": "completed_with_failures",
+    "through": 1,
+    "receipts": {
+      "10": 30,
+      "11": 31,
+      "12": 32,
+      "13": 33
+    },
+    "channels": {
+      "9": {
+        "form_id": 29,
+        "term_id": 3,
+        "slug": "receipt-channel"
+      }
+    },
+    "verified": [
+      "10",
+      "11",
+      "13"
+    ],
+    "held": {
+      "999999": "Prepared new CF7 form mapping missing"
+    },
+    "failed": {
+      "12": {
+        "created_id": 32,
+        "reason": "Normal add/read differs: fields; no repair attempted"
+      }
+    }
+  },
+  "backslash_receipt": {
+    "source_fields": {
+      "equipment-code": "PLC-24",
+      "choices": [
+        "solar",
+        "monitor"
+      ],
+      "details": "C:\\docs",
+      "zero": "0",
+      "empty": ""
+    },
+    "verified": false,
+    "failure": {
+      "created_id": 32,
+      "reason": "Normal add/read differs: fields; no repair attempted"
+    },
+    "destination_fields": {
+      "equipment-code": "PLC-24",
+      "choices": [
+        "solar",
+        "monitor"
+      ],
+      "details": "C:docs",
+      "zero": "0",
+      "empty": ""
+    }
+  },
+  "checks": {
+    "baseline_plus_history": true,
+    "new_receipt_ids": true,
+    "new_form_id": true,
+    "ordinary_fields_verified": true,
+    "spam_verified": true,
+    "unmapped_held": true,
+    "admin_receipt_visible": true,
+    "anonymous_no_receipt": true,
+    "normal_channel_reused": true,
+    "no_private_cf7_pointer": true,
+    "prepared_form_unchanged": true,
+    "prepared_setting_unchanged": true,
+    "original_unchanged": true,
+    "plugins_unchanged": true,
+    "differences_reported_without_repair": true
+  },
+  "all_checks_passed": true,
+  "all_receipts_rebuilt": false,
+  "s3_used": false,
+  "mail_sent": false,
+  "cleanup_errors": [],
+  "elapsed_seconds": 44.28,
+  "tested_source_sha256": {
+    "src/FlamingoReconstruction.php": "39A224BDD36978859E348C1CF3AFCB34F306F7650F1C1CE4A069AF1DCB7DA435",
+    "tools/reconstruct-flamingo.php": "9DC1C718E34B9B8A0D6DC2409D702F82E600A43AC06C0E9740CD0FAC54DA75BE",
+    "tests/flamingo-reconstruction-run.py": "1B1C58AFF93E1DD8E2BD6404807D51EEB1B24B4D1FD5EA2318E3DFBA64FA1E75",
+    "src/SiteSnapshot.php": "26F0B28B077AD5E82F141769C81B5470D5418D766FFBC72664F4A7A654F7C922",
+    "tests/flamingo-reconstruction.php": "074D6475598C3138BC3914F762D82A3D81E214A807BFEA096E6CC8B902A328D5"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "versions": [
+    {
+      "name": "advanced-custom-fields",
+      "version": "6.8.10"
+    },
+    {
+      "name": "contact-form-7",
+      "version": "6.2.5"
+    },
+    {
+      "name": "flamingo",
+      "version": "2.6.4"
+    },
+    {
+      "name": "ozeki-markdown-documents",
+      "version": "0.1.3"
+    },
+    {
+      "name": "tablepress",
+      "version": "3.4.1"
+    },
+    {
+      "name": "wp-members",
+      "version": "3.5.8.3"
+    }
+  ],
+  "source_checks": {
+    "member_login": true,
+    "member_markdown": true,
+    "member_table": true,
+    "guest_blocked": true,
+    "acf_value": true,
+    "image_served": true,
+    "profile_field": true,
+    "flamingo_readable": true
+  },
+  "automatic_source_counts": {
+    "rest": 13,
+    "admin": 9,
+    "flamingo-add": 1
+  },
+  "initial_save_connection": {
+    "cutoff": 23,
+    "tail_count": 1,
+    "old_without_anchor_rejected": true,
+    "modified_original_rejected": true
+  },
+  "automatic_capture_without_driver": true,
+  "receipt_runs": [
+    {
+      "site": "automatic-construction-1795867527-target",
+      "feedback_count": 0,
+      "same_ids_on_retry": true
+    },
+    {
+      "site": "automatic-construction-1795867527-again",
+      "feedback_count": 0,
+      "same_ids_on_retry": true
+    }
+  ],
+  "target_checks": {
+    "member_login": true,
+    "member_markdown": true,
+    "member_table": true,
+    "guest_blocked": true,
+    "acf_value": true,
+    "image_served": true,
+    "profile_field": true,
+    "flamingo_readable": true
+  },
+  "observed_tail_applied": true,
+  "again_checks": {
+    "member_login": true,
+    "member_markdown": true,
+    "member_table": true,
+    "guest_blocked": true,
+    "acf_value": true,
+    "image_served": true,
+    "profile_field": true,
+    "flamingo_readable": true
+  },
+  "edited_title_preserved": true,
+  "distinct_page_ids": true,
+  "plugins_unchanged": true,
+  "no_member_initialization": true,
+  "source_record_unchanged": true,
+  "normal_receipt_output_equal": true,
+  "no_feedback_resubmission": true,
+  "automatic_journals": {
+    "automatic-construction-1795867527-source": {
+      "count": 24,
+      "all_registered": true
+    },
+    "automatic-construction-1795867527-target": {
+      "count": 29,
+      "all_registered": true
+    },
+    "automatic-construction-1795867527-again": {
+      "count": 29,
+      "all_registered": true
+    }
+  },
+  "receipt_input": {
+    "your-name": "Fixture Technician",
+    "probe": "PLC C:\\technical\\manual 日本語"
+  },
+  "receipt_normal_output": {
+    "your-name": "Fixture Technician",
+    "your-email": "technician@example.invalid",
+    "your-subject": "Combined inquiry",
+    "probe": "PLC C:technicalmanual 日本語"
+  },
+  "operation_counts": [
+    26,
+    32,
+    32
+  ],
+  "records": [
+    "/tmp/automatic-construction-20261128/automatic-construction-1795867527-source.jsonl",
+    "/tmp/automatic-construction-20261128/automatic-construction-1795867527-target.jsonl",
+    "/tmp/automatic-construction-20261128/automatic-construction-1795867527-again.jsonl"
+  ],
+  "all_checks_passed": true,
+  "s3_used": false,
+  "cleanup_errors": [],
+  "elapsed_seconds": 114.83
+}

@@ -1,0 +1,219 @@
+{
+  "wordpress": "7.1.5",
+  "cf7": "6.2.5",
+  "baseline": {
+    "baseline_posts": 15
+  },
+  "history": {
+    "through": 3
+  },
+  "report": {
+    "state": "completed",
+    "through": 3,
+    "forms": {
+      "5": 28,
+      "8": 29,
+      "9": 30,
+      "11": 31,
+      "7": 32,
+      "16": 33
+    },
+    "pages": {
+      "12": 34,
+      "13": 35
+    },
+    "held": {
+      "form:11": "CF7 configuration warnings: registered, but not linked to a page",
+      "page:14": "Referenced form was not registered",
+      "page:15": "Referenced form was not registered"
+    },
+    "excluded": [],
+    "defaults": {
+      "5": {
+        "mail_normal_boolean_output": {
+          "use_html": false,
+          "exclude_blank": false
+        },
+        "mail": {
+          "active": true
+        },
+        "mail_2_normal_boolean_output": {
+          "use_html": false,
+          "exclude_blank": false
+        },
+        "messages": {
+          "invalid_date": "Please enter a date in YYYY-MM-DD format.",
+          "date_too_early": "This field has a too early date.",
+          "date_too_late": "This field has a too late date.",
+          "invalid_number": "Please enter a number.",
+          "number_too_small": "This field has a too small number.",
+          "number_too_large": "This field has a too large number.",
+          "quiz_answer_not_correct": "The answer to the quiz is incorrect.",
+          "captcha_not_match": "Your entered code is incorrect.",
+          "invalid_email": "Please enter an email address.",
+          "invalid_url": "Please enter a URL.",
+          "invalid_tel": "Please enter a telephone number."
+        }
+      },
+      "8": {
+        "messages": {
+          "mail_sent_ng": "There was an error trying to send your message. Please try again later.",
+          "validation_error": "One or more fields have an error. Please check and try again.",
+          "spam": "There was an error trying to send your message. Please try again later.",
+          "accept_terms": "You must accept the terms and conditions before sending your message.",
+          "invalid_required": "Please fill out this field.",
+          "invalid_too_long": "This field has a too long input.",
+          "invalid_too_short": "This field has a too short input.",
+          "upload_failed": "There was an unknown error uploading the file.",
+          "upload_file_type_invalid": "You are not allowed to upload files of this type.",
+          "upload_file_too_large": "The uploaded file is too large.",
+          "upload_failed_php_error": "There was an error uploading the file.",
+          "invalid_date": "Please enter a date in YYYY-MM-DD format.",
+          "date_too_early": "This field has a too early date.",
+          "date_too_late": "This field has a too late date.",
+          "invalid_number": "Please enter a number.",
+          "number_too_small": "This field has a too small number.",
+          "number_too_large": "This field has a too large number.",
+          "quiz_answer_not_correct": "The answer to the quiz is incorrect.",
+          "captcha_not_match": "Your entered code is incorrect.",
+          "invalid_email": "Please enter an email address.",
+          "invalid_url": "Please enter a URL.",
+          "invalid_tel": "Please enter a telephone number."
+        }
+      },
+      "9": {
+        "messages": {
+          "mail_sent_ng": "There was an error trying to send your message. Please try again later.",
+          "validation_error": "One or more fields have an error. Please check and try again.",
+          "spam": "There was an error trying to send your message. Please try again later.",
+          "accept_terms": "You must accept the terms and conditions before sending your message.",
+          "invalid_required": "Please fill out this field.",
+          "invalid_too_long": "This field has a too long input.",
+          "invalid_too_short": "This field has a too short input.",
+          "upload_failed": "There was an unknown error uploading the file.",
+          "upload_file_type_invalid": "You are not allowed to upload files of this type.",
+          "upload_file_too_large": "The uploaded file is too large.",
+          "upload_failed_php_error": "There was an error uploading the file.",
+          "invalid_date": "Please enter a date in YYYY-MM-DD format.",
+          "date_too_early": "This field has a too early date.",
+          "date_too_late": "This field has a too late date.",
+          "invalid_number": "Please enter a number.",
+          "number_too_small": "This field has a too small number.",
+          "number_too_large": "This field has a too large number.",
+          "quiz_answer_not_correct": "The answer to the quiz is incorrect.",
+          "captcha_not_match": "Your entered code is incorrect.",
+          "invalid_email": "Please enter an email address.",
+          "invalid_url": "Please enter a URL.",
+          "invalid_tel": "Please enter a telephone number."
+        }
+      },
+      "11": {
+        "messages": {
+          "mail_sent_ng": "There was an error trying to send your message. Please try again later.",
+          "validation_error": "One or more fields have an error. Please check and try again.",
+          "spam": "There was an error trying to send your message. Please try again later.",
+          "accept_terms": "You must accept the terms and conditions before sending your message.",
+          "invalid_required": "Please fill out this field.",
+          "invalid_too_long": "This field has a too long input.",
+          "invalid_too_short": "This field has a too short input.",
+          "upload_failed": "There was an unknown error uploading the file.",
+          "upload_file_type_invalid": "You are not allowed to upload files of this type.",
+          "upload_file_too_large": "The uploaded file is too large.",
+          "upload_failed_php_error": "There was an error uploading the file.",
+          "invalid_date": "Please enter a date in YYYY-MM-DD format.",
+          "date_too_early": "This field has a too early date.",
+          "date_too_late": "This field has a too late date.",
+          "invalid_number": "Please enter a number.",
+          "number_too_small": "This field has a too small number.",
+          "number_too_large": "This field has a too large number.",
+          "quiz_answer_not_correct": "The answer to the quiz is incorrect.",
+          "captcha_not_match": "Your entered code is incorrect.",
+          "invalid_email": "Please enter an email address.",
+          "invalid_url": "Please enter a URL.",
+          "invalid_tel": "Please enter a telephone number."
+        }
+      },
+      "7": {},
+      "16": {
+        "messages": {
+          "mail_sent_ng": "There was an error trying to send your message. Please try again later.",
+          "validation_error": "One or more fields have an error. Please check and try again.",
+          "spam": "There was an error trying to send your message. Please try again later.",
+          "accept_terms": "You must accept the terms and conditions before sending your message.",
+          "invalid_required": "Please fill out this field.",
+          "invalid_too_long": "This field has a too long input.",
+          "invalid_too_short": "This field has a too short input.",
+          "upload_failed": "There was an unknown error uploading the file.",
+          "upload_file_type_invalid": "You are not allowed to upload files of this type.",
+          "upload_file_too_large": "The uploaded file is too large.",
+          "upload_failed_php_error": "There was an error uploading the file.",
+          "invalid_date": "Please enter a date in YYYY-MM-DD format.",
+          "date_too_early": "This field has a too early date.",
+          "date_too_late": "This field has a too late date.",
+          "invalid_number": "Please enter a number.",
+          "number_too_small": "This field has a too small number.",
+          "number_too_large": "This field has a too large number.",
+          "quiz_answer_not_correct": "The answer to the quiz is incorrect.",
+          "captcha_not_match": "Your entered code is incorrect.",
+          "invalid_email": "Please enter an email address.",
+          "invalid_url": "Please enter a URL.",
+          "invalid_tel": "Please enter a telephone number."
+        }
+      }
+    },
+    "config_errors": {
+      "11": {
+        "mail.recipient": [
+          {
+            "message": "Invalid mailbox syntax is used.",
+            "link": "https://contactform7.com/configuration-errors/invalid-mailbox-syntax"
+          }
+        ]
+      }
+    },
+    "plan_sha256": "381a6375c10b2262241558e50c9fe068a50418c998908e8ccae3f8ec54915d7e"
+  },
+  "default_added_message_count": 22,
+  "negative_checks": {
+    "missing_mail": true,
+    "attachments": true,
+    "unknown_tag": true,
+    "event_handler": true,
+    "additional_script": true
+  },
+  "checks": {
+    "baseline_and_history": true,
+    "deleted_removed": true,
+    "new_ids": true,
+    "new_hash": true,
+    "hash_and_numeric_embed": true,
+    "form_exact": true,
+    "unedited_form": true,
+    "added_form": true,
+    "restricted_anonymous": true,
+    "restricted_authenticated": true,
+    "deleted_page_held": true,
+    "warning_not_linked": true,
+    "edit_resave": true,
+    "page_edit_resave": true,
+    "prepared_form_unchanged": true,
+    "prepared_setting_unchanged": true,
+    "source_material_unchanged": true,
+    "plugins_unchanged": true,
+    "normal_defaults_reported": true,
+    "unsupported_held": true
+  },
+  "s3_used": false,
+  "mail_submitted": false,
+  "all_checks_passed": true,
+  "cleanup_errors": [],
+  "elapsed_seconds": 41.19,
+  "tested_source_sha256": {
+    "tests/contact-form-reconstruction.php": "E77A01CD4D65CFFFA7943D1428B04B039B8BB78B88908943D06D50639530620A",
+    "tests/contact-form-reconstruction-run.py": "DBCFD6398CA4B8A5729B016442EE8852ED8C3909E444946FB8E225FCDE1DC14D",
+    "src/ContactFormReconstruction.php": "1B16F77A90BEC544F3AB365357446EE1F57ABA7657BA6317011E60F916BDBCE5",
+    "src/SiteSnapshot.php": "2764CBBF242CD7E31DF5F6AA25057D75D5E552300625CB6718DA105829A1753A",
+    "tools/reconstruct-markdown.py": "850C28781D6B3220DE263B6D65843926039B12D3F6B6799EAB334EAFDB68CE3B",
+    "tools/reconstruct-contact-form.py": "CD4E6FC8286DA55B6ABC28CD8D2E2BB8AF63602F3C477AD0F9C52A1EEB639736"
+  }
+}

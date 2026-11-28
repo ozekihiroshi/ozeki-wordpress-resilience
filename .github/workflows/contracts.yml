@@ -2,7 +2,7 @@ name: Offline recovery contracts
 
 on:
   push:
-    branches: [main]
+    branches: [main, codex/native-wordpress-reconstruction]
   pull_request:
 
 permissions:
@@ -29,6 +29,9 @@ jobs:
           /tmp/owr-ci-venv/bin/pip install -r requirements-dev.txt
       - name: Independent M1 package contracts
         run: |
+          php packages/markdown-m1/tests/construction-initial-content.php
+          python3 packages/markdown-m1/tests/construction-normal-dispatch.py
+          python3 packages/markdown-m1/tests/construction-record-test.py
           php packages/markdown-m1/tests/prepared-settings.php
           find packages/markdown-m1/src -name '*.php' -exec php -l {} \;
           php -l packages/markdown-m1/ozeki-wordpress-resilience.php

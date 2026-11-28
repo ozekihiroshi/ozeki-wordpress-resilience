@@ -1,5 +1,7 @@
 # Ozeki Resilience
 
+**開発ブランチの状況：** [保存時の記録と通常登録による再構築の方針・確認結果・残る制約](packages/markdown-m1/docs/normal-reconstruction-status-20261129.ja.md)。本番未導入・公開準備未完了であり、以下の申請状況は変更しません。
+
 [rc.24候補](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.24)・[ZIP確認結果と範囲](docs/releases/wordpress-org-033-rc24.md)。**rc.24は未提出・本番未導入です。提出済み・本番稼働中はrc.23で、審査担当者の回答待ち・公開未承認です。**
 
 [rc.23候補のダウンロード](https://github.com/ozekihiroshi/ozeki-wordpress-resilience/releases/tag/wporg-0.3.3-rc.23)・[ZIP確認と審査対応の記録](docs/review/path-startup-20261128/RC23-PACKAGE.txt)。

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace OzekiResilience\M1;
 if (!defined('ABSPATH')) exit;
 require_once __DIR__.'/SaveFailure.php';
+require_once __DIR__.'/ReceiptInputs.php';
 
 /** CF7 definition and Flamingo receipt snapshots at their completed-save boundaries. */
 final class FormHistory
@@ -30,7 +31,9 @@ final class FormHistory
 
     public const DEPENDENCIES=['contact-form-7/wp-contact-form-7.php','flamingo/flamingo.php'];
     private array $dirty=[];
+    private ReceiptInputs $inputs;
     public function boot(): void {
+        $this->inputs=new ReceiptInputs();$this->inputs->boot();
         // Flamingo writes metadata after wp_insert_post; freeze only the completed
         // request state, not the intermediate core save. One final state per ID.
         add_action('wp_after_insert_post',fn($id,$post)=>$this->mark((int)$id),PHP_INT_MAX,2);
@@ -49,7 +52,7 @@ final class FormHistory
             $id=(int)($result['flamingo_inbound_id']??0);if(!$id)return;
             $form=\WPCF7_ContactForm::get_current();
             if(!$form)SaveFailure::run('Receipt identity',static function(){throw new \RuntimeException('Missing received form identity.');});
-            $this->capture([$form->id(),$id]);
+            $this->capture([$form->id(),$id],true);
         },PHP_INT_MIN,1);
     }
     private function mark(int $id): void {
@@ -68,10 +71,10 @@ final class FormHistory
         // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Internal exception text is stored as data; admin renderers escape it and REST responses encode it.
         if(($data['Version']??'')!==$version)throw new \RuntimeException('Install recorded form dependency before recovery: '.$plugin.' '.$version);
     }
-    public function capture(array $ids): void {
-        SaveFailure::run('Form / receipt capture',fn()=>$this->captureOperation($ids));
+    public function capture(array $ids,bool $registered=false): void {
+        SaveFailure::run('Form / receipt capture',fn()=>$this->captureOperation($ids,$registered));
     }
-    private function captureOperation(array $ids): void {
+    private function captureOperation(array $ids,bool $registered=false): void {
         if(empty((new Plugin())->config()['protect']))return;
         global $wpdb;$items=[];
         foreach($ids as $id){
@@ -83,7 +86,7 @@ final class FormHistory
             if($wpdb->last_error)throw new \RuntimeException('Cannot capture completed form.');
             $items[]=['post'=>$post,'meta'=>$meta,'channels'=>$terms];
         }
-        $this->enqueue($items);
+        if(!$registered||!$this->inputs->completed((int)end($ids),(int)$ids[0],$items))$this->enqueue($items);
         foreach($ids as $id)unset($this->dirty[(int)$id]);
     }
     private function enqueue(array $items): void {
