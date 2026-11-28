@@ -110,6 +110,8 @@ No. Prepare a compatible destination when recovery is needed. Python workers, SS
 == Changelog ==
 
 = 0.3.3 =
+* Share the private workspace path boundary check; allow sibling directories without permitting WordPress-internal staging.
+* Keep protection and initial-save readiness after successful settings migration. On failure, stop only Resilience preservation, retain interruption evidence across retries/reactivation, and guide explicit restart after a new trusted initial save.
 * Keep prepared destination templates and navigation; check the referenced document's viewing conditions when displaying embedded Markdown.
 * Avoid full media reconciliation for revision autosaves and editor lock updates; retain pending work and retry guidance when capture cannot complete.
 * Display history without requiring article titles or statuses; preserve existing recorded values and guide file-access records to complete site recovery.

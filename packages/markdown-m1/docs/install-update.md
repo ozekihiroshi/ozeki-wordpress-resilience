@@ -8,6 +8,8 @@ Install WordPress, themes and required plugins separately from trusted distribut
 
 ## English
 
+**rc.22 → rc.23:** The saved-data format is unchanged. A successful uninterrupted update keeps protection, pending saves and the existing initial-save confirmation; do not redo the initial save solely for this update. This specific update does not require the new Baseline advised below for format-changing prereleases. If settings migration fails, normal WordPress operations remain available but Resilience preservation stops. After retry succeeds, resolve pending saves and review changes made during the interruption, create a trusted complete initial save on the healthy source, then explicitly enable protection. Reactivation does not clear the interruption record. The new initial save preserves the current state, not every intermediate change made during the interruption.
+
 **Markdown Documents 0.1.3:** For new Markdown setups, use the published 0.1.3 release. It checks the document's own access conditions for direct views and embeds. Resolve pending saves, update the healthy source first, and create a new trusted Baseline. Install the same recorded version on the recovery destination. Do not update only the destination for an older recovery point. Resilience does not install or initialize this plugin for you.
 
 **Before the first public release:** Saved-data compatibility between prerelease candidates is not guaranteed. The version-specific notes below describe earlier candidates, not a promise for all later development builds. Resolve pending saves before changing versions. Update the healthy source and prepared recovery destination to the same supported build, then create and verify a new trusted Baseline. Keep earlier originals and history unchanged. An update cannot recreate missing information; do not resume writing with an older build after the new format is used.
@@ -28,6 +30,8 @@ Recovery does not install or initialize plugins. Complete their normal setup bef
 Where possible, resolve pending operations before updating. Otherwise preserve them and compare after the update; do not clear queues to simplify the procedure. A plugin update does not require running site recovery. See [save resumption](save-resume.md) when needed.
 
 ## 日本語
+
+**rc.22 → rc.23：** 保存形式は変わりません。保全の中断なく正常に更新できた場合は、保護・未完了保存・初回保存の確認状態を維持します。この更新だけを理由とした初回保存のやり直しは不要で、下記の形式変更を伴う公開前版の案内とは区別してください。設定移行に失敗した場合、WordPressの通常操作は継続できますがResilienceの保全は停止します。再試行成功後、未完了保存と停止中の変更を確認し、健全な保存元で信頼済みの初回保存を作成してから、明示的に保護を開始します。再有効化では中断記録は消えません。新しい初回保存で残せるのは現在の状態であり、停止中の全変更経過ではありません。
 
 **Markdown Documents 0.1.3：** Markdownの新規導入には公開済みの0.1.3を使用します。直接表示・埋込みとも文書自身の閲覧条件を確認する版です。未確定の保存を解消してから健全な保存元を先に更新し、新しい信頼済みの初回保存を作ってください。復旧先には記録された同じ版を導入します。古い復旧点を使うために復旧先だけ新版へ変更しないでください。Resilienceがこのプラグインをインストール・初期化することはありません。
 
